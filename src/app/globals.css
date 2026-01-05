@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fff7f0;
+  --surface: #ffffff;
+  --ink: #1e1a15;
+  --muted: #6f5f52;
+  --accent: #ff7a00;
+  --accent-strong: #ff6a00;
+  --accent-soft: #ffd1a1;
+  --ring: #ffbe7a;
+  --shadow-soft: 0 12px 30px rgba(255, 122, 0, 0.12);
+  --shadow-strong: 0 22px 60px rgba(39, 24, 12, 0.18);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--ink);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-ring: var(--ring);
+  --color-app: var(--background);
+  --shadow-soft: var(--shadow-soft);
+  --shadow-strong: var(--shadow-strong);
+  --font-sans: var(--font-space-grotesk);
+  --font-mono: var(--font-space-mono);
+}
+
+body {
+  background: radial-gradient(circle at 15% 20%, #fff1e3 0, transparent 45%),
+    radial-gradient(circle at 90% 10%, #ffe1c7 0, transparent 40%), var(--background);
+  color: var(--ink);
+  font-family: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
