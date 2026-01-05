@@ -1,7 +1,12 @@
+import { NextRequest } from "next/server";
 import { auth0 } from "@/lib/auth0";
 
-export default auth0.withMiddlewareAuthRequired();
+export async function middleware(request: NextRequest) {
+  return await auth0.middleware(request);
+}
 
 export const config = {
-  matcher: ["/", "/add-entry", "/history", "/settings"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+  ],
 };

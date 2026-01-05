@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { auth0 } from "@/lib/auth0";
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 const navItems = [
   { href: "/", label: "Panel", icon: "⌂" },
@@ -13,7 +13,7 @@ const navItems = [
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user, isLoading } = auth0.useUser();
+  const { user, isLoading } = useUser();
 
   return (
     <div className="min-h-screen bg-app text-ink">
@@ -30,7 +30,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
             {!isLoading && !user && (
               <Link
-                href="/api/auth/login"
+                href="/auth/login"
                 className="rounded-full border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700 shadow-soft"
               >
                 Giriş Yap
@@ -42,7 +42,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   Merhaba, {user.name ?? user.email ?? "Kullanıcı"}
                 </span>
                 <Link
-                  href="/api/auth/logout"
+                  href="/auth/logout"
                   className="rounded-full border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700 shadow-soft"
                 >
                   Çıkış

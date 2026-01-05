@@ -35,7 +35,7 @@ export default function SettingsPage() {
         <div className="flex flex-wrap gap-2">
           {!isLoading && !user && (
             <a
-              href="/api/auth/login"
+              href="/auth/login"
               className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
             >
               Giriş Yap
@@ -43,7 +43,7 @@ export default function SettingsPage() {
           )}
           {user && (
             <a
-              href="/api/auth/logout"
+              href="/auth/logout"
               className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-sm font-semibold text-amber-700"
             >
               Çıkış Yap
