@@ -34,7 +34,7 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  const session = await getSession();
+  const session = await auth0.getSession();
   if (!session?.user?.sub) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
