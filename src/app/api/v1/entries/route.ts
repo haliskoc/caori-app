@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@auth0/nextjs-auth0";
+import { auth0 } from "@/lib/auth0";
 import { desc, eq } from "drizzle-orm";
 import { entries, users } from "@/lib/schema";
 import { getDb } from "@/lib/db";
@@ -22,7 +22,7 @@ async function ensureUser(user: { sub: string; email?: string; name?: string }) 
 }
 
 export async function GET() {
-  const session = await getSession();
+  const session = await auth0.getSession();
   if (!session?.user?.sub) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

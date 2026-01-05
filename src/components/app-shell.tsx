@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { auth0 } from "@/lib/auth0";
 
 const navItems = [
   { href: "/", label: "Panel", icon: "⌂" },
@@ -13,7 +13,7 @@ const navItems = [
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user, isLoading } = useUser();
+  const { user, isLoading } = auth0.useUser();
 
   return (
     <div className="min-h-screen bg-app text-ink">

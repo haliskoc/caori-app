@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@auth0/nextjs-auth0";
+import { auth0 } from "@/lib/auth0";
 import { and, eq } from "drizzle-orm";
 import { entries } from "@/lib/schema";
 import { getDb } from "@/lib/db";
 
 export async function DELETE(
-  _request: Request,
-  { params }: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getSession();
+  const session = await auth0.getSession();
   if (!session?.user?.sub) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

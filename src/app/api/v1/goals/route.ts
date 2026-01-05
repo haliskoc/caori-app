@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@auth0/nextjs-auth0";
+import { auth0 } from "@/lib/auth0";
 import { eq } from "drizzle-orm";
 import { goals, users } from "@/lib/schema";
 import { getDb } from "@/lib/db";
@@ -23,7 +23,7 @@ async function ensureGoals(userId: string) {
 }
 
 export async function GET() {
-  const session = await getSession();
+  const session = await auth0.getSession();
   if (!session?.user?.sub) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

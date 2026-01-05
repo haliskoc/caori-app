@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@auth0/nextjs-auth0";
+import { auth0 } from "@/lib/auth0";
 import { entries, users } from "@/lib/schema";
 import { getDb } from "@/lib/db";
 import { createId } from "@/lib/utils";
@@ -21,7 +21,7 @@ async function ensureUser(user: { sub: string; email?: string; name?: string }) 
 }
 
 export async function POST(request: Request) {
-  const session = await getSession();
+  const session = await auth0.getSession();
   if (!session?.user?.sub) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
