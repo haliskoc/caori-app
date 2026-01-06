@@ -15,9 +15,9 @@ npm run dev
 
 Create `.env.local` based on `.env.example`:
 
-- `AUTH0_SECRET`
-- `AUTH0_BASE_URL` (ex: `http://localhost:3000`)
-- `AUTH0_ISSUER_BASE_URL`
+- `AUTH0_SECRET` (32-byte hex)
+- `APP_BASE_URL` (ex: `http://localhost:3000`)
+- `AUTH0_DOMAIN` (ex: `dev-xxxx.us.auth0.com`)
 - `AUTH0_CLIENT_ID`
 - `AUTH0_CLIENT_SECRET`
 - `DATABASE_URL` (Neon pooled connection string recommended for Vercel)
@@ -26,8 +26,8 @@ Create `.env.local` based on `.env.example`:
 
 1. Create a **Regular Web App** in Auth0.
 2. Add callback URLs:
-   - `http://localhost:3000/api/auth/callback`
-   - `https://YOUR_DOMAIN/api/auth/callback`
+   - `http://localhost:3000/auth/callback`
+   - `https://YOUR_DOMAIN/auth/callback`
 3. Add logout URLs:
    - `http://localhost:3000`
    - `https://YOUR_DOMAIN`

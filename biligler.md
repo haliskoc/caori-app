@@ -20,8 +20,7 @@ NvoCJX08Lasc4VK5Vytzr8JR-bZVNKg4I6MU0y8iypVh5uUsqXnwkiavKBhzAuRE
 
 allowed callbeck url 
 
-https://cal-ai-track.vercel.app/auth/callback
-
+https://cal-ai-track.vercel.app/auth/callback , https://cal-ai-track.vercel.app/api/auth/callback
 
 aloowd log out url 
 
