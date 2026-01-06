@@ -2,18 +2,7 @@ import { NextResponse } from "next/server";
 import { auth0 } from "@/lib/auth0";
 import { eq } from "drizzle-orm";
 import { goals, users } from "@/lib/schema";
-import { getDb } from "@/lib/db";
-
-async function ensureUser(user: { sub: string; email?: string; name?: string }) {
-  const db = getDb();
-  await db
-    .insert(users)
-    .values({ id: user.sub, email: user.email ?? null, name: user.name ?? null })
-    .onConflictDoUpdate({
-      target: users.id,
-      set: { email: user.email ?? null, name: user.name ?? null },
-    });
-}
+import { getDb, ensureUser } from "@/lib/db";
 
 async function ensureGoals(userId: string) {
   const db = getDb();

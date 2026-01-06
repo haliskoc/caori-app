@@ -1,23 +1,12 @@
 import { NextResponse } from "next/server";
 import { auth0 } from "@/lib/auth0";
 import { entries, users } from "@/lib/schema";
-import { getDb } from "@/lib/db";
+import { getDb, ensureUser } from "@/lib/db";
 import { createId } from "@/lib/utils";
 
 function toNumber(value: unknown) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
-}
-
-async function ensureUser(user: { sub: string; email?: string; name?: string }) {
-  const db = getDb();
-  await db
-    .insert(users)
-    .values({ id: user.sub, email: user.email ?? null, name: user.name ?? null })
-    .onConflictDoUpdate({
-      target: users.id,
-      set: { email: user.email ?? null, name: user.name ?? null },
-    });
 }
 
 export async function POST(request: Request) {

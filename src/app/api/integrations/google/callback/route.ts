@@ -1,7 +1,7 @@
 import { getTokens, saveTokens } from "@/lib/google-fit";
 import { auth0 } from "@/lib/auth0";
 import { NextRequest, NextResponse } from "next/server";
-import { getDb } from "@/lib/db";
+import { getDb, ensureUser } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
@@ -28,18 +28,9 @@ export const GET = async (req: NextRequest) => {
     
     // We need to ensure the user exists in our DB to link the tokens
     // Auth0 user ID is session.user.sub
-    const db = getDb();
-    const user = await db.query.users.findFirst({
-        where: eq(users.auth0Id, session.user.sub)
-    });
-
-    let userId = user?.id;
-
-    if (!userId) {
-         // This typically shouldn't happen if properly synced, but good to handle
-         return NextResponse.json({ error: "User record not found" }, { status: 404 });
-    }
-
+    await ensureUser(session.user);
+    
+    const userId = session.user.sub;
     await saveTokens(userId, tokens);
 
     return NextResponse.redirect(new URL("/settings?google_fit=connected", req.url));
