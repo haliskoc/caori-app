@@ -3,6 +3,7 @@ import {
   pgTable,
   text,
   timestamp,
+  bigint,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -10,6 +11,16 @@ export const users = pgTable("users", {
   email: text("email"),
   name: text("name"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+export const googleFitTokens = pgTable("google_fit_tokens", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  accessToken: text("access_token").notNull(),
+  refreshToken: text("refresh_token").notNull(),
+  expiryDate: bigint("expiry_date", { mode: "number" }),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
 export const goals = pgTable("goals", {

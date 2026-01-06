@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/card";
 import { useTracker } from "@/components/tracker-provider";
 import { ActivityType, MealType } from "@/lib/types";
+import { OFFProduct } from "@/lib/off";
 
 const mealLabels: Record<MealType, string> = {
   breakfast: "Kahvaltı",
@@ -27,6 +28,30 @@ export default function AddEntryPage() {
   const [foodName, setFoodName] = useState("");
   const [foodCalories, setFoodCalories] = useState("");
   const [mealType, setMealType] = useState<MealType>("lunch");
+
+  const [searchResults, setSearchResults] = useState<OFFProduct[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (foodName.length > 2) {
+        setIsSearching(true);
+        try {
+          const res = await fetch(`/api/v1/food-search?q=${encodeURIComponent(foodName)}`);
+          const data = await res.json();
+          setSearchResults(data);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setIsSearching(false);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [foodName]);
 
   const [waterAmount, setWaterAmount] = useState("250");
 
@@ -68,8 +93,37 @@ export default function AddEntryPage() {
             value={foodName}
             onChange={(event) => setFoodName(event.target.value)}
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-            placeholder="Örn: Izgara tavuk"
+            placeholder="Ürün Ara veya Manuel Gir..."
           />
+
+          {isSearching && <p className="text-[10px] text-muted animate-pulse">Aranıyor...</p>}
+
+          {searchResults.length > 0 && (
+            <div className="max-h-40 overflow-y-auto rounded-xl border border-amber-50 bg-amber-50/30 p-1 space-y-1">
+              {searchResults.map((product) => (
+                <button
+                  key={product.code}
+                  onClick={() => {
+                    setFoodName(product.product_name);
+                    const kcal = product.nutriments["energy-kcal_100g"];
+                    if (kcal) setFoodCalories(String(Math.round(kcal)));
+                    setSearchResults([]);
+                  }}
+                  className="flex w-full items-center gap-3 rounded-lg bg-white p-2 text-left text-xs transition hover:bg-amber-100/50"
+                >
+                  {product.image_url && (
+                    <img src={product.image_url} alt="" className="h-8 w-8 rounded object-cover" />
+                  )}
+                  <div className="flex-1 overflow-hidden">
+                    <p className="truncate font-semibold text-amber-900">{product.product_name}</p>
+                    <p className="text-[10px] text-muted">
+                      {product.nutriments["energy-kcal_100g"] ?? "?"} kcal / 100g
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
           <div className="grid gap-3 sm:grid-cols-2">
             <input
               value={foodCalories}
