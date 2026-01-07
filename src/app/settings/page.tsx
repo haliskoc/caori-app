@@ -106,7 +106,7 @@ export default function SettingsPage() {
         <div className="flex flex-wrap gap-2">
           {!isLoading && !user && (
             <a
-              href="/auth/login"
+              href="/api/auth/login"
               className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
             >
               Giriş Yap
@@ -114,7 +114,7 @@ export default function SettingsPage() {
           )}
           {user && (
             <a
-              href="/auth/logout"
+              href="/api/auth/logout"
               className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-sm font-semibold text-amber-700"
             >
               Çıkış Yap
