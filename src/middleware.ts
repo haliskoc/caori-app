@@ -12,6 +12,6 @@ export const config = {
     "/settings/:path*",
     "/add-entry/:path*",
     "/history/:path*",
-    // "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|auth).*)", // Eski matcher
+    "/auth/:path*",
   ],
 };
