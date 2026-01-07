@@ -99,12 +99,9 @@ export default function SettingsPage() {
           </p>
         </div>
         <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs text-muted">
-          {/* 
-          {isLoading && "Oturum kontrol ediliyor..."}
-          {!isLoading && !user && "Giriş yaparak verilerinizi buluta taşıyabilirsiniz."}
-          {user && `Giriş yapan: ${user.email ?? user.name ?? "Kullanıcı"}`} 
-          */}
-          Yerel depolama modu aktif. Verileriniz sadece bu cihazda saklanır.
+          {dataMode === "remote"
+            ? "Bulut modu aktif. Verileriniz Neon veritabanında saklanır."
+            : "Yerel depolama modu aktif. Verileriniz sadece bu cihazda saklanır."}
         </div>
         <div className="flex flex-wrap gap-2">
           {/*

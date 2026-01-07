@@ -1,9 +1,11 @@
 import {
+  boolean,
   integer,
   pgTable,
   text,
   timestamp,
   bigint,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -45,6 +47,54 @@ export const entries = pgTable("entries", {
   activityType: text("activity_type"),
   durationMin: integer("duration_min"),
   estimatedCalories: integer("estimated_calories"),
+  timestamp: timestamp("timestamp", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+export const profiles = pgTable("profiles", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  fullName: text("full_name"),
+  age: integer("age"),
+  heightCm: integer("height_cm"),
+  weightKg: integer("weight_kg"),
+  mainGoal: text("main_goal"),
+  sportLevel: text("sport_level"),
+  workoutDays: text("workout_days"),
+  workoutPlace: text("workout_place"),
+  equipmentLevel: text("equipment_level"),
+  injury: text("injury"),
+  injuryDetail: text("injury_detail"),
+  doctorRestriction: text("doctor_restriction"),
+  referralSource: text("referral_source"),
+  expectation: text("expectation"),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+});
+
+export const userSettings = pgTable("user_settings", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  themeMode: text("theme_mode").notNull().default("light"),
+  themeAccent: text("theme_accent").notNull().default("amber"),
+  reminderEnabled: boolean("reminder_enabled").notNull().default(false),
+  reminderTime: text("reminder_time").notNull().default("20:00"),
+  reminderLastNotifiedDay: text("reminder_last_notified_day"),
+  aiVisual: boolean("ai_visual").notNull().default(false),
+  googleFit: boolean("google_fit").notNull().default(false),
+  darkMode: boolean("dark_mode").notNull().default(true),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+});
+
+export const auditLog = pgTable("audit_log", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  action: text("action").notNull(),
+  detail: text("detail").notNull(),
+  meta: jsonb("meta"),
   timestamp: timestamp("timestamp", { withTimezone: true }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });

@@ -36,8 +36,29 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       setShowOnboarding(false);
       return;
     }
-    const profile = loadProfile();
-    setShowOnboarding(!isProfileComplete(profile));
+    let active = true;
+    const check = async () => {
+      try {
+        const res = await fetch("/api/v1/profile", { credentials: "include" });
+        if (res.ok) {
+          const data = await res.json();
+          if (active) {
+            setShowOnboarding(!isProfileComplete(data));
+          }
+          return;
+        }
+      } catch {
+        // fall back to local
+      }
+      const profile = loadProfile();
+      if (active) {
+        setShowOnboarding(!isProfileComplete(profile));
+      }
+    };
+    void check();
+    return () => {
+      active = false;
+    };
   }, [isLoading, pathname, user]);
 
   return (

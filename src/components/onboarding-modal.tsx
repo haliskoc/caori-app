@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@auth0/nextjs-auth0/client";
 import { Card } from "@/components/card";
 import {
   isProfileComplete,
@@ -227,19 +228,46 @@ function getProgressValue(currentIndex: number) {
 
 export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
   const router = useRouter();
+  const { user } = useUser();
   const [profile, setProfile] = useState<ProfileInfo>(() => loadProfile());
   const [questionIndex, setQuestionIndex] = useState(() => getInitialIndex(profile));
   const [error, setError] = useState<string | null>(null);
+  const isRemote = Boolean(user?.sub);
 
   useEffect(() => {
     if (!isOpen) {
       return;
     }
-    const freshProfile = loadProfile();
-    setProfile(freshProfile);
-    setQuestionIndex(getInitialIndex(freshProfile));
-    setError(null);
-  }, [isOpen]);
+    let active = true;
+    const load = async () => {
+      if (isRemote) {
+        try {
+          const res = await fetch("/api/v1/profile", { credentials: "include" });
+          if (res.ok) {
+            const data = (await res.json()) as ProfileInfo;
+            if (active) {
+              setProfile(data);
+              setQuestionIndex(getInitialIndex(data));
+              setError(null);
+            }
+            return;
+          }
+        } catch {
+          // fall back to local
+        }
+      }
+      const freshProfile = loadProfile();
+      if (active) {
+        setProfile(freshProfile);
+        setQuestionIndex(getInitialIndex(freshProfile));
+        setError(null);
+      }
+    };
+    void load();
+    return () => {
+      active = false;
+    };
+  }, [isOpen, isRemote]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -273,7 +301,25 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
     setError(null);
   }
 
-  function goNext() {
+  async function persistProfile(nextProfile: ProfileInfo) {
+    if (!isRemote) {
+      saveProfile(nextProfile);
+      return true;
+    }
+    try {
+      const res = await fetch("/api/v1/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(nextProfile),
+      });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  }
+
+  async function goNext() {
     if (isAnswerMissing) {
       setError("Lütfen bu soruyu yanıtla.");
       return;
@@ -283,7 +329,11 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
       return;
     }
     const nextProfile = { ...profile };
-    saveProfile(nextProfile);
+    const saved = await persistProfile(nextProfile);
+    if (!saved) {
+      setError("Profil kaydedilemedi. Tekrar dene.");
+      return;
+    }
     const nextIndex = questionIndex + 1;
     if (nextIndex >= questions.length) {
       if (!isProfileComplete(nextProfile)) {

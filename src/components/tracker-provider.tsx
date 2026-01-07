@@ -96,22 +96,6 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   const dataMode: "local" | "remote" = user?.sub ? "remote" : "local";
 
   useEffect(() => {
-    let active = true;
-    fetch("/api/v1/flags")
-      .then((response) => (response.ok ? response.json() : null))
-      .then((remoteFlags) => {
-        if (!remoteFlags || !active) {
-          return;
-        }
-        setFlags((prev) => ({ ...prev, ...remoteFlags }));
-      })
-      .catch(() => undefined);
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  useEffect(() => {
     if (dataMode === "local") {
       saveEntries(entries);
     }
@@ -124,27 +108,37 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   }, [goals, dataMode]);
 
   useEffect(() => {
-    saveFlags(flags);
-  }, [flags]);
+    if (dataMode === "local") {
+      saveFlags(flags);
+    }
+  }, [dataMode, flags]);
 
   useEffect(() => {
-    saveTheme(theme);
+    if (dataMode === "local") {
+      saveTheme(theme);
+    }
     applyTheme(theme);
-  }, [theme]);
+  }, [dataMode, theme]);
 
   useEffect(() => {
-    saveReminder(reminder);
-  }, [reminder]);
+    if (dataMode === "local") {
+      saveReminder(reminder);
+    }
+  }, [dataMode, reminder]);
 
   useEffect(() => {
-    saveAuditLog(auditLog);
-  }, [auditLog]);
+    if (dataMode === "local") {
+      saveAuditLog(auditLog);
+    }
+  }, [auditLog, dataMode]);
 
   const loadRemoteData = useCallback(async () => {
     try {
-      const [entriesRes, goalsRes] = await Promise.all([
+      const [entriesRes, goalsRes, settingsRes, auditRes] = await Promise.all([
         fetch("/api/v1/entries", { credentials: "include" }),
         fetch("/api/v1/goals", { credentials: "include" }),
+        fetch("/api/v1/settings", { credentials: "include" }),
+        fetch("/api/v1/audit", { credentials: "include" }),
       ]);
       if (entriesRes.ok) {
         const data = (await entriesRes.json()) as Entry[];
@@ -156,6 +150,26 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           waterGoalMl: data?.waterGoalMl ?? DEFAULT_GOALS.waterGoalMl,
           calorieGoal: data?.calorieGoal ?? DEFAULT_GOALS.calorieGoal,
         });
+      }
+      if (settingsRes.ok) {
+        const data = (await settingsRes.json()) as {
+          theme?: ThemeSettings;
+          reminder?: ReminderSettings;
+          flags?: FeatureFlags;
+        };
+        if (data?.theme) {
+          setTheme((prev) => ({ ...prev, ...data.theme }));
+        }
+        if (data?.reminder) {
+          setReminder((prev) => ({ ...prev, ...data.reminder }));
+        }
+        if (data?.flags) {
+          setFlags((prev) => ({ ...prev, ...data.flags }));
+        }
+      }
+      if (auditRes.ok) {
+        const data = (await auditRes.json()) as AuditEvent[];
+        setAuditLog(Array.isArray(data) ? data : []);
       }
     } catch {
       // ignore network errors for MVP
@@ -172,6 +186,10 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     if (user?.sub) {
+      // reset local-only state before loading remote data
+      setEntries([]);
+      setGoals(DEFAULT_GOALS);
+      setAuditLog([]);
       // eslint-disable-next-line react-hooks/set-state-in-effect
       void loadRemoteData();
       return;
@@ -206,12 +224,44 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
 
   const weeklySummary = useMemo(() => buildWeeklySummary(entries, 7), [entries]);
 
+  const syncSettings = useCallback(
+    async (nextSettings: {
+      theme: ThemeSettings;
+      reminder: ReminderSettings;
+      flags: FeatureFlags;
+    }) => {
+      if (dataMode !== "remote") {
+        return;
+      }
+      try {
+        await fetch("/api/v1/settings", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(nextSettings),
+        });
+      } catch {
+        // ignore persistence errors for MVP
+      }
+    },
+    [dataMode]
+  );
+
   function recordAudit(
     action: AuditEvent["action"],
     detail: string,
     meta?: Record<string, string | number | boolean>
   ) {
-    setAuditLog((prev) => appendAuditEvent(buildAuditEvent({ action, detail, meta }), prev));
+    const event = buildAuditEvent({ action, detail, meta });
+    setAuditLog((prev) => appendAuditEvent(event, prev));
+    if (dataMode === "remote") {
+      void fetch("/api/v1/audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(event),
+      }).catch(() => undefined);
+    }
   }
 
   function normalizeEntry(entry: Entry): Entry {
@@ -452,17 +502,23 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   }
 
   function updateFlags(next: Partial<FeatureFlags>) {
-    setFlags((prev) => ({ ...prev, ...next }));
+    const merged = { ...flags, ...next };
+    setFlags(merged);
+    void syncSettings({ theme, reminder, flags: merged });
     recordAudit("update-flags", "Özellik bayrakları güncellendi", next as Record<string, boolean>);
   }
 
   function updateTheme(next: Partial<ThemeSettings>) {
-    setTheme((prev) => ({ ...prev, ...next }));
+    const merged = { ...theme, ...next };
+    setTheme(merged);
+    void syncSettings({ theme: merged, reminder, flags });
     recordAudit("theme", "Tema güncellendi", next as Record<string, string>);
   }
 
   function updateReminder(next: Partial<ReminderSettings>) {
-    setReminder((prev) => ({ ...prev, ...next }));
+    const merged = { ...reminder, ...next };
+    setReminder(merged);
+    void syncSettings({ theme, reminder: merged, flags });
     const shouldLog = Object.keys(next).some((key) => key !== "lastNotifiedDay");
     if (shouldLog) {
       recordAudit("reminder", "Hatırlatıcı güncellendi", next as Record<string, boolean | string>);
@@ -471,6 +527,12 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
 
   function clearAuditLog() {
     setAuditLog([]);
+    if (dataMode === "remote") {
+      void fetch("/api/v1/audit", {
+        method: "DELETE",
+        credentials: "include",
+      }).catch(() => undefined);
+    }
   }
 
   async function importLocalEntries() {

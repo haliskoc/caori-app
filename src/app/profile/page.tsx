@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { Card } from "@/components/card";
 import { useTracker } from "@/components/tracker-provider";
@@ -173,6 +173,32 @@ export default function ProfilePage() {
   const { entries, goals } = useTracker();
   const [profile, setProfile] = useState<ProfileInfo>(() => loadProfile());
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const isRemote = Boolean(user?.sub);
+
+  useEffect(() => {
+    if (!isRemote) {
+      return;
+    }
+    let active = true;
+    const load = async () => {
+      try {
+        const res = await fetch("/api/v1/profile", { credentials: "include" });
+        if (res.ok) {
+          const data = (await res.json()) as ProfileInfo;
+          if (active) {
+            setProfile(data);
+          }
+        }
+      } catch {
+        // ignore remote load errors
+      }
+    };
+    void load();
+    return () => {
+      active = false;
+    };
+  }, [isRemote]);
 
   const stats = useMemo(() => {
     const dayMap = new Map<string, DayBucket>();
@@ -680,13 +706,38 @@ export default function ProfilePage() {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button
-              onClick={() => {
+              onClick={async () => {
+                setIsSaving(true);
+                setSaveMessage(null);
+                if (isRemote) {
+                  try {
+                    const res = await fetch("/api/v1/profile", {
+                      method: "PUT",
+                      headers: { "Content-Type": "application/json" },
+                      credentials: "include",
+                      body: JSON.stringify(profile),
+                    });
+                    if (res.ok) {
+                      const data = (await res.json()) as ProfileInfo;
+                      setProfile(data);
+                      setSaveMessage("Profil kaydedildi.");
+                    } else {
+                      setSaveMessage("Profil kaydedilemedi.");
+                    }
+                  } catch {
+                    setSaveMessage("Profil kaydedilemedi.");
+                  } finally {
+                    setIsSaving(false);
+                  }
+                  return;
+                }
                 saveProfile(profile);
                 setSaveMessage("Profil kaydedildi.");
+                setIsSaving(false);
               }}
               className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
             >
-              Kaydet
+              {isSaving ? "Kaydediliyor..." : "Kaydet"}
             </button>
             {saveMessage && <span className="text-xs text-muted">{saveMessage}</span>}
           </div>
