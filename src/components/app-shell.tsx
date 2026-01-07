@@ -48,7 +48,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             {user && (
               <div className="flex items-center gap-2">
                 <span className="hidden text-xs text-muted sm:inline">
-                  Merhaba, {user.name ?? user.email ?? "Kullanıcı"}
+                  {user.name ?? user.email ?? "Kullanıcı"}
                 </span>
                 <a
                   href="/auth/logout"
@@ -77,11 +77,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-medium transition ${
-                  active
+                className={`flex flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-medium transition ${active
                     ? "bg-accent text-white shadow-soft"
                     : "text-muted hover:text-ink"
-                }`}
+                  }`}
               >
                 <span className="text-base">{item.icon}</span>
                 {item.label}

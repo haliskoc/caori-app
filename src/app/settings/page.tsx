@@ -99,11 +99,15 @@ export default function SettingsPage() {
           </p>
         </div>
         <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs text-muted">
+          {/* 
           {isLoading && "Oturum kontrol ediliyor..."}
           {!isLoading && !user && "Giriş yaparak verilerinizi buluta taşıyabilirsiniz."}
-          {user && `Giriş yapan: ${user.email ?? user.name ?? "Kullanıcı"}`}
+          {user && `Giriş yapan: ${user.email ?? user.name ?? "Kullanıcı"}`} 
+          */}
+          Yerel depolama modu aktif. Verileriniz sadece bu cihazda saklanır.
         </div>
         <div className="flex flex-wrap gap-2">
+          {/*
           {!isLoading && !user && (
             <a
               href="/auth/login"
@@ -120,6 +124,7 @@ export default function SettingsPage() {
               Çıkış Yap
             </a>
           )}
+          */}
           {dataMode === "remote" && (
             <button
               onClick={async () => {
@@ -187,22 +192,20 @@ export default function SettingsPage() {
         <div className="grid gap-3 sm:grid-cols-2">
           <button
             onClick={() => updateTheme({ mode: "light" })}
-            className={`rounded-2xl border px-4 py-3 text-left text-xs transition ${
-              theme.mode === "light"
+            className={`rounded-2xl border px-4 py-3 text-left text-xs transition ${theme.mode === "light"
                 ? "border-amber-300 bg-amber-50 text-amber-700"
                 : "border-amber-100 bg-white text-muted hover:text-ink"
-            }`}
+              }`}
           >
             <p className="text-sm font-semibold">Aydınlık</p>
             <p className="text-[11px] text-muted">Yüksek kontrast, net arayüz.</p>
           </button>
           <button
             onClick={() => updateTheme({ mode: "dim" })}
-            className={`rounded-2xl border px-4 py-3 text-left text-xs transition ${
-              theme.mode === "dim"
+            className={`rounded-2xl border px-4 py-3 text-left text-xs transition ${theme.mode === "dim"
                 ? "border-amber-300 bg-amber-50 text-amber-700"
                 : "border-amber-100 bg-white text-muted hover:text-ink"
-            }`}
+              }`}
           >
             <p className="text-sm font-semibold">Dim</p>
             <p className="text-[11px] text-muted">Daha yumuşak ve sakin tonlar.</p>
@@ -213,11 +216,10 @@ export default function SettingsPage() {
             <button
               key={option.value}
               onClick={() => updateTheme({ accent: option.value })}
-              className={`flex items-center gap-2 rounded-full border px-3 py-1 text-xs transition ${
-                theme.accent === option.value
+              className={`flex items-center gap-2 rounded-full border px-3 py-1 text-xs transition ${theme.accent === option.value
                   ? "border-amber-400 bg-amber-50 text-amber-700"
                   : "border-amber-100 bg-white text-muted hover:text-ink"
-              }`}
+                }`}
             >
               <span className={`h-2 w-2 rounded-full ${option.swatch}`} />
               {option.label}

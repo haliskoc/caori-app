@@ -126,7 +126,7 @@ export default function LandingPage() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <a href="/auth/login?screen_hint=signup" className="w-full sm:w-auto">
                   <span className="flex h-12 items-center justify-center gap-2 rounded-xl bg-gray-900 px-6 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-gray-800">
-                    Plani Olustur
+                    Hemen Basla
                     <ArrowRight className="h-4 w-4" />
                   </span>
                 </a>
