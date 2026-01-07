@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useUser } from "@auth0/nextjs-auth0/client";
 
 const navItems = [
-  { href: "/", label: "Panel", icon: "⌂" },
+  { href: "/dashboard", label: "Panel", icon: "⌂" },
   { href: "/add-entry", label: "Ekle", icon: "+" },
   { href: "/history", label: "Geçmiş", icon: "◎" },
   { href: "/settings", label: "Ayarlar", icon: "⚙" },
@@ -14,6 +14,11 @@ const navItems = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, isLoading } = useUser();
+
+  // Landing Page için AppShell UI'ını gösterme
+  if (pathname === "/") {
+    return <>{children}</>;
+  }
 
   return (
     <div className="min-h-screen bg-app text-ink">
