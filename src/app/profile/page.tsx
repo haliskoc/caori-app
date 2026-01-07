@@ -321,7 +321,7 @@ export default function ProfilePage() {
                 </p>
               </div>
             </div>
-            <div className="min-w-[200px]">
+            <div className="w-full sm:min-w-[200px] sm:w-auto">
               <div className="flex items-center justify-between text-[11px] text-muted">
                 <span>Profil tamamlama</span>
                 <span>%{profileCompletion}</span>

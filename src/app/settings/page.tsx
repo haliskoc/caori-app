@@ -239,7 +239,7 @@ export default function SettingsPage() {
           {notificationStatus === "denied" && "Bildirim izni reddedildi."}
           {notificationStatus === "granted" && "Bildirim izni açık."}
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="flex items-center gap-2 text-xs text-muted">
             <input
               type="checkbox"
@@ -253,7 +253,7 @@ export default function SettingsPage() {
             type="time"
             value={reminder.time}
             onChange={(event) => updateReminder({ time: event.target.value })}
-            className="rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
+            className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs sm:w-auto"
           />
           {notificationStatus !== "granted" && notificationStatus !== "unsupported" && (
             <button
@@ -265,7 +265,7 @@ export default function SettingsPage() {
                 const permission = await Notification.requestPermission();
                 setNotificationStatus(permission);
               }}
-              className="rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs text-muted hover:text-ink"
+              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs text-muted hover:text-ink sm:w-auto"
             >
               İzin Ver
             </button>
@@ -283,15 +283,15 @@ export default function SettingsPage() {
           <p className="text-sm font-semibold">Veri Yönetimi</p>
           <p className="text-xs text-muted">CSV içe/dışa aktarma (cihaz veya bulut).</p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <button
             onClick={downloadCsv}
-            className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-xs text-muted hover:text-ink"
+            className="w-full rounded-xl border border-amber-100 bg-white px-4 py-2 text-xs text-muted hover:text-ink sm:w-auto"
             disabled={entries.length === 0}
           >
             CSV Dışa Aktar
           </button>
-          <label className="cursor-pointer rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700">
+          <label className="w-full cursor-pointer rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 sm:w-auto">
             {isCsvImporting ? "İçe aktarılıyor..." : "CSV İçe Aktar"}
             <input
               type="file"
@@ -312,14 +312,14 @@ export default function SettingsPage() {
       </Card>
 
       <Card className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold">Değişiklik Geçmişi</p>
             <p className="text-xs text-muted">Son işlemler cihazda saklanır.</p>
           </div>
           <button
             onClick={clearAuditLog}
-            className="rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs text-muted hover:text-ink"
+            className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs text-muted hover:text-ink sm:w-auto"
             disabled={auditLog.length === 0}
           >
             Temizle
@@ -333,10 +333,12 @@ export default function SettingsPage() {
             {auditPreview.map((event) => (
               <div
                 key={event.id}
-                className="flex items-center justify-between rounded-2xl border border-amber-100 bg-white px-3 py-2"
+                className="flex flex-col gap-1 rounded-2xl border border-amber-100 bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
               >
                 <span>{event.detail}</span>
-                <span>{auditFormatter.format(new Date(event.timestamp))}</span>
+                <span className="text-[11px] text-muted sm:text-xs">
+                  {auditFormatter.format(new Date(event.timestamp))}
+                </span>
               </div>
             ))}
           </div>

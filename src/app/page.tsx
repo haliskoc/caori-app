@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { ArrowRight, BarChart3, Calendar, Check, ChefHat, Lock } from "lucide-react";
 
 const featureCards = [
@@ -61,6 +62,7 @@ const templateMeals = [
 ];
 
 export default function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <div className="min-h-screen text-ink font-sans">
       <header className="sticky top-0 z-50 w-full border-b border-amber-100/70 bg-white/75 backdrop-blur-md">
@@ -87,19 +89,53 @@ export default function LandingPage() {
               Ucretlendirme
             </Link>
           </nav>
-          <div className="flex items-center gap-3">
-            <a href="/auth/login">
-              <span className="text-sm font-medium hover:text-amber-600 transition-colors">
-                Giris Yap
-              </span>
+          <div className="flex items-center gap-2">
+            <a href="/auth/login" className="hidden text-sm font-medium hover:text-amber-600 transition-colors sm:inline">
+              Giris Yap
             </a>
             <a href="/auth/login?screen_hint=signup&returnTo=%2Fdashboard%3Fonboarding%3D1">
               <span className="rounded-xl bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-700">
                 Kayit Ol
               </span>
             </a>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs font-semibold text-amber-700 shadow-sm md:hidden"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
+            >
+              Menü
+            </button>
           </div>
         </div>
+        {mobileMenuOpen && (
+          <div
+            id="mobile-menu"
+            className="border-t border-amber-100/70 bg-white/90 md:hidden"
+          >
+            <nav className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 text-sm">
+              <Link href="#features" onClick={() => setMobileMenuOpen(false)}>
+                Ozellikler
+              </Link>
+              <Link href="#steps" onClick={() => setMobileMenuOpen(false)}>
+                Nasil Calisir
+              </Link>
+              <Link href="#schedule" onClick={() => setMobileMenuOpen(false)}>
+                Takvim
+              </Link>
+              <Link href="#templates" onClick={() => setMobileMenuOpen(false)}>
+                Ogun Sablonlari
+              </Link>
+              <Link href="#pricing" onClick={() => setMobileMenuOpen(false)}>
+                Ucretlendirme
+              </Link>
+              <a href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
+                Giris Yap
+              </a>
+            </nav>
+          </div>
+        )}
       </header>
 
       <main>
@@ -397,14 +433,17 @@ export default function LandingPage() {
                   <span>Grafik Onizleme</span>
                   <span className="text-xs text-gray-400">Son 4 Hafta</span>
                 </div>
-                <div className="mt-6 grid grid-cols-7 items-end gap-3">
+                <div className="mt-6 grid grid-cols-4 items-end gap-2 sm:grid-cols-7 sm:gap-3">
                   {[40, 55, 62, 50, 75, 80, 68].map((value, index) => (
                     <div key={index} className="flex flex-col items-center gap-2">
                       <div
-                        className="w-4 rounded-full bg-gradient-to-t from-amber-400 via-orange-400 to-rose-400"
+                        className="w-3 rounded-full bg-gradient-to-t from-amber-400 via-orange-400 to-rose-400 sm:w-4"
                         style={{ height: `${value}px` }}
                       />
-                      <span className="text-[10px] text-gray-400">Hafta {index + 1}</span>
+                      <span className="text-[10px] text-gray-400">
+                        <span className="sm:hidden">H{index + 1}</span>
+                        <span className="hidden sm:inline">Hafta {index + 1}</span>
+                      </span>
                     </div>
                   ))}
                 </div>

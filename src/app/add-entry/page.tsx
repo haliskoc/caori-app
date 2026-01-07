@@ -264,7 +264,7 @@ export default function AddEntryPage() {
             </div>
           </div>
           <div className="rounded-2xl border border-amber-100 bg-white p-3 space-y-3">
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs font-semibold text-ink">Barkod ile bul</p>
                 <p className="text-[11px] text-muted">Kamera veya barkod numarası</p>
@@ -289,7 +289,7 @@ export default function AddEntryPage() {
                 <div className="overflow-hidden rounded-xl border border-amber-100 bg-black">
                   <video
                     ref={videoRef}
-                    className="h-44 w-full object-cover"
+                    className="h-40 w-full object-cover sm:h-44"
                     playsInline
                     muted
                   />
@@ -412,7 +412,7 @@ export default function AddEntryPage() {
               </button>
             ))}
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <input
               value={waterAmount}
               onChange={(event) => setWaterAmount(event.target.value)}
@@ -423,7 +423,7 @@ export default function AddEntryPage() {
             />
             <button
               onClick={() => addWater({ amountMl: Number(waterAmount) })}
-              className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
+              className="w-full rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong sm:w-auto"
             >
               Ekle
             </button>

@@ -311,7 +311,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
       role="dialog"
       aria-modal="true"
     >
-      <Card className="w-full max-w-2xl space-y-5 rounded-3xl border border-amber-100 bg-white/95 p-6 shadow-strong">
+      <Card className="w-full max-w-2xl max-h-[calc(100vh-2rem)] space-y-5 overflow-y-auto rounded-3xl border border-amber-100 bg-white/95 p-4 shadow-strong sm:p-6">
         <div className="space-y-2">
           <p className="text-xs uppercase tracking-[0.2em] text-muted">Onboarding</p>
           <div className="flex items-center justify-between text-[11px] text-muted">

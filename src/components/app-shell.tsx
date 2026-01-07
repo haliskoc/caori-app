@@ -44,12 +44,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-app text-ink">
       <ReminderScheduler />
       <div className="mx-auto flex w-full max-w-6xl flex-col px-4 pb-24 pt-6 sm:px-8">
-        <header className="mb-6 flex items-center justify-between">
+        <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-muted">Cal AI</p>
             <h1 className="text-2xl font-semibold sm:text-3xl">Günlük Takip</h1>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
             <div className="hidden items-center gap-3 rounded-full bg-white/80 px-4 py-2 text-xs text-muted shadow-soft sm:flex">
               <span className="h-2 w-2 rounded-full bg-accent" />
               Kullanıcı kontrolü her zaman açık
