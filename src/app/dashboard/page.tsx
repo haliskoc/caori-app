@@ -1,15 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Card } from "@/components/card";
 import { Tooltip } from "@/components/tooltip";
 import { ProgressRing } from "@/components/progress-ring";
 import { WeeklyCharts } from "@/components/weekly-charts";
 import { useTracker } from "@/components/tracker-provider";
 import { MealType } from "@/lib/types";
-import { isProfileComplete, loadProfile } from "@/lib/profile";
-import { ProfileSetupModal } from "@/components/profile-setup-modal";
 
 const mealLabels: Record<MealType, string> = {
   breakfast: "Kahvaltı",
@@ -19,24 +16,9 @@ const mealLabels: Record<MealType, string> = {
 };
 
 export default function DashboardPage() {
-  const router = useRouter();
   const { entries, dailySummary, weeklySummary, goals, addFood, addWater, flags } = useTracker();
   const [quickCalories, setQuickCalories] = useState("");
   const [quickMeal, setQuickMeal] = useState<MealType>("snack");
-  const [onboardingParam, setOnboardingParam] = useState(false);
-  const [showProfileSetup, setShowProfileSetup] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-    const params = new URLSearchParams(window.location.search);
-    const fromOnboarding = params.get("onboarding") === "1";
-    setOnboardingParam(fromOnboarding);
-    if (fromOnboarding || !isProfileComplete(loadProfile())) {
-      setShowProfileSetup(true);
-    }
-  }, []);
 
   const netCalories = dailySummary.caloriesIn - dailySummary.caloriesOut;
   const waterLeft = Math.max(goals.waterGoalMl - dailySummary.waterMl, 0);
@@ -171,16 +153,6 @@ export default function DashboardPage() {
         </Card>
       </section>
 
-      <ProfileSetupModal
-        open={showProfileSetup}
-        onClose={() => setShowProfileSetup(false)}
-        onSaved={() => {
-          setShowProfileSetup(false);
-          if (onboardingParam) {
-            router.replace("/dashboard");
-          }
-        }}
-      />
     </div>
   );
 }

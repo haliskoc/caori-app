@@ -1,52 +1,113 @@
-export type ActivityLevel = "low" | "moderate" | "high";
-export type GoalType = "lose" | "maintain" | "gain";
-export type DietPreference = "balanced" | "vegetarian" | "vegan" | "lowcarb";
+export type MainGoal =
+  | "fat_burn"
+  | "muscle_gain"
+  | "fit_form"
+  | "conditioning"
+  | "healthy";
+export type SportLevel = "beginner" | "sometimes" | "regular" | "advanced";
+export type WorkoutDays = "1-2" | "3-4" | "5+";
+export type WorkoutPlace = "home" | "gym" | "outdoor";
+export type EquipmentLevel = "none" | "basic" | "full";
+export type InjuryType = "none" | "knee" | "back" | "shoulder" | "other";
+export type DoctorRestriction = "no" | "yes";
+export type ReferralSource =
+  | "instagram"
+  | "tiktok"
+  | "youtube"
+  | "friend"
+  | "search"
+  | "other";
 
 export type ProfileInfo = {
   fullName: string;
-  birthYear: string;
+  age: string;
   heightCm: string;
   weightKg: string;
-  targetWeightKg: string;
-  activityLevel: ActivityLevel;
-  goal: GoalType;
-  dietPreference: DietPreference;
-  notes: string;
+  mainGoal: MainGoal | "";
+  sportLevel: SportLevel | "";
+  workoutDays: WorkoutDays | "";
+  workoutPlace: WorkoutPlace | "";
+  equipmentLevel: EquipmentLevel | "";
+  injury: InjuryType | "";
+  injuryDetail: string;
+  doctorRestriction: DoctorRestriction | "";
+  referralSource: ReferralSource | "";
+  expectation: string;
 };
 
 const PROFILE_KEY = "calai.profile.v1";
 
 export const defaultProfile: ProfileInfo = {
   fullName: "",
-  birthYear: "",
+  age: "",
   heightCm: "",
   weightKg: "",
-  targetWeightKg: "",
-  activityLevel: "moderate",
-  goal: "maintain",
-  dietPreference: "balanced",
-  notes: "",
+  mainGoal: "",
+  sportLevel: "",
+  workoutDays: "",
+  workoutPlace: "",
+  equipmentLevel: "",
+  injury: "",
+  injuryDetail: "",
+  doctorRestriction: "",
+  referralSource: "",
+  expectation: "",
 };
 
 function normalizeProfile(profile: Partial<ProfileInfo>): ProfileInfo {
-  const activity: ActivityLevel[] = ["low", "moderate", "high"];
-  const goals: GoalType[] = ["lose", "maintain", "gain"];
-  const diets: DietPreference[] = ["balanced", "vegetarian", "vegan", "lowcarb"];
+  const goals: MainGoal[] = [
+    "fat_burn",
+    "muscle_gain",
+    "fit_form",
+    "conditioning",
+    "healthy",
+  ];
+  const levels: SportLevel[] = ["beginner", "sometimes", "regular", "advanced"];
+  const workoutDays: WorkoutDays[] = ["1-2", "3-4", "5+"];
+  const places: WorkoutPlace[] = ["home", "gym", "outdoor"];
+  const equipment: EquipmentLevel[] = ["none", "basic", "full"];
+  const injuries: InjuryType[] = ["none", "knee", "back", "shoulder", "other"];
+  const doctorRestriction: DoctorRestriction[] = ["no", "yes"];
+  const referrals: ReferralSource[] = [
+    "instagram",
+    "tiktok",
+    "youtube",
+    "friend",
+    "search",
+    "other",
+  ];
 
   return {
     fullName: typeof profile.fullName === "string" ? profile.fullName : "",
-    birthYear: typeof profile.birthYear === "string" ? profile.birthYear : "",
+    age: typeof profile.age === "string" ? profile.age : "",
     heightCm: typeof profile.heightCm === "string" ? profile.heightCm : "",
     weightKg: typeof profile.weightKg === "string" ? profile.weightKg : "",
-    targetWeightKg: typeof profile.targetWeightKg === "string" ? profile.targetWeightKg : "",
-    activityLevel: activity.includes(profile.activityLevel as ActivityLevel)
-      ? (profile.activityLevel as ActivityLevel)
-      : "moderate",
-    goal: goals.includes(profile.goal as GoalType) ? (profile.goal as GoalType) : "maintain",
-    dietPreference: diets.includes(profile.dietPreference as DietPreference)
-      ? (profile.dietPreference as DietPreference)
-      : "balanced",
-    notes: typeof profile.notes === "string" ? profile.notes : "",
+    mainGoal: goals.includes(profile.mainGoal as MainGoal)
+      ? (profile.mainGoal as MainGoal)
+      : "",
+    sportLevel: levels.includes(profile.sportLevel as SportLevel)
+      ? (profile.sportLevel as SportLevel)
+      : "",
+    workoutDays: workoutDays.includes(profile.workoutDays as WorkoutDays)
+      ? (profile.workoutDays as WorkoutDays)
+      : "",
+    workoutPlace: places.includes(profile.workoutPlace as WorkoutPlace)
+      ? (profile.workoutPlace as WorkoutPlace)
+      : "",
+    equipmentLevel: equipment.includes(profile.equipmentLevel as EquipmentLevel)
+      ? (profile.equipmentLevel as EquipmentLevel)
+      : "",
+    injury: injuries.includes(profile.injury as InjuryType)
+      ? (profile.injury as InjuryType)
+      : "",
+    injuryDetail: typeof profile.injuryDetail === "string" ? profile.injuryDetail : "",
+    doctorRestriction: doctorRestriction.includes(profile.doctorRestriction as DoctorRestriction)
+      ? (profile.doctorRestriction as DoctorRestriction)
+      : "",
+    referralSource: referrals.includes(profile.referralSource as ReferralSource)
+      ? (profile.referralSource as ReferralSource)
+      : "",
+    expectation: typeof profile.expectation === "string" ? profile.expectation : "",
   };
 }
 
@@ -75,18 +136,13 @@ export function saveProfile(profile: ProfileInfo) {
 
 export function isProfileComplete(profile: ProfileInfo) {
   return Boolean(
-    profile.birthYear.trim() && profile.heightCm.trim() && profile.weightKg.trim()
+    profile.age.trim() &&
+      profile.heightCm.trim() &&
+      profile.weightKg.trim() &&
+      profile.mainGoal &&
+      profile.sportLevel &&
+      profile.workoutDays &&
+      profile.workoutPlace &&
+      profile.equipmentLevel
   );
-}
-
-export function getAgeFromBirthYear(birthYear: string) {
-  const year = Number(birthYear);
-  if (!Number.isFinite(year)) {
-    return null;
-  }
-  const currentYear = new Date().getFullYear();
-  if (year < 1900 || year > currentYear) {
-    return null;
-  }
-  return currentYear - year;
 }

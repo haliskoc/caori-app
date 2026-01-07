@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTracker } from "@/components/tracker-provider";
-import { getDemoEntries } from "@/lib/demo-data";
 
 type Command = {
   id: string;
@@ -15,7 +14,7 @@ type Command = {
 
 export function CommandPalette() {
   const router = useRouter();
-  const { addWater, addEntries, theme, updateTheme } = useTracker();
+  const { addWater, theme, updateTheme } = useTracker();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -78,15 +77,8 @@ export function CommandPalette() {
         keywords: "tema görünüm",
         action: () => updateTheme({ mode: theme.mode === "light" ? "dim" : "light" }),
       },
-      {
-        id: "seed-demo",
-        label: "Örnek verileri yükle",
-        hint: "Onboarding",
-        keywords: "ornek demo",
-        action: () => addEntries(getDemoEntries(), { mode: "merge", source: "palette" }),
-      },
     ],
-    [addEntries, addWater, router, theme.mode, updateTheme]
+    [addWater, router, theme.mode, updateTheme]
   );
 
   const filtered = useMemo(() => {

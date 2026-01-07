@@ -2,277 +2,418 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import { Card } from "@/components/card";
 import {
-  getAgeFromBirthYear,
   isProfileComplete,
   loadProfile,
   saveProfile,
   type ProfileInfo,
 } from "@/lib/profile";
 
-const activityOptions = [
-  { value: "low", label: "Düşük" },
-  { value: "moderate", label: "Orta" },
-  { value: "high", label: "Yüksek" },
-] as const;
+type QuestionType = "number" | "text" | "single";
 
-const goalOptions = [
-  { value: "lose", label: "Kilo ver" },
-  { value: "maintain", label: "Koru" },
-  { value: "gain", label: "Kilo al" },
-] as const;
+type Option = {
+  value: string;
+  label: string;
+};
 
-const dietOptions = [
-  { value: "balanced", label: "Dengeli" },
-  { value: "vegetarian", label: "Vejetaryen" },
-  { value: "vegan", label: "Vegan" },
-  { value: "lowcarb", label: "Düşük karbonhidrat" },
-] as const;
+type Question = {
+  id: keyof ProfileInfo;
+  step: number;
+  title: string;
+  subtitle: string;
+  prompt: string;
+  type: QuestionType;
+  options?: Option[];
+  placeholder?: string;
+  required?: boolean;
+  hint?: string;
+};
 
-function getBmiLabel(bmi: number) {
-  if (bmi < 18.5) return "Zayıf";
-  if (bmi < 25) return "Normal";
-  if (bmi < 30) return "Fazla";
-  return "Yüksek";
+const steps = [
+  { id: 1, label: "Seni tanıyalım" },
+  { id: 2, label: "Hedefini seç" },
+  { id: 3, label: "Spor geçmişin" },
+  { id: 4, label: "Koşulların" },
+  { id: 5, label: "Sağlık & güvenlik" },
+  { id: 6, label: "Bizi nereden duydun" },
+  { id: 7, label: "Beklentin" },
+];
+
+const questions: Question[] = [
+  {
+    id: "age",
+    step: 1,
+    title: "Seni tanıyalım",
+    subtitle: "Temel ölçüleri öğrenelim",
+    prompt: "Yaşın kaç?",
+    type: "number",
+    placeholder: "Örn: 26",
+    required: true,
+  },
+  {
+    id: "heightCm",
+    step: 1,
+    title: "Seni tanıyalım",
+    subtitle: "Temel ölçüleri öğrenelim",
+    prompt: "Boyun kaç cm?",
+    type: "number",
+    placeholder: "Örn: 175",
+    required: true,
+  },
+  {
+    id: "weightKg",
+    step: 1,
+    title: "Seni tanıyalım",
+    subtitle: "Temel ölçüleri öğrenelim",
+    prompt: "Kilon kaç kg?",
+    type: "number",
+    placeholder: "Örn: 70",
+    required: true,
+  },
+  {
+    id: "mainGoal",
+    step: 2,
+    title: "Hedefini seç",
+    subtitle: "Ana odağını belirle",
+    prompt: "Ana hedefin ne?",
+    type: "single",
+    required: true,
+    options: [
+      { value: "fat_burn", label: "Yağ yakmak" },
+      { value: "muscle_gain", label: "Kas kazanmak" },
+      { value: "fit_form", label: "Fit & form kalmak" },
+      { value: "conditioning", label: "Kondisyon artırmak" },
+      { value: "healthy", label: "Sağlıklı yaşamak" },
+    ],
+  },
+  {
+    id: "sportLevel",
+    step: 3,
+    title: "Spor geçmişin",
+    subtitle: "Deneyimini öğrenelim",
+    prompt: "Spor seviyeni nasıl tanımlarsın?",
+    type: "single",
+    required: true,
+    options: [
+      { value: "beginner", label: "Yeni başlıyorum" },
+      { value: "sometimes", label: "Ara sıra yapıyorum" },
+      { value: "regular", label: "Düzenli yapıyorum" },
+      { value: "advanced", label: "İleri seviye" },
+    ],
+  },
+  {
+    id: "workoutDays",
+    step: 3,
+    title: "Spor geçmişin",
+    subtitle: "Rutini netleştirelim",
+    prompt: "Haftada kaç gün spor yapabilirsin?",
+    type: "single",
+    required: true,
+    options: [
+      { value: "1-2", label: "1–2 gün" },
+      { value: "3-4", label: "3–4 gün" },
+      { value: "5+", label: "5+ gün" },
+    ],
+  },
+  {
+    id: "workoutPlace",
+    step: 4,
+    title: "Koşulların",
+    subtitle: "Antrenman ortamı",
+    prompt: "Nerede spor yapacaksın?",
+    type: "single",
+    required: true,
+    options: [
+      { value: "home", label: "Ev" },
+      { value: "gym", label: "Spor salonu" },
+      { value: "outdoor", label: "Açık alan" },
+    ],
+  },
+  {
+    id: "equipmentLevel",
+    step: 4,
+    title: "Koşulların",
+    subtitle: "Ekipman durumu",
+    prompt: "Ekipman durumun nedir?",
+    type: "single",
+    required: true,
+    options: [
+      { value: "none", label: "Ekipman yok" },
+      { value: "basic", label: "Temel ekipman (dumbbell vb.)" },
+      { value: "full", label: "Tam ekipman" },
+    ],
+  },
+  {
+    id: "injury",
+    step: 5,
+    title: "Sağlık & güvenlik",
+    subtitle: "Opsiyonel ama önerilir",
+    prompt: "Bilinen bir sakatlığın var mı?",
+    type: "single",
+    options: [
+      { value: "none", label: "Yok" },
+      { value: "knee", label: "Diz" },
+      { value: "back", label: "Bel" },
+      { value: "shoulder", label: "Omuz" },
+      { value: "other", label: "Diğer (yaz)" },
+    ],
+  },
+  {
+    id: "doctorRestriction",
+    step: 5,
+    title: "Sağlık & güvenlik",
+    subtitle: "Opsiyonel ama önerilir",
+    prompt: "Doktorun sporla ilgili bir kısıt koydu mu?",
+    type: "single",
+    options: [
+      { value: "no", label: "Hayır" },
+      { value: "yes", label: "Evet" },
+    ],
+  },
+  {
+    id: "referralSource",
+    step: 6,
+    title: "Bizi nereden duydun?",
+    subtitle: "Tek soru, altın değerinde",
+    prompt: "Uygulamamızı nereden duydun?",
+    type: "single",
+    required: true,
+    options: [
+      { value: "instagram", label: "Instagram" },
+      { value: "tiktok", label: "TikTok" },
+      { value: "youtube", label: "YouTube" },
+      { value: "friend", label: "Arkadaş tavsiyesi" },
+      { value: "search", label: "Google / App Store" },
+      { value: "other", label: "Diğer" },
+    ],
+  },
+  {
+    id: "expectation",
+    step: 7,
+    title: "Beklentin",
+    subtitle: "Opsiyonel (atlayabilirsin)",
+    prompt: "Bu uygulamadan en büyük beklentin ne?",
+    type: "text",
+    placeholder: "Kısa not...",
+    required: false,
+  },
+];
+
+function getProgressValue(currentIndex: number) {
+  return Math.round(((currentIndex + 1) / questions.length) * 100);
+}
+
+function getBmiSummary(profile: ProfileInfo) {
+  const height = Number(profile.heightCm);
+  const weight = Number(profile.weightKg);
+  if (!Number.isFinite(height) || !Number.isFinite(weight) || height <= 0 || weight <= 0) {
+    return null;
+  }
+  const bmi = weight / Math.pow(height / 100, 2);
+  return bmi.toFixed(1);
 }
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { user } = useUser();
   const [profile, setProfile] = useState<ProfileInfo>(() => loadProfile());
+  const [questionIndex, setQuestionIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  const age = getAgeFromBirthYear(profile.birthYear);
-  const heightCm = Number(profile.heightCm);
-  const weightKg = Number(profile.weightKg);
-  const targetKg = Number(profile.targetWeightKg);
+  const question = questions[questionIndex];
+  const progress = getProgressValue(questionIndex);
+  const step = steps.find((item) => item.id === question.step);
 
-  const bmi =
-    Number.isFinite(heightCm) && heightCm > 0 && Number.isFinite(weightKg) && weightKg > 0
-      ? weightKg / Math.pow(heightCm / 100, 2)
-      : null;
+  const answer = profile[question.id] ?? "";
+  const bmi = useMemo(() => getBmiSummary(profile), [profile]);
 
-  const targetDelta =
-    Number.isFinite(targetKg) && Number.isFinite(weightKg) && targetKg > 0 && weightKg > 0
-      ? Number((weightKg - targetKg).toFixed(1))
-      : null;
+  const isOptionalStep = question.step === 5 || question.id === "expectation";
 
-  const canContinue = isProfileComplete(profile);
-  const completion = useMemo(() => (canContinue ? 100 : 65), [canContinue]);
+  const isAnswerMissing =
+    question.required &&
+    (typeof answer !== "string" || answer.trim() === "");
+
+  const needsOtherDetail = question.id === "injury" && profile.injury === "other";
+  const hasOtherDetail = profile.injuryDetail.trim().length > 0;
+
+  function updateProfile(key: keyof ProfileInfo, value: string) {
+    setProfile((prev) => ({ ...prev, [key]: value }));
+    setError(null);
+  }
+
+  function goNext() {
+    if (isAnswerMissing) {
+      setError("Lütfen bu soruyu yanıtla.");
+      return;
+    }
+    if (needsOtherDetail && !hasOtherDetail) {
+      setError("Lütfen sakatlık detayını yaz.");
+      return;
+    }
+    const nextIndex = questionIndex + 1;
+    const nextProfile = { ...profile };
+    saveProfile(nextProfile);
+    if (nextIndex >= questions.length) {
+      if (!isProfileComplete(nextProfile)) {
+        setError("Zorunlu soruları tamamla.");
+        return;
+      }
+      router.replace("/dashboard");
+      return;
+    }
+    setQuestionIndex(nextIndex);
+  }
+
+  function goBack() {
+    if (questionIndex === 0) {
+      return;
+    }
+    setQuestionIndex((prev) => Math.max(prev - 1, 0));
+    setError(null);
+  }
+
+  function skip() {
+    if (!isOptionalStep) {
+      return;
+    }
+    setQuestionIndex((prev) => Math.min(prev + 1, questions.length - 1));
+    setError(null);
+  }
 
   return (
     <div className="space-y-6">
       <Card className="space-y-3">
-        <p className="text-xs uppercase tracking-[0.2em] text-muted">Hoş geldin</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-muted">Onboarding</p>
         <h1 className="text-2xl font-semibold text-ink">
-          {user?.name ? `${user.name}, kendini tanıyalım` : "Kendini tanıyalım"}
+          {step?.label ?? "Seni tanıyalım"}
         </h1>
-        <p className="text-sm text-muted">
-          Bu bilgiler kişiselleştirilmiş plan ve istatistikler için kullanılacak.
-        </p>
+        <p className="text-sm text-muted">{question.subtitle}</p>
         <div className="flex items-center justify-between text-[11px] text-muted">
-          <span>Profil tamamlama</span>
-          <span>%{completion}</span>
+          <span>İlerleme</span>
+          <span>%{progress}</span>
         </div>
         <div className="h-2 rounded-full bg-amber-100">
-          <div className="h-2 rounded-full bg-accent" style={{ width: `${completion}%` }} />
+          <div className="h-2 rounded-full bg-accent" style={{ width: `${progress}%` }} />
+        </div>
+        <div className="flex flex-wrap gap-2 text-[11px] text-muted">
+          {steps.map((item) => (
+            <span
+              key={item.id}
+              className={`rounded-full px-3 py-1 ${
+                item.id === question.step
+                  ? "bg-amber-100 text-amber-700"
+                  : "bg-white/80 text-muted"
+              }`}
+            >
+              {item.id}. {item.label}
+            </span>
+          ))}
         </div>
       </Card>
 
-      <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-        <Card className="space-y-4">
-          <div>
-            <p className="text-sm font-semibold">Kişisel Bilgiler</p>
-            <p className="text-xs text-muted">Kilo, boy ve yaş bilgisi zorunludur.</p>
+      <Card className="space-y-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.2em] text-muted">{question.title}</p>
+          <h2 className="mt-2 text-xl font-semibold text-ink">{question.prompt}</h2>
+          {question.hint && <p className="mt-2 text-xs text-muted">{question.hint}</p>}
+        </div>
+
+        {question.type === "number" && (
+          <input
+            value={String(answer)}
+            onChange={(event) => updateProfile(question.id, event.target.value)}
+            className="w-full rounded-xl border border-amber-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+            placeholder={question.placeholder}
+            inputMode="numeric"
+          />
+        )}
+
+        {question.type === "text" && (
+          <textarea
+            value={String(answer)}
+            onChange={(event) => updateProfile(question.id, event.target.value)}
+            className="min-h-[120px] w-full rounded-xl border border-amber-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+            placeholder={question.placeholder}
+          />
+        )}
+
+        {question.type === "single" && (
+          <div className="grid gap-2 sm:grid-cols-2">
+            {question.options?.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => updateProfile(question.id, option.value)}
+                className={`rounded-xl border px-4 py-3 text-left text-sm transition ${
+                  answer === option.value
+                    ? "border-amber-300 bg-amber-50 text-amber-700"
+                    : "border-amber-100 bg-white text-muted hover:text-ink"
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-1">
-              <label className="text-[11px] text-muted">Ad Soyad</label>
-              <input
-                value={profile.fullName}
-                onChange={(event) => {
-                  setProfile((prev) => ({ ...prev, fullName: event.target.value }));
-                  setError(null);
-                }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-                placeholder="İsmin"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[11px] text-muted">Doğum yılı</label>
-              <input
-                value={profile.birthYear}
-                onChange={(event) => {
-                  setProfile((prev) => ({ ...prev, birthYear: event.target.value }));
-                  setError(null);
-                }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-                placeholder="1998"
-                inputMode="numeric"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[11px] text-muted">Boy (cm)</label>
-              <input
-                value={profile.heightCm}
-                onChange={(event) => {
-                  setProfile((prev) => ({ ...prev, heightCm: event.target.value }));
-                  setError(null);
-                }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-                placeholder="175"
-                inputMode="numeric"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[11px] text-muted">Kilo (kg)</label>
-              <input
-                value={profile.weightKg}
-                onChange={(event) => {
-                  setProfile((prev) => ({ ...prev, weightKg: event.target.value }));
-                  setError(null);
-                }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-                placeholder="70"
-                inputMode="numeric"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[11px] text-muted">Hedef kilo (kg)</label>
-              <input
-                value={profile.targetWeightKg}
-                onChange={(event) => {
-                  setProfile((prev) => ({ ...prev, targetWeightKg: event.target.value }));
-                  setError(null);
-                }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-                placeholder="65"
-                inputMode="numeric"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[11px] text-muted">Aktivite düzeyi</label>
-              <select
-                value={profile.activityLevel}
-                onChange={(event) => {
-                  setProfile((prev) => ({
-                    ...prev,
-                    activityLevel: event.target.value as ProfileInfo["activityLevel"],
-                  }));
-                }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-              >
-                {activityOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-1">
-              <label className="text-[11px] text-muted">Hedef</label>
-              <select
-                value={profile.goal}
-                onChange={(event) => {
-                  setProfile((prev) => ({
-                    ...prev,
-                    goal: event.target.value as ProfileInfo["goal"],
-                  }));
-                }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-              >
-                {goalOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-1">
-              <label className="text-[11px] text-muted">Beslenme tercihi</label>
-              <select
-                value={profile.dietPreference}
-                onChange={(event) => {
-                  setProfile((prev) => ({
-                    ...prev,
-                    dietPreference: event.target.value as ProfileInfo["dietPreference"],
-                  }));
-                }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-              >
-                {dietOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          {error && <p className="text-xs text-red-600">{error}</p>}
-          <div className="flex flex-wrap items-center gap-3">
+        )}
+
+        {question.id === "injury" && profile.injury === "other" && (
+          <input
+            value={profile.injuryDetail}
+            onChange={(event) => updateProfile("injuryDetail", event.target.value)}
+            className="w-full rounded-xl border border-amber-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+            placeholder="Sakatlık detayını yaz"
+          />
+        )}
+
+        {error && <p className="text-xs text-red-600">{error}</p>}
+
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
             <button
-              onClick={() => {
-                if (!canContinue) {
-                  setError("Lütfen doğum yılı, boy ve kilo alanlarını doldurun.");
-                  return;
-                }
-                saveProfile(profile);
-                router.replace("/dashboard");
-              }}
+              onClick={goBack}
+              className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-sm text-muted hover:text-ink"
+              disabled={questionIndex === 0}
+            >
+              Geri
+            </button>
+            <button
+              onClick={goNext}
               className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
             >
-              Devam Et
+              {questionIndex === questions.length - 1 ? "Bitir" : "İleri"}
             </button>
+          </div>
+          {isOptionalStep && (
             <button
-              onClick={() => router.replace("/dashboard")}
+              onClick={skip}
               className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-sm text-muted hover:text-ink"
             >
-              Şimdilik geç
+              Atla
             </button>
-          </div>
-        </Card>
+          )}
+        </div>
+      </Card>
 
-        <Card className="space-y-4">
-          <div>
-            <p className="text-sm font-semibold">Önizleme</p>
-            <p className="text-xs text-muted">Girdiğin verilerden özet.</p>
+      <Card className="space-y-3">
+        <p className="text-sm font-semibold">Önizleme</p>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <p className="text-muted">Yaş</p>
+            <p className="mt-1 text-lg font-semibold text-ink">
+              {profile.age ? `${profile.age} yaş` : "-"}
+            </p>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Yaş</p>
-              <p className="mt-1 text-lg font-semibold text-ink">
-                {age !== null ? `${age} yaş` : "-"}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">BMI</p>
-              <p className="mt-1 text-lg font-semibold text-ink">
-                {bmi !== null ? bmi.toFixed(1) : "-"}
-              </p>
-              {bmi !== null && (
-                <p className="text-[11px] text-muted">{getBmiLabel(bmi)}</p>
-              )}
-            </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Hedefe kalan</p>
-              <p className="mt-1 text-lg font-semibold text-ink">
-                {targetDelta !== null ? `${targetDelta} kg` : "-"}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Aktivite düzeyi</p>
-              <p className="mt-1 text-lg font-semibold text-ink">
-                {activityOptions.find((option) => option.value === profile.activityLevel)?.label}
-              </p>
-            </div>
+          <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <p className="text-muted">Kilo</p>
+            <p className="mt-1 text-lg font-semibold text-ink">
+              {profile.weightKg ? `${profile.weightKg} kg` : "-"}
+            </p>
           </div>
-          <div className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-amber-900">
-            Kişisel planlar sonraki güncellemelerde bu bilgilerle otomatik üretilecek.
+          <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <p className="text-muted">BMI</p>
+            <p className="mt-1 text-lg font-semibold text-ink">{bmi ?? "-"}</p>
           </div>
-        </Card>
-      </section>
+        </div>
+      </Card>
     </div>
   );
 }

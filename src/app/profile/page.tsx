@@ -6,12 +6,7 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { Card } from "@/components/card";
 import { useTracker } from "@/components/tracker-provider";
 import { DAY_MS, getDayKey } from "@/lib/utils";
-import {
-  getAgeFromBirthYear,
-  loadProfile,
-  saveProfile,
-  type ProfileInfo,
-} from "@/lib/profile";
+import { loadProfile, saveProfile, type ProfileInfo } from "@/lib/profile";
 import { MealType } from "@/lib/types";
 
 type DayBucket = {
@@ -32,23 +27,59 @@ type BadgeDefinition = {
   label: string;
 };
 
-const activityOptions = [
-  { value: "low", label: "Düşük" },
-  { value: "moderate", label: "Orta" },
-  { value: "high", label: "Yüksek" },
-] as const;
-
 const goalOptions = [
-  { value: "lose", label: "Kilo ver" },
-  { value: "maintain", label: "Koru" },
-  { value: "gain", label: "Kilo al" },
+  { value: "fat_burn", label: "Yağ yakmak" },
+  { value: "muscle_gain", label: "Kas kazanmak" },
+  { value: "fit_form", label: "Fit & form kalmak" },
+  { value: "conditioning", label: "Kondisyon artırmak" },
+  { value: "healthy", label: "Sağlıklı yaşamak" },
 ] as const;
 
-const dietOptions = [
-  { value: "balanced", label: "Dengeli" },
-  { value: "vegetarian", label: "Vejetaryen" },
-  { value: "vegan", label: "Vegan" },
-  { value: "lowcarb", label: "Düşük karbonhidrat" },
+const sportLevelOptions = [
+  { value: "beginner", label: "Yeni başlıyorum" },
+  { value: "sometimes", label: "Ara sıra yapıyorum" },
+  { value: "regular", label: "Düzenli yapıyorum" },
+  { value: "advanced", label: "İleri seviye" },
+] as const;
+
+const workoutDaysOptions = [
+  { value: "1-2", label: "1–2 gün" },
+  { value: "3-4", label: "3–4 gün" },
+  { value: "5+", label: "5+ gün" },
+] as const;
+
+const workoutPlaceOptions = [
+  { value: "home", label: "Ev" },
+  { value: "gym", label: "Spor salonu" },
+  { value: "outdoor", label: "Açık alan" },
+] as const;
+
+const equipmentOptions = [
+  { value: "none", label: "Ekipman yok" },
+  { value: "basic", label: "Temel ekipman (dumbbell vb.)" },
+  { value: "full", label: "Tam ekipman" },
+] as const;
+
+const injuryOptions = [
+  { value: "none", label: "Yok" },
+  { value: "knee", label: "Diz" },
+  { value: "back", label: "Bel" },
+  { value: "shoulder", label: "Omuz" },
+  { value: "other", label: "Diğer" },
+] as const;
+
+const doctorRestrictionOptions = [
+  { value: "no", label: "Hayır" },
+  { value: "yes", label: "Evet" },
+] as const;
+
+const referralOptions = [
+  { value: "instagram", label: "Instagram" },
+  { value: "tiktok", label: "TikTok" },
+  { value: "youtube", label: "YouTube" },
+  { value: "friend", label: "Arkadaş tavsiyesi" },
+  { value: "search", label: "Google / App Store" },
+  { value: "other", label: "Diğer" },
 ] as const;
 
 const badgeDefinitions: BadgeDefinition[] = [
@@ -128,6 +159,13 @@ function getBmiLabel(bmi: number) {
   if (bmi < 25) return "Normal";
   if (bmi < 30) return "Fazla";
   return "Yüksek";
+}
+
+function getOptionLabel<T extends { value: string; label: string }>(
+  options: readonly T[],
+  value: string,
+) {
+  return options.find((option) => option.value === value)?.label ?? "-";
 }
 
 export default function ProfilePage() {
@@ -218,33 +256,34 @@ export default function ProfilePage() {
   }, [entries]);
 
   const profileCompletion = useMemo(() => {
-    const fields: Array<keyof ProfileInfo> = [
-      "fullName",
-      "birthYear",
+    const requiredFields: Array<keyof ProfileInfo> = [
+      "age",
       "heightCm",
       "weightKg",
-      "targetWeightKg",
-      "notes",
+      "mainGoal",
+      "sportLevel",
+      "workoutDays",
+      "workoutPlace",
+      "equipmentLevel",
+      "referralSource",
     ];
-    const filled = fields.filter((key) => profile[key]?.toString().trim()).length;
-    const total = fields.length;
-    return Math.round((filled / total) * 100);
+    const filled = requiredFields.filter((key) => profile[key]?.toString().trim()).length;
+    const total = requiredFields.length;
+    return total > 0 ? Math.round((filled / total) * 100) : 0;
   }, [profile]);
 
   const heightCm = Number(profile.heightCm);
   const weightKg = Number(profile.weightKg);
-  const targetKg = Number(profile.targetWeightKg);
-  const age = getAgeFromBirthYear(profile.birthYear);
+  const age = Number(profile.age);
   const bmi = heightCm > 0 && weightKg > 0 ? weightKg / Math.pow(heightCm / 100, 2) : null;
-  const targetDelta =
-    Number.isFinite(targetKg) && Number.isFinite(weightKg) && targetKg > 0 && weightKg > 0
-      ? Number((weightKg - targetKg).toFixed(1))
-      : null;
+  const ageLabel = Number.isFinite(age) && age > 0 ? `${age} yaş` : "-";
 
   const numberFormat = useMemo(() => new Intl.NumberFormat("tr-TR"), []);
   const formatNumber = (value: number) => numberFormat.format(Math.round(value));
 
   const mealRate = stats.daysCount > 0 ? Math.round((stats.fullMealDays / stats.daysCount) * 100) : 0;
+  const mainGoalLabel = getOptionLabel(goalOptions, profile.mainGoal);
+  const sportLevelLabel = getOptionLabel(sportLevelOptions, profile.sportLevel);
 
   const badgeProgress = {
     streak: stats.currentStreak,
@@ -309,18 +348,20 @@ export default function ProfilePage() {
               BMI: {bmi.toFixed(1)} • {getBmiLabel(bmi)} aralık
             </div>
           )}
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">Yaş</p>
               <p className="mt-1 text-lg font-semibold text-ink">
-                {age !== null ? `${age} yaş` : "-"}
+                {ageLabel}
               </p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Hedefe kalan</p>
-              <p className="mt-1 text-lg font-semibold text-ink">
-                {targetDelta !== null ? `${targetDelta} kg` : "-"}
-              </p>
+              <p className="text-muted">Ana hedef</p>
+              <p className="mt-1 text-lg font-semibold text-ink">{mainGoalLabel}</p>
+            </div>
+            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+              <p className="text-muted">Spor seviyesi</p>
+              <p className="mt-1 text-lg font-semibold text-ink">{sportLevelLabel}</p>
             </div>
           </div>
         </Card>
@@ -384,15 +425,15 @@ export default function ProfilePage() {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Doğum yılı</label>
+              <label className="text-[11px] text-muted">Yaş</label>
               <input
-                value={profile.birthYear}
+                value={profile.age}
                 onChange={(event) => {
-                  setProfile((prev) => ({ ...prev, birthYear: event.target.value }));
+                  setProfile((prev) => ({ ...prev, age: event.target.value }));
                   setSaveMessage(null);
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-                placeholder="1998"
+                placeholder="26"
                 inputMode="numeric"
               />
             </div>
@@ -422,52 +463,23 @@ export default function ProfilePage() {
                 inputMode="numeric"
               />
             </div>
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Hedef kilo (kg)</label>
-              <input
-                value={profile.targetWeightKg}
-                onChange={(event) => {
-                  setProfile((prev) => ({ ...prev, targetWeightKg: event.target.value }));
-                  setSaveMessage(null);
-                }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-                placeholder="65"
-                inputMode="numeric"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[11px] text-muted">Aktivite düzeyi</label>
+              <label className="text-[11px] text-muted">Ana hedef</label>
               <select
-                value={profile.activityLevel}
+                value={profile.mainGoal}
                 onChange={(event) => {
                   setProfile((prev) => ({
                     ...prev,
-                    activityLevel: event.target.value as ProfileInfo["activityLevel"],
+                    mainGoal: event.target.value as ProfileInfo["mainGoal"],
                   }));
                   setSaveMessage(null);
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
               >
-                {activityOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-1">
-              <label className="text-[11px] text-muted">Hedef</label>
-              <select
-                value={profile.goal}
-                onChange={(event) => {
-                  setProfile((prev) => ({
-                    ...prev,
-                    goal: event.target.value as ProfileInfo["goal"],
-                  }));
-                  setSaveMessage(null);
-                }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-              >
+                <option value="">Seç</option>
                 {goalOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
@@ -476,19 +488,83 @@ export default function ProfilePage() {
               </select>
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Beslenme tercihi</label>
+              <label className="text-[11px] text-muted">Spor seviyesi</label>
               <select
-                value={profile.dietPreference}
+                value={profile.sportLevel}
                 onChange={(event) => {
                   setProfile((prev) => ({
                     ...prev,
-                    dietPreference: event.target.value as ProfileInfo["dietPreference"],
+                    sportLevel: event.target.value as ProfileInfo["sportLevel"],
                   }));
                   setSaveMessage(null);
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
               >
-                {dietOptions.map((option) => (
+                <option value="">Seç</option>
+                {sportLevelOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-[11px] text-muted">Haftalık spor</label>
+              <select
+                value={profile.workoutDays}
+                onChange={(event) => {
+                  setProfile((prev) => ({
+                    ...prev,
+                    workoutDays: event.target.value as ProfileInfo["workoutDays"],
+                  }));
+                  setSaveMessage(null);
+                }}
+                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              >
+                <option value="">Seç</option>
+                {workoutDaysOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-[11px] text-muted">Spor yeri</label>
+              <select
+                value={profile.workoutPlace}
+                onChange={(event) => {
+                  setProfile((prev) => ({
+                    ...prev,
+                    workoutPlace: event.target.value as ProfileInfo["workoutPlace"],
+                  }));
+                  setSaveMessage(null);
+                }}
+                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              >
+                <option value="">Seç</option>
+                {workoutPlaceOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-[11px] text-muted">Ekipman durumu</label>
+              <select
+                value={profile.equipmentLevel}
+                onChange={(event) => {
+                  setProfile((prev) => ({
+                    ...prev,
+                    equipmentLevel: event.target.value as ProfileInfo["equipmentLevel"],
+                  }));
+                  setSaveMessage(null);
+                }}
+                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              >
+                <option value="">Seç</option>
+                {equipmentOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
@@ -496,16 +572,101 @@ export default function ProfilePage() {
               </select>
             </div>
           </div>
-          <div className="space-y-1">
-            <label className="text-[11px] text-muted">Notlar</label>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="space-y-1">
+              <label className="text-[11px] text-muted">Sakatlık</label>
+              <select
+                value={profile.injury}
+                onChange={(event) => {
+                  setProfile((prev) => ({
+                    ...prev,
+                    injury: event.target.value as ProfileInfo["injury"],
+                  }));
+                  setSaveMessage(null);
+                }}
+                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              >
+                <option value="">Seç</option>
+                {injuryOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-[11px] text-muted">Doktor kısıtı</label>
+              <select
+                value={profile.doctorRestriction}
+                onChange={(event) => {
+                  setProfile((prev) => ({
+                    ...prev,
+                    doctorRestriction: event.target.value as ProfileInfo["doctorRestriction"],
+                  }));
+                  setSaveMessage(null);
+                }}
+                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              >
+                <option value="">Seç</option>
+                {doctorRestrictionOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {profile.injury === "other" && (
+            <div className="mt-4 space-y-1">
+              <label className="text-[11px] text-muted">Sakatlık detayı</label>
+              <input
+                value={profile.injuryDetail}
+                onChange={(event) => {
+                  setProfile((prev) => ({ ...prev, injuryDetail: event.target.value }));
+                  setSaveMessage(null);
+                }}
+                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+                placeholder="Kısa açıklama"
+              />
+            </div>
+          )}
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="space-y-1">
+              <label className="text-[11px] text-muted">Bizi nereden duydun?</label>
+              <select
+                value={profile.referralSource}
+                onChange={(event) => {
+                  setProfile((prev) => ({
+                    ...prev,
+                    referralSource: event.target.value as ProfileInfo["referralSource"],
+                  }));
+                  setSaveMessage(null);
+                }}
+                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              >
+                <option value="">Seç</option>
+                {referralOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-4 space-y-1">
+            <label className="text-[11px] text-muted">Beklentin</label>
             <textarea
-              value={profile.notes}
+              value={profile.expectation}
               onChange={(event) => {
-                setProfile((prev) => ({ ...prev, notes: event.target.value }));
+                setProfile((prev) => ({ ...prev, expectation: event.target.value }));
                 setSaveMessage(null);
               }}
               className="min-h-[90px] w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-              placeholder="Kendiniz için kısa not..."
+              placeholder="Kısa not (opsiyonel)..."
             />
           </div>
           <div className="flex flex-wrap items-center gap-3">
