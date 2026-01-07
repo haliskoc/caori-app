@@ -6,7 +6,7 @@ import { AppShell } from "@/components/app-shell";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <Auth0Provider>
+    <Auth0Provider loginUrl="/auth/login" profileUrl="/auth/me">
       <TrackerProvider>
         <AppShell>{children}</AppShell>
       </TrackerProvider>
