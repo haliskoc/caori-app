@@ -39,7 +39,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
             {!isLoading && !user && (
               <a
-                href="/api/auth/login"
+                href="/auth/login"
                 className="rounded-full border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700 shadow-soft"
               >
                 Giriş Yap
@@ -51,7 +51,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   Merhaba, {user.name ?? user.email ?? "Kullanıcı"}
                 </span>
                 <a
-                  href="/api/auth/logout"
+                  href="/auth/logout"
                   className="rounded-full border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700 shadow-soft"
                 >
                   Çıkış
