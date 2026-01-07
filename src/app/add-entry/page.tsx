@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Card } from "@/components/card";
+import { Tooltip } from "@/components/tooltip";
 import { useTracker } from "@/components/tracker-provider";
 import { ActivityType, MealType } from "@/lib/types";
 import { OFFProduct } from "@/lib/off";
@@ -87,7 +88,14 @@ export default function AddEntryPage() {
         <Card className="space-y-4">
           <div>
             <p className="text-sm font-semibold">Yemek Girişi</p>
-            <p className="text-xs text-muted">Manuel kalori girişi</p>
+            <div className="flex items-center gap-2 text-xs text-muted">
+              <span>Manuel kalori girişi</span>
+              <Tooltip label="Ürün araması için en az 3 harf yazın.">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full border border-amber-200 text-[10px] text-amber-700">
+                  ?
+                </span>
+              </Tooltip>
+            </div>
           </div>
           <input
             value={foodName}
@@ -122,6 +130,11 @@ export default function AddEntryPage() {
                   </div>
                 </button>
               ))}
+            </div>
+          )}
+          {foodName.length > 2 && !isSearching && searchResults.length === 0 && (
+            <div className="rounded-xl border border-dashed border-amber-100 bg-amber-50/50 px-3 py-3 text-xs text-muted">
+              Sonuç bulunamadı. Manuel kalori girişi yapabilirsiniz.
             </div>
           )}
           <div className="grid gap-3 sm:grid-cols-2">

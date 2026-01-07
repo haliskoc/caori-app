@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Card } from "@/components/card";
+import { Tooltip } from "@/components/tooltip";
 import { ProgressRing } from "@/components/progress-ring";
 import { WeeklyCharts } from "@/components/weekly-charts";
 import { useTracker } from "@/components/tracker-provider";
@@ -15,12 +16,13 @@ const mealLabels: Record<MealType, string> = {
 };
 
 export default function DashboardPage() {
-  const { dailySummary, weeklySummary, goals, addFood, addWater, flags } = useTracker();
+  const { entries, dailySummary, weeklySummary, goals, addFood, addWater, flags } = useTracker();
   const [quickCalories, setQuickCalories] = useState("");
   const [quickMeal, setQuickMeal] = useState<MealType>("snack");
 
   const netCalories = dailySummary.caloriesIn - dailySummary.caloriesOut;
   const waterLeft = Math.max(goals.waterGoalMl - dailySummary.waterMl, 0);
+  const hasEntries = entries.length > 0;
 
   return (
     <div className="space-y-6">
@@ -51,7 +53,14 @@ export default function DashboardPage() {
           </div>
 
           <div className="rounded-2xl border border-amber-100 bg-white p-4">
-            <p className="text-xs text-muted">Hızlı Kalori Ekle</p>
+            <div className="flex items-center gap-2 text-xs text-muted">
+              <span>Hızlı Kalori Ekle</span>
+              <Tooltip label="Sadece kalori yazıp öğünü seçerek hızlı kayıt oluşturun.">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full border border-amber-200 text-[10px] text-amber-700">
+                  ?
+                </span>
+              </Tooltip>
+            </div>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row">
               <input
                 value={quickCalories}
@@ -113,7 +122,13 @@ export default function DashboardPage() {
         </Card>
       </section>
 
-      <WeeklyCharts summary={weeklySummary} />
+      <WeeklyCharts summary={weeklySummary} hasEntries={hasEntries} />
+
+      {!hasEntries && (
+        <Card className="text-center text-sm text-muted">
+          Henüz kayıt yok. Hızlı ekleme veya "Ekle" sekmesini kullanarak başlayın.
+        </Card>
+      )}
 
       <section className="grid gap-4 lg:grid-cols-2">
         <Card className="flex flex-col gap-2">

@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@auth0/nextjs-auth0/client";
+import { CommandPalette } from "@/components/command-palette";
+import { Onboarding } from "@/components/onboarding";
+import { ReminderScheduler } from "@/components/reminder-scheduler";
 
 const navItems = [
   { href: "/dashboard", label: "Panel", icon: "⌂" },
@@ -22,6 +25,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-app text-ink">
+      <ReminderScheduler />
       <div className="mx-auto flex w-full max-w-6xl flex-col px-4 pb-24 pt-6 sm:px-8">
         <header className="mb-6 flex items-center justify-between">
           <div>
@@ -34,24 +38,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               Kullanıcı kontrolü her zaman açık
             </div>
             {!isLoading && !user && (
-              <Link
+              <a
                 href="/auth/login"
                 className="rounded-full border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700 shadow-soft"
               >
                 Giriş Yap
-              </Link>
+              </a>
             )}
             {user && (
               <div className="flex items-center gap-2">
                 <span className="hidden text-xs text-muted sm:inline">
                   Merhaba, {user.name ?? user.email ?? "Kullanıcı"}
                 </span>
-                <Link
+                <a
                   href="/auth/logout"
                   className="rounded-full border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700 shadow-soft"
                 >
                   Çıkış
-                </Link>
+                </a>
               </div>
             )}
           </div>
@@ -86,6 +90,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           })}
         </div>
       </nav>
+      <CommandPalette />
+      <Onboarding />
     </div>
   );
 }

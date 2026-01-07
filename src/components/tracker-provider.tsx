@@ -12,6 +12,26 @@ import type {
 import { loadEntries, saveEntries } from "@/lib/storage";
 import { buildWeeklySummary, createId, getDayKey } from "@/lib/utils";
 import { FeatureFlags, defaultFlags, loadFlags, saveFlags } from "@/lib/flags";
+import {
+  AuditEvent,
+  appendAuditEvent,
+  buildAuditEvent,
+  loadAuditLog,
+  saveAuditLog,
+} from "@/lib/audit";
+import {
+  ThemeSettings,
+  applyTheme,
+  defaultTheme,
+  loadTheme,
+  saveTheme,
+} from "@/lib/theme";
+import {
+  ReminderSettings,
+  defaultReminder,
+  loadReminder,
+  saveReminder,
+} from "@/lib/reminders";
 
 type Goals = {
   waterGoalMl: number;
@@ -27,6 +47,10 @@ type TrackerContextValue = {
     durationMin: number;
     estimatedCalories: number;
   }) => Promise<void>;
+  addEntries: (
+    items: Entry[],
+    options?: { mode?: "merge" | "replace"; source?: string }
+  ) => Promise<number>;
   removeEntry: (id: string) => Promise<void>;
   dailySummary: { caloriesIn: number; caloriesOut: number; waterMl: number };
   weeklySummary: ReturnType<typeof buildWeeklySummary>;
@@ -34,6 +58,12 @@ type TrackerContextValue = {
   updateGoals: (next: Partial<Goals>) => Promise<void>;
   flags: FeatureFlags;
   updateFlags: (next: Partial<FeatureFlags>) => void;
+  theme: ThemeSettings;
+  updateTheme: (next: Partial<ThemeSettings>) => void;
+  reminder: ReminderSettings;
+  updateReminder: (next: Partial<ReminderSettings>) => void;
+  auditLog: AuditEvent[];
+  clearAuditLog: () => void;
   dataMode: "local" | "remote";
   importLocalEntries: () => Promise<number>;
 };
@@ -71,10 +101,28 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [goals, setGoals] = useState<Goals>(DEFAULT_GOALS);
   const [flags, setFlags] = useState<FeatureFlags>(defaultFlags);
+  const [theme, setTheme] = useState<ThemeSettings>(defaultTheme);
+  const [reminder, setReminder] = useState<ReminderSettings>(defaultReminder);
+  const [auditLog, setAuditLog] = useState<AuditEvent[]>([]);
   const [dataMode, setDataMode] = useState<"local" | "remote">("local");
 
   useEffect(() => {
     setFlags(loadFlags());
+  }, []);
+
+  useEffect(() => {
+    const storedTheme = loadTheme();
+    setTheme(storedTheme);
+    applyTheme(storedTheme);
+  }, []);
+
+  useEffect(() => {
+    const storedReminder = loadReminder();
+    setReminder(storedReminder);
+  }, []);
+
+  useEffect(() => {
+    setAuditLog(loadAuditLog());
   }, []);
 
   useEffect(() => {
@@ -108,6 +156,19 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     saveFlags(flags);
   }, [flags]);
+
+  useEffect(() => {
+    saveTheme(theme);
+    applyTheme(theme);
+  }, [theme]);
+
+  useEffect(() => {
+    saveReminder(reminder);
+  }, [reminder]);
+
+  useEffect(() => {
+    saveAuditLog(auditLog);
+  }, [auditLog]);
 
   useEffect(() => {
     if (isLoading) {
@@ -150,6 +211,56 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
 
   const weeklySummary = useMemo(() => buildWeeklySummary(entries, 7), [entries]);
 
+  function recordAudit(
+    action: AuditEvent["action"],
+    detail: string,
+    meta?: Record<string, string | number | boolean>
+  ) {
+    setAuditLog((prev) => appendAuditEvent(buildAuditEvent({ action, detail, meta }), prev));
+  }
+
+  function normalizeEntry(entry: Entry): Entry {
+    const timestampDate = new Date(entry.timestamp);
+    const timestamp = Number.isNaN(timestampDate.getTime())
+      ? new Date().toISOString()
+      : timestampDate.toISOString();
+    const id = entry.id || createId();
+    if (entry.type === "food") {
+      const mealType: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
+      return {
+        id,
+        type: "food",
+        name: entry.name?.trim() || "Belirtilmedi",
+        calories: Number(entry.calories) || 0,
+        mealType: mealType.includes(entry.mealType) ? entry.mealType : "snack",
+        timestamp,
+      };
+    }
+    if (entry.type === "water") {
+      return {
+        id,
+        type: "water",
+        amountMl: Number(entry.amountMl) || 0,
+        timestamp,
+      };
+    }
+    const activityType: ActivityType[] = ["walking", "running", "gym"];
+    return {
+      id,
+      type: "activity",
+      activityType: activityType.includes(entry.activityType) ? entry.activityType : "walking",
+      durationMin: Number(entry.durationMin) || 0,
+      estimatedCalories: Number(entry.estimatedCalories) || 0,
+      timestamp,
+    };
+  }
+
+  function sortEntries(list: Entry[]) {
+    return [...list].sort(
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
+  }
+
   async function loadRemoteData() {
     try {
       const [entriesRes, goalsRes] = await Promise.all([
@@ -170,6 +281,50 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // ignore network errors for MVP
     }
+  }
+
+  async function addEntries(
+    items: Entry[],
+    options?: { mode?: "merge" | "replace"; source?: string }
+  ) {
+    if (!Array.isArray(items) || items.length === 0) {
+      return 0;
+    }
+    const normalized = items.map(normalizeEntry);
+    const mode = options?.mode ?? "merge";
+    if (dataMode === "remote") {
+      const response = await fetch("/api/v1/entries/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ entries: normalized }),
+      });
+      if (response.ok) {
+        await loadRemoteData();
+        recordAudit("import", "Toplu içe aktarma (bulut)", {
+          count: normalized.length,
+          source: options?.source ?? "bulk",
+        });
+        return normalized.length;
+      }
+      return 0;
+    }
+    setEntries((prev) => {
+      if (mode === "replace") {
+        return sortEntries(normalized);
+      }
+      const existingIds = new Set(prev.map((entry) => entry.id));
+      const merged = [
+        ...normalized,
+        ...prev.filter((entry) => !existingIds.has(entry.id)),
+      ];
+      return sortEntries(merged);
+    });
+    recordAudit("import", "Toplu içe aktarma (cihaz)", {
+      count: normalized.length,
+      source: options?.source ?? "bulk",
+    });
+    return normalized.length;
   }
 
   async function addFood(input: { name: string; calories: number; mealType: MealType }) {
@@ -197,10 +352,18 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       if (response.ok) {
         const created = (await response.json()) as Entry;
         setEntries((prev) => [created, ...prev]);
+        recordAudit("add", "Yemek eklendi", {
+          calories: entry.calories,
+          mealType: entry.mealType,
+        });
       }
       return;
     }
     setEntries((prev) => [entry, ...prev]);
+    recordAudit("add", "Yemek eklendi", {
+      calories: entry.calories,
+      mealType: entry.mealType,
+    });
   }
 
   async function addWater(input: { amountMl: number }) {
@@ -224,10 +387,12 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       if (response.ok) {
         const created = (await response.json()) as Entry;
         setEntries((prev) => [created, ...prev]);
+        recordAudit("add", "Su eklendi", { amountMl: entry.amountMl });
       }
       return;
     }
     setEntries((prev) => [entry, ...prev]);
+    recordAudit("add", "Su eklendi", { amountMl: entry.amountMl });
   }
 
   async function addActivity(input: {
@@ -259,13 +424,22 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       if (response.ok) {
         const created = (await response.json()) as Entry;
         setEntries((prev) => [created, ...prev]);
+        recordAudit("add", "Aktivite eklendi", {
+          activityType: entry.activityType,
+          durationMin: entry.durationMin,
+        });
       }
       return;
     }
     setEntries((prev) => [entry, ...prev]);
+    recordAudit("add", "Aktivite eklendi", {
+      activityType: entry.activityType,
+      durationMin: entry.durationMin,
+    });
   }
 
   async function removeEntry(id: string) {
+    const target = entries.find((entry) => entry.id === id);
     if (dataMode === "remote") {
       await fetch(`/api/v1/entries/${id}`, {
         method: "DELETE",
@@ -273,6 +447,9 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       });
     }
     setEntries((prev) => prev.filter((entry) => entry.id !== id));
+    if (target) {
+      recordAudit("remove", "Kayıt silindi", { type: target.type });
+    }
   }
 
   async function updateGoals(next: Partial<Goals>) {
@@ -290,14 +467,37 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           waterGoalMl: data?.waterGoalMl ?? updated.waterGoalMl,
           calorieGoal: data?.calorieGoal ?? updated.calorieGoal,
         });
+        recordAudit("update-goals", "Hedefler güncellendi", {
+          waterGoalMl: data?.waterGoalMl ?? updated.waterGoalMl,
+          calorieGoal: data?.calorieGoal ?? updated.calorieGoal,
+        });
         return;
       }
     }
     setGoals(updated);
+    recordAudit("update-goals", "Hedefler güncellendi", updated);
   }
 
   function updateFlags(next: Partial<FeatureFlags>) {
     setFlags((prev) => ({ ...prev, ...next }));
+    recordAudit("update-flags", "Özellik bayrakları güncellendi", next as Record<string, boolean>);
+  }
+
+  function updateTheme(next: Partial<ThemeSettings>) {
+    setTheme((prev) => ({ ...prev, ...next }));
+    recordAudit("theme", "Tema güncellendi", next as Record<string, string>);
+  }
+
+  function updateReminder(next: Partial<ReminderSettings>) {
+    setReminder((prev) => ({ ...prev, ...next }));
+    const shouldLog = Object.keys(next).some((key) => key !== "lastNotifiedDay");
+    if (shouldLog) {
+      recordAudit("reminder", "Hatırlatıcı güncellendi", next as Record<string, boolean | string>);
+    }
+  }
+
+  function clearAuditLog() {
+    setAuditLog([]);
   }
 
   async function importLocalEntries() {
@@ -317,7 +517,9 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     if (response.ok) {
       const data = (await response.json()) as { imported: number } | null;
       await loadRemoteData();
-      return data?.imported ?? localEntries.length;
+      const count = data?.imported ?? localEntries.length;
+      recordAudit("import", "Yerel kayıtlar buluta taşındı", { count });
+      return count;
     }
     return 0;
   }
@@ -327,6 +529,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     addFood,
     addWater,
     addActivity,
+    addEntries,
     removeEntry,
     dailySummary,
     weeklySummary,
@@ -334,6 +537,12 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     updateGoals,
     flags,
     updateFlags,
+    theme,
+    updateTheme,
+    reminder,
+    updateReminder,
+    auditLog,
+    clearAuditLog,
     dataMode,
     importLocalEntries,
   };

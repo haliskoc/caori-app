@@ -11,6 +11,42 @@
   --ring: #ffbe7a;
   --shadow-soft: 0 12px 30px rgba(255, 122, 0, 0.12);
   --shadow-strong: 0 22px 60px rgba(39, 24, 12, 0.18);
+  --bg-spot-1: #fff1e3;
+  --bg-spot-2: #ffe1c7;
+}
+
+:root[data-theme="dim"] {
+  --background: #f7efe7;
+  --surface: #ffffff;
+  --ink: #1a1410;
+  --muted: #6a5a4f;
+  --accent-soft: #f7d7b3;
+  --ring: #f0b574;
+  --shadow-soft: 0 12px 30px rgba(69, 38, 10, 0.12);
+  --shadow-strong: 0 22px 60px rgba(25, 18, 12, 0.2);
+  --bg-spot-1: #f4e3d4;
+  --bg-spot-2: #f2d8bf;
+}
+
+:root[data-accent="amber"] {
+  --accent: #ff7a00;
+  --accent-strong: #ff6a00;
+  --accent-soft: #ffd1a1;
+  --ring: #ffbe7a;
+}
+
+:root[data-accent="teal"] {
+  --accent: #0f9f91;
+  --accent-strong: #0a7f73;
+  --accent-soft: #b9eee6;
+  --ring: #74d6ca;
+}
+
+:root[data-accent="rose"] {
+  --accent: #e24a63;
+  --accent-strong: #c43b53;
+  --accent-soft: #f7b3c1;
+  --ring: #f199aa;
 }
 
 @theme inline {
@@ -30,14 +66,20 @@
 }
 
 body {
-  background: radial-gradient(circle at 15% 20%, #fff1e3 0, transparent 45%),
-    radial-gradient(circle at 90% 10%, #ffe1c7 0, transparent 40%), var(--background);
+  background: radial-gradient(circle at 15% 20%, var(--bg-spot-1) 0, transparent 45%),
+    radial-gradient(circle at 90% 10%, var(--bg-spot-2) 0, transparent 40%),
+    var(--background);
   color: var(--ink);
   font-family: var(--font-space-grotesk), "Space Grotesk", sans-serif;
 }
 
 * {
   box-sizing: border-box;
+}
+
+:where(button, [role="button"], a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
 
 @keyframes fade-up {

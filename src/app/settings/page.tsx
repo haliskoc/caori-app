@@ -4,19 +4,90 @@ import { useEffect, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { Card } from "@/components/card";
 import { useTracker } from "@/components/tracker-provider";
+import { entriesFromCsv, entriesToCsv, parseCsv } from "@/lib/csv";
 
 export default function SettingsPage() {
   const { user, isLoading } = useUser();
-  const { goals, updateGoals, flags, updateFlags, dataMode, importLocalEntries } = useTracker();
+  const {
+    goals,
+    updateGoals,
+    flags,
+    updateFlags,
+    dataMode,
+    importLocalEntries,
+    entries,
+    addEntries,
+    theme,
+    updateTheme,
+    reminder,
+    updateReminder,
+    auditLog,
+    clearAuditLog,
+  } = useTracker();
   const [waterGoal, setWaterGoal] = useState(String(goals.waterGoalMl));
   const [calorieGoal, setCalorieGoal] = useState(String(goals.calorieGoal));
   const [importedCount, setImportedCount] = useState<number | null>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [csvMessage, setCsvMessage] = useState<string | null>(null);
+  const [isCsvImporting, setIsCsvImporting] = useState(false);
+  const [notificationStatus, setNotificationStatus] = useState<
+    NotificationPermission | "unsupported"
+  >("default");
 
   useEffect(() => {
     setWaterGoal(String(goals.waterGoalMl));
     setCalorieGoal(String(goals.calorieGoal));
   }, [goals]);
+
+  useEffect(() => {
+    if (typeof Notification === "undefined") {
+      setNotificationStatus("unsupported");
+    } else {
+      setNotificationStatus(Notification.permission);
+    }
+  }, []);
+
+  function downloadCsv() {
+    const csv = entriesToCsv(entries);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `calai-kayitlari-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+    setCsvMessage("CSV dışa aktarıldı.");
+  }
+
+  async function handleCsvImport(file: File) {
+    setIsCsvImporting(true);
+    setCsvMessage(null);
+    try {
+      const text = await file.text();
+      const rows = parseCsv(text);
+      const importedEntries = entriesFromCsv(rows);
+      const count = await addEntries(importedEntries, { mode: "merge", source: "csv" });
+      setCsvMessage(count > 0 ? `${count} kayıt içe aktarıldı.` : "CSV içinde kayıt bulunamadı.");
+    } catch {
+      setCsvMessage("CSV okunamadı. Formatı kontrol edin.");
+    } finally {
+      setIsCsvImporting(false);
+    }
+  }
+
+  const accentOptions = [
+    { value: "amber", label: "Amber", swatch: "bg-amber-500" },
+    { value: "teal", label: "Teal", swatch: "bg-teal-500" },
+    { value: "rose", label: "Rose", swatch: "bg-rose-500" },
+  ] as const;
+
+  const auditPreview = auditLog.slice(0, 10);
+  const auditFormatter = new Intl.DateTimeFormat("tr-TR", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   return (
     <div className="space-y-6">
@@ -108,6 +179,168 @@ export default function SettingsPage() {
         </button>
       </Card>
 
+      <Card className="space-y-4">
+        <div>
+          <p className="text-sm font-semibold">Tema ve Görünüm</p>
+          <p className="text-xs text-muted">Aydınlık veya dim mod + vurgu renkleri.</p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <button
+            onClick={() => updateTheme({ mode: "light" })}
+            className={`rounded-2xl border px-4 py-3 text-left text-xs transition ${
+              theme.mode === "light"
+                ? "border-amber-300 bg-amber-50 text-amber-700"
+                : "border-amber-100 bg-white text-muted hover:text-ink"
+            }`}
+          >
+            <p className="text-sm font-semibold">Aydınlık</p>
+            <p className="text-[11px] text-muted">Yüksek kontrast, net arayüz.</p>
+          </button>
+          <button
+            onClick={() => updateTheme({ mode: "dim" })}
+            className={`rounded-2xl border px-4 py-3 text-left text-xs transition ${
+              theme.mode === "dim"
+                ? "border-amber-300 bg-amber-50 text-amber-700"
+                : "border-amber-100 bg-white text-muted hover:text-ink"
+            }`}
+          >
+            <p className="text-sm font-semibold">Dim</p>
+            <p className="text-[11px] text-muted">Daha yumuşak ve sakin tonlar.</p>
+          </button>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {accentOptions.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => updateTheme({ accent: option.value })}
+              className={`flex items-center gap-2 rounded-full border px-3 py-1 text-xs transition ${
+                theme.accent === option.value
+                  ? "border-amber-400 bg-amber-50 text-amber-700"
+                  : "border-amber-100 bg-white text-muted hover:text-ink"
+              }`}
+            >
+              <span className={`h-2 w-2 rounded-full ${option.swatch}`} />
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </Card>
+
+      <Card className="space-y-4">
+        <div>
+          <p className="text-sm font-semibold">Hatırlatıcılar</p>
+          <p className="text-xs text-muted">Tarayıcı bildirimi ile günlük hatırlatma.</p>
+        </div>
+        <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs text-muted">
+          {notificationStatus === "unsupported" && "Tarayıcı bildirimleri desteklenmiyor."}
+          {notificationStatus === "default" && "Bildirim izni verilmedi."}
+          {notificationStatus === "denied" && "Bildirim izni reddedildi."}
+          {notificationStatus === "granted" && "Bildirim izni açık."}
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <label className="flex items-center gap-2 text-xs text-muted">
+            <input
+              type="checkbox"
+              checked={reminder.enabled}
+              onChange={(event) => updateReminder({ enabled: event.target.checked })}
+              className="h-4 w-4 accent-orange-500"
+            />
+            Günlük hatırlatma
+          </label>
+          <input
+            type="time"
+            value={reminder.time}
+            onChange={(event) => updateReminder({ time: event.target.value })}
+            className="rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
+          />
+          {notificationStatus !== "granted" && notificationStatus !== "unsupported" && (
+            <button
+              onClick={async () => {
+                if (typeof Notification === "undefined") {
+                  setNotificationStatus("unsupported");
+                  return;
+                }
+                const permission = await Notification.requestPermission();
+                setNotificationStatus(permission);
+              }}
+              className="rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs text-muted hover:text-ink"
+            >
+              İzin Ver
+            </button>
+          )}
+        </div>
+        {reminder.enabled && notificationStatus !== "granted" && notificationStatus !== "unsupported" && (
+          <p className="text-xs text-muted">
+            Hatırlatma için tarayıcı izni gereklidir.
+          </p>
+        )}
+      </Card>
+
+      <Card className="space-y-4">
+        <div>
+          <p className="text-sm font-semibold">Veri Yönetimi</p>
+          <p className="text-xs text-muted">CSV içe/dışa aktarma (cihaz veya bulut).</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={downloadCsv}
+            className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-xs text-muted hover:text-ink"
+            disabled={entries.length === 0}
+          >
+            CSV Dışa Aktar
+          </button>
+          <label className="cursor-pointer rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700">
+            {isCsvImporting ? "İçe aktarılıyor..." : "CSV İçe Aktar"}
+            <input
+              type="file"
+              accept=".csv"
+              className="hidden"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) {
+                  void handleCsvImport(file);
+                }
+                event.currentTarget.value = "";
+              }}
+              disabled={isCsvImporting}
+            />
+          </label>
+        </div>
+        {csvMessage && <p className="text-xs text-muted">{csvMessage}</p>}
+      </Card>
+
+      <Card className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-semibold">Değişiklik Geçmişi</p>
+            <p className="text-xs text-muted">Son işlemler cihazda saklanır.</p>
+          </div>
+          <button
+            onClick={clearAuditLog}
+            className="rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs text-muted hover:text-ink"
+            disabled={auditLog.length === 0}
+          >
+            Temizle
+          </button>
+        </div>
+        {auditPreview.length === 0 && (
+          <p className="text-xs text-muted">Henüz kayıtlı bir işlem yok.</p>
+        )}
+        {auditPreview.length > 0 && (
+          <div className="space-y-2 text-xs text-muted">
+            {auditPreview.map((event) => (
+              <div
+                key={event.id}
+                className="flex items-center justify-between rounded-2xl border border-amber-100 bg-white px-3 py-2"
+              >
+                <span>{event.detail}</span>
+                <span>{auditFormatter.format(new Date(event.timestamp))}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+
       {/* Google Fit Integration Temporarily Disabled
       {user && (
         <Card className="space-y-4">
@@ -165,15 +398,6 @@ export default function SettingsPage() {
             />
           </label>
           */}
-          <label className="flex items-center justify-between rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs">
-            <span className="text-muted">Karanlık Mod (opsiyonel)</span>
-            <input
-              type="checkbox"
-              checked={flags.darkMode}
-              onChange={(event) => updateFlags({ darkMode: event.target.checked })}
-              className="h-5 w-5 accent-orange-500"
-            />
-          </label>
         </div>
       </Card>
     </div>

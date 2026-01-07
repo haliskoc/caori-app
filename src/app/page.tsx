@@ -88,16 +88,16 @@ export default function LandingPage() {
             </Link>
           </nav>
           <div className="flex items-center gap-3">
-            <Link href="/auth/login">
+            <a href="/auth/login">
               <span className="text-sm font-medium hover:text-amber-600 transition-colors">
                 Giris Yap
               </span>
-            </Link>
-            <Link href="/auth/login?screen_hint=signup">
+            </a>
+            <a href="/auth/login?screen_hint=signup">
               <span className="rounded-xl bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-700">
                 Kayit Ol
               </span>
-            </Link>
+            </a>
           </div>
         </div>
       </header>
@@ -124,17 +124,17 @@ export default function LandingPage() {
                 erisime acilir.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Link href="/auth/login?screen_hint=signup" className="w-full sm:w-auto">
+                <a href="/auth/login?screen_hint=signup" className="w-full sm:w-auto">
                   <span className="flex h-12 items-center justify-center gap-2 rounded-xl bg-gray-900 px-6 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-gray-800">
                     Plani Olustur
                     <ArrowRight className="h-4 w-4" />
                   </span>
-                </Link>
-                <Link href="/auth/login" className="w-full sm:w-auto">
+                </a>
+                <a href="/auth/login" className="w-full sm:w-auto">
                   <span className="flex h-12 items-center justify-center rounded-xl border border-gray-200 bg-white px-6 text-sm font-semibold text-gray-900 transition-all hover:-translate-y-0.5 hover:bg-gray-50">
                     Giris Yap
                   </span>
-                </Link>
+                </a>
               </div>
               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                 <div className="rounded-full bg-white/70 px-4 py-2 shadow-sm">
@@ -353,12 +353,12 @@ export default function LandingPage() {
                   Ogun secimi tek bir tik ile. Tum makrolar otomatik hesaplanir, tek tek giris yok.
                 </p>
               </div>
-              <Link href="/auth/login?screen_hint=signup">
+              <a href="/auth/login?screen_hint=signup">
                 <span className="inline-flex items-center gap-2 text-sm font-semibold text-amber-700 transition-colors hover:text-amber-800">
                   Sablonlara Eris
                   <ArrowRight className="h-4 w-4" />
                 </span>
-              </Link>
+              </a>
             </div>
             <div className="mt-8 grid gap-6 md:grid-cols-3">
               {templateMeals.map((meal) => (
@@ -468,11 +468,11 @@ export default function LandingPage() {
                     Temel grafikler
                   </li>
                 </ul>
-                <Link href="/auth/login?screen_hint=signup">
+                <a href="/auth/login?screen_hint=signup">
                   <span className="mt-8 inline-flex w-full items-center justify-center rounded-xl border border-gray-200 bg-white py-3 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50">
                     Ucretsiz Basla
                   </span>
-                </Link>
+                </a>
               </div>
               <div className="relative rounded-3xl border border-amber-200 bg-amber-50 p-7 shadow-sm">
                 <div className="absolute -top-4 right-6 rounded-full bg-amber-600 px-3 py-1 text-xs font-semibold text-white shadow-sm">
@@ -499,11 +499,11 @@ export default function LandingPage() {
                     Oncelikli destek
                   </li>
                 </ul>
-                <Link href="/auth/login?screen_hint=signup">
+                <a href="/auth/login?screen_hint=signup">
                   <span className="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-amber-600 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-700">
                     Premiuma Gec
                   </span>
-                </Link>
+                </a>
               </div>
             </div>
           </div>
@@ -523,16 +523,16 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
-                  <Link href="/auth/login">
+                  <a href="/auth/login">
                     <span className="inline-flex h-12 items-center justify-center rounded-xl border border-gray-200 bg-white px-6 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50">
                       Giris Yap
                     </span>
-                  </Link>
-                  <Link href="/auth/login?screen_hint=signup">
+                  </a>
+                  <a href="/auth/login?screen_hint=signup">
                     <span className="inline-flex h-12 items-center justify-center rounded-xl bg-gray-900 px-6 text-sm font-semibold text-white transition-colors hover:bg-gray-800">
                       Kayit Ol
                     </span>
-                  </Link>
+                  </a>
                 </div>
               </div>
             </div>
