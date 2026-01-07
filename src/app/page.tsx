@@ -93,7 +93,7 @@ export default function LandingPage() {
                 Giris Yap
               </span>
             </a>
-            <a href="/auth/login?screen_hint=signup">
+            <a href="/auth/login?screen_hint=signup&returnTo=%2Fdashboard%3Fonboarding%3D1">
               <span className="rounded-xl bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-700">
                 Kayit Ol
               </span>
@@ -124,7 +124,7 @@ export default function LandingPage() {
                 erisime acilir.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <a href="/auth/login?screen_hint=signup" className="w-full sm:w-auto">
+                <a href="/auth/login?screen_hint=signup&returnTo=%2Fdashboard%3Fonboarding%3D1" className="w-full sm:w-auto">
                   <span className="flex h-12 items-center justify-center gap-2 rounded-xl bg-gray-900 px-6 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-gray-800">
                     Hemen Basla
                     <ArrowRight className="h-4 w-4" />
@@ -353,7 +353,7 @@ export default function LandingPage() {
                   Ogun secimi tek bir tik ile. Tum makrolar otomatik hesaplanir, tek tek giris yok.
                 </p>
               </div>
-              <a href="/auth/login?screen_hint=signup">
+              <a href="/auth/login?screen_hint=signup&returnTo=%2Fdashboard%3Fonboarding%3D1">
                 <span className="inline-flex items-center gap-2 text-sm font-semibold text-amber-700 transition-colors hover:text-amber-800">
                   Sablonlara Eris
                   <ArrowRight className="h-4 w-4" />
@@ -468,7 +468,7 @@ export default function LandingPage() {
                     Temel grafikler
                   </li>
                 </ul>
-                <a href="/auth/login?screen_hint=signup">
+                <a href="/auth/login?screen_hint=signup&returnTo=%2Fdashboard%3Fonboarding%3D1">
                   <span className="mt-8 inline-flex w-full items-center justify-center rounded-xl border border-gray-200 bg-white py-3 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50">
                     Ucretsiz Basla
                   </span>
@@ -499,7 +499,7 @@ export default function LandingPage() {
                     Oncelikli destek
                   </li>
                 </ul>
-                <a href="/auth/login?screen_hint=signup">
+                <a href="/auth/login?screen_hint=signup&returnTo=%2Fdashboard%3Fonboarding%3D1">
                   <span className="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-amber-600 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-700">
                     Premiuma Gec
                   </span>
@@ -528,7 +528,7 @@ export default function LandingPage() {
                       Giris Yap
                     </span>
                   </a>
-                  <a href="/auth/login?screen_hint=signup">
+                  <a href="/auth/login?screen_hint=signup&returnTo=%2Fdashboard%3Fonboarding%3D1">
                     <span className="inline-flex h-12 items-center justify-center rounded-xl bg-gray-900 px-6 text-sm font-semibold text-white transition-colors hover:bg-gray-800">
                       Kayit Ol
                     </span>

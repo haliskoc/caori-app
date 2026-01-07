@@ -40,6 +40,32 @@ type SavedView = {
 
 const SAVED_VIEWS_KEY = "calai.savedviews.v1";
 
+function loadSavedViews(): SavedView[] {
+  if (typeof window === "undefined") {
+    return [];
+  }
+  try {
+    const raw = window.localStorage.getItem(SAVED_VIEWS_KEY);
+    if (!raw) {
+      return [];
+    }
+    const parsed = JSON.parse(raw) as SavedView[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function filtersMatch(a: FilterState, b: FilterState) {
+  return (
+    a.query === b.query &&
+    a.type === b.type &&
+    a.meal === b.meal &&
+    a.range === b.range &&
+    a.sort === b.sort
+  );
+}
+
 export default function HistoryPage() {
   const { entries, removeEntry } = useTracker();
   const [query, setQuery] = useState("");
@@ -47,7 +73,7 @@ export default function HistoryPage() {
   const [mealFilter, setMealFilter] = useState<MealFilter>("all");
   const [rangeFilter, setRangeFilter] = useState<RangeFilter>("30");
   const [sortOrder, setSortOrder] = useState<SortOrder>("newest");
-  const [savedViews, setSavedViews] = useState<SavedView[]>([]);
+  const [savedViews, setSavedViews] = useState<SavedView[]>(() => loadSavedViews());
   const [viewName, setViewName] = useState("");
   const [activeViewId, setActiveViewId] = useState<string | null>(null);
 
@@ -55,32 +81,8 @@ export default function HistoryPage() {
     if (typeof window === "undefined") {
       return;
     }
-    try {
-      const raw = window.localStorage.getItem(SAVED_VIEWS_KEY);
-      if (!raw) {
-        return;
-      }
-      const parsed = JSON.parse(raw) as SavedView[];
-      if (Array.isArray(parsed)) {
-        setSavedViews(parsed);
-      }
-    } catch {
-      // ignore
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
     window.localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(savedViews));
   }, [savedViews]);
-
-  useEffect(() => {
-    if (typeFilter !== "food" && mealFilter !== "all") {
-      setMealFilter("all");
-    }
-  }, [mealFilter, typeFilter]);
 
   const filteredEntries = useMemo(() => {
     let list = entries;
@@ -132,27 +134,18 @@ export default function HistoryPage() {
     rangeFilter !== "all" ||
     sortOrder !== "newest";
 
-  const activeView = savedViews.find((view) => view.id === activeViewId) ?? null;
+  const currentFilters: FilterState = {
+    query,
+    type: typeFilter,
+    meal: mealFilter,
+    range: rangeFilter,
+    sort: sortOrder,
+  };
 
-  useEffect(() => {
-    if (!activeViewId) {
-      return;
-    }
-    const active = savedViews.find((view) => view.id === activeViewId);
-    if (!active) {
-      setActiveViewId(null);
-      return;
-    }
-    const isMatch =
-      active.filters.query === query &&
-      active.filters.type === typeFilter &&
-      active.filters.meal === mealFilter &&
-      active.filters.range === rangeFilter &&
-      active.filters.sort === sortOrder;
-    if (!isMatch) {
-      setActiveViewId(null);
-    }
-  }, [activeViewId, mealFilter, query, rangeFilter, savedViews, sortOrder, typeFilter]);
+  const activeView =
+    savedViews.find(
+      (view) => view.id === activeViewId && filtersMatch(view.filters, currentFilters)
+    ) ?? null;
 
   return (
     <div className="space-y-6">
@@ -164,13 +157,23 @@ export default function HistoryPage() {
         <div className="grid gap-3 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
           <input
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setActiveViewId(null);
+            }}
             placeholder="Ara: öğün, aktivite..."
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
           />
           <select
             value={typeFilter}
-            onChange={(event) => setTypeFilter(event.target.value as FilterType)}
+            onChange={(event) => {
+              const nextType = event.target.value as FilterType;
+              setTypeFilter(nextType);
+              if (nextType !== "food") {
+                setMealFilter("all");
+              }
+              setActiveViewId(null);
+            }}
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
           >
             <option value="all">Tüm Tipler</option>
@@ -180,7 +183,10 @@ export default function HistoryPage() {
           </select>
           <select
             value={mealFilter}
-            onChange={(event) => setMealFilter(event.target.value as MealFilter)}
+            onChange={(event) => {
+              setMealFilter(event.target.value as MealFilter);
+              setActiveViewId(null);
+            }}
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
             disabled={typeFilter !== "food"}
           >
@@ -195,7 +201,10 @@ export default function HistoryPage() {
         <div className="grid gap-3 md:grid-cols-[0.8fr_0.8fr_1fr]">
           <select
             value={rangeFilter}
-            onChange={(event) => setRangeFilter(event.target.value as RangeFilter)}
+            onChange={(event) => {
+              setRangeFilter(event.target.value as RangeFilter);
+              setActiveViewId(null);
+            }}
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
           >
             <option value="all">Tüm Zamanlar</option>
@@ -205,7 +214,10 @@ export default function HistoryPage() {
           </select>
           <select
             value={sortOrder}
-            onChange={(event) => setSortOrder(event.target.value as SortOrder)}
+            onChange={(event) => {
+              setSortOrder(event.target.value as SortOrder);
+              setActiveViewId(null);
+            }}
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
           >
             <option value="newest">En Yeni</option>

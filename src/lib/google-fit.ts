@@ -1,4 +1,5 @@
 import { google } from "googleapis";
+import type { Credentials } from "google-auth-library";
 import { getDb } from "@/lib/db";
 import { googleFitTokens, entries, goals } from "@/lib/schema";
 import { eq, and, gte, lte } from "drizzle-orm";
@@ -24,27 +25,30 @@ export const getAuthUrl = () => {
   });
 };
 
-export const getTokens = async (code: string) => {
+export const getTokens = async (code: string): Promise<Credentials> => {
   const { tokens } = await oauth2Client.getToken(code);
   return tokens;
 };
 
-export const saveTokens = async (userId: string, tokens: any) => {
+export const saveTokens = async (userId: string, tokens: Credentials) => {
+  if (!tokens.access_token || !tokens.refresh_token) {
+    return;
+  }
   const db = getDb();
   await db
     .insert(googleFitTokens)
     .values({
       userId,
-      accessToken: tokens.access_token!,
-      refreshToken: tokens.refresh_token!,
-      expiryDate: tokens.expiry_date!,
+      accessToken: tokens.access_token,
+      refreshToken: tokens.refresh_token,
+      expiryDate: tokens.expiry_date ?? null,
     })
     .onConflictDoUpdate({
       target: googleFitTokens.userId,
       set: {
-        accessToken: tokens.access_token!,
-        refreshToken: tokens.refresh_token!, // Update refresh token if provided
-        expiryDate: tokens.expiry_date!,
+        accessToken: tokens.access_token,
+        refreshToken: tokens.refresh_token,
+        expiryDate: tokens.expiry_date ?? null,
         updatedAt: new Date(),
       },
     });
@@ -73,16 +77,26 @@ export const getFitData = async (userId: string, startTime: Date, endTime: Date)
   // but for now relying on googleapis auto-refresh in memory for this session request.
   // Ideally, one should capture the 'tokens' event.
   
-  oauth2Client.on('tokens', async (tokens) => {
-    if (tokens.refresh_token) {
-        await saveTokens(userId, { ...tokenData[0], ...tokens });
-    } else {
-        // Just update access token
-         await db.update(googleFitTokens).set({
-             accessToken: tokens.access_token!,
-             expiryDate: tokens.expiry_date!
-         }).where(eq(googleFitTokens.userId, userId));
+  oauth2Client.on("tokens", async (tokens: Credentials) => {
+    const mergedTokens: Credentials = {
+      access_token: tokens.access_token ?? tokenData[0].accessToken,
+      refresh_token: tokens.refresh_token ?? tokenData[0].refreshToken,
+      expiry_date: tokens.expiry_date ?? tokenData[0].expiryDate ?? undefined,
+    };
+    if (mergedTokens.access_token && mergedTokens.refresh_token) {
+      await saveTokens(userId, mergedTokens);
+      return;
     }
+    if (!tokens.access_token) {
+      return;
+    }
+    await db
+      .update(googleFitTokens)
+      .set({
+        accessToken: tokens.access_token,
+        expiryDate: tokens.expiry_date ?? null,
+      })
+      .where(eq(googleFitTokens.userId, userId));
   });
 
 
@@ -92,30 +106,33 @@ export const getFitData = async (userId: string, startTime: Date, endTime: Date)
   // We need to query the dataset. Aggregate is best.
   
   try {
-      const response = await fitness.users.dataset.aggregate({
-        userId: "me",
-        requestBody: {
-          aggregateBy: [
-            {
-              dataTypeName: "com.google.calories.expended",
-            },
-            {
-              dataTypeName: "com.google.step_count.delta",
-            },
-             {
-              dataTypeName: "com.google.active_minutes",
-            },
-          ],
-          bucketByTime: { durationMillis: 86400000 }, // Daily buckets
-          startTimeMillis: startTime.getTime(),
-          endTimeMillis: endTime.getTime(),
-        },
-      } as any);
+    type FitnessAggregateParams = Parameters<typeof fitness.users.dataset.aggregate>[0];
+    type FitnessAggregateData = { bucket?: unknown[] };
 
-      return (response as any).data;
+    const response = await fitness.users.dataset.aggregate({
+      userId: "me",
+      requestBody: {
+        aggregateBy: [
+          {
+            dataTypeName: "com.google.calories.expended",
+          },
+          {
+            dataTypeName: "com.google.step_count.delta",
+          },
+          {
+            dataTypeName: "com.google.active_minutes",
+          },
+        ],
+        bucketByTime: { durationMillis: 86400000 }, // Daily buckets
+        startTimeMillis: startTime.getTime(),
+        endTimeMillis: endTime.getTime(),
+      },
+    } as FitnessAggregateParams);
+
+    return response.data as FitnessAggregateData | undefined;
   } catch (error) {
-      console.error("Error fetching Google Fit data:", error);
-      throw error;
+    console.error("Error fetching Google Fit data:", error);
+    throw error;
   }
 };
 

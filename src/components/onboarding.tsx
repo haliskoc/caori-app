@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTracker } from "@/components/tracker-provider";
 import { getDemoEntries } from "@/lib/demo-data";
 
@@ -23,19 +23,15 @@ const steps = [
 
 export function Onboarding() {
   const { addEntries, entries } = useTracker();
-  const [open, setOpen] = useState(false);
-  const [stepIndex, setStepIndex] = useState(0);
-  const [demoLoaded, setDemoLoaded] = useState(false);
-
-  useEffect(() => {
+  const [open, setOpen] = useState(() => {
     if (typeof window === "undefined") {
-      return;
+      return false;
     }
     const seen = window.localStorage.getItem(ONBOARDING_KEY);
-    if (!seen) {
-      setOpen(true);
-    }
-  }, []);
+    return !seen;
+  });
+  const [stepIndex, setStepIndex] = useState(0);
+  const [demoLoaded, setDemoLoaded] = useState(false);
 
   function close() {
     if (typeof window !== "undefined") {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Card } from "@/components/card";
 import { Tooltip } from "@/components/tooltip";
 import { useTracker } from "@/components/tracker-provider";
@@ -22,6 +22,12 @@ const activityLabels: Record<ActivityType, string> = {
 
 type TabKey = "food" | "water" | "activity";
 
+type BarcodeDetectorConstructor = new (options?: { formats?: string[] }) => {
+  detect: (
+    image: HTMLVideoElement | HTMLCanvasElement | HTMLImageElement | ImageBitmap
+  ) => Promise<Array<{ rawValue: string }>>;
+};
+
 export default function AddEntryPage() {
   const { addFood, addWater, addActivity } = useTracker();
   const [tab, setTab] = useState<TabKey>("food");
@@ -32,9 +38,23 @@ export default function AddEntryPage() {
 
   const [searchResults, setSearchResults] = useState<OFFProduct[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [barcodeInput, setBarcodeInput] = useState("");
+  const [isBarcodeSearching, setIsBarcodeSearching] = useState(false);
+  const [barcodeMessage, setBarcodeMessage] = useState<string | null>(null);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [cameraActive, setCameraActive] = useState(false);
+  const [supportsBarcodeDetector, setSupportsBarcodeDetector] = useState(true);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const skipSearchRef = useRef(false);
 
   useEffect(() => {
     const timer = setTimeout(async () => {
+      if (skipSearchRef.current) {
+        skipSearchRef.current = false;
+        return;
+      }
       if (foodName.length > 2) {
         setIsSearching(true);
         try {
@@ -53,6 +73,152 @@ export default function AddEntryPage() {
 
     return () => clearTimeout(timer);
   }, [foodName]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    setSupportsBarcodeDetector("BarcodeDetector" in window);
+  }, []);
+
+  useEffect(() => {
+    if (tab !== "food") {
+      setScannerOpen(false);
+    }
+  }, [tab]);
+
+  useEffect(() => {
+    if (!scannerOpen) {
+      setCameraActive(false);
+      return;
+    }
+    if (typeof window === "undefined") {
+      return;
+    }
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setScanError("Kamera erişimi desteklenmiyor.");
+      return;
+    }
+    setScanError(null);
+    let active = true;
+    navigator.mediaDevices
+      .getUserMedia({ video: { facingMode: "environment" } })
+      .then((stream) => {
+        if (!active) {
+          stream.getTracks().forEach((track) => track.stop());
+          return;
+        }
+        streamRef.current = stream;
+        const video = videoRef.current;
+        if (video) {
+          video.srcObject = stream;
+          video
+            .play()
+            .then(() => setCameraActive(true))
+            .catch(() => undefined);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setScanError("Kamera izni alınamadı.");
+        }
+      });
+    return () => {
+      active = false;
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
+      setCameraActive(false);
+    };
+  }, [scannerOpen]);
+
+  const handleBarcodeLookup = useCallback(
+    async (rawCode: string) => {
+      const code = rawCode.trim();
+      if (!code) {
+        return;
+      }
+      setBarcodeMessage(null);
+      setIsBarcodeSearching(true);
+      try {
+        const res = await fetch(`/api/v1/food-search?barcode=${encodeURIComponent(code)}`);
+        if (!res.ok) {
+          setBarcodeMessage("Barkod bulunamadı.");
+          setSearchResults([]);
+          return;
+        }
+        const product = await res.json();
+        if (!product || !product.product_name) {
+          setBarcodeMessage("Barkod bulunamadı.");
+          setSearchResults([]);
+          return;
+        }
+        skipSearchRef.current = true;
+        setSearchResults([]);
+        setFoodName(product.product_name);
+        const kcal = product.nutriments?.["energy-kcal_100g"];
+        if (typeof kcal === "number") {
+          setFoodCalories(String(Math.round(kcal)));
+        } else {
+          setFoodCalories("");
+        }
+        setBarcodeMessage(`Bulunan ürün: ${product.product_name}`);
+      } catch {
+        setBarcodeMessage("Barkod aranamadı.");
+      } finally {
+        setIsBarcodeSearching(false);
+      }
+    },
+    [setFoodCalories, setFoodName, setSearchResults]
+  );
+
+  useEffect(() => {
+    if (!scannerOpen || !supportsBarcodeDetector) {
+      return;
+    }
+    if (typeof window === "undefined") {
+      return;
+    }
+    const Detector = (window as unknown as { BarcodeDetector?: BarcodeDetectorConstructor })
+      .BarcodeDetector;
+    if (!Detector) {
+      return;
+    }
+    let cancelled = false;
+    let isDetecting = false;
+    const detector = new Detector({
+      formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39", "qr_code"],
+    });
+    const interval = window.setInterval(async () => {
+      if (cancelled || isDetecting) {
+        return;
+      }
+      const video = videoRef.current;
+      if (!video || video.readyState < 2) {
+        return;
+      }
+      isDetecting = true;
+      try {
+        const barcodes = await detector.detect(video);
+        const value = barcodes?.[0]?.rawValue;
+        if (value) {
+          setBarcodeInput(value);
+          setScannerOpen(false);
+          await handleBarcodeLookup(value);
+        }
+      } catch {
+        // ignore detector errors
+      } finally {
+        isDetecting = false;
+      }
+    }, 700);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, [handleBarcodeLookup, scannerOpen, supportsBarcodeDetector]);
 
   const [waterAmount, setWaterAmount] = useState("250");
 
@@ -96,6 +262,60 @@ export default function AddEntryPage() {
                 </span>
               </Tooltip>
             </div>
+          </div>
+          <div className="rounded-2xl border border-amber-100 bg-white p-3 space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold text-ink">Barkod ile bul</p>
+                <p className="text-[11px] text-muted">Kamera veya barkod numarası</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setScannerOpen((prev) => !prev)}
+                className="rounded-full border border-amber-100 bg-white px-3 py-1 text-[11px] font-semibold text-amber-700 hover:border-amber-200"
+                disabled={!supportsBarcodeDetector}
+              >
+                {scannerOpen ? "Kamerayı kapat" : "Barkod tara"}
+              </button>
+            </div>
+            {!supportsBarcodeDetector && (
+              <p className="text-[11px] text-muted">
+                Tarayıcı barkod taramayı desteklemiyor.
+              </p>
+            )}
+            {scanError && <p className="text-[11px] text-red-600">{scanError}</p>}
+            {scannerOpen && (
+              <div className="space-y-2">
+                <div className="overflow-hidden rounded-xl border border-amber-100 bg-black">
+                  <video
+                    ref={videoRef}
+                    className="h-44 w-full object-cover"
+                    playsInline
+                    muted
+                  />
+                </div>
+                <p className="text-[11px] text-muted">
+                  {cameraActive ? "Barkodu kadraja alın." : "Kamera açılıyor..."}
+                </p>
+              </div>
+            )}
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <input
+                value={barcodeInput}
+                onChange={(event) => setBarcodeInput(event.target.value)}
+                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-200"
+                placeholder="Barkod numarası"
+                inputMode="numeric"
+              />
+              <button
+                onClick={() => handleBarcodeLookup(barcodeInput)}
+                className="rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 disabled:opacity-60"
+                disabled={isBarcodeSearching || !barcodeInput.trim()}
+              >
+                {isBarcodeSearching ? "Aranıyor..." : "Ara"}
+              </button>
+            </div>
+            {barcodeMessage && <p className="text-[11px] text-muted">{barcodeMessage}</p>}
           </div>
           <input
             value={foodName}

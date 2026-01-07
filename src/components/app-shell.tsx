@@ -11,6 +11,7 @@ const navItems = [
   { href: "/dashboard", label: "Panel", icon: "⌂" },
   { href: "/add-entry", label: "Ekle", icon: "+" },
   { href: "/history", label: "Geçmiş", icon: "◎" },
+  { href: "/profile", label: "Profil", icon: "👤" },
   { href: "/settings", label: "Ayarlar", icon: "⚙" },
 ];
 
@@ -69,8 +70,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <main className="flex-1">{children}</main>
       </div>
 
-      <nav className="fixed bottom-4 left-1/2 z-20 w-[min(92vw,520px)] -translate-x-1/2 rounded-2xl border border-amber-100 bg-white/95 px-2 py-2 shadow-strong backdrop-blur">
-        <div className="grid grid-cols-4">
+      <nav className="fixed bottom-4 left-1/2 z-20 w-[min(94vw,640px)] -translate-x-1/2 rounded-2xl border border-amber-100 bg-white/95 px-2 py-2 shadow-strong backdrop-blur">
+        <div className="grid grid-cols-5">
           {navItems.map((item) => {
             const active = pathname === item.href;
             return (
@@ -90,7 +91,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
       <CommandPalette />
-      <Onboarding />
+      {pathname !== "/onboarding" && <Onboarding />}
     </div>
   );
 }

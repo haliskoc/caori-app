@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Card } from "@/components/card";
 import { Tooltip } from "@/components/tooltip";
 import { ProgressRing } from "@/components/progress-ring";
 import { WeeklyCharts } from "@/components/weekly-charts";
 import { useTracker } from "@/components/tracker-provider";
 import { MealType } from "@/lib/types";
+import { isProfileComplete, loadProfile } from "@/lib/profile";
+import { ProfileSetupModal } from "@/components/profile-setup-modal";
 
 const mealLabels: Record<MealType, string> = {
   breakfast: "Kahvaltı",
@@ -16,9 +19,18 @@ const mealLabels: Record<MealType, string> = {
 };
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { entries, dailySummary, weeklySummary, goals, addFood, addWater, flags } = useTracker();
   const [quickCalories, setQuickCalories] = useState("");
   const [quickMeal, setQuickMeal] = useState<MealType>("snack");
+  const onboardingParam = searchParams.get("onboarding") === "1";
+  const [showProfileSetup, setShowProfileSetup] = useState(() => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+    return onboardingParam || !isProfileComplete(loadProfile());
+  });
 
   const netCalories = dailySummary.caloriesIn - dailySummary.caloriesOut;
   const waterLeft = Math.max(goals.waterGoalMl - dailySummary.waterMl, 0);
@@ -126,7 +138,7 @@ export default function DashboardPage() {
 
       {!hasEntries && (
         <Card className="text-center text-sm text-muted">
-          Henüz kayıt yok. Hızlı ekleme veya "Ekle" sekmesini kullanarak başlayın.
+          Henüz kayıt yok. Hızlı ekleme veya &quot;Ekle&quot; sekmesini kullanarak başlayın.
         </Card>
       )}
 
@@ -152,6 +164,17 @@ export default function DashboardPage() {
           </div>
         </Card>
       </section>
+
+      <ProfileSetupModal
+        open={showProfileSetup}
+        onClose={() => setShowProfileSetup(false)}
+        onSaved={() => {
+          setShowProfileSetup(false);
+          if (onboardingParam) {
+            router.replace("/dashboard");
+          }
+        }}
+      />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import type {
   ActivityType,
@@ -11,7 +11,7 @@ import type {
 } from "@/lib/types";
 import { loadEntries, saveEntries } from "@/lib/storage";
 import { buildWeeklySummary, createId, getDayKey } from "@/lib/utils";
-import { FeatureFlags, defaultFlags, loadFlags, saveFlags } from "@/lib/flags";
+import { FeatureFlags, loadFlags, saveFlags } from "@/lib/flags";
 import {
   AuditEvent,
   appendAuditEvent,
@@ -19,19 +19,8 @@ import {
   loadAuditLog,
   saveAuditLog,
 } from "@/lib/audit";
-import {
-  ThemeSettings,
-  applyTheme,
-  defaultTheme,
-  loadTheme,
-  saveTheme,
-} from "@/lib/theme";
-import {
-  ReminderSettings,
-  defaultReminder,
-  loadReminder,
-  saveReminder,
-} from "@/lib/reminders";
+import { ThemeSettings, applyTheme, loadTheme, saveTheme } from "@/lib/theme";
+import { ReminderSettings, loadReminder, saveReminder } from "@/lib/reminders";
 
 type Goals = {
   waterGoalMl: number;
@@ -98,32 +87,13 @@ function saveGoals(goals: Goals) {
 
 export function TrackerProvider({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useUser();
-  const [entries, setEntries] = useState<Entry[]>([]);
-  const [goals, setGoals] = useState<Goals>(DEFAULT_GOALS);
-  const [flags, setFlags] = useState<FeatureFlags>(defaultFlags);
-  const [theme, setTheme] = useState<ThemeSettings>(defaultTheme);
-  const [reminder, setReminder] = useState<ReminderSettings>(defaultReminder);
-  const [auditLog, setAuditLog] = useState<AuditEvent[]>([]);
-  const [dataMode, setDataMode] = useState<"local" | "remote">("local");
-
-  useEffect(() => {
-    setFlags(loadFlags());
-  }, []);
-
-  useEffect(() => {
-    const storedTheme = loadTheme();
-    setTheme(storedTheme);
-    applyTheme(storedTheme);
-  }, []);
-
-  useEffect(() => {
-    const storedReminder = loadReminder();
-    setReminder(storedReminder);
-  }, []);
-
-  useEffect(() => {
-    setAuditLog(loadAuditLog());
-  }, []);
+  const [entries, setEntries] = useState<Entry[]>(() => loadEntries());
+  const [goals, setGoals] = useState<Goals>(() => loadGoals());
+  const [flags, setFlags] = useState<FeatureFlags>(() => loadFlags());
+  const [theme, setTheme] = useState<ThemeSettings>(() => loadTheme());
+  const [reminder, setReminder] = useState<ReminderSettings>(() => loadReminder());
+  const [auditLog, setAuditLog] = useState<AuditEvent[]>(() => loadAuditLog());
+  const dataMode: "local" | "remote" = user?.sub ? "remote" : "local";
 
   useEffect(() => {
     let active = true;
@@ -170,19 +140,44 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     saveAuditLog(auditLog);
   }, [auditLog]);
 
+  const loadRemoteData = useCallback(async () => {
+    try {
+      const [entriesRes, goalsRes] = await Promise.all([
+        fetch("/api/v1/entries", { credentials: "include" }),
+        fetch("/api/v1/goals", { credentials: "include" }),
+      ]);
+      if (entriesRes.ok) {
+        const data = (await entriesRes.json()) as Entry[];
+        setEntries(data);
+      }
+      if (goalsRes.ok) {
+        const data = (await goalsRes.json()) as Goals;
+        setGoals({
+          waterGoalMl: data?.waterGoalMl ?? DEFAULT_GOALS.waterGoalMl,
+          calorieGoal: data?.calorieGoal ?? DEFAULT_GOALS.calorieGoal,
+        });
+      }
+    } catch {
+      // ignore network errors for MVP
+    }
+  }, []);
+
+  const hydrateLocal = useCallback(() => {
+    setEntries(loadEntries());
+    setGoals(loadGoals());
+  }, []);
+
   useEffect(() => {
     if (isLoading) {
       return;
     }
     if (user?.sub) {
-      setDataMode("remote");
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       void loadRemoteData();
-    } else {
-      setDataMode("local");
-      setEntries(loadEntries());
-      setGoals(loadGoals());
+      return;
     }
-  }, [user, isLoading]);
+    hydrateLocal();
+  }, [hydrateLocal, isLoading, loadRemoteData, user]);
 
   const dailySummary = useMemo(() => {
     const todayKey = getDayKey(new Date());
@@ -259,28 +254,6 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     return [...list].sort(
       (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
-  }
-
-  async function loadRemoteData() {
-    try {
-      const [entriesRes, goalsRes] = await Promise.all([
-        fetch("/api/v1/entries", { credentials: "include" }),
-        fetch("/api/v1/goals", { credentials: "include" }),
-      ]);
-      if (entriesRes.ok) {
-        const data = (await entriesRes.json()) as Entry[];
-        setEntries(data);
-      }
-      if (goalsRes.ok) {
-        const data = (await goalsRes.json()) as Goals;
-        setGoals({
-          waterGoalMl: data?.waterGoalMl ?? DEFAULT_GOALS.waterGoalMl,
-          calorieGoal: data?.calorieGoal ?? DEFAULT_GOALS.calorieGoal,
-        });
-      }
-    } catch {
-      // ignore network errors for MVP
-    }
   }
 
   async function addEntries(

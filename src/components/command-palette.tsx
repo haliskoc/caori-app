@@ -44,6 +44,13 @@ export function CommandPalette() {
         action: () => router.push("/history"),
       },
       {
+        id: "nav-profile",
+        label: "Profil sayfası",
+        hint: "/profile",
+        keywords: "profil kullanıcı",
+        action: () => router.push("/profile"),
+      },
+      {
         id: "nav-settings",
         label: "Ayarları aç",
         hint: "/settings",
@@ -94,22 +101,18 @@ export function CommandPalette() {
   }, [commands, query]);
 
   useEffect(() => {
-    if (open) {
-      setQuery("");
-      setSelectedIndex(0);
-    }
-  }, [open]);
-
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [query]);
-
-  useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       const isK = event.key.toLowerCase() === "k";
       if ((event.metaKey || event.ctrlKey) && isK) {
         event.preventDefault();
-        setOpen((prev) => !prev);
+        setOpen((prev) => {
+          const next = !prev;
+          if (next) {
+            setQuery("");
+            setSelectedIndex(0);
+          }
+          return next;
+        });
         return;
       }
       if (!open) {
@@ -162,7 +165,10 @@ export function CommandPalette() {
         </div>
         <input
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setSelectedIndex(0);
+          }}
           placeholder="Komut ara..."
           className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
           autoFocus
