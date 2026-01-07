@@ -265,10 +265,19 @@ export default function ProfilePage() {
       "workoutDays",
       "workoutPlace",
       "equipmentLevel",
+      "injury",
+      "doctorRestriction",
       "referralSource",
+      "expectation",
     ];
-    const filled = requiredFields.filter((key) => profile[key]?.toString().trim()).length;
-    const total = requiredFields.length;
+    let filled = requiredFields.filter((key) => profile[key]?.toString().trim()).length;
+    let total = requiredFields.length;
+    if (profile.injury === "other") {
+      total += 1;
+      if (profile.injuryDetail.trim()) {
+        filled += 1;
+      }
+    }
     return total > 0 ? Math.round((filled / total) * 100) : 0;
   }, [profile]);
 

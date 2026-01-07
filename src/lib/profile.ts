@@ -135,14 +135,24 @@ export function saveProfile(profile: ProfileInfo) {
 }
 
 export function isProfileComplete(profile: ProfileInfo) {
-  return Boolean(
-    profile.age.trim() &&
-      profile.heightCm.trim() &&
-      profile.weightKg.trim() &&
-      profile.mainGoal &&
-      profile.sportLevel &&
-      profile.workoutDays &&
-      profile.workoutPlace &&
-      profile.equipmentLevel
-  );
+  if (
+    !profile.age.trim() ||
+    !profile.heightCm.trim() ||
+    !profile.weightKg.trim() ||
+    !profile.mainGoal ||
+    !profile.sportLevel ||
+    !profile.workoutDays ||
+    !profile.workoutPlace ||
+    !profile.equipmentLevel ||
+    !profile.injury ||
+    !profile.doctorRestriction ||
+    !profile.referralSource ||
+    !profile.expectation.trim()
+  ) {
+    return false;
+  }
+  if (profile.injury === "other" && !profile.injuryDetail.trim()) {
+    return false;
+  }
+  return true;
 }

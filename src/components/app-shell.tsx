@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { CommandPalette } from "@/components/command-palette";
+import { OnboardingModal } from "@/components/onboarding-modal";
 import { ReminderScheduler } from "@/components/reminder-scheduler";
 import { isProfileComplete, loadProfile } from "@/lib/profile";
 
@@ -18,8 +19,8 @@ const navItems = [
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
   const { user, isLoading } = useUser();
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   // Landing Page için AppShell UI'ını gösterme
   if (pathname === "/") {
@@ -28,16 +29,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isLoading || !user) {
+      setShowOnboarding(false);
       return;
     }
     if (pathname.startsWith("/auth") || pathname.startsWith("/onboarding")) {
+      setShowOnboarding(false);
       return;
     }
     const profile = loadProfile();
-    if (!isProfileComplete(profile)) {
-      router.replace("/onboarding");
-    }
-  }, [isLoading, pathname, router, user]);
+    setShowOnboarding(!isProfileComplete(profile));
+  }, [isLoading, pathname, user]);
 
   return (
     <div className="min-h-screen bg-app text-ink">
@@ -106,6 +107,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
       <CommandPalette />
+      <OnboardingModal isOpen={showOnboarding} onComplete={() => setShowOnboarding(false)} />
     </div>
   );
 }
