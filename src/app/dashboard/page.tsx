@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/card";
 import { Tooltip } from "@/components/tooltip";
 import { ProgressRing } from "@/components/progress-ring";
@@ -20,17 +20,23 @@ const mealLabels: Record<MealType, string> = {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { entries, dailySummary, weeklySummary, goals, addFood, addWater, flags } = useTracker();
   const [quickCalories, setQuickCalories] = useState("");
   const [quickMeal, setQuickMeal] = useState<MealType>("snack");
-  const onboardingParam = searchParams.get("onboarding") === "1";
-  const [showProfileSetup, setShowProfileSetup] = useState(() => {
+  const [onboardingParam, setOnboardingParam] = useState(false);
+  const [showProfileSetup, setShowProfileSetup] = useState(false);
+
+  useEffect(() => {
     if (typeof window === "undefined") {
-      return false;
+      return;
     }
-    return onboardingParam || !isProfileComplete(loadProfile());
-  });
+    const params = new URLSearchParams(window.location.search);
+    const fromOnboarding = params.get("onboarding") === "1";
+    setOnboardingParam(fromOnboarding);
+    if (fromOnboarding || !isProfileComplete(loadProfile())) {
+      setShowProfileSetup(true);
+    }
+  }, []);
 
   const netCalories = dailySummary.caloriesIn - dailySummary.caloriesOut;
   const waterLeft = Math.max(goals.waterGoalMl - dailySummary.waterMl, 0);

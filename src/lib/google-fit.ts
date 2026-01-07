@@ -1,4 +1,5 @@
 import { google } from "googleapis";
+import type { fitness_v1 } from "googleapis";
 import type { Credentials } from "google-auth-library";
 import { getDb } from "@/lib/db";
 import { googleFitTokens, entries, goals } from "@/lib/schema";
@@ -106,10 +107,7 @@ export const getFitData = async (userId: string, startTime: Date, endTime: Date)
   // We need to query the dataset. Aggregate is best.
   
   try {
-    type FitnessAggregateParams = Parameters<typeof fitness.users.dataset.aggregate>[0];
-    type FitnessAggregateData = { bucket?: unknown[] };
-
-    const response = await fitness.users.dataset.aggregate({
+    const request: fitness_v1.Params$Resource$Users$Dataset$Aggregate = {
       userId: "me",
       requestBody: {
         aggregateBy: [
@@ -123,13 +121,15 @@ export const getFitData = async (userId: string, startTime: Date, endTime: Date)
             dataTypeName: "com.google.active_minutes",
           },
         ],
-        bucketByTime: { durationMillis: 86400000 }, // Daily buckets
-        startTimeMillis: startTime.getTime(),
-        endTimeMillis: endTime.getTime(),
+        bucketByTime: { durationMillis: "86400000" }, // Daily buckets
+        startTimeMillis: String(startTime.getTime()),
+        endTimeMillis: String(endTime.getTime()),
       },
-    } as FitnessAggregateParams);
+    };
 
-    return response.data as FitnessAggregateData | undefined;
+    const response = await fitness.users.dataset.aggregate(request);
+
+    return response.data;
   } catch (error) {
     console.error("Error fetching Google Fit data:", error);
     throw error;

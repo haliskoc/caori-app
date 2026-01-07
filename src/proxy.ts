@@ -1,3 +1,4 @@
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { auth0 } from "@/lib/auth0";
 
@@ -9,7 +10,7 @@ export async function proxy(request: Request) {
     return authRes;
   }
 
-  const session = await auth0.getSession(request);
+  const session = await auth0.getSession(request as NextRequest);
   if (!session) {
     return NextResponse.redirect(new URL("/auth/login", origin));
   }
