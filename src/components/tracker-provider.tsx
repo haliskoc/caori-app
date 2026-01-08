@@ -142,7 +142,8 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       ]);
       if (entriesRes.ok) {
         const data = (await entriesRes.json()) as Entry[];
-        setEntries(data);
+        const normalized = Array.isArray(data) ? data.map(normalizeEntry) : [];
+        setEntries(normalized);
       }
       if (goalsRes.ok) {
         const data = (await goalsRes.json()) as Goals;
@@ -374,7 +375,8 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       });
       if (response.ok) {
         const created = (await response.json()) as Entry;
-        setEntries((prev) => [created, ...prev]);
+        const normalized = normalizeEntry(created);
+        setEntries((prev) => [normalized, ...prev]);
         recordAudit("add", "Yemek eklendi", {
           calories: entry.calories,
           mealType: entry.mealType,
@@ -410,7 +412,8 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       });
       if (response.ok) {
         const created = (await response.json()) as Entry;
-        setEntries((prev) => [created, ...prev]);
+        const normalized = normalizeEntry(created);
+        setEntries((prev) => [normalized, ...prev]);
         recordAudit("add", "Su eklendi", { amountMl: entry.amountMl });
         void loadRemoteData();
       }
@@ -448,7 +451,8 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       });
       if (response.ok) {
         const created = (await response.json()) as Entry;
-        setEntries((prev) => [created, ...prev]);
+        const normalized = normalizeEntry(created);
+        setEntries((prev) => [normalized, ...prev]);
         recordAudit("add", "Aktivite eklendi", {
           activityType: entry.activityType,
           durationMin: entry.durationMin,
