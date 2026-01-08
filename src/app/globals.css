@@ -341,6 +341,7 @@ html[data-app="true"] select:focus {
 }
 
 @media print {
+  /* Enable color printing */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -348,39 +349,40 @@ html[data-app="true"] select:focus {
 
   @page {
     size: A4;
-    margin: 15mm 15mm 20mm 15mm;
-  }
-
-  @page:first {
-    margin: 0;
+    margin: 15mm;
   }
 
   body {
-    background: #ffffff;
-    font-size: 11pt;
-    line-height: 1.4;
-    color: #1e1a15;
+    background: #ffffff !important;
+    color: #1e1a15 !important;
   }
 
+  /* Hide UI elements */
   .print-hidden {
     display: none !important;
   }
 
+  /* Hide navigation during print */
+  .app-shell,
+  .app-nav,
+  nav,
+  [role="navigation"] {
+    display: none !important;
+  }
+
+  /* Main container */
   .print-page {
-    max-width: none;
+    max-width: 100% !important;
     padding: 0 !important;
   }
 
   /* Cover Page */
   .print-cover-page {
-    position: relative;
     page-break-after: always;
     break-after: page;
-    min-height: 280mm;
-    background: linear-gradient(135deg, #fff7f0 0%, #ffe8d0 50%, #ffd9b8 100%) !important;
-    border: none !important;
-    margin: -15mm -15mm -20mm -15mm !important;
-    padding: 40mm 20mm 40mm 20mm !important;
+    min-height: 250mm;
+    padding: 60mm 20mm !important;
+    background: linear-gradient(135deg, #fff7f0 0%, #ffe8d0 100%) !important;
   }
 
   .print-cover-page .text-accent {
@@ -408,123 +410,41 @@ html[data-app="true"] select:focus {
     box-shadow: 0 8px 32px rgba(255, 122, 0, 0.15) !important;
   }
 
-  /* Report Header - Hide on cover page */
-  .print-cover-page + header,
-  .print-page > header:first-child {
-    position: fixed;
-    top: -5mm;
-    left: 15mm;
-    right: 15mm;
-    height: 12mm;
-    padding: 8mm 0 4mm 0;
-    border-bottom: 2px solid #ff7a00;
-    background: linear-gradient(180deg, #fff7f0 0%, #ffffff 100%);
-    z-index: 1000;
+  /* Hide header in print */
+  .print-page > header {
+    display: none !important;
   }
 
-  /* Hide header on cover page */
-  .print-cover-page {
-    z-index: 1;
-  }
-
-  .print-cover-page ~ header {
-    position: fixed;
-    top: -5mm;
-    left: 15mm;
-    right: 15mm;
-  }
-
-  /* Ensure content after cover page starts with proper spacing */
-  .print-cover-page ~ section {
-    margin-top: 18mm;
-  }
-
-  .print-page > header:first-child h1 {
-    font-size: 16pt;
-    font-weight: 700;
-    margin: 0;
-    color: #1e1a15;
-  }
-
-  .print-page > header:first-child p {
-    font-size: 9pt;
-    margin: 2px 0 0 0;
-    color: #6f5f52;
-  }
-
-  /* Main Content */
+  /* Ensure all sections are visible */
   .print-page > section {
-    margin-top: 20mm;
-    break-inside: avoid;
+    display: block !important;
     page-break-inside: avoid;
+    margin-bottom: 20px;
   }
 
-  .print-page > section:first-of-type {
-    margin-top: 18mm;
-  }
-
-  /* Cards */
-  .print-page > section > div[class*="rounded"],
-  .print-page > section > div[class*="Card"] {
-    border: 1px solid #e8e0d8;
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-bottom: 16px;
-    background: #faf9f6 !important;
-    box-shadow: none !important;
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  /* Charts Section */
+  /* Charts on separate page */
   .print-charts {
-    display: block;
-    break-before: page;
     page-break-before: always;
-    margin-top: 0 !important;
+    break-before: page;
   }
 
   .print-chart {
-    width: 100%;
-    margin-bottom: 20px;
-    break-inside: avoid;
     page-break-inside: avoid;
+    margin-bottom: 15px;
   }
 
-  .print-chart > div[class*="Card"],
-  .print-chart > div[class*="rounded"] {
-    border: 1px solid #e8e0d8;
-    border-radius: 12px;
-    padding: 16px;
-    background: #ffffff !important;
+  /* Cards and containers */
+  .print-page [class*="Card"],
+  .print-page [class*="rounded-2xl"],
+  .print-page [class*="rounded-xl"] {
+    page-break-inside: avoid;
+    border: 1px solid #e8e0d8 !important;
     box-shadow: none !important;
   }
 
-  .print-chart svg {
-    max-width: 100%;
-    height: auto !important;
-  }
-
-  /* Progress Bars */
-  .print-page .h-2.rounded-full,
-  .print-page .h-2[class*="rounded"] {
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-    background: #f5e6d8 !important;
-  }
-
-  .print-page .h-2.rounded-full > div,
-  .print-page .h-2[class*="rounded"] > div {
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-    background: linear-gradient(90deg, #ff7a00 0%, #ff6a00 100%) !important;
-  }
-
-  /* Score Box */
   .print-page .rounded-2xl.border.border-amber-100.bg-amber-50 {
     background: linear-gradient(135deg, #fff7f0 0%, #ffe8cc 100%) !important;
     border: 2px solid #ff7a00 !important;
-    box-shadow: 0 4px 12px rgba(255, 122, 0, 0.15) !important;
   }
 
   .print-page .rounded-2xl.border.border-amber-100.bg-amber-50 p.text-3xl {
@@ -533,176 +453,46 @@ html[data-app="true"] select:focus {
     color: #ff7a00 !important;
   }
 
-  /* Stat Cards */
-  .print-page .grid > div {
-    border: 1px solid #e8e0d8;
-    border-radius: 10px;
-    padding: 12px;
-    background: #ffffff !important;
+  /* Progress bars */
+  .print-page .h-2.rounded-full {
+    background: #f5e6d8 !important;
   }
 
-  .print-page .grid > div p.text-lg {
-    font-size: 16pt;
-    font-weight: 700;
-    color: #1e1a15;
+  .print-page .h-2.rounded-full > div {
+    background: linear-gradient(90deg, #ff7a00 0%, #ff6a00 100%) !important;
   }
 
-  /* Week Cards */
-  .print-page section:nth-child(2) .rounded-2xl {
-    background: #ffffff !important;
-    border: 1px solid #d8d0c8;
-    page-break-inside: avoid;
-  }
-
-  /* Daily Details */
-  .print-page section:nth-child(6) .rounded-xl {
-    background: #faf9f6 !important;
-    border: 1px solid #e8e0d8;
-  }
-
-  /* Typography */
-  .print-page .text-sm.font-semibold {
-    font-size: 11pt;
-    font-weight: 700;
-    color: #1e1a15;
-    margin-bottom: 8px;
-  }
-
-  .print-page .text-xs {
-    font-size: 9pt;
-  }
-
-  .print-page .text-xs.text-muted {
-    color: #6f5f52;
-  }
-
-  .print-page .text-lg {
-    font-size: 14pt;
-  }
-
-  /* Footer with Page Numbers */
-  .print-page::after {
-    content: "";
-    position: fixed;
-    bottom: 5mm;
-    left: 15mm;
-    right: 15mm;
-    height: 8mm;
-    border-top: 1px solid #e8e0d8;
-    text-align: center;
-  }
-
-  /* Watermark */
-  .print-watermark {
-    position: fixed;
-    bottom: 8mm;
-    right: 15mm;
-    font-size: 8pt;
-    color: #b0a090;
-    z-index: 1000;
-  }
-
-  /* Page Numbers */
-  @page {
-    @bottom-center {
-      content: "Cal AI • Sağlık & Fitness Raporu • " counter(page) " / " counter(pages);
-      font-size: 8pt;
-      color: #6f5f52;
-      padding-top: 4mm;
-      border-top: 1px solid #e8e0d8;
-    }
-  }
-
-  /* Section Headers */
-  .print-page section {
-    page-break-before: auto;
-  }
-
-  /* Prevent breaking inside cards */
-  .print-page [class*="Card"],
-  .print-page [class*="rounded-2xl"],
-  .print-page [class*="rounded-xl"] {
-    break-inside: avoid;
-    page-break-inside: avoid;
-    orphans: 3;
-    widows: 3;
-  }
-
-  /* Tables if any */
-  .print-page table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 9pt;
-  }
-
-  .print-page table th,
-  .print-page table td {
-    border: 1px solid #e8e0d8;
-    padding: 6px 8px;
-    text-align: left;
-  }
-
-  .print-page table th {
-    background: #f5f0eb;
-    font-weight: 600;
-  }
-
-  /* Grid Layouts */
+  /* Grid layouts */
   .print-page .grid {
     display: grid !important;
     gap: 12px;
   }
 
-  .print-page .sm\:grid-cols-2 {
-    grid-template-columns: repeat(2, 1fr) !important;
+  .print-page .grid > div {
+    border: 1px solid #e8e0d8;
+    padding: 12px;
+    background: #ffffff !important;
   }
 
-  .print-page .lg\:grid-cols-2 {
-    grid-template-columns: repeat(2, 1fr) !important;
+  /* Text colors */
+  .print-page .text-muted {
+    color: #6f5f52 !important;
   }
 
-  .print-page .lg\:grid-cols-3 {
-    grid-template-columns: repeat(3, 1fr) !important;
+  .print-page .text-ink {
+    color: #1e1a15 !important;
   }
 
-  /* Flex items */
-  .print-page .flex {
-    display: flex !important;
+  /* Watermark */
+  .print-watermark {
+    position: fixed;
+    bottom: 10mm;
+    right: 15mm;
+    font-size: 8pt;
+    color: #b0a090;
   }
 
-  .print-page .flex-wrap {
-    flex-wrap: wrap;
-  }
-
-  .print-page .items-center {
-    align-items: center;
-  }
-
-  .print-page .justify-between {
-    justify-content: space-between;
-  }
-
-  .print-page .gap-2 {
-    gap: 8px;
-  }
-
-  .print-page .gap-3 {
-    gap: 12px;
-  }
-
-  .print-page .gap-4 {
-    gap: 16px;
-  }
-
-  /* Space */
-  .print-page .space-y-2 > * + * {
-    margin-top: 8px;
-  }
-
-  .print-page .space-y-3 > * + * {
-    margin-top: 12px;
-  }
-
+  /* Section spacing */
   .print-page .space-y-4 > * + * {
     margin-top: 16px;
   }
@@ -715,40 +505,9 @@ html[data-app="true"] select:focus {
     margin-top: 32px;
   }
 
-  /* Hide mobile navigation */
-  .app-shell,
-  .app-nav,
-  nav,
-  [role="navigation"] {
-    display: none !important;
-  }
-
-  /* Ensure all text is readable */
-  .print-page .text-muted {
-    color: #6f5f52 !important;
-  }
-
-  .print-page .text-ink {
-    color: #1e1a15 !important;
-  }
-
-  .print-page .text-amber-700 {
-    color: #c47700 !important;
-  }
-
-  /* Print optimization */
-  .print-page a[href]:after {
-    content: none !important;
-  }
-
-  /* First page title treatment */
-  .print-page > header:first-child + section {
-    margin-top: 5mm;
-  }
-
-  /* Motivation card special styling */
-  .print-page section:first-of-type > div:first-child {
-    background: linear-gradient(135deg, #fffaf5 0%, #fff0e0 100%) !important;
-    border: 2px solid #ffd8a8 !important;
+  /* SVG charts */
+  .print-chart svg {
+    max-width: 100%;
+    height: auto !important;
   }
 }
