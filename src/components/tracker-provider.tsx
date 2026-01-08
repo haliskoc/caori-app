@@ -244,27 +244,6 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     hydrateLocal();
   }, [hydrateLocal, isLoading, loadRemoteData, user]);
 
-  useEffect(() => {
-    if (dataMode !== "remote") {
-      return;
-    }
-    if (!autoSyncRef.current) {
-      autoSyncRef.current = true;
-      void importLocalEntries();
-    }
-  }, [dataMode, importLocalEntries]);
-
-  useEffect(() => {
-    if (dataMode !== "remote") {
-      return;
-    }
-    function handleOnline() {
-      void importLocalEntries();
-    }
-    window.addEventListener("online", handleOnline);
-    return () => window.removeEventListener("online", handleOnline);
-  }, [dataMode, importLocalEntries]);
-
   const dailySummary = useMemo(() => {
     const todayKey = getDayKey(new Date());
     const todayEntries = entries.filter((entry) => getDayKey(entry.timestamp) === todayKey);
@@ -707,6 +686,27 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     }
     return importedTotal;
   }, [dataMode, loadRemoteData, recordAudit]);
+
+  useEffect(() => {
+    if (dataMode !== "remote") {
+      return;
+    }
+    if (!autoSyncRef.current) {
+      autoSyncRef.current = true;
+      void importLocalEntries();
+    }
+  }, [dataMode, importLocalEntries]);
+
+  useEffect(() => {
+    if (dataMode !== "remote") {
+      return;
+    }
+    function handleOnline() {
+      void importLocalEntries();
+    }
+    window.addEventListener("online", handleOnline);
+    return () => window.removeEventListener("online", handleOnline);
+  }, [dataMode, importLocalEntries]);
 
   const value: TrackerContextValue = {
     entries,
