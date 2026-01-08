@@ -3,11 +3,16 @@ import { auth0 } from "@/lib/auth0";
 import { and, eq } from "drizzle-orm";
 import { entries } from "@/lib/schema";
 import { getDb } from "@/lib/db";
+import { isSameOrigin } from "@/lib/security";
 
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (!isSameOrigin(request)) {
+    return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+  }
+
   const session = await auth0.getSession();
   if (!session?.user?.sub) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

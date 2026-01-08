@@ -47,6 +47,10 @@ export const entries = pgTable("entries", {
   activityType: text("activity_type"),
   durationMin: integer("duration_min"),
   estimatedCalories: integer("estimated_calories"),
+  amountG: integer("amount_g"),
+  proteinG: integer("protein_g"),
+  carbsG: integer("carbs_g"),
+  fatG: integer("fat_g"),
   timestamp: timestamp("timestamp", { withTimezone: true }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });

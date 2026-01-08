@@ -4,6 +4,29 @@ import { getDb, ensureUser } from "@/lib/db";
 import { profiles } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { defaultProfile, type ProfileInfo } from "@/lib/profile";
+import { isSameOrigin } from "@/lib/security";
+
+const MAIN_GOALS = new Set([
+  "fat_burn",
+  "muscle_gain",
+  "fit_form",
+  "conditioning",
+  "healthy",
+]);
+const SPORT_LEVELS = new Set(["beginner", "sometimes", "regular", "advanced"]);
+const WORKOUT_DAYS = new Set(["1-2", "3-4", "5+"]);
+const WORKOUT_PLACES = new Set(["home", "gym", "outdoor"]);
+const EQUIPMENT_LEVELS = new Set(["none", "basic", "full"]);
+const INJURY_TYPES = new Set(["none", "knee", "back", "shoulder", "other"]);
+const DOCTOR_RESTRICTIONS = new Set(["no", "yes"]);
+const REFERRAL_SOURCES = new Set([
+  "instagram",
+  "tiktok",
+  "youtube",
+  "friend",
+  "search",
+  "other",
+]);
 
 function toIntOrNull(value: unknown) {
   const parsed = Number(value);
@@ -15,21 +38,26 @@ function toTextOrNull(value: unknown) {
   return text ? text : null;
 }
 
+function toEnumOrNull(value: unknown, allowed: Set<string>) {
+  const text = typeof value === "string" ? value.trim() : "";
+  return allowed.has(text) ? text : null;
+}
+
 function toProfilePayload(body: Partial<ProfileInfo>) {
   return {
     fullName: toTextOrNull(body.fullName),
     age: toIntOrNull(body.age),
     heightCm: toIntOrNull(body.heightCm),
     weightKg: toIntOrNull(body.weightKg),
-    mainGoal: toTextOrNull(body.mainGoal),
-    sportLevel: toTextOrNull(body.sportLevel),
-    workoutDays: toTextOrNull(body.workoutDays),
-    workoutPlace: toTextOrNull(body.workoutPlace),
-    equipmentLevel: toTextOrNull(body.equipmentLevel),
-    injury: toTextOrNull(body.injury),
+    mainGoal: toEnumOrNull(body.mainGoal, MAIN_GOALS),
+    sportLevel: toEnumOrNull(body.sportLevel, SPORT_LEVELS),
+    workoutDays: toEnumOrNull(body.workoutDays, WORKOUT_DAYS),
+    workoutPlace: toEnumOrNull(body.workoutPlace, WORKOUT_PLACES),
+    equipmentLevel: toEnumOrNull(body.equipmentLevel, EQUIPMENT_LEVELS),
+    injury: toEnumOrNull(body.injury, INJURY_TYPES),
     injuryDetail: toTextOrNull(body.injuryDetail),
-    doctorRestriction: toTextOrNull(body.doctorRestriction),
-    referralSource: toTextOrNull(body.referralSource),
+    doctorRestriction: toEnumOrNull(body.doctorRestriction, DOCTOR_RESTRICTIONS),
+    referralSource: toEnumOrNull(body.referralSource, REFERRAL_SOURCES),
     expectation: toTextOrNull(body.expectation),
   };
 }
@@ -69,6 +97,10 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
+  if (!isSameOrigin(request)) {
+    return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+  }
+
   const session = await auth0.getSession();
   if (!session?.user?.sub) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

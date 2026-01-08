@@ -55,6 +55,24 @@ export function buildWeeklySummary(entries: Entry[], days = 7): DailySummary[] {
       }
       return sum;
     }, 0);
-    return { date, caloriesIn, caloriesOut, waterMl };
+    const proteinG = dailyEntries.reduce((sum, entry) => {
+      if (entry.type === "food") {
+        return sum + (entry.proteinG ?? 0);
+      }
+      return sum;
+    }, 0);
+    const carbsG = dailyEntries.reduce((sum, entry) => {
+      if (entry.type === "food") {
+        return sum + (entry.carbsG ?? 0);
+      }
+      return sum;
+    }, 0);
+    const fatG = dailyEntries.reduce((sum, entry) => {
+      if (entry.type === "food") {
+        return sum + (entry.fatG ?? 0);
+      }
+      return sum;
+    }, 0);
+    return { date, caloriesIn, caloriesOut, waterMl, proteinG, carbsG, fatG };
   });
 }

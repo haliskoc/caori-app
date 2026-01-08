@@ -6,12 +6,28 @@ import { eq } from "drizzle-orm";
 import { defaultTheme, type ThemeSettings } from "@/lib/theme";
 import { defaultReminder, type ReminderSettings } from "@/lib/reminders";
 import { defaultFlags, type FeatureFlags } from "@/lib/flags";
+import { isSameOrigin } from "@/lib/security";
 
 type SettingsPayload = {
   theme?: Partial<ThemeSettings>;
   reminder?: Partial<ReminderSettings>;
   flags?: Partial<FeatureFlags>;
 };
+
+function isValidReminderTime(value?: string) {
+  if (!value || !/^\d{2}:\d{2}$/.test(value)) {
+    return false;
+  }
+  const [hour, minute] = value.split(":").map(Number);
+  return (
+    Number.isFinite(hour) &&
+    Number.isFinite(minute) &&
+    hour >= 0 &&
+    hour <= 23 &&
+    minute >= 0 &&
+    minute <= 59
+  );
+}
 
 function rowToSettings(row: typeof userSettings.$inferSelect | null) {
   const theme: ThemeSettings = {
@@ -69,6 +85,10 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
+  if (!isSameOrigin(request)) {
+    return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+  }
+
   const session = await auth0.getSession();
   if (!session?.user?.sub) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -76,16 +96,35 @@ export async function PUT(request: Request) {
 
   const body = (await request.json()) as SettingsPayload;
   const nextTheme: ThemeSettings = {
-    ...defaultTheme,
-    ...(body.theme ?? {}),
+    mode: body.theme?.mode === "dim" ? "dim" : defaultTheme.mode,
+    accent:
+      body.theme?.accent === "teal" || body.theme?.accent === "rose"
+        ? body.theme?.accent
+        : defaultTheme.accent,
   };
   const nextReminder: ReminderSettings = {
-    ...defaultReminder,
-    ...(body.reminder ?? {}),
+    enabled:
+      typeof body.reminder?.enabled === "boolean"
+        ? body.reminder.enabled
+        : defaultReminder.enabled,
+    time: isValidReminderTime(body.reminder?.time)
+      ? body.reminder?.time ?? defaultReminder.time
+      : defaultReminder.time,
+    lastNotifiedDay: body.reminder?.lastNotifiedDay ?? defaultReminder.lastNotifiedDay,
   };
   const nextFlags: FeatureFlags = {
-    ...defaultFlags,
-    ...(body.flags ?? {}),
+    aiVisual:
+      typeof body.flags?.aiVisual === "boolean"
+        ? body.flags.aiVisual
+        : defaultFlags.aiVisual,
+    googleFit:
+      typeof body.flags?.googleFit === "boolean"
+        ? body.flags.googleFit
+        : defaultFlags.googleFit,
+    darkMode:
+      typeof body.flags?.darkMode === "boolean"
+        ? body.flags.darkMode
+        : defaultFlags.darkMode,
   };
 
   await ensureUser(session.user);

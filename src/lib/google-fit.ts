@@ -12,7 +12,7 @@ const oauth2Client = new google.auth.OAuth2(
   `${process.env.APP_BASE_URL}/api/integrations/google/callback`
 );
 
-export const getAuthUrl = () => {
+export const getAuthUrl = (state?: string) => {
   const scopes = [
     "https://www.googleapis.com/auth/fitness.activity.read",
     "https://www.googleapis.com/auth/fitness.nutrition.read",
@@ -23,6 +23,7 @@ export const getAuthUrl = () => {
     access_type: "offline",
     scope: scopes,
     prompt: "consent", // Force refresh token generation
+    state,
   });
 };
 

@@ -1,9 +1,8 @@
 import { getTokens, saveTokens } from "@/lib/google-fit";
 import { auth0 } from "@/lib/auth0";
 import { NextRequest, NextResponse } from "next/server";
-import { getDb, ensureUser } from "@/lib/db";
-import { users } from "@/lib/schema";
-import { eq } from "drizzle-orm";
+import { ensureUser } from "@/lib/db";
+import { cookies } from "next/headers";
 
 export const GET = async (req: NextRequest) => {
   const session = await auth0.getSession();
@@ -14,6 +13,8 @@ export const GET = async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
   const error = searchParams.get("error");
+  const state = searchParams.get("state");
+  const storedState = cookies().get("calai_gfit_state")?.value;
 
   if (error) {
     return NextResponse.json({ error }, { status: 400 });
@@ -21,6 +22,10 @@ export const GET = async (req: NextRequest) => {
 
   if (!code) {
     return NextResponse.json({ error: "No code provided" }, { status: 400 });
+  }
+
+  if (!state || !storedState || state !== storedState) {
+    return NextResponse.json({ error: "Invalid state" }, { status: 400 });
   }
 
   try {
@@ -33,9 +38,21 @@ export const GET = async (req: NextRequest) => {
     const userId = session.user.sub;
     await saveTokens(userId, tokens);
 
-    return NextResponse.redirect(new URL("/settings?google_fit=connected", req.url));
+    const response = NextResponse.redirect(
+      new URL("/settings?google_fit=connected", req.url)
+    );
+    response.cookies.set("calai_gfit_state", "", {
+      maxAge: 0,
+      path: "/",
+    });
+    return response;
   } catch (err) {
     console.error("Error exchanging code for tokens", err);
-    return NextResponse.redirect(new URL("/settings?google_fit=error", req.url));
+    const response = NextResponse.redirect(new URL("/settings?google_fit=error", req.url));
+    response.cookies.set("calai_gfit_state", "", {
+      maxAge: 0,
+      path: "/",
+    });
+    return response;
   }
 };

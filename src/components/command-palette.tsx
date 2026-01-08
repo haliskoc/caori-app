@@ -57,6 +57,13 @@ export function CommandPalette() {
         action: () => router.push("/settings"),
       },
       {
+        id: "nav-report",
+        label: "PDF raporu aç",
+        hint: "/report",
+        keywords: "rapor pdf export",
+        action: () => router.push("/report"),
+      },
+      {
         id: "water-250",
         label: "250 ml su ekle",
         hint: "Hızlı",

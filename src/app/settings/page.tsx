@@ -136,9 +136,27 @@ export default function SettingsPage() {
             </button>
           )}
         </div>
-        {importedCount !== null && (
-          <p className="text-xs text-muted">{importedCount} kayıt taşındı.</p>
-        )}
+      {importedCount !== null && (
+        <p className="text-xs text-muted">{importedCount} kayıt taşındı.</p>
+      )}
+    </Card>
+
+      <Card className="space-y-3">
+        <div>
+          <p className="text-sm font-semibold">PDF Rapor</p>
+          <p className="text-xs text-muted">Grafikli özet + motivasyon notu</p>
+        </div>
+        <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs text-muted">
+          Raporu açıp tarayıcıdan PDF olarak kaydedebilirsin.
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <a
+            href="/report"
+            className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
+          >
+            PDF Raporu Aç
+          </a>
+        </div>
       </Card>
 
       <Card className="space-y-3">

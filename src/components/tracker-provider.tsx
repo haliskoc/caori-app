@@ -1,6 +1,14 @@
 "use client";
 
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import type {
   ActivityType,
@@ -29,7 +37,15 @@ type Goals = {
 
 type TrackerContextValue = {
   entries: Entry[];
-  addFood: (input: { name: string; calories: number; mealType: MealType }) => Promise<void>;
+  addFood: (input: {
+    name: string;
+    calories: number;
+    mealType: MealType;
+    amountG?: number;
+    proteinG?: number;
+    carbsG?: number;
+    fatG?: number;
+  }) => Promise<void>;
   addWater: (input: { amountMl: number }) => Promise<void>;
   addActivity: (input: {
     activityType: ActivityType;
@@ -41,7 +57,14 @@ type TrackerContextValue = {
     options?: { mode?: "merge" | "replace"; source?: string }
   ) => Promise<number>;
   removeEntry: (id: string) => Promise<void>;
-  dailySummary: { caloriesIn: number; caloriesOut: number; waterMl: number };
+  dailySummary: {
+    caloriesIn: number;
+    caloriesOut: number;
+    waterMl: number;
+    proteinG: number;
+    carbsG: number;
+    fatG: number;
+  };
   weeklySummary: ReturnType<typeof buildWeeklySummary>;
   goals: Goals;
   updateGoals: (next: Partial<Goals>) => Promise<void>;
@@ -94,12 +117,11 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   const [reminder, setReminder] = useState<ReminderSettings>(() => loadReminder());
   const [auditLog, setAuditLog] = useState<AuditEvent[]>(() => loadAuditLog());
   const dataMode: "local" | "remote" = user?.sub ? "remote" : "local";
+  const autoSyncRef = useRef(false);
 
   useEffect(() => {
-    if (dataMode === "local") {
-      saveEntries(entries);
-    }
-  }, [entries, dataMode]);
+    saveEntries(entries);
+  }, [entries]);
 
   useEffect(() => {
     if (dataMode === "local") {
@@ -144,6 +166,12 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
         const data = (await entriesRes.json()) as Entry[];
         const normalized = Array.isArray(data) ? data.map(normalizeEntry) : [];
         setEntries(normalized);
+        saveEntries(normalized);
+      } else {
+        const localEntries = loadEntries();
+        if (localEntries.length > 0) {
+          setEntries(localEntries);
+        }
       }
       if (goalsRes.ok) {
         const data = (await goalsRes.json()) as Goals;
@@ -195,8 +223,30 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       void loadRemoteData();
       return;
     }
+    autoSyncRef.current = false;
     hydrateLocal();
   }, [hydrateLocal, isLoading, loadRemoteData, user]);
+
+  useEffect(() => {
+    if (dataMode !== "remote") {
+      return;
+    }
+    if (!autoSyncRef.current) {
+      autoSyncRef.current = true;
+      void importLocalEntries();
+    }
+  }, [dataMode, importLocalEntries]);
+
+  useEffect(() => {
+    if (dataMode !== "remote") {
+      return;
+    }
+    function handleOnline() {
+      void importLocalEntries();
+    }
+    window.addEventListener("online", handleOnline);
+    return () => window.removeEventListener("online", handleOnline);
+  }, [dataMode, importLocalEntries]);
 
   const dailySummary = useMemo(() => {
     const todayKey = getDayKey(new Date());
@@ -217,6 +267,24 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       waterMl: todayEntries.reduce((sum, entry) => {
         if (entry.type === "water") {
           return sum + entry.amountMl;
+        }
+        return sum;
+      }, 0),
+      proteinG: todayEntries.reduce((sum, entry) => {
+        if (entry.type === "food") {
+          return sum + (entry.proteinG ?? 0);
+        }
+        return sum;
+      }, 0),
+      carbsG: todayEntries.reduce((sum, entry) => {
+        if (entry.type === "food") {
+          return sum + (entry.carbsG ?? 0);
+        }
+        return sum;
+      }, 0),
+      fatG: todayEntries.reduce((sum, entry) => {
+        if (entry.type === "food") {
+          return sum + (entry.fatG ?? 0);
         }
         return sum;
       }, 0),
@@ -248,22 +316,25 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     [dataMode]
   );
 
-  function recordAudit(
-    action: AuditEvent["action"],
-    detail: string,
-    meta?: Record<string, string | number | boolean>
-  ) {
-    const event = buildAuditEvent({ action, detail, meta });
-    setAuditLog((prev) => appendAuditEvent(event, prev));
-    if (dataMode === "remote") {
-      void fetch("/api/v1/audit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(event),
-      }).catch(() => undefined);
-    }
-  }
+  const recordAudit = useCallback(
+    (
+      action: AuditEvent["action"],
+      detail: string,
+      meta?: Record<string, string | number | boolean>
+    ) => {
+      const event = buildAuditEvent({ action, detail, meta });
+      setAuditLog((prev) => appendAuditEvent(event, prev));
+      if (dataMode === "remote") {
+        void fetch("/api/v1/audit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(event),
+        }).catch(() => undefined);
+      }
+    },
+    [dataMode]
+  );
 
   function normalizeEntry(entry: Entry): Entry {
     const timestampDate = new Date(entry.timestamp);
@@ -279,6 +350,10 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
         name: entry.name?.trim() || "Belirtilmedi",
         calories: Number(entry.calories) || 0,
         mealType: mealType.includes(entry.mealType) ? entry.mealType : "snack",
+        amountG: Number.isFinite(Number(entry.amountG)) ? Number(entry.amountG) : undefined,
+        proteinG: Number.isFinite(Number(entry.proteinG)) ? Number(entry.proteinG) : undefined,
+        carbsG: Number.isFinite(Number(entry.carbsG)) ? Number(entry.carbsG) : undefined,
+        fatG: Number.isFinite(Number(entry.fatG)) ? Number(entry.fatG) : undefined,
         timestamp,
       };
     }
@@ -351,13 +426,25 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     return normalized.length;
   }
 
-  async function addFood(input: { name: string; calories: number; mealType: MealType }) {
+  async function addFood(input: {
+    name: string;
+    calories: number;
+    mealType: MealType;
+    amountG?: number;
+    proteinG?: number;
+    carbsG?: number;
+    fatG?: number;
+  }) {
     const entry: FoodEntry = {
       id: createId(),
       type: "food",
       name: input.name.trim() || "Belirtilmedi",
       calories: Number(input.calories) || 0,
       mealType: input.mealType,
+      amountG: input.amountG,
+      proteinG: input.proteinG,
+      carbsG: input.carbsG,
+      fatG: input.fatG,
       timestamp: new Date().toISOString(),
     };
     if (dataMode === "remote") {
@@ -370,6 +457,10 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           name: entry.name,
           calories: entry.calories,
           mealType: entry.mealType,
+          amountG: entry.amountG,
+          proteinG: entry.proteinG,
+          carbsG: entry.carbsG,
+          fatG: entry.fatG,
           timestamp: entry.timestamp,
         }),
       });
@@ -382,6 +473,16 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           mealType: entry.mealType,
         });
         void loadRemoteData();
+      } else {
+        setEntries((prev) => {
+          const next = [entry, ...prev];
+          saveEntries(next);
+          return next;
+        });
+        recordAudit("add", "Yemek eklendi (yerel)", {
+          calories: entry.calories,
+          mealType: entry.mealType,
+        });
       }
       return;
     }
@@ -416,6 +517,13 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
         setEntries((prev) => [normalized, ...prev]);
         recordAudit("add", "Su eklendi", { amountMl: entry.amountMl });
         void loadRemoteData();
+      } else {
+        setEntries((prev) => {
+          const next = [entry, ...prev];
+          saveEntries(next);
+          return next;
+        });
+        recordAudit("add", "Su eklendi (yerel)", { amountMl: entry.amountMl });
       }
       return;
     }
@@ -458,6 +566,16 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           durationMin: entry.durationMin,
         });
         void loadRemoteData();
+      } else {
+        setEntries((prev) => {
+          const next = [entry, ...prev];
+          saveEntries(next);
+          return next;
+        });
+        recordAudit("add", "Aktivite eklendi (yerel)", {
+          activityType: entry.activityType,
+          durationMin: entry.durationMin,
+        });
       }
       return;
     }
@@ -542,7 +660,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  async function importLocalEntries() {
+  const importLocalEntries = useCallback(async () => {
     if (dataMode !== "remote") {
       return 0;
     }
@@ -550,21 +668,28 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     if (localEntries.length === 0) {
       return 0;
     }
-    const response = await fetch("/api/v1/entries/import", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ entries: localEntries }),
-    });
-    if (response.ok) {
+    const batchSize = 200;
+    let importedTotal = 0;
+    for (let index = 0; index < localEntries.length; index += batchSize) {
+      const batch = localEntries.slice(index, index + batchSize);
+      const response = await fetch("/api/v1/entries/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ entries: batch }),
+      });
+      if (!response.ok) {
+        break;
+      }
       const data = (await response.json()) as { imported: number } | null;
-      await loadRemoteData();
-      const count = data?.imported ?? localEntries.length;
-      recordAudit("import", "Yerel kayıtlar buluta taşındı", { count });
-      return count;
+      importedTotal += data?.imported ?? batch.length;
     }
-    return 0;
-  }
+    if (importedTotal > 0) {
+      await loadRemoteData();
+      recordAudit("import", "Yerel kayıtlar buluta taşındı", { count: importedTotal });
+    }
+    return importedTotal;
+  }, [dataMode, loadRemoteData, recordAudit]);
 
   const value: TrackerContextValue = {
     entries,

@@ -102,3 +102,17 @@ body {
     transform: translateY(-12px);
   }
 }
+
+@media print {
+  body {
+    background: #ffffff;
+  }
+
+  .print-hidden {
+    display: none !important;
+  }
+
+  .print-page {
+    max-width: none;
+  }
+}

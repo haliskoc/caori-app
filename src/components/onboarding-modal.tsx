@@ -232,6 +232,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
   const [profile, setProfile] = useState<ProfileInfo>(() => loadProfile());
   const [questionIndex, setQuestionIndex] = useState(() => getInitialIndex(profile));
   const [error, setError] = useState<string | null>(null);
+  const [saveNotice, setSaveNotice] = useState<string | null>(null);
   const isRemote = Boolean(user?.sub);
 
   useEffect(() => {
@@ -299,6 +300,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
   function updateProfile(key: keyof ProfileInfo, value: string) {
     setProfile((prev) => ({ ...prev, [key]: value }));
     setError(null);
+    setSaveNotice(null);
   }
 
   async function persistProfile(nextProfile: ProfileInfo) {
@@ -313,10 +315,16 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
         credentials: "include",
         body: JSON.stringify(nextProfile),
       });
-      return res.ok;
+      if (res.ok) {
+        setSaveNotice(null);
+        return true;
+      }
     } catch {
-      return false;
+      // fall through to local save
     }
+    saveProfile(nextProfile);
+    setSaveNotice("Buluta kaydedilemedi, cihazına kaydedildi.");
+    return true;
   }
 
   async function goNext() {
@@ -429,6 +437,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
         )}
 
         {error && <p className="text-xs text-red-600">{error}</p>}
+        {!error && saveNotice && <p className="text-xs text-muted">{saveNotice}</p>}
 
         <div className="flex items-center justify-between">
           <button

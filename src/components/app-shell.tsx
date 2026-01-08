@@ -65,7 +65,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-app text-ink">
       <ReminderScheduler />
       <div className="mx-auto flex w-full max-w-6xl flex-col px-4 pb-24 pt-6 sm:px-8">
-        <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between print-hidden">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-muted">Cal AI</p>
             <h1 className="text-2xl font-semibold sm:text-3xl">Günlük Takip</h1>
@@ -99,7 +99,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <div className="mb-6 rounded-2xl border border-amber-100 bg-white/90 p-4 text-xs text-muted shadow-soft">
+        <div className="mb-6 rounded-2xl border border-amber-100 bg-white/90 p-4 text-xs text-muted shadow-soft print-hidden">
           Bu platform yalnızca takip ve farkındalık amaçlıdır. Tıbbi, diyetetik veya sağlık
           tavsiyesi sunmaz.
         </div>
@@ -107,7 +107,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <main className="flex-1">{children}</main>
       </div>
 
-      <nav className="fixed bottom-4 left-1/2 z-20 w-[min(94vw,640px)] -translate-x-1/2 rounded-2xl border border-amber-100 bg-white/95 px-2 py-2 shadow-strong backdrop-blur">
+      <nav className="fixed bottom-4 left-1/2 z-20 w-[min(94vw,640px)] -translate-x-1/2 rounded-2xl border border-amber-100 bg-white/95 px-2 py-2 shadow-strong backdrop-blur print-hidden">
         <div className="grid grid-cols-5">
           {navItems.map((item) => {
             const active = pathname === item.href;

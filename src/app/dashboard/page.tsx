@@ -51,6 +51,20 @@ export default function DashboardPage() {
               <p className="text-2xl font-semibold text-ink">{netCalories}</p>
             </div>
           </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-amber-100 bg-white p-3">
+              <p className="text-xs text-muted">Protein</p>
+              <p className="text-xl font-semibold text-ink">{Math.round(dailySummary.proteinG)} g</p>
+            </div>
+            <div className="rounded-2xl border border-amber-100 bg-white p-3">
+              <p className="text-xs text-muted">Karbonhidrat</p>
+              <p className="text-xl font-semibold text-ink">{Math.round(dailySummary.carbsG)} g</p>
+            </div>
+            <div className="rounded-2xl border border-amber-100 bg-white p-3">
+              <p className="text-xs text-muted">Yağ</p>
+              <p className="text-xl font-semibold text-ink">{Math.round(dailySummary.fatG)} g</p>
+            </div>
+          </div>
 
           <div className="rounded-2xl border border-amber-100 bg-white p-4">
             <div className="flex items-center gap-2 text-xs text-muted">

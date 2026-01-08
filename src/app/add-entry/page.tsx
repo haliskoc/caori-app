@@ -35,6 +35,18 @@ export default function AddEntryPage() {
   const [foodName, setFoodName] = useState("");
   const [foodCalories, setFoodCalories] = useState("");
   const [mealType, setMealType] = useState<MealType>("lunch");
+  const [foodAmount, setFoodAmount] = useState("100");
+  const [foodPer100, setFoodPer100] = useState<{
+    kcal?: number;
+    protein?: number;
+    carbs?: number;
+    fat?: number;
+  } | null>(null);
+  const [foodMacros, setFoodMacros] = useState<{
+    proteinG?: number;
+    carbsG?: number;
+    fatG?: number;
+  } | null>(null);
 
   const [searchResults, setSearchResults] = useState<OFFProduct[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -49,6 +61,45 @@ export default function AddEntryPage() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const skipSearchRef = useRef(false);
+
+  useEffect(() => {
+    if (!foodPer100) {
+      setFoodMacros(null);
+      return;
+    }
+    const grams = Number(foodAmount);
+    if (!Number.isFinite(grams) || grams <= 0) {
+      setFoodMacros(null);
+      return;
+    }
+    const factor = grams / 100;
+    const proteinG =
+      typeof foodPer100.protein === "number"
+        ? Math.round(foodPer100.protein * factor)
+        : undefined;
+    const carbsG =
+      typeof foodPer100.carbs === "number"
+        ? Math.round(foodPer100.carbs * factor)
+        : undefined;
+    const fatG =
+      typeof foodPer100.fat === "number" ? Math.round(foodPer100.fat * factor) : undefined;
+    const hasMacros =
+      typeof proteinG === "number" || typeof carbsG === "number" || typeof fatG === "number";
+    setFoodMacros(hasMacros ? { proteinG, carbsG, fatG } : null);
+    const kcalPer100 =
+      typeof foodPer100.kcal === "number"
+        ? foodPer100.kcal
+        : typeof foodPer100.protein === "number" ||
+            typeof foodPer100.carbs === "number" ||
+            typeof foodPer100.fat === "number"
+          ? (foodPer100.protein ?? 0) * 4 +
+            (foodPer100.carbs ?? 0) * 4 +
+            (foodPer100.fat ?? 0) * 9
+          : null;
+    if (typeof kcalPer100 === "number") {
+      setFoodCalories(String(Math.round(kcalPer100 * factor)));
+    }
+  }, [foodAmount, foodPer100]);
 
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -159,6 +210,12 @@ export default function AddEntryPage() {
         setSearchResults([]);
         setFoodName(product.product_name);
         setSelectedFromSearch(true);
+        setFoodPer100({
+          kcal: product.nutriments?.["energy-kcal_100g"],
+          protein: product.nutriments?.proteins_100g,
+          carbs: product.nutriments?.carbohydrates_100g,
+          fat: product.nutriments?.fat_100g,
+        });
         const kcal = product.nutriments?.["energy-kcal_100g"];
         if (typeof kcal === "number") {
           setFoodCalories(String(Math.round(kcal)));
@@ -324,6 +381,7 @@ export default function AddEntryPage() {
             onChange={(event) => {
               setFoodName(event.target.value);
               setSelectedFromSearch(false);
+              setFoodPer100(null);
             }}
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
             placeholder="Ürün Ara veya Manuel Gir..."
@@ -340,6 +398,12 @@ export default function AddEntryPage() {
                     skipSearchRef.current = true;
                     setFoodName(product.product_name);
                     setSelectedFromSearch(true);
+                    setFoodPer100({
+                      kcal: product.nutriments?.["energy-kcal_100g"],
+                      protein: product.nutriments?.proteins_100g,
+                      carbs: product.nutriments?.carbohydrates_100g,
+                      fat: product.nutriments?.fat_100g,
+                    });
                     const kcal = product.nutriments["energy-kcal_100g"];
                     if (typeof kcal === "number") setFoodCalories(String(Math.round(kcal)));
                     setSearchResults([]);
@@ -388,13 +452,47 @@ export default function AddEntryPage() {
               ))}
             </select>
           </div>
+          <div className="grid gap-3 sm:grid-cols-[1fr_1.5fr]">
+            <input
+              value={foodAmount}
+              onChange={(event) => setFoodAmount(event.target.value)}
+              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+              placeholder="Miktar (g)"
+              type="number"
+              min="0"
+            />
+            <div className="flex flex-col justify-center rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs text-muted">
+              <span className="text-[11px] uppercase tracking-[0.2em]">Makrolar (g)</span>
+              <div className="mt-1 flex flex-wrap gap-2 text-xs font-semibold text-ink">
+                <span>P: {foodMacros?.proteinG ?? "-"}</span>
+                <span>K: {foodMacros?.carbsG ?? "-"}</span>
+                <span>Y: {foodMacros?.fatG ?? "-"}</span>
+              </div>
+            </div>
+          </div>
           <button
             onClick={() => {
               if (!foodCalories) return;
-              addFood({ name: foodName || "Belirtilmedi", calories: Number(foodCalories), mealType });
+              const amountValue = Number(foodAmount);
+              const amountG =
+                Number.isFinite(amountValue) && amountValue > 0
+                  ? Math.round(amountValue)
+                  : undefined;
+              addFood({
+                name: foodName || "Belirtilmedi",
+                calories: Number(foodCalories),
+                mealType,
+                amountG,
+                proteinG: foodMacros?.proteinG,
+                carbsG: foodMacros?.carbsG,
+                fatG: foodMacros?.fatG,
+              });
               setFoodName("");
               setFoodCalories("");
               setSelectedFromSearch(false);
+              setFoodPer100(null);
+              setFoodMacros(null);
+              setFoodAmount("100");
             }}
             className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
           >

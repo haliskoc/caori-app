@@ -7,6 +7,10 @@ export type FoodEntry = {
   name: string;
   calories: number;
   mealType: MealType;
+  amountG?: number;
+  proteinG?: number;
+  carbsG?: number;
+  fatG?: number;
   timestamp: string;
 };
 
@@ -33,6 +37,9 @@ export type DailySummary = {
   caloriesIn: number;
   caloriesOut: number;
   waterMl: number;
+  proteinG: number;
+  carbsG: number;
+  fatG: number;
 };
 
 export type WeeklySummary = DailySummary[];

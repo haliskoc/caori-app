@@ -1,6 +1,7 @@
 import { getAuthUrl } from "@/lib/google-fit";
 import { auth0 } from "@/lib/auth0";
 import { NextResponse } from "next/server";
+import { nanoid } from "nanoid";
 
 export const GET = async () => {
   const session = await auth0.getSession();
@@ -8,6 +9,15 @@ export const GET = async () => {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const url = getAuthUrl();
-  return NextResponse.redirect(url);
+  const state = nanoid();
+  const url = getAuthUrl(state);
+  const response = NextResponse.redirect(url);
+  response.cookies.set("calai_gfit_state", state, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 300,
+    path: "/",
+  });
+  return response;
 };

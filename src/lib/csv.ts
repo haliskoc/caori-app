@@ -92,6 +92,10 @@ export function entriesFromCsv(rows: string[][]): Entry[] {
           calories: Number(hasHeader ? get(row, "calories") : row[3]) || 0,
           mealType: ((hasHeader ? get(row, "mealtype") : row[4])?.trim() ||
             "snack") as MealType,
+          amountG: Number(hasHeader ? get(row, "amountg") : "") || undefined,
+          proteinG: Number(hasHeader ? get(row, "proteing") : "") || undefined,
+          carbsG: Number(hasHeader ? get(row, "carbsg") : "") || undefined,
+          fatG: Number(hasHeader ? get(row, "fatg") : "") || undefined,
           timestamp: safeTimestamp,
         };
       }
@@ -131,6 +135,10 @@ export function entriesToCsv(entries: Entry[]): string {
     "name",
     "calories",
     "mealType",
+    "amountG",
+    "proteinG",
+    "carbsG",
+    "fatG",
     "amountMl",
     "activityType",
     "durationMin",
@@ -146,6 +154,10 @@ export function entriesToCsv(entries: Entry[]): string {
       entry.type === "food" ? entry.name : "",
       entry.type === "food" ? entry.calories : "",
       entry.type === "food" ? entry.mealType : "",
+      entry.type === "food" ? entry.amountG ?? "" : "",
+      entry.type === "food" ? entry.proteinG ?? "" : "",
+      entry.type === "food" ? entry.carbsG ?? "" : "",
+      entry.type === "food" ? entry.fatG ?? "" : "",
       entry.type === "water" ? entry.amountMl : "",
       entry.type === "activity" ? entry.activityType : "",
       entry.type === "activity" ? entry.durationMin : "",
