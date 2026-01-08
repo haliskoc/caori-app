@@ -21,6 +21,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, isLoading } = useUser();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [isAppMode, setIsAppMode] = useState(false);
+  const [showSplash, setShowSplash] = useState(false);
 
   // Landing Page için AppShell UI'ını gösterme
   if (pathname === "/") {
@@ -61,11 +63,66 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     };
   }, [isLoading, pathname, user]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const media = window.matchMedia?.("(display-mode: standalone)");
+    const applyMode = (active: boolean) => {
+      if (active) {
+        document.documentElement.dataset.app = "true";
+      } else {
+        delete document.documentElement.dataset.app;
+      }
+      setIsAppMode(active);
+    };
+    const triggerSplash = () => {
+      if (sessionStorage.getItem("calai.appSplash") === "1") {
+        return;
+      }
+      sessionStorage.setItem("calai.appSplash", "1");
+      setShowSplash(true);
+      window.setTimeout(() => setShowSplash(false), 1100);
+    };
+    const detectStandalone = () =>
+      Boolean(
+        media?.matches ||
+          window.matchMedia?.("(display-mode: minimal-ui)")?.matches ||
+          (window.navigator as { standalone?: boolean }).standalone ||
+          document.referrer.startsWith("android-app://")
+      );
+    const initial = detectStandalone();
+    applyMode(initial);
+    if (initial) {
+      triggerSplash();
+    }
+    const handleChange = (event: MediaQueryListEvent) => {
+      const active = event.matches || document.referrer.startsWith("android-app://");
+      applyMode(active);
+      if (active) {
+        triggerSplash();
+      } else {
+        setShowSplash(false);
+      }
+    };
+    media?.addEventListener?.("change", handleChange);
+    return () => media?.removeEventListener?.("change", handleChange);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-app text-ink">
+    <div className="app-root min-h-screen bg-app text-ink">
+      {isAppMode && showSplash && (
+        <div className="app-splash">
+          <div className="app-splash-card">
+            <span className="app-splash-orb" />
+            <div className="app-splash-title">Cal AI</div>
+            <div className="app-splash-sub">Günlük Takip</div>
+          </div>
+        </div>
+      )}
       <ReminderScheduler />
-      <div className="mx-auto flex w-full max-w-6xl flex-col px-4 pb-24 pt-6 sm:px-8">
-        <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between print-hidden">
+      <div className="app-shell mx-auto flex w-full max-w-6xl flex-col px-4 pb-24 pt-6 sm:px-8">
+        <header className="app-header mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between print-hidden">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-muted">Cal AI</p>
             <h1 className="text-2xl font-semibold sm:text-3xl">Günlük Takip</h1>
@@ -104,10 +161,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           tavsiyesi sunmaz.
         </div>
 
-        <main className="flex-1">{children}</main>
+        <main className="app-main flex-1">
+          <div key={pathname} className="app-page">
+            {children}
+          </div>
+        </main>
       </div>
 
-      <nav className="fixed bottom-4 left-1/2 z-20 w-[min(94vw,640px)] -translate-x-1/2 rounded-2xl border border-amber-100 bg-white/95 px-2 py-2 shadow-strong backdrop-blur print-hidden">
+      <nav className="app-nav fixed bottom-4 left-1/2 z-20 w-[min(94vw,640px)] -translate-x-1/2 rounded-2xl border border-amber-100 bg-white/95 px-2 py-2 shadow-strong backdrop-blur print-hidden">
         <div className="grid grid-cols-5">
           {navItems.map((item) => {
             const active = pathname === item.href;
