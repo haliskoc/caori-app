@@ -71,7 +71,7 @@ export function entriesFromCsv(rows: string[][]): Entry[] {
   };
 
   return dataRows
-    .map((row) => {
+    .map<Entry | null>((row) => {
       const type = (hasHeader ? get(row, "type") : row[1])?.trim();
       if (type !== "food" && type !== "water" && type !== "activity") {
         return null;
@@ -117,7 +117,7 @@ export function entriesFromCsv(rows: string[][]): Entry[] {
         timestamp: safeTimestamp,
       };
     })
-    .filter((entry): entry is Entry => Boolean(entry));
+    .filter((entry): entry is Entry => entry !== null);
 }
 
 function csvEscape(value: string | number | null | undefined) {
