@@ -8,6 +8,7 @@ import { ActivityType, MealType } from "@/lib/types";
 import { OFFProduct } from "@/lib/off";
 import {
   FoodLibraryItem,
+  FoodLibrarySource,
   loadFoodLibrary,
   normalizeFoodLibraryItem,
   saveFoodLibrary,
@@ -296,6 +297,7 @@ export default function AddEntryPage() {
           : factor && typeof foodMacros?.fatG === "number"
             ? Math.round(foodMacros.fatG / factor)
             : undefined;
+      const source: FoodLibrarySource = selectedFromSearch ? "off" : "manual";
 
       return {
         name,
@@ -305,7 +307,7 @@ export default function AddEntryPage() {
         fatPer100,
         barcode: barcodeInput.trim() || undefined,
         imageUrl: foodImageUrl ?? undefined,
-        source: selectedFromSearch ? "off" : "manual",
+        source,
         favorite,
       };
     },
