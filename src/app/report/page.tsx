@@ -340,8 +340,26 @@ export default function ReportPage() {
     window.URL.revokeObjectURL(url);
   };
 
+  const formatDateFull = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("tr-TR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
   return (
     <div className="print-page space-y-8">
+      <div className="print-watermark">
+        {t("Cal AI • {date}", {
+          date: new Date().toLocaleDateString("tr-TR", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          }),
+        })}
+      </div>
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.2em] text-muted">{t("Rapor")}</p>
@@ -376,6 +394,56 @@ export default function ReportPage() {
           </button>
         </div>
       </header>
+
+      {/* Print Cover Page */}
+      <div className="hidden print:block print-cover-page">
+        <div className="flex min-h-[200mm] flex-col items-center justify-center text-center">
+          <div className="mb-8 text-6xl font-bold text-accent">Cal AI</div>
+          <h2 className="mb-4 text-4xl font-bold text-ink">{t("Performans Özeti")}</h2>
+          <p className="mb-2 text-xl text-muted">{name}</p>
+          <p className="mb-6 text-lg text-muted">{rangeLabel}</p>
+          <div className="mb-8 text-sm text-muted">
+            {formatDateFull(report.startDate)} - {formatDateFull(report.endDate)}
+          </div>
+          <div className="rounded-3xl border-2 border-accent bg-amber-50 px-12 py-8">
+            <p className="mb-2 text-sm uppercase tracking-widest text-muted">
+              {t("Hedef Uyum Skoru")}
+            </p>
+            <p className="text-7xl font-bold text-accent">%{report.adherenceScore}</p>
+          </div>
+          <div className="mt-12 grid grid-cols-3 gap-8 text-center">
+            <div>
+              <p className="text-3xl font-bold text-ink">
+                {formatNumber(report.totals.caloriesIn)}
+              </p>
+              <p className="text-sm text-muted">{t("Toplam Kalori (kcal)")}</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-ink">
+                {formatNumber(report.totals.waterMl)}
+              </p>
+              <p className="text-sm text-muted">{t("Toplam Su (ml)")}</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-ink">
+                {formatNumber(report.totals.activityMin)}
+              </p>
+              <p className="text-sm text-muted">{t("Aktivite (dk)")}</p>
+            </div>
+          </div>
+          <p className="mt-16 text-xs text-muted">
+            {t("Rapor Tarihi: {date}", {
+              date: new Date().toLocaleDateString("tr-TR", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            })}
+          </p>
+        </div>
+      </div>
 
       <div className="flex flex-wrap gap-2 sm:hidden print-hidden">
         {sections.map((section) => (
