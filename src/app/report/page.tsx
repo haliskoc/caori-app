@@ -264,7 +264,7 @@ export default function ReportPage() {
           <meta charset="utf-8" />
           <title>${t("Cal AI Rapor")}</title>
           <style>
-            body { font-family: Arial, sans-serif; color: #2b2b2b; }
+            body { font-family: Arial, sans-serif; color: #2b2b2b; margin: 0; padding: 20px; }
             h1 { font-size: 20px; margin-bottom: 4px; }
             h2 { margin-top: 20px; font-size: 16px; }
             h3 { font-size: 13px; margin: 12px 0 6px; }
@@ -273,14 +273,57 @@ export default function ReportPage() {
             th, td { border: 1px solid #e0e0e0; padding: 6px; font-size: 11px; text-align: left; }
             th { background: #f7f4f0; }
             .chart img { max-width: 720px; width: 100%; height: auto; border: 1px solid #eee; }
+            .cover-page { text-align: center; padding: 40px; page-break-after: always; }
+            .cover-title { font-size: 36px; font-weight: bold; color: #ff7a00; margin-bottom: 20px; }
+            .cover-score { font-size: 48px; font-weight: bold; color: #ff7a00; margin: 20px 0; }
+            .stats-grid { display: flex; justify-content: center; gap: 40px; margin: 30px 0; }
+            .stat-item { text-align: center; }
+            .stat-value { font-size: 24px; font-weight: bold; }
+            .stat-label { font-size: 12px; color: #6f5f52; }
           </style>
         </head>
         <body>
-          <h1>${t("Performans Özeti")}</h1>
-          <p>${escapeHtml(name)} • ${escapeHtml(rangeLabel)} • ${escapeHtml(
-      formatShortDate(report.startDate)
-    )} - ${escapeHtml(formatShortDate(report.endDate))}</p>
+          <div class="cover-page">
+            <div class="cover-title">Cal AI</div>
+            <h1>${t("Performans Özeti")}</h1>
+            <p>${escapeHtml(name)} • ${escapeHtml(rangeLabel)}</p>
+            <p>${escapeHtml(formatDateFull(report.startDate))} - ${escapeHtml(formatDateFull(report.endDate))}</p>
+            <div class="cover-score">%${report.adherenceScore}</div>
+            <p>${t("Hedef Uyum Skoru")}</p>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-value">${formatNumber(report.totals.caloriesIn)}</div>
+                <div class="stat-label">${t("Kalori (kcal)")}</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">${formatNumber(report.totals.waterMl)}</div>
+                <div class="stat-label">${t("Su (ml)")}</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">${formatNumber(report.totals.activityMin)}</div>
+                <div class="stat-label">${t("Aktivite (dk)")}</div>
+              </div>
+            </div>
+            <p style="margin-top: 40px; font-size: 10px; color: #999;">
+              ${t("Rapor Tarihi: {date}", {
+                date: new Date().toLocaleDateString("tr-TR", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+              })}
+            </p>
+          </div>
+
+          <h2>${t("Motivasyon Notu")}</h2>
           <p>${escapeHtml(report.comment)}</p>
+          <p>${t("Aktif gün: {active}/{range} • Toplam kayıt: {count}", {
+            active: report.activeDays,
+            range: report.rangeDays,
+            count: report.entryCount,
+          })}</p>
 
           <h2>${t("Özet")}</h2>
           <table>
@@ -340,6 +383,400 @@ export default function ReportPage() {
     window.URL.revokeObjectURL(url);
   };
 
+  const handlePdfExport = async () => {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    const escapeHtml = (value: string) =>
+      value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
+    const svgToPngDataUrl = async (svg: SVGSVGElement) => {
+      const serializer = new XMLSerializer();
+      const svgText = serializer.serializeToString(svg);
+      const svgBlob = new Blob([svgText], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svgBlob);
+      return await new Promise<string>((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const width = svg.viewBox?.baseVal?.width || svg.clientWidth || 600;
+          const height = svg.viewBox?.baseVal?.height || svg.clientHeight || 300;
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL("image/png"));
+          } else {
+            resolve("");
+          }
+          URL.revokeObjectURL(url);
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          resolve("");
+        };
+        img.src = url;
+      });
+    };
+
+    const chartBlocks = Array.from(document.querySelectorAll("[data-report-chart]"));
+    const charts = await Promise.all(
+      chartBlocks.map(async (block) => {
+        const title = block.getAttribute("data-chart-title") ?? t("Grafik");
+        const svg = block.querySelector("svg");
+        if (!svg) {
+          return { title, dataUrl: "" };
+        }
+        const dataUrl = await svgToPngDataUrl(svg);
+        return { title, dataUrl };
+      })
+    );
+
+    const chartHtml = charts
+      .map((chart) => {
+        if (!chart.dataUrl) return "";
+        return `
+          <div style="page-break-inside: avoid; margin-bottom: 20px;">
+            <h3 style="font-size: 14px; margin: 10px 0;">${escapeHtml(chart.title)}</h3>
+            <img src="${chart.dataUrl}" style="max-width: 100%; height: auto; border: 1px solid #eee;" />
+          </div>
+        `;
+      })
+      .join("");
+
+    const weeklyRows = report.weekly
+      .map(
+        (week) => `
+          <tr>
+            <td>${escapeHtml(formatShortDate(week.weekStart))} - ${escapeHtml(
+              formatShortDate(week.weekEnd)
+            )}</td>
+            <td>%${week.adherenceScore}</td>
+            <td>${formatDelta(week.deltas.caloriesIn, t("kcal"))}</td>
+            <td>${formatDelta(week.deltas.waterMl, t("ml"))}</td>
+            <td>${formatDelta(week.deltas.activityMin, t("dk"))}</td>
+            <td>${formatDelta(week.deltas.mealCount, t("öğün"))}</td>
+          </tr>
+        `
+      )
+      .join("");
+
+    const dailyRows = report.daily
+      .map(
+        (day) => `
+          <tr>
+            <td>${escapeHtml(formatShortDate(day.date))}</td>
+            <td>${formatNumber(day.caloriesIn)}</td>
+            <td>${formatNumber(day.caloriesOut)}</td>
+            <td>${formatNumber(day.waterMl)}</td>
+            <td>${formatNumber(day.activityMin)}</td>
+            <td>${formatNumber(day.mealCount)}</td>
+            <td>${formatNumber(day.proteinG)}</td>
+            <td>${formatNumber(day.carbsG)}</td>
+            <td>${formatNumber(day.fatG)}</td>
+          </tr>
+        `
+      )
+      .join("");
+
+    const summaryRows = `
+      <tr><td>${t("Hedef uyum skoru")}</td><td>%${report.adherenceScore}</td></tr>
+      <tr><td>${t("Toplam kalori")}</td><td>${formatNumber(report.totals.caloriesIn)} ${t("kcal")}</td></tr>
+      <tr><td>${t("Net kalori")}</td><td>${formatNumber(report.totals.netCalories)} ${t("kcal")}</td></tr>
+      <tr><td>${t("Toplam su")}</td><td>${formatNumber(report.totals.waterMl)} ${t("ml")}</td></tr>
+      <tr><td>${t("Aktivite süresi")}</td><td>${formatNumber(report.totals.activityMin)} ${t("dk")}</td></tr>
+      <tr><td>${t("Öğün toplamı")}</td><td>${formatNumber(report.totals.mealCount)} ${t("öğün")}</td></tr>
+    `;
+
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>${t("Cal AI Rapor")}</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 15mm;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      color: #1e1a15;
+      margin: 0;
+      padding: 0;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .cover-page {
+      text-align: center;
+      padding: 60mm 20mm;
+      min-height: 100vh;
+      page-break-after: always;
+      background: linear-gradient(135deg, #fff7f0 0%, #ffe8d0 100%);
+    }
+    .cover-title {
+      font-size: 42px;
+      font-weight: bold;
+      color: #ff7a00;
+      margin-bottom: 30px;
+    }
+    h1 { font-size: 28px; margin-bottom: 10px; color: #1e1a15; }
+    h2 { font-size: 18px; margin-top: 25px; margin-bottom: 10px; color: #1e1a15; border-bottom: 2px solid #ff7a00; padding-bottom: 5px; }
+    h3 { font-size: 14px; margin: 12px 0 8px; color: #1e1a15; }
+    p { font-size: 12px; margin: 6px 0; color: #6f5f52; }
+    .subtitle { font-size: 16px; margin-bottom: 20px; }
+    .cover-score-box {
+      display: inline-block;
+      border: 3px solid #ff7a00;
+      border-radius: 20px;
+      padding: 20px 50px;
+      margin: 30px 0;
+      background: rgba(255, 255, 255, 0.9);
+    }
+    .cover-score {
+      font-size: 56px;
+      font-weight: bold;
+      color: #ff7a00;
+    }
+    .cover-score-label {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #6f5f52;
+      margin-top: 10px;
+    }
+    .stats-grid {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      margin: 40px 0;
+    }
+    .stat-item {
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #1e1a15;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #6f5f52;
+      margin-top: 5px;
+    }
+    .report-date {
+      margin-top: 40px;
+      font-size: 10px;
+      color: #999;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      page-break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid #e0e0e0;
+      padding: 8px;
+      font-size: 10px;
+      text-align: left;
+    }
+    th {
+      background: #f7f4f0;
+      font-weight: bold;
+    }
+    .chart-container {
+      page-break-inside: avoid;
+      margin: 20px 0;
+    }
+    .chart-container img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #eee;
+    }
+    .motivation-box {
+      background: linear-gradient(135deg, #fff7f0 0%, #ffe8cc 100%);
+      border: 2px solid #ff7a00;
+      border-radius: 12px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .motivation-text {
+      font-size: 13px;
+      color: #1e1a15;
+      line-height: 1.6;
+    }
+    .stats-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin: 15px 0;
+    }
+    .stat-box {
+      border: 1px solid #e0e0d8;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      background: #fff;
+    }
+    .stat-box-value {
+      font-size: 20px;
+      font-weight: bold;
+      color: #1e1a15;
+    }
+    .stat-box-label {
+      font-size: 10px;
+      color: #6f5f52;
+    }
+  </style>
+</head>
+<body>
+  <div class="cover-page">
+    <div class="cover-title">Cal AI</div>
+    <h1>${t("Performans Özeti")}</h1>
+    <p class="subtitle">${escapeHtml(name)} • ${escapeHtml(rangeLabel)}</p>
+    <p>${escapeHtml(formatDateFull(report.startDate))} - ${escapeHtml(formatDateFull(report.endDate))}</p>
+    
+    <div class="cover-score-box">
+      <div class="cover-score">%${report.adherenceScore}</div>
+      <div class="cover-score-label">${t("Hedef Uyum Skoru")}</div>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-value">${formatNumber(report.totals.caloriesIn)}</div>
+        <div class="stat-label">${t("Toplam Kalori (kcal)")}</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">${formatNumber(report.totals.waterMl)}</div>
+        <div class="stat-label">${t("Toplam Su (ml)")}</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">${formatNumber(report.totals.activityMin)}</div>
+        <div class="stat-label">${t("Aktivite (dk)")}</div>
+      </div>
+    </div>
+    
+    <p class="report-date">
+      ${t("Rapor Tarihi: {date}", {
+        date: new Date().toLocaleDateString("tr-TR", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      })}
+    </p>
+  </div>
+
+  <div style="padding: 20mm;">
+    <h2>${t("Motivasyon Notu")}</h2>
+    <div class="motivation-box">
+      <p class="motivation-text">${escapeHtml(report.comment)}</p>
+      <p style="margin-top: 10px;">
+        ${t("Aktif gün: {active}/{range} • Toplam kayıt: {count}", {
+          active: report.activeDays,
+          range: report.rangeDays,
+          count: report.entryCount,
+        })}
+      </p>
+    </div>
+
+    <h2>${t("Özet")}</h2>
+    <div class="stats-summary">
+      <div class="stat-box">
+        <div class="stat-box-value">${formatNumber(report.totals.caloriesIn)}</div>
+        <div class="stat-box-label">${t("Toplam Kalori")}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value">${formatNumber(report.totals.netCalories)}</div>
+        <div class="stat-box-label">${t("Net Kalori")}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value">${formatNumber(report.totals.waterMl)}</div>
+        <div class="stat-box-label">${t("Toplam Su (ml)")}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value">${formatNumber(report.totals.activityMin)}</div>
+        <div class="stat-box-label">${t("Aktivite (dk)")}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value">${formatNumber(report.totals.mealCount)}</div>
+        <div class="stat-box-label">${t("Toplam Öğün")}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value">${formatNumber(report.averages.caloriesIn)}</div>
+        <div class="stat-box-label">${t("Günlük Ort. Kalori")}</div>
+      </div>
+    </div>
+
+    <h2>${t("Haftalık Sapma")}</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>${t("Hafta")}</th>
+          <th>${t("Uyum")}</th>
+          <th>${t("Kalori")}</th>
+          <th>${t("Su")}</th>
+          <th>${t("Aktivite")}</th>
+          <th>${t("Öğün")}</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${weeklyRows}
+      </tbody>
+    </table>
+
+    <h2>${t("Grafikler")}</h2>
+    <div class="chart-container">
+      ${chartHtml}
+    </div>
+
+    <h2>${t("Günlük Detaylar")}</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>${t("Gün")}</th>
+          <th>${t("Kalori")}</th>
+          <th>${t("Akt. Kalori")}</th>
+          <th>${t("Su")}</th>
+          <th>${t("Akt. Süre")}</th>
+          <th>${t("Öğün")}</th>
+          <th>${t("Protein")}</th>
+          <th>${t("Karbonhidrat")}</th>
+          <th>${t("Yağ")}</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${dailyRows}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
+    `;
+
+    const printWindow = window.open("", "_blank");
+    if (printWindow) {
+      printWindow.document.write(html);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+      }, 500);
+    }
+  };
+
   const formatDateFull = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString("tr-TR", {
@@ -381,7 +818,7 @@ export default function ReportPage() {
             <option value={90}>{t("{value} gün", { value: 90 })}</option>
           </select>
           <button
-            onClick={() => window.print()}
+            onClick={handlePdfExport}
             className="rounded-xl bg-accent px-4 py-2 text-xs font-semibold text-white"
           >
             {t("PDF Olarak Kaydet")}
