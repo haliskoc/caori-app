@@ -30,6 +30,7 @@ import {
 } from "@/lib/audit";
 import { ThemeSettings, applyTheme, loadTheme, saveTheme } from "@/lib/theme";
 import { ReminderSettings, loadReminder, saveReminder } from "@/lib/reminders";
+import { t } from "@/lib/i18n";
 
 type TrackerContextValue = {
   entries: Entry[];
@@ -348,7 +349,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       return {
         id,
         type: "food",
-        name: entry.name?.trim() || "Belirtilmedi",
+        name: entry.name?.trim() || t("Belirtilmedi"),
         calories: Number(entry.calories) || 0,
         mealType: mealType.includes(entry.mealType) ? entry.mealType : "snack",
         amountG: Number.isFinite(Number(entry.amountG)) ? Number(entry.amountG) : undefined,
@@ -401,7 +402,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       });
       if (response.ok) {
         await loadRemoteData();
-        recordAudit("import", "Toplu içe aktarma (bulut)", {
+        recordAudit("import", t("Toplu içe aktarma (bulut)"), {
           count: normalized.length,
           source: options?.source ?? "bulk",
         });
@@ -420,7 +421,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       ];
       return sortEntries(merged);
     });
-    recordAudit("import", "Toplu içe aktarma (cihaz)", {
+    recordAudit("import", t("Toplu içe aktarma (cihaz)"), {
       count: normalized.length,
       source: options?.source ?? "bulk",
     });
@@ -439,7 +440,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     const entry: FoodEntry = {
       id: createId(),
       type: "food",
-      name: input.name.trim() || "Belirtilmedi",
+      name: input.name.trim() || t("Belirtilmedi"),
       calories: Number(input.calories) || 0,
       mealType: input.mealType,
       amountG: input.amountG,
@@ -469,7 +470,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
         const created = (await response.json()) as Entry;
         const normalized = normalizeEntry(created);
         setEntries((prev) => [normalized, ...prev]);
-        recordAudit("add", "Yemek eklendi", {
+        recordAudit("add", t("Yemek eklendi"), {
           calories: entry.calories,
           mealType: entry.mealType,
         });
@@ -480,7 +481,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           saveEntries(next);
           return next;
         });
-        recordAudit("add", "Yemek eklendi (yerel)", {
+        recordAudit("add", t("Yemek eklendi (yerel)"), {
           calories: entry.calories,
           mealType: entry.mealType,
         });
@@ -488,7 +489,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     setEntries((prev) => [entry, ...prev]);
-    recordAudit("add", "Yemek eklendi", {
+    recordAudit("add", t("Yemek eklendi"), {
       calories: entry.calories,
       mealType: entry.mealType,
     });
@@ -516,7 +517,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
         const created = (await response.json()) as Entry;
         const normalized = normalizeEntry(created);
         setEntries((prev) => [normalized, ...prev]);
-        recordAudit("add", "Su eklendi", { amountMl: entry.amountMl });
+        recordAudit("add", t("Su eklendi"), { amountMl: entry.amountMl });
         void loadRemoteData();
       } else {
         setEntries((prev) => {
@@ -524,12 +525,12 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           saveEntries(next);
           return next;
         });
-        recordAudit("add", "Su eklendi (yerel)", { amountMl: entry.amountMl });
+        recordAudit("add", t("Su eklendi (yerel)"), { amountMl: entry.amountMl });
       }
       return;
     }
     setEntries((prev) => [entry, ...prev]);
-    recordAudit("add", "Su eklendi", { amountMl: entry.amountMl });
+    recordAudit("add", t("Su eklendi"), { amountMl: entry.amountMl });
   }
 
   async function addActivity(input: {
@@ -562,7 +563,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
         const created = (await response.json()) as Entry;
         const normalized = normalizeEntry(created);
         setEntries((prev) => [normalized, ...prev]);
-        recordAudit("add", "Aktivite eklendi", {
+        recordAudit("add", t("Aktivite eklendi"), {
           activityType: entry.activityType,
           durationMin: entry.durationMin,
         });
@@ -573,7 +574,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           saveEntries(next);
           return next;
         });
-        recordAudit("add", "Aktivite eklendi (yerel)", {
+        recordAudit("add", t("Aktivite eklendi (yerel)"), {
           activityType: entry.activityType,
           durationMin: entry.durationMin,
         });
@@ -581,7 +582,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     setEntries((prev) => [entry, ...prev]);
-    recordAudit("add", "Aktivite eklendi", {
+    recordAudit("add", t("Aktivite eklendi"), {
       activityType: entry.activityType,
       durationMin: entry.durationMin,
     });
@@ -597,7 +598,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     }
     setEntries((prev) => prev.filter((entry) => entry.id !== id));
     if (target) {
-      recordAudit("remove", "Kayıt silindi", { type: target.type });
+      recordAudit("remove", t("Kayıt silindi"), { type: target.type });
     }
   }
 
@@ -619,7 +620,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           mealGoalCount: data?.mealGoalCount ?? updated.mealGoalCount,
           weightGoalKg: data?.weightGoalKg ?? updated.weightGoalKg,
         });
-        recordAudit("update-goals", "Hedefler güncellendi", {
+        recordAudit("update-goals", t("Hedefler güncellendi"), {
           waterGoalMl: data?.waterGoalMl ?? updated.waterGoalMl,
           calorieGoal: data?.calorieGoal ?? updated.calorieGoal,
           activityGoalMin: data?.activityGoalMin ?? updated.activityGoalMin,
@@ -630,21 +631,25 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       }
     }
     setGoals(updated);
-    recordAudit("update-goals", "Hedefler güncellendi", updated);
+    recordAudit("update-goals", t("Hedefler güncellendi"), updated);
   }
 
   function updateFlags(next: Partial<FeatureFlags>) {
     const merged = { ...flags, ...next };
     setFlags(merged);
     void syncSettings({ theme, reminder, flags: merged });
-    recordAudit("update-flags", "Özellik bayrakları güncellendi", next as Record<string, boolean>);
+    recordAudit(
+      "update-flags",
+      t("Özellik bayrakları güncellendi"),
+      next as Record<string, boolean>
+    );
   }
 
   function updateTheme(next: Partial<ThemeSettings>) {
     const merged = { ...theme, ...next };
     setTheme(merged);
     void syncSettings({ theme: merged, reminder, flags });
-    recordAudit("theme", "Tema güncellendi", next as Record<string, string>);
+    recordAudit("theme", t("Tema güncellendi"), next as Record<string, string>);
   }
 
   function updateReminder(next: Partial<ReminderSettings>) {
@@ -653,7 +658,11 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     void syncSettings({ theme, reminder: merged, flags });
     const shouldLog = Object.keys(next).some((key) => key !== "lastNotifiedDay");
     if (shouldLog) {
-      recordAudit("reminder", "Hatırlatıcı güncellendi", next as Record<string, boolean | string>);
+      recordAudit(
+        "reminder",
+        t("Hatırlatıcı güncellendi"),
+        next as Record<string, boolean | string>
+      );
     }
   }
 
@@ -693,7 +702,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     }
     if (importedTotal > 0) {
       await loadRemoteData();
-      recordAudit("import", "Yerel kayıtlar buluta taşındı", { count: importedTotal });
+      recordAudit("import", t("Yerel kayıtlar buluta taşındı"), { count: importedTotal });
     }
     return importedTotal;
   }, [dataMode, loadRemoteData, recordAudit]);

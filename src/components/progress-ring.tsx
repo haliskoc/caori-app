@@ -1,4 +1,5 @@
 import React from "react";
+import { t } from "@/lib/i18n";
 
 type ProgressRingProps = {
   value: number;
@@ -44,8 +45,10 @@ export function ProgressRing({ value, goal, size = 120, stroke = 12 }: ProgressR
         </defs>
       </svg>
       <div className="absolute text-center">
-        <p className="text-xl font-semibold text-ink">{Math.round(progress * 100)}%</p>
-        <p className="text-xs text-muted">{Math.round(value)} ml</p>
+        <p className="text-xl font-semibold text-ink">
+          {t("{value}%", { value: Math.round(progress * 100) })}
+        </p>
+        <p className="text-xs text-muted">{t("{value} ml", { value: Math.round(value) })}</p>
       </div>
     </div>
   );

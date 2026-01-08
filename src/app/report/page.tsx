@@ -9,12 +9,7 @@ import { buildReportData, type ReportData } from "@/lib/report";
 import { formatShortDate } from "@/lib/utils";
 import { ActivityType } from "@/lib/types";
 import { defaultProfile, loadProfile, type ProfileInfo } from "@/lib/profile";
-
-const activityLabels: Record<ActivityType, string> = {
-  walking: "Yürümek",
-  running: "Koşu",
-  gym: "Salon",
-};
+import { getIntlLocale, t } from "@/lib/i18n";
 
 export default function ReportPage() {
   const { user } = useUser();
@@ -25,6 +20,11 @@ export default function ReportPage() {
   const [activeSection, setActiveSection] = useState<
     "overview" | "weekly" | "trends" | "insights" | "details"
   >("overview");
+  const activityLabels: Record<ActivityType, string> = {
+    walking: t("Yürümek"),
+    running: t("Koşu"),
+    gym: t("Salon"),
+  };
 
   const localReport = useMemo(
     () => buildReportData(entries, rangeDays, goals),
@@ -74,8 +74,8 @@ export default function ReportPage() {
   }, [dataMode]);
 
   const report = remoteReport ?? localReport;
-  const name = user?.name ?? user?.email ?? "Kullanıcı";
-  const rangeLabel = `Son ${report.rangeDays} gün`;
+  const name = user?.name ?? user?.email ?? t("Kullanıcı");
+  const rangeLabel = t("Son {value} gün", { value: report.rangeDays });
   const calorieGoal = report.goals?.calorieGoal;
   const waterGoalMl = report.goals?.waterGoalMl;
   const activityGoalMin = report.goals?.activityGoalMin;
@@ -127,14 +127,14 @@ export default function ReportPage() {
     safeWeightGoalKg !== null && safeCurrentWeight !== null
       ? Math.round((safeCurrentWeight - safeWeightGoalKg) * 10) / 10
       : null;
-  const numberFormat = useMemo(() => new Intl.NumberFormat("tr-TR"), []);
+  const numberFormat = useMemo(() => new Intl.NumberFormat(getIntlLocale()), []);
   const formatNumber = (value: number) => numberFormat.format(Math.round(value));
   const sections = [
-    { key: "overview", label: "Özet" },
-    { key: "weekly", label: "Sapma" },
-    { key: "trends", label: "Trendler" },
-    { key: "insights", label: "Öne çıkanlar" },
-    { key: "details", label: "Detaylar" },
+    { key: "overview", label: t("Özet") },
+    { key: "weekly", label: t("Sapma") },
+    { key: "trends", label: t("Trendler") },
+    { key: "insights", label: t("Öne çıkanlar") },
+    { key: "details", label: t("Detaylar") },
   ] as const;
   const sectionClass = (key: (typeof sections)[number]["key"]) =>
     `${activeSection === key ? "block" : "hidden"} sm:block print:block space-y-6`;
@@ -192,7 +192,7 @@ export default function ReportPage() {
     const chartBlocks = Array.from(document.querySelectorAll("[data-report-chart]"));
     const charts = await Promise.all(
       chartBlocks.map(async (block) => {
-        const title = block.getAttribute("data-chart-title") ?? "Grafik";
+        const title = block.getAttribute("data-chart-title") ?? t("Grafik");
         const svg = block.querySelector("svg");
         if (!svg) {
           return { title, dataUrl: "" };
@@ -222,10 +222,10 @@ export default function ReportPage() {
               formatShortDate(week.weekEnd)
             )}</td>
             <td>%${week.adherenceScore}</td>
-            <td>${formatDelta(week.deltas.caloriesIn, "kcal")}</td>
-            <td>${formatDelta(week.deltas.waterMl, "ml")}</td>
-            <td>${formatDelta(week.deltas.activityMin, "dk")}</td>
-            <td>${formatDelta(week.deltas.mealCount, "öğün")}</td>
+            <td>${formatDelta(week.deltas.caloriesIn, t("kcal"))}</td>
+            <td>${formatDelta(week.deltas.waterMl, t("ml"))}</td>
+            <td>${formatDelta(week.deltas.activityMin, t("dk"))}</td>
+            <td>${formatDelta(week.deltas.mealCount, t("öğün"))}</td>
           </tr>
         `
       )
@@ -250,19 +250,19 @@ export default function ReportPage() {
       .join("");
 
     const summaryRows = `
-      <tr><td>Hedef uyum skoru</td><td>%${report.adherenceScore}</td></tr>
-      <tr><td>Toplam kalori</td><td>${formatNumber(report.totals.caloriesIn)} kcal</td></tr>
-      <tr><td>Net kalori</td><td>${formatNumber(report.totals.netCalories)} kcal</td></tr>
-      <tr><td>Toplam su</td><td>${formatNumber(report.totals.waterMl)} ml</td></tr>
-      <tr><td>Aktivite süresi</td><td>${formatNumber(report.totals.activityMin)} dk</td></tr>
-      <tr><td>Öğün toplamı</td><td>${formatNumber(report.totals.mealCount)} öğün</td></tr>
+      <tr><td>${t("Hedef uyum skoru")}</td><td>%${report.adherenceScore}</td></tr>
+      <tr><td>${t("Toplam kalori")}</td><td>${formatNumber(report.totals.caloriesIn)} ${t("kcal")}</td></tr>
+      <tr><td>${t("Net kalori")}</td><td>${formatNumber(report.totals.netCalories)} ${t("kcal")}</td></tr>
+      <tr><td>${t("Toplam su")}</td><td>${formatNumber(report.totals.waterMl)} ${t("ml")}</td></tr>
+      <tr><td>${t("Aktivite süresi")}</td><td>${formatNumber(report.totals.activityMin)} ${t("dk")}</td></tr>
+      <tr><td>${t("Öğün toplamı")}</td><td>${formatNumber(report.totals.mealCount)} ${t("öğün")}</td></tr>
     `;
 
     const html = `<!DOCTYPE html>
       <html>
         <head>
           <meta charset="utf-8" />
-          <title>Cal AI Rapor</title>
+          <title>${t("Cal AI Rapor")}</title>
           <style>
             body { font-family: Arial, sans-serif; color: #2b2b2b; }
             h1 { font-size: 20px; margin-bottom: 4px; }
@@ -276,29 +276,29 @@ export default function ReportPage() {
           </style>
         </head>
         <body>
-          <h1>Performans Özeti</h1>
+          <h1>${t("Performans Özeti")}</h1>
           <p>${escapeHtml(name)} • ${escapeHtml(rangeLabel)} • ${escapeHtml(
       formatShortDate(report.startDate)
     )} - ${escapeHtml(formatShortDate(report.endDate))}</p>
           <p>${escapeHtml(report.comment)}</p>
 
-          <h2>Özet</h2>
+          <h2>${t("Özet")}</h2>
           <table>
             <tbody>
               ${summaryRows}
             </tbody>
           </table>
 
-          <h2>Haftalık Sapma</h2>
+          <h2>${t("Haftalık Sapma")}</h2>
           <table>
             <thead>
               <tr>
-                <th>Hafta</th>
-                <th>Uyum</th>
-                <th>Kalori</th>
-                <th>Su</th>
-                <th>Aktivite</th>
-                <th>Öğün</th>
+                <th>${t("Hafta")}</th>
+                <th>${t("Uyum")}</th>
+                <th>${t("Kalori")}</th>
+                <th>${t("Su")}</th>
+                <th>${t("Aktivite")}</th>
+                <th>${t("Öğün")}</th>
               </tr>
             </thead>
             <tbody>
@@ -306,22 +306,22 @@ export default function ReportPage() {
             </tbody>
           </table>
 
-          <h2>Grafikler</h2>
+          <h2>${t("Grafikler")}</h2>
           ${chartHtml}
 
-          <h2>Günlük Detaylar</h2>
+          <h2>${t("Günlük Detaylar")}</h2>
           <table>
             <thead>
               <tr>
-                <th>Gün</th>
-                <th>Kalori</th>
-                <th>Akt. Kalori</th>
-                <th>Su</th>
-                <th>Akt. Süre</th>
-                <th>Öğün</th>
-                <th>Protein</th>
-                <th>Karbonhidrat</th>
-                <th>Yağ</th>
+                <th>${t("Gün")}</th>
+                <th>${t("Kalori")}</th>
+                <th>${t("Akt. Kalori")}</th>
+                <th>${t("Su")}</th>
+                <th>${t("Akt. Süre")}</th>
+                <th>${t("Öğün")}</th>
+                <th>${t("Protein")}</th>
+                <th>${t("Karbonhidrat")}</th>
+                <th>${t("Yağ")}</th>
               </tr>
             </thead>
             <tbody>
@@ -344,8 +344,8 @@ export default function ReportPage() {
     <div className="print-page space-y-8">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-muted">Rapor</p>
-          <h1 className="text-2xl font-semibold text-ink">Performans Özeti</h1>
+          <p className="text-xs uppercase tracking-[0.2em] text-muted">{t("Rapor")}</p>
+          <h1 className="text-2xl font-semibold text-ink">{t("Performans Özeti")}</h1>
           <p className="text-xs text-muted">
             {name} • {rangeLabel} • {formatShortDate(report.startDate)} -{" "}
             {formatShortDate(report.endDate)}
@@ -357,22 +357,22 @@ export default function ReportPage() {
             onChange={(event) => setRangeDays(Number(event.target.value))}
             className="rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
           >
-            <option value={7}>7 gün</option>
-            <option value={30}>30 gün</option>
-            <option value={60}>60 gün</option>
-            <option value={90}>90 gün</option>
+            <option value={7}>{t("{value} gün", { value: 7 })}</option>
+            <option value={30}>{t("{value} gün", { value: 30 })}</option>
+            <option value={60}>{t("{value} gün", { value: 60 })}</option>
+            <option value={90}>{t("{value} gün", { value: 90 })}</option>
           </select>
           <button
             onClick={() => window.print()}
             className="rounded-xl bg-accent px-4 py-2 text-xs font-semibold text-white"
           >
-            PDF Olarak Kaydet
+            {t("PDF Olarak Kaydet")}
           </button>
           <button
             onClick={handleExcelExport}
             className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700"
           >
-            Excel Olarak İndir
+            {t("Excel Olarak İndir")}
           </button>
         </div>
       </header>
@@ -397,16 +397,19 @@ export default function ReportPage() {
         <Card className="space-y-4">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="space-y-2">
-              <p className="text-sm font-semibold">Motivasyon Notu</p>
+              <p className="text-sm font-semibold">{t("Motivasyon Notu")}</p>
               <p className="text-sm text-muted">{report.comment}</p>
               <p className="text-xs text-muted">
-                Aktif gün: {report.activeDays}/{report.rangeDays} • Toplam kayıt:{" "}
-                {report.entryCount}
+                {t("Aktif gün: {active}/{range} • Toplam kayıt: {count}", {
+                  active: report.activeDays,
+                  range: report.rangeDays,
+                  count: report.entryCount,
+                })}
               </p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-amber-50/70 px-4 py-3 text-center">
               <p className="text-[11px] uppercase tracking-[0.2em] text-muted">
-                Hedef Uyum Skoru
+                {t("Hedef Uyum Skoru")}
               </p>
               <p className="mt-1 text-3xl font-semibold text-ink">%{report.adherenceScore}</p>
               <p className="text-[11px] text-muted">{rangeLabel}</p>
@@ -414,62 +417,68 @@ export default function ReportPage() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Toplam kalori</p>
+              <p className="text-muted">{t("Toplam kalori")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
-                {formatNumber(report.totals.caloriesIn)} kcal
+                {t("{value} kcal", { value: formatNumber(report.totals.caloriesIn) })}
               </p>
               <p className="text-[11px] text-muted">
-                Net {formatNumber(report.totals.netCalories)} kcal
+                {t("Net {value} kcal", { value: formatNumber(report.totals.netCalories) })}
               </p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Aktivite kalorisi</p>
+              <p className="text-muted">{t("Aktivite kalorisi")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
-                {formatNumber(report.totals.caloriesOut)} kcal
+                {t("{value} kcal", { value: formatNumber(report.totals.caloriesOut) })}
               </p>
               <p className="text-[11px] text-muted">
-                Günlük ort. {formatNumber(report.averages.caloriesOut)}
+                {t("Günlük ort. {value}", { value: formatNumber(report.averages.caloriesOut) })}
               </p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Su toplamı</p>
+              <p className="text-muted">{t("Su toplamı")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
-                {formatNumber(report.totals.waterMl)} ml
+                {t("{value} ml", { value: formatNumber(report.totals.waterMl) })}
               </p>
               <p className="text-[11px] text-muted">
-                Günlük ort. {formatNumber(report.averages.waterMl)} ml
+                {t("Günlük ort. {value} ml", { value: formatNumber(report.averages.waterMl) })}
               </p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Aktivite süresi</p>
+              <p className="text-muted">{t("Aktivite süresi")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
-                {formatNumber(report.totals.activityMin)} dk
+                {t("{value} dk", { value: formatNumber(report.totals.activityMin) })}
               </p>
               <p className="text-[11px] text-muted">
-                Günlük ort. {formatNumber(report.averages.activityMin)} dk
+                {t("Günlük ort. {value} dk", { value: formatNumber(report.averages.activityMin) })}
               </p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Öğün ritmi</p>
+              <p className="text-muted">{t("Öğün ritmi")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
-                {formatNumber(report.averages.mealCount)} öğün/gün
+                {t("{value} öğün/gün", { value: formatNumber(report.averages.mealCount) })}
               </p>
               <p className="text-[11px] text-muted">
-                Toplam {formatNumber(report.totals.mealCount)} öğün
+                {t("Toplam {value} öğün", { value: formatNumber(report.totals.mealCount) })}
               </p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Makro toplamı</p>
+              <p className="text-muted">{t("Makro toplamı")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
-                {formatNumber(
-                  report.totals.proteinG + report.totals.carbsG + report.totals.fatG
-                )}{" "}
-                g
+                {t("{value} g", {
+                  value: formatNumber(
+                    report.totals.proteinG + report.totals.carbsG + report.totals.fatG
+                  ),
+                })}
               </p>
               <p className="text-[11px] text-muted">
-                P {formatNumber(report.averages.proteinG)} • K{" "}
-                {formatNumber(report.averages.carbsG)} • Y{" "}
-                {formatNumber(report.averages.fatG)}
+                {t(
+                  "P {protein} • K {carb} • Y {fat}",
+                  {
+                    protein: formatNumber(report.averages.proteinG),
+                    carb: formatNumber(report.averages.carbsG),
+                    fat: formatNumber(report.averages.fatG),
+                  }
+                )}
               </p>
             </div>
           </div>
@@ -477,21 +486,21 @@ export default function ReportPage() {
 
         <Card className="space-y-4">
           <div>
-            <p className="text-sm font-semibold">Hedeflere Yakınlık</p>
-            <p className="text-xs text-muted">Ortalama değerler ile hedef karşılaştırması</p>
+            <p className="text-sm font-semibold">{t("Hedeflere Yakınlık")}</p>
+            <p className="text-xs text-muted">{t("Ortalama değerler ile hedef karşılaştırması")}</p>
           </div>
           {hasGoals ? (
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted">Kalori hedefi</span>
+                  <span className="text-muted">{t("Kalori hedefi")}</span>
                   {safeCalorieGoal !== null ? (
                     <span className="font-semibold text-ink">
                       {formatNumber(report.averages.caloriesIn)} /{" "}
-                      {formatNumber(safeCalorieGoal)} kcal
+                      {t("{value} kcal", { value: formatNumber(safeCalorieGoal) })}
                     </span>
                   ) : (
-                    <span className="text-muted">Hedef yok</span>
+                    <span className="text-muted">{t("Hedef yok")}</span>
                   )}
                 </div>
                 <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
@@ -501,19 +510,22 @@ export default function ReportPage() {
                   />
                 </div>
                 <p className="text-[11px] text-muted">
-                  {formatDelta(calorieDelta, "kcal")} sapma • %{caloriePercent ?? 0}
+                  {t("{value} sapma • %{percent}", {
+                    value: formatDelta(calorieDelta, t("kcal")),
+                    percent: caloriePercent ?? 0,
+                  })}
                 </p>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted">Su hedefi</span>
+                  <span className="text-muted">{t("Su hedefi")}</span>
                   {safeWaterGoalMl !== null ? (
                     <span className="font-semibold text-ink">
                       {formatNumber(report.averages.waterMl)} /{" "}
-                      {formatNumber(safeWaterGoalMl)} ml
+                      {t("{value} ml", { value: formatNumber(safeWaterGoalMl) })}
                     </span>
                   ) : (
-                    <span className="text-muted">Hedef yok</span>
+                    <span className="text-muted">{t("Hedef yok")}</span>
                   )}
                 </div>
                 <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
@@ -523,19 +535,22 @@ export default function ReportPage() {
                   />
                 </div>
                 <p className="text-[11px] text-muted">
-                  {formatDelta(waterDelta, "ml")} sapma • %{waterPercent ?? 0}
+                  {t("{value} sapma • %{percent}", {
+                    value: formatDelta(waterDelta, t("ml")),
+                    percent: waterPercent ?? 0,
+                  })}
                 </p>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted">Aktivite hedefi</span>
+                  <span className="text-muted">{t("Aktivite hedefi")}</span>
                   {safeActivityGoalMin !== null ? (
                     <span className="font-semibold text-ink">
                       {formatNumber(report.averages.activityMin)} /{" "}
-                      {formatNumber(safeActivityGoalMin)} dk
+                      {t("{value} dk", { value: formatNumber(safeActivityGoalMin) })}
                     </span>
                   ) : (
-                    <span className="text-muted">Hedef yok</span>
+                    <span className="text-muted">{t("Hedef yok")}</span>
                   )}
                 </div>
                 <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
@@ -545,19 +560,22 @@ export default function ReportPage() {
                   />
                 </div>
                 <p className="text-[11px] text-muted">
-                  {formatDelta(activityDelta, "dk")} sapma • %{activityPercent ?? 0}
+                  {t("{value} sapma • %{percent}", {
+                    value: formatDelta(activityDelta, t("dk")),
+                    percent: activityPercent ?? 0,
+                  })}
                 </p>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted">Öğün hedefi</span>
+                  <span className="text-muted">{t("Öğün hedefi")}</span>
                   {safeMealGoalCount !== null ? (
                     <span className="font-semibold text-ink">
                       {formatNumber(report.averages.mealCount)} /{" "}
-                      {formatNumber(safeMealGoalCount)} öğün
+                      {t("{value} öğün", { value: formatNumber(safeMealGoalCount) })}
                     </span>
                   ) : (
-                    <span className="text-muted">Hedef yok</span>
+                    <span className="text-muted">{t("Hedef yok")}</span>
                   )}
                 </div>
                 <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
@@ -567,24 +585,36 @@ export default function ReportPage() {
                   />
                 </div>
                 <p className="text-[11px] text-muted">
-                  {formatDelta(mealDelta, "öğün")} sapma • %{mealPercent ?? 0}
+                  {t("{value} sapma • %{percent}", {
+                    value: formatDelta(mealDelta, t("öğün")),
+                    percent: mealPercent ?? 0,
+                  })}
                 </p>
               </div>
             </div>
           ) : (
-            <p className="text-xs text-muted">Hedef bilgisi henüz eklenmemiş.</p>
+            <p className="text-xs text-muted">{t("Hedef bilgisi henüz eklenmemiş.")}</p>
           )}
           {safeWeightGoalKg !== null && (
             <div className="rounded-2xl border border-amber-100 bg-amber-50/70 px-4 py-3 text-xs text-muted">
-              <span>Hedef kilo: {formatNumber(safeWeightGoalKg)} kg</span>
+              <span>{t("Hedef kilo: {value} kg", { value: formatNumber(safeWeightGoalKg) })}</span>
               <span className="mx-2">•</span>
               <span>
-                Mevcut:{" "}
-                {safeCurrentWeight !== null ? `${formatNumber(safeCurrentWeight)} kg` : "-"}
+                {t("Mevcut: {value}", {
+                  value:
+                    safeCurrentWeight !== null
+                      ? t("{value} kg", { value: formatNumber(safeCurrentWeight) })
+                      : "-",
+                })}
               </span>
               <span className="mx-2">•</span>
               <span>
-                Fark: {weightDelta !== null ? `${weightDelta > 0 ? "+" : ""}${weightDelta} kg` : "-"}
+                {t("Fark: {value}", {
+                  value:
+                    weightDelta !== null
+                      ? `${weightDelta > 0 ? "+" : ""}${weightDelta} ${t("kg")}`
+                      : "-",
+                })}
               </span>
             </div>
           )}
@@ -594,11 +624,11 @@ export default function ReportPage() {
       <section className={sectionClass("weekly")}>
         <Card className="space-y-3">
           <div>
-            <p className="text-sm font-semibold">Haftalık Sapma Analizi</p>
-            <p className="text-xs text-muted">Hedeflerden sapma ve uyum skoru</p>
+            <p className="text-sm font-semibold">{t("Haftalık Sapma Analizi")}</p>
+            <p className="text-xs text-muted">{t("Hedeflerden sapma ve uyum skoru")}</p>
           </div>
           {report.weekly.length === 0 ? (
-            <p className="text-xs text-muted">Henüz haftalık veri yok.</p>
+            <p className="text-xs text-muted">{t("Henüz haftalık veri yok.")}</p>
           ) : (
             <div className="space-y-2">
               {report.weekly.map((week) => (
@@ -612,14 +642,22 @@ export default function ReportPage() {
                         {formatShortDate(week.weekStart)} - {formatShortDate(week.weekEnd)}
                       </p>
                       <p className="text-[11px] text-muted">
-                        {week.days} gün • Uyum %{week.adherenceScore}
+                        {t("{value} gün • Uyum %{score}", {
+                          value: week.days,
+                          score: week.adherenceScore,
+                        })}
                       </p>
                     </div>
                     <div className="text-[11px] text-muted">
-                      Kalori {formatDelta(week.deltas.caloriesIn, "kcal")} • Su{" "}
-                      {formatDelta(week.deltas.waterMl, "ml")} • Aktivite{" "}
-                      {formatDelta(week.deltas.activityMin, "dk")} • Öğün{" "}
-                      {formatDelta(week.deltas.mealCount, "öğün")}
+                      {t(
+                        "Kalori {calorie} • Su {water} • Aktivite {activity} • Öğün {meal}",
+                        {
+                          calorie: formatDelta(week.deltas.caloriesIn, t("kcal")),
+                          water: formatDelta(week.deltas.waterMl, t("ml")),
+                          activity: formatDelta(week.deltas.activityMin, t("dk")),
+                          meal: formatDelta(week.deltas.mealCount, t("öğün")),
+                        }
+                      )}
                     </div>
                   </div>
                   <div className="mt-2 h-2 rounded-full bg-amber-100">
@@ -636,11 +674,11 @@ export default function ReportPage() {
 
         <Card className="space-y-3">
           <div>
-            <p className="text-sm font-semibold">En Etkili Günler</p>
-            <p className="text-xs text-muted">Hedef uyumunun en yüksek olduğu günler</p>
+            <p className="text-sm font-semibold">{t("En Etkili Günler")}</p>
+            <p className="text-xs text-muted">{t("Hedef uyumunun en yüksek olduğu günler")}</p>
           </div>
           {report.effectiveDays.length === 0 ? (
-            <p className="text-xs text-muted">Henüz öne çıkan gün yok.</p>
+            <p className="text-xs text-muted">{t("Henüz öne çıkan gün yok.")}</p>
           ) : (
             <div className="space-y-2">
               {report.effectiveDays.map((day) => (
@@ -651,12 +689,18 @@ export default function ReportPage() {
                   <div>
                     <p className="font-semibold text-ink">{formatShortDate(day.date)}</p>
                     <p className="text-[11px] text-muted">
-                      Uyum %{day.score} • {formatNumber(day.caloriesIn)} kcal
+                      {t("Uyum %{score} • {calorie} kcal", {
+                        score: day.score,
+                        calorie: formatNumber(day.caloriesIn),
+                      })}
                     </p>
                   </div>
                   <div className="text-[11px] text-muted">
-                    Su {formatNumber(day.waterMl)} ml • Aktivite {formatNumber(day.activityMin)} dk
-                    • Öğün {formatNumber(day.mealCount)}
+                    {t("Su {water} ml • Aktivite {activity} dk • Öğün {meal}", {
+                      water: formatNumber(day.waterMl),
+                      activity: formatNumber(day.activityMin),
+                      meal: formatNumber(day.mealCount),
+                    })}
                   </div>
                 </div>
               ))}
@@ -667,8 +711,8 @@ export default function ReportPage() {
 
       <section className={sectionClass("trends")}>
         <div className="print-hidden">
-          <p className="text-sm font-semibold">Trendler</p>
-          <p className="text-xs text-muted">Kalori, su ve makro değişimleri</p>
+          <p className="text-sm font-semibold">{t("Trendler")}</p>
+          <p className="text-xs text-muted">{t("Kalori, su ve makro değişimleri")}</p>
         </div>
         <ReportCharts summary={report.daily} hasEntries={report.entryCount > 0} />
       </section>
@@ -677,18 +721,21 @@ export default function ReportPage() {
         <div className="grid gap-4 lg:grid-cols-2">
           <Card className="space-y-3">
             <div>
-              <p className="text-sm font-semibold">Öne Çıkan Öğünler</p>
-              <p className="text-xs text-muted">En çok kalori getiren seçimler</p>
+              <p className="text-sm font-semibold">{t("Öne Çıkan Öğünler")}</p>
+              <p className="text-xs text-muted">{t("En çok kalori getiren seçimler")}</p>
             </div>
             {report.topFoods.length === 0 ? (
-              <p className="text-xs text-muted">Henüz öğün kaydı yok.</p>
+              <p className="text-xs text-muted">{t("Henüz öğün kaydı yok.")}</p>
             ) : (
               <div className="space-y-2 text-sm">
                 {report.topFoods.map((food) => (
                   <div key={food.name} className="flex items-center justify-between">
                     <span className="truncate">{food.name}</span>
                     <span className="text-xs text-muted">
-                      {formatNumber(food.calories)} kcal • {food.count} kez
+                      {t("{calorie} kcal • {count} kez", {
+                        calorie: formatNumber(food.calories),
+                        count: food.count,
+                      })}
                     </span>
                   </div>
                 ))}
@@ -698,19 +745,23 @@ export default function ReportPage() {
 
           <Card className="space-y-3">
             <div>
-              <p className="text-sm font-semibold">Öne Çıkan Aktiviteler</p>
-              <p className="text-xs text-muted">Hareket yoğunluğu özeti</p>
+              <p className="text-sm font-semibold">{t("Öne Çıkan Aktiviteler")}</p>
+              <p className="text-xs text-muted">{t("Hareket yoğunluğu özeti")}</p>
             </div>
             {report.topActivities.length === 0 ? (
-              <p className="text-xs text-muted">Henüz aktivite kaydı yok.</p>
+              <p className="text-xs text-muted">{t("Henüz aktivite kaydı yok.")}</p>
             ) : (
               <div className="space-y-2 text-sm">
                 {report.topActivities.map((activity) => (
                   <div key={activity.activityType} className="flex items-center justify-between">
-                    <span>{activityLabels[activity.activityType as ActivityType] ?? "Aktivite"}</span>
+                    <span>
+                      {activityLabels[activity.activityType as ActivityType] ?? t("Aktivite")}
+                    </span>
                     <span className="text-xs text-muted">
-                      {formatNumber(activity.calories)} kcal •{" "}
-                      {formatNumber(activity.durationMin)} dk
+                      {t("{calorie} kcal • {duration} dk", {
+                        calorie: formatNumber(activity.calories),
+                        duration: formatNumber(activity.durationMin),
+                      })}
                     </span>
                   </div>
                 ))}
@@ -723,8 +774,8 @@ export default function ReportPage() {
       <section className={sectionClass("details")}>
         <Card className="space-y-3">
           <div>
-            <p className="text-sm font-semibold">Günlük Detaylar</p>
-            <p className="text-xs text-muted">Kayıtların gün bazlı özeti</p>
+            <p className="text-sm font-semibold">{t("Günlük Detaylar")}</p>
+            <p className="text-xs text-muted">{t("Kayıtların gün bazlı özeti")}</p>
           </div>
           <div className="max-h-80 space-y-2 overflow-y-auto pr-1 text-xs print:max-h-none print:overflow-visible">
             {report.daily.map((day) => (
@@ -734,16 +785,24 @@ export default function ReportPage() {
               >
                 <span className="text-muted">{formatShortDate(day.date)}</span>
                 <span>
-                  {formatNumber(day.caloriesIn)} kcal • {formatNumber(day.caloriesOut)} kcal •{" "}
-                  {formatNumber(day.waterMl)} ml
+                  {t("{in} kcal • {out} kcal • {water} ml", {
+                    in: formatNumber(day.caloriesIn),
+                    out: formatNumber(day.caloriesOut),
+                    water: formatNumber(day.waterMl),
+                  })}
                 </span>
                 <span className="text-muted">
-                  Aktivite {formatNumber(day.activityMin)} dk • Öğün{" "}
-                  {formatNumber(day.mealCount)}
+                  {t("Aktivite {activity} dk • Öğün {meal}", {
+                    activity: formatNumber(day.activityMin),
+                    meal: formatNumber(day.mealCount),
+                  })}
                 </span>
                 <span className="text-muted">
-                  P {formatNumber(day.proteinG)} • K {formatNumber(day.carbsG)} • Y{" "}
-                  {formatNumber(day.fatG)}
+                  {t("P {protein} • K {carb} • Y {fat}", {
+                    protein: formatNumber(day.proteinG),
+                    carb: formatNumber(day.carbsG),
+                    fat: formatNumber(day.fatG),
+                  })}
                 </span>
               </div>
             ))}

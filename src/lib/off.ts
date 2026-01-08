@@ -1,3 +1,5 @@
+import { t } from "./i18n";
+
 export interface OFFProduct {
   product_name: string;
   nutriments: {
@@ -42,7 +44,7 @@ function normalizeBarcode(input: string) {
 function mapProduct(product: OFFApiProduct | undefined, fallbackCode: string): OFFProduct | null {
   if (!product) return null;
   return {
-    product_name: product.product_name || product.product_name_tr || "Bilinmeyen Ürün",
+    product_name: product.product_name || product.product_name_tr || t("Bilinmeyen Ürün"),
     nutriments: {
       "energy-kcal_100g": product.nutriments?.["energy-kcal_100g"],
       proteins_100g: product.nutriments?.proteins_100g,
@@ -78,7 +80,7 @@ export const searchFood = async (query: string): Promise<OFFProduct[]> => {
     const data = (await response.json()) as OFFSearchResponse;
 
     return (data.products ?? []).map((p, index) => ({
-      product_name: p.product_name || p.product_name_tr || "Bilinmeyen Ürün",
+      product_name: p.product_name || p.product_name_tr || t("Bilinmeyen Ürün"),
       nutriments: {
         "energy-kcal_100g": p.nutriments?.["energy-kcal_100g"],
         proteins_100g: p.nutriments?.proteins_100g,

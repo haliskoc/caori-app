@@ -10,6 +10,7 @@ import {
   saveProfile,
   type ProfileInfo,
 } from "@/lib/profile";
+import { t } from "@/lib/i18n";
 
 type QuestionType = "number" | "text" | "single";
 
@@ -323,29 +324,29 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
       // fall through to local save
     }
     saveProfile(nextProfile);
-    setSaveNotice("Buluta kaydedilemedi, cihazına kaydedildi.");
+    setSaveNotice(t("Buluta kaydedilemedi, cihazına kaydedildi."));
     return true;
   }
 
   async function goNext() {
     if (isAnswerMissing) {
-      setError("Lütfen bu soruyu yanıtla.");
+      setError(t("Lütfen bu soruyu yanıtla."));
       return;
     }
     if (needsOtherDetail && !hasOtherDetail) {
-      setError("Lütfen sakatlık detayını yaz.");
+      setError(t("Lütfen sakatlık detayını yaz."));
       return;
     }
     const nextProfile = { ...profile };
     const saved = await persistProfile(nextProfile);
     if (!saved) {
-      setError("Profil kaydedilemedi. Tekrar dene.");
+      setError(t("Profil kaydedilemedi. Tekrar dene."));
       return;
     }
     const nextIndex = questionIndex + 1;
     if (nextIndex >= questions.length) {
       if (!isProfileComplete(nextProfile)) {
-        setError("Lütfen tüm soruları yanıtla.");
+        setError(t("Lütfen tüm soruları yanıtla."));
         return;
       }
       router.replace("/dashboard");
@@ -371,9 +372,9 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
     >
       <Card className="w-full max-w-2xl max-h-[calc(100vh-2rem)] space-y-5 overflow-y-auto rounded-3xl border border-amber-100 bg-white/95 p-4 shadow-strong sm:p-6">
         <div className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted">Onboarding</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-muted">{t("Onboarding")}</p>
           <div className="flex items-center justify-between text-[11px] text-muted">
-            <span>{step?.label ?? "Seni tanıyalım"}</span>
+            <span>{t(step?.label ?? "Seni tanıyalım")}</span>
             <span>
               {questionIndex + 1}/{questions.length}
             </span>
@@ -384,10 +385,10 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
         </div>
 
         <div className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted">{question.title}</p>
-          <h2 className="text-xl font-semibold text-ink">{question.prompt}</h2>
-          {question.subtitle && <p className="text-sm text-muted">{question.subtitle}</p>}
-          {question.hint && <p className="text-xs text-muted">{question.hint}</p>}
+          <p className="text-xs uppercase tracking-[0.2em] text-muted">{t(question.title)}</p>
+          <h2 className="text-xl font-semibold text-ink">{t(question.prompt)}</h2>
+          {question.subtitle && <p className="text-sm text-muted">{t(question.subtitle)}</p>}
+          {question.hint && <p className="text-xs text-muted">{t(question.hint)}</p>}
         </div>
 
         {question.type === "number" && (
@@ -395,7 +396,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
             value={String(answer)}
             onChange={(event) => updateProfile(question.id, event.target.value)}
             className="w-full rounded-2xl border border-amber-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-            placeholder={question.placeholder}
+            placeholder={question.placeholder ? t(question.placeholder) : undefined}
             inputMode="numeric"
           />
         )}
@@ -405,7 +406,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
             value={String(answer)}
             onChange={(event) => updateProfile(question.id, event.target.value)}
             className="min-h-[120px] w-full rounded-2xl border border-amber-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-            placeholder={question.placeholder}
+            placeholder={question.placeholder ? t(question.placeholder) : undefined}
           />
         )}
 
@@ -421,7 +422,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
                     : "border-amber-100 bg-white text-muted hover:text-ink"
                 }`}
               >
-                {option.label}
+                {t(option.label)}
               </button>
             ))}
           </div>
@@ -432,7 +433,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
             value={profile.injuryDetail}
             onChange={(event) => updateProfile("injuryDetail", event.target.value)}
             className="w-full rounded-2xl border border-amber-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-            placeholder="Sakatlık detayını yaz"
+            placeholder={t("Sakatlık detayını yaz")}
           />
         )}
 
@@ -445,13 +446,13 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
             className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-sm text-muted hover:text-ink"
             disabled={questionIndex === 0}
           >
-            Geri
+            {t("Geri")}
           </button>
           <button
             onClick={goNext}
             className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
           >
-            {questionIndex === questions.length - 1 ? "Bitir" : "İleri"}
+            {questionIndex === questions.length - 1 ? t("Bitir") : t("İleri")}
           </button>
         </div>
 
@@ -465,7 +466,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
                   : "bg-white/80 text-muted"
               }`}
             >
-              {item.id}. {item.label}
+              {item.id}. {t(item.label)}
             </span>
           ))}
         </div>

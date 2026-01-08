@@ -1,5 +1,6 @@
 import { Entry, DailySummary } from "./types";
 import { getDayKey, getLastNDays } from "./utils";
+import { t } from "./i18n";
 
 export type ReportTotals = {
   caloriesIn: number;
@@ -101,45 +102,57 @@ function buildMotivation(input: {
 
   if (input.averages.caloriesIn > calorieGoal + 200) {
     lines.push(
-      "Ortalama kalori alımın hedefinin üstünde. Porsiyonları biraz küçültmek fayda sağlar."
+      t(
+        "Ortalama kalori alımın hedefinin üstünde. Porsiyonları biraz küçültmek fayda sağlar."
+      )
     );
   } else if (input.averages.caloriesIn < calorieGoal - 300) {
     lines.push(
-      "Ortalama kalori alımın hedefinin altında. Dengeli ve yeterli öğün planlamaya odaklan."
+      t(
+        "Ortalama kalori alımın hedefinin altında. Dengeli ve yeterli öğün planlamaya odaklan."
+      )
     );
   } else {
-    lines.push("Kalori alımın hedefle uyumlu, ritmi koruyorsun.");
+    lines.push(t("Kalori alımın hedefle uyumlu, ritmi koruyorsun."));
   }
 
   if (input.averages.caloriesOut < 80) {
-    lines.push("Aktivite düşük görünüyor; kısa yürüyüşler bile dengeyi güçlendirir.");
+    lines.push(t("Aktivite düşük görünüyor; kısa yürüyüşler bile dengeyi güçlendirir."));
   } else {
-    lines.push("Aktivite tarafı iyi; hareketliliği sürdürmek hedefe yaklaşmanı hızlandırır.");
+    lines.push(
+      t("Aktivite tarafı iyi; hareketliliği sürdürmek hedefe yaklaşmanı hızlandırır.")
+    );
   }
 
   if (input.averages.activityMin < activityGoalMin * 0.7) {
-    lines.push("Hareket süren hedefinin altında. Günlük 10-15 dakika ekleme etkili olur.");
+    lines.push(t("Hareket süren hedefinin altında. Günlük 10-15 dakika ekleme etkili olur."));
   }
 
   if (input.averages.waterMl < waterGoalMl * 0.7) {
-    lines.push("Su alımın hedefin altında. Gün içinde 1-2 bardak ekleyerek dengeleyebilirsin.");
+    lines.push(
+      t("Su alımın hedefin altında. Gün içinde 1-2 bardak ekleyerek dengeleyebilirsin.")
+    );
   } else {
-    lines.push("Su takibin iyi, bu tempo toparlanmayı destekler.");
+    lines.push(t("Su takibin iyi, bu tempo toparlanmayı destekler."));
   }
 
   if (input.averages.mealCount < mealGoalCount - 1) {
-    lines.push("Öğün düzeni dağınık görünüyor. Ana öğünleri sabitlemek dengeyi artırır.");
+    lines.push(
+      t("Öğün düzeni dağınık görünüyor. Ana öğünleri sabitlemek dengeyi artırır.")
+    );
   }
 
   if (input.macroCoverage < 0.4) {
-    lines.push("Makro bilgisi eksik kayıtlar var. Ürün seçimiyle daha net takip yapabilirsin.");
+    lines.push(
+      t("Makro bilgisi eksik kayıtlar var. Ürün seçimiyle daha net takip yapabilirsin.")
+    );
   }
 
   if (input.activeDays < Math.max(3, Math.round(input.rangeDays * 0.4))) {
-    lines.push("Takip günlerini artırırsan gelişim eğrisi daha net görünür.");
+    lines.push(t("Takip günlerini artırırsan gelişim eğrisi daha net görünür."));
   }
 
-  lines.push("Küçük adımlar büyük değişimi başlatır. Devam et!");
+  lines.push(t("Küçük adımlar büyük değişimi başlatır. Devam et!"));
   return lines.join(" ");
 }
 
@@ -246,7 +259,7 @@ export function buildReportData(
       if ((entry.proteinG ?? 0) > 0 || (entry.carbsG ?? 0) > 0 || (entry.fatG ?? 0) > 0) {
         macroCount += 1;
       }
-      const key = entry.name || "Belirtilmedi";
+      const key = entry.name || t("Belirtilmedi");
       const existing = foodMap.get(key) ?? { name: key, calories: 0, count: 0 };
       existing.calories += entry.calories;
       existing.count += 1;

@@ -14,19 +14,7 @@ import {
   saveFoodLibrary,
 } from "@/lib/food-library";
 import { createId } from "@/lib/utils";
-
-const mealLabels: Record<MealType, string> = {
-  breakfast: "Kahvaltı",
-  lunch: "Öğle",
-  dinner: "Akşam",
-  snack: "Atıştırmalık",
-};
-
-const activityLabels: Record<ActivityType, string> = {
-  walking: "Yürümek",
-  running: "Koşu",
-  gym: "Salon",
-};
+import { t } from "@/lib/i18n";
 
 type TabKey = "food" | "water" | "activity";
 
@@ -39,6 +27,17 @@ type BarcodeDetectorConstructor = new (options?: { formats?: string[] }) => {
 export default function AddEntryPage() {
   const { addFood, addWater, addActivity, dataMode } = useTracker();
   const [tab, setTab] = useState<TabKey>("food");
+  const mealLabels: Record<MealType, string> = {
+    breakfast: t("Kahvaltı"),
+    lunch: t("Öğle"),
+    dinner: t("Akşam"),
+    snack: t("Atıştırmalık"),
+  };
+  const activityLabels: Record<ActivityType, string> = {
+    walking: t("Yürümek"),
+    running: t("Koşu"),
+    gym: t("Salon"),
+  };
 
   const [foodName, setFoodName] = useState("");
   const [foodCalories, setFoodCalories] = useState("");
@@ -169,7 +168,7 @@ export default function AddEntryPage() {
         }
       } catch {
         if (active) {
-          setLibraryMessage("Kütüphane yüklenemedi.");
+          setLibraryMessage(t("Kütüphane yüklenemedi."));
         }
       } finally {
         if (active) {
@@ -198,7 +197,7 @@ export default function AddEntryPage() {
       return;
     }
     if (!navigator.mediaDevices?.getUserMedia) {
-      setScanError("Kamera erişimi desteklenmiyor.");
+      setScanError(t("Kamera erişimi desteklenmiyor."));
       return;
     }
     setScanError(null);
@@ -222,7 +221,7 @@ export default function AddEntryPage() {
       })
       .catch(() => {
         if (active) {
-          setScanError("Kamera izni alınamadı.");
+          setScanError(t("Kamera izni alınamadı."));
         }
       });
     return () => {
@@ -267,7 +266,7 @@ export default function AddEntryPage() {
     (favorite: boolean) => {
       const name = foodName.trim();
       if (!name) {
-        setLibraryMessage("Kütüphane için ürün adı gerekli.");
+        setLibraryMessage(t("Kütüphane için ürün adı gerekli."));
         return null;
       }
       const amountValue = Number(foodAmount);
@@ -344,13 +343,13 @@ export default function AddEntryPage() {
               normalizeFoodLibraryItem(saved),
               ...prev.filter((item) => item.id !== saved.id),
             ]);
-            setLibraryMessage("Ürün kütüphaneye kaydedildi.");
+            setLibraryMessage(t("Ürün kütüphaneye kaydedildi."));
             return;
           }
         } catch {
           // ignore
         }
-        setLibraryMessage("Kütüphane kaydı başarısız.");
+        setLibraryMessage(t("Kütüphane kaydı başarısız."));
         return;
       }
 
@@ -370,7 +369,7 @@ export default function AddEntryPage() {
         updatedAt: now,
       };
       persistLocalLibrary([item, ...foodLibrary]);
-      setLibraryMessage("Ürün kütüphaneye kaydedildi.");
+      setLibraryMessage(t("Ürün kütüphaneye kaydedildi."));
     },
     [buildLibraryItemFromForm, dataMode, foodLibrary, persistLocalLibrary]
   );
@@ -398,7 +397,7 @@ export default function AddEntryPage() {
         } catch {
           // ignore
         }
-        setLibraryMessage("Favori güncellenemedi.");
+        setLibraryMessage(t("Favori güncellenemedi."));
         return;
       }
       const next = foodLibrary.map((entry) =>
@@ -424,7 +423,7 @@ export default function AddEntryPage() {
         } catch {
           // ignore
         }
-        setLibraryMessage("Ürün silinemedi.");
+        setLibraryMessage(t("Ürün silinemedi."));
         return;
       }
       const next = foodLibrary.filter((entry) => entry.id !== item.id);
@@ -437,7 +436,7 @@ export default function AddEntryPage() {
     async (rawCode: string) => {
       const code = rawCode.replace(/\D/g, "");
       if (!code) {
-        setBarcodeMessage("Geçerli bir barkod girin.");
+        setBarcodeMessage(t("Geçerli bir barkod girin."));
         return;
       }
       if (code !== rawCode) {
@@ -446,7 +445,7 @@ export default function AddEntryPage() {
       const localMatch = foodLibrary.find((item) => item.barcode === code);
       if (localMatch) {
         applyLibraryItem(localMatch);
-        setBarcodeMessage(`Kütüphaneden bulundu: ${localMatch.name}`);
+        setBarcodeMessage(t("Kütüphaneden bulundu: {name}", { name: localMatch.name }));
         return;
       }
       setBarcodeMessage(null);
@@ -454,13 +453,13 @@ export default function AddEntryPage() {
       try {
         const res = await fetch(`/api/v1/food-search?barcode=${encodeURIComponent(code)}`);
         if (!res.ok) {
-          setBarcodeMessage("Barkod bulunamadı.");
+          setBarcodeMessage(t("Barkod bulunamadı."));
           setSearchResults([]);
           return;
         }
         const product = await res.json();
         if (!product || !product.product_name) {
-          setBarcodeMessage("Barkod bulunamadı.");
+          setBarcodeMessage(t("Barkod bulunamadı."));
           setSearchResults([]);
           return;
         }
@@ -481,9 +480,9 @@ export default function AddEntryPage() {
         } else {
           setFoodCalories("");
         }
-        setBarcodeMessage(`Bulunan ürün: ${product.product_name}`);
+        setBarcodeMessage(t("Bulunan ürün: {name}", { name: product.product_name }));
       } catch {
-        setBarcodeMessage("Barkod aranamadı.");
+        setBarcodeMessage(t("Barkod aranamadı."));
       } finally {
         setIsBarcodeSearching(false);
       }
@@ -568,9 +567,9 @@ export default function AddEntryPage() {
       <div className="flex flex-wrap gap-2">
         {(
           [
-            { key: "food", label: "Yemek" },
-            { key: "water", label: "Su" },
-            { key: "activity", label: "Aktivite" },
+            { key: "food", label: t("Yemek") },
+            { key: "water", label: t("Su") },
+            { key: "activity", label: t("Aktivite") },
           ] as const
         ).map((item) => (
           <button
@@ -591,10 +590,10 @@ export default function AddEntryPage() {
         <div className="space-y-6">
           <Card className="space-y-4">
             <div>
-              <p className="text-sm font-semibold">Yemek Girişi</p>
+              <p className="text-sm font-semibold">{t("Yemek Girişi")}</p>
               <div className="flex items-center gap-2 text-xs text-muted">
-                <span>Manuel kalori girişi</span>
-                <Tooltip label="Ürün araması için en az 3 harf yazın.">
+                <span>{t("Manuel kalori girişi")}</span>
+                <Tooltip label={t("Ürün araması için en az 3 harf yazın.")}>
                   <span className="flex h-5 w-5 items-center justify-center rounded-full border border-amber-200 text-[10px] text-amber-700">
                     ?
                   </span>
@@ -604,8 +603,8 @@ export default function AddEntryPage() {
             <div className="rounded-2xl border border-amber-100 bg-white p-3 space-y-3">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-xs font-semibold text-ink">Barkod ile bul</p>
-                  <p className="text-[11px] text-muted">Kamera veya barkod numarası</p>
+                  <p className="text-xs font-semibold text-ink">{t("Barkod ile bul")}</p>
+                  <p className="text-[11px] text-muted">{t("Kamera veya barkod numarası")}</p>
                 </div>
                 <button
                   type="button"
@@ -613,12 +612,12 @@ export default function AddEntryPage() {
                   className="rounded-full border border-amber-100 bg-white px-3 py-1 text-[11px] font-semibold text-amber-700 hover:border-amber-200"
                   disabled={!supportsBarcodeDetector}
                 >
-                  {scannerOpen ? "Kamerayı kapat" : "Barkod tara"}
+                  {scannerOpen ? t("Kamerayı kapat") : t("Barkod tara")}
                 </button>
               </div>
               {!supportsBarcodeDetector && (
                 <p className="text-[11px] text-muted">
-                  Tarayıcı barkod taramayı desteklemiyor.
+                  {t("Tarayıcı barkod taramayı desteklemiyor.")}
                 </p>
               )}
               {scanError && <p className="text-[11px] text-red-600">{scanError}</p>}
@@ -630,44 +629,46 @@ export default function AddEntryPage() {
                       className="h-40 w-full object-cover sm:h-44"
                       playsInline
                       muted
-                    />
-                  </div>
-                  <p className="text-[11px] text-muted">
-                    {cameraActive ? "Barkodu kadraja alın." : "Kamera açılıyor..."}
-                  </p>
+                  />
                 </div>
-              )}
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <input
-                  value={barcodeInput}
-                  onChange={(event) => setBarcodeInput(event.target.value.replace(/\D/g, ""))}
-                  className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-200"
-                  placeholder="Barkod numarası"
-                  inputMode="numeric"
-                />
-                <button
-                  onClick={() => handleBarcodeLookup(barcodeInput)}
-                  className="rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 disabled:opacity-60"
-                  disabled={isBarcodeSearching || !barcodeInput.trim()}
-                >
-                  {isBarcodeSearching ? "Aranıyor..." : "Ara"}
-                </button>
+                <p className="text-[11px] text-muted">
+                  {cameraActive ? t("Barkodu kadraja alın.") : t("Kamera açılıyor...")}
+                </p>
               </div>
-              {barcodeMessage && <p className="text-[11px] text-muted">{barcodeMessage}</p>}
+            )}
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <input
+                value={barcodeInput}
+                onChange={(event) => setBarcodeInput(event.target.value.replace(/\D/g, ""))}
+                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-200"
+                placeholder={t("Barkod numarası")}
+                inputMode="numeric"
+              />
+              <button
+                onClick={() => handleBarcodeLookup(barcodeInput)}
+                className="rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 disabled:opacity-60"
+                disabled={isBarcodeSearching || !barcodeInput.trim()}
+              >
+                {isBarcodeSearching ? t("Aranıyor...") : t("Ara")}
+              </button>
             </div>
-            <input
+            {barcodeMessage && <p className="text-[11px] text-muted">{barcodeMessage}</p>}
+          </div>
+          <input
               value={foodName}
               onChange={(event) => {
                 setFoodName(event.target.value);
                 setSelectedFromSearch(false);
                 setFoodPer100(null);
                 setFoodImageUrl(null);
-              }}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-              placeholder="Ürün Ara veya Manuel Gir..."
-            />
+            }}
+            className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+            placeholder={t("Ürün Ara veya Manuel Gir...")}
+          />
 
-            {isSearching && <p className="text-[10px] text-muted animate-pulse">Aranıyor...</p>}
+          {isSearching && (
+            <p className="text-[10px] text-muted animate-pulse">{t("Aranıyor...")}</p>
+          )}
 
             {searchResults.length > 0 && (
               <div className="max-h-40 overflow-y-auto rounded-xl border border-amber-50 bg-amber-50/30 p-1 space-y-1">
@@ -697,30 +698,32 @@ export default function AddEntryPage() {
                     <div className="flex-1 overflow-hidden">
                       <p className="truncate font-semibold text-amber-900">{product.product_name}</p>
                       <p className="text-[10px] text-muted">
-                        {product.nutriments["energy-kcal_100g"] ?? "?"} kcal / 100g
+                        {t("{value} kcal / 100g", {
+                          value: product.nutriments["energy-kcal_100g"] ?? "?",
+                        })}
                       </p>
                     </div>
                   </button>
                 ))}
               </div>
             )}
-            {foodName.length > 2 &&
-              !isSearching &&
-              searchResults.length === 0 &&
-              !selectedFromSearch && (
-              <div className="rounded-xl border border-dashed border-amber-100 bg-amber-50/50 px-3 py-3 text-xs text-muted">
-                Sonuç bulunamadı. Manuel kalori girişi yapabilirsiniz.
-              </div>
-            )}
-            <div className="grid gap-3 sm:grid-cols-2">
-              <input
-                value={foodCalories}
-                onChange={(event) => setFoodCalories(event.target.value)}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-                placeholder="Kalori"
-                type="number"
-                min="0"
-              />
+          {foodName.length > 2 &&
+            !isSearching &&
+            searchResults.length === 0 &&
+            !selectedFromSearch && (
+            <div className="rounded-xl border border-dashed border-amber-100 bg-amber-50/50 px-3 py-3 text-xs text-muted">
+              {t("Sonuç bulunamadı. Manuel kalori girişi yapabilirsiniz.")}
+            </div>
+          )}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <input
+              value={foodCalories}
+              onChange={(event) => setFoodCalories(event.target.value)}
+              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+              placeholder={t("Kalori")}
+              type="number"
+              min="0"
+            />
               <select
                 value={mealType}
                 onChange={(event) => setMealType(event.target.value as MealType)}
@@ -733,24 +736,26 @@ export default function AddEntryPage() {
                 ))}
               </select>
             </div>
-            <div className="grid gap-3 sm:grid-cols-[1fr_1.5fr]">
-              <input
-                value={foodAmount}
-                onChange={(event) => setFoodAmount(event.target.value)}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-                placeholder="Miktar (g)"
-                type="number"
-                min="0"
-              />
-              <div className="flex flex-col justify-center rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs text-muted">
-                <span className="text-[11px] uppercase tracking-[0.2em]">Makrolar (g)</span>
-                <div className="mt-1 flex flex-wrap gap-2 text-xs font-semibold text-ink">
-                  <span>P: {foodMacros?.proteinG ?? "-"}</span>
-                  <span>K: {foodMacros?.carbsG ?? "-"}</span>
-                  <span>Y: {foodMacros?.fatG ?? "-"}</span>
-                </div>
+          <div className="grid gap-3 sm:grid-cols-[1fr_1.5fr]">
+            <input
+              value={foodAmount}
+              onChange={(event) => setFoodAmount(event.target.value)}
+              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+              placeholder={t("Miktar (g)")}
+              type="number"
+              min="0"
+            />
+            <div className="flex flex-col justify-center rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs text-muted">
+              <span className="text-[11px] uppercase tracking-[0.2em]">
+                {t("Makrolar (g)")}
+              </span>
+              <div className="mt-1 flex flex-wrap gap-2 text-xs font-semibold text-ink">
+                <span>{t("P")}: {foodMacros?.proteinG ?? "-"}</span>
+                <span>{t("K")}: {foodMacros?.carbsG ?? "-"}</span>
+                <span>{t("Y")}: {foodMacros?.fatG ?? "-"}</span>
               </div>
             </div>
+          </div>
             <button
               onClick={() => {
                 if (!foodCalories) return;
@@ -760,7 +765,7 @@ export default function AddEntryPage() {
                     ? Math.round(amountValue)
                     : undefined;
                 addFood({
-                  name: foodName || "Belirtilmedi",
+                  name: foodName || t("Belirtilmedi"),
                   calories: Number(foodCalories),
                   mealType,
                   amountG,
@@ -779,15 +784,15 @@ export default function AddEntryPage() {
               }}
               className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
             >
-              Kaydet
+              {t("Kaydet")}
             </button>
           </Card>
 
           <Card className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <p className="text-sm font-semibold">Ürün Kütüphanesi</p>
-                <p className="text-xs text-muted">Manuel ürünler ve favoriler</p>
+                <p className="text-sm font-semibold">{t("Ürün Kütüphanesi")}</p>
+                <p className="text-xs text-muted">{t("Manuel ürünler ve favoriler")}</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
@@ -795,14 +800,14 @@ export default function AddEntryPage() {
                   className="rounded-full border border-amber-100 bg-white px-3 py-1 text-[11px] font-semibold text-amber-700 hover:border-amber-200 disabled:opacity-60"
                   disabled={!foodName.trim()}
                 >
-                  Kütüphaneye kaydet
+                  {t("Kütüphaneye kaydet")}
                 </button>
                 <button
                   onClick={() => handleSaveLibrary(true)}
                   className="rounded-full bg-amber-600 px-3 py-1 text-[11px] font-semibold text-white hover:bg-amber-700 disabled:opacity-60"
                   disabled={!foodName.trim()}
                 >
-                  Favoriye kaydet
+                  {t("Favoriye kaydet")}
                 </button>
               </div>
             </div>
@@ -811,20 +816,20 @@ export default function AddEntryPage() {
                 value={libraryQuery}
                 onChange={(event) => setLibraryQuery(event.target.value)}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
-                placeholder="Kütüphanede ara"
+                placeholder={t("Kütüphanede ara")}
               />
               <button
                 onClick={() => setLibraryFavoritesOnly((prev) => !prev)}
                 className="rounded-xl border border-amber-100 bg-white px-3 py-2 text-[11px] font-semibold text-amber-700"
               >
-                {libraryFavoritesOnly ? "Tüm ürünler" : "Sadece favoriler"}
+                {libraryFavoritesOnly ? t("Tüm ürünler") : t("Sadece favoriler")}
               </button>
             </div>
             {libraryMessage && <p className="text-[11px] text-muted">{libraryMessage}</p>}
             {libraryLoading ? (
-              <p className="text-[11px] text-muted">Kütüphane yükleniyor...</p>
+              <p className="text-[11px] text-muted">{t("Kütüphane yükleniyor...")}</p>
             ) : filteredLibrary.length === 0 ? (
-              <p className="text-[11px] text-muted">Henüz kayıtlı ürün yok.</p>
+              <p className="text-[11px] text-muted">{t("Henüz kayıtlı ürün yok.")}</p>
             ) : (
               <div className="space-y-2">
                 {filteredLibrary.map((item) => (
@@ -842,7 +847,9 @@ export default function AddEntryPage() {
                     <div className="min-w-[120px] flex-1">
                       <p className="truncate font-semibold text-ink">{item.name}</p>
                       <p className="text-[10px] text-muted">
-                        {item.caloriesPer100 || "?"} kcal / 100g
+                        {t("{value} kcal / 100g", {
+                          value: item.caloriesPer100 || "?",
+                        })}
                         {item.barcode ? ` • ${item.barcode}` : ""}
                       </p>
                     </div>
@@ -851,19 +858,19 @@ export default function AddEntryPage() {
                         onClick={() => applyLibraryItem(item)}
                         className="rounded-full border border-amber-100 bg-white px-3 py-1 text-[11px] font-semibold text-amber-700"
                       >
-                        Kullan
+                        {t("Kullan")}
                       </button>
                       <button
                         onClick={() => handleToggleFavorite(item)}
                         className="rounded-full border border-amber-100 bg-white px-3 py-1 text-[11px] font-semibold text-amber-700"
                       >
-                        {item.favorite ? "Favori" : "Favori yap"}
+                        {item.favorite ? t("Favori") : t("Favori yap")}
                       </button>
                       <button
                         onClick={() => handleRemoveLibraryItem(item)}
                         className="rounded-full border border-amber-100 bg-white px-3 py-1 text-[11px] font-semibold text-amber-700"
                       >
-                        Sil
+                        {t("Sil")}
                       </button>
                     </div>
                   </div>
@@ -877,8 +884,8 @@ export default function AddEntryPage() {
       {tab === "water" && (
         <Card className="space-y-4">
           <div>
-            <p className="text-sm font-semibold">Su Girişi</p>
-            <p className="text-xs text-muted">Preset veya özel miktar</p>
+            <p className="text-sm font-semibold">{t("Su Girişi")}</p>
+            <p className="text-xs text-muted">{t("Preset veya özel miktar")}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             {[200, 500, 1000].map((amount) => (
@@ -890,7 +897,7 @@ export default function AddEntryPage() {
                 }}
                 className="rounded-full border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700"
               >
-                +{amount === 1000 ? "1L" : `${amount}ml`}
+                {t("+{value}", { value: amount === 1000 ? "1L" : `${amount}ml` })}
               </button>
             ))}
           </div>
@@ -899,7 +906,7 @@ export default function AddEntryPage() {
               value={waterAmount}
               onChange={(event) => setWaterAmount(event.target.value)}
               className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-              placeholder="Miktar (ml)"
+              placeholder={t("Miktar (ml)")}
               type="number"
               min="0"
             />
@@ -907,7 +914,7 @@ export default function AddEntryPage() {
               onClick={() => addWater({ amountMl: Number(waterAmount) })}
               className="w-full rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong sm:w-auto"
             >
-              Ekle
+              {t("Ekle")}
             </button>
           </div>
         </Card>
@@ -916,8 +923,8 @@ export default function AddEntryPage() {
       {tab === "activity" && (
         <Card className="space-y-4">
           <div>
-            <p className="text-sm font-semibold">Aktivite Girişi</p>
-            <p className="text-xs text-muted">Kalori değeri tahminidir</p>
+            <p className="text-sm font-semibold">{t("Aktivite Girişi")}</p>
+            <p className="text-xs text-muted">{t("Kalori değeri tahminidir")}</p>
           </div>
           <select
             value={activityType}
@@ -935,7 +942,7 @@ export default function AddEntryPage() {
               value={activityDuration}
               onChange={(event) => setActivityDuration(event.target.value)}
               className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-              placeholder="Süre (dk)"
+              placeholder={t("Süre (dk)")}
               type="number"
               min="0"
             />
@@ -943,7 +950,7 @@ export default function AddEntryPage() {
               value={activityCalories}
               onChange={(event) => setActivityCalories(event.target.value)}
               className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-              placeholder="Tahmini kalori"
+              placeholder={t("Tahmini kalori")}
               type="number"
               min="0"
             />
@@ -959,7 +966,7 @@ export default function AddEntryPage() {
             }}
             className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
           >
-            Kaydet
+            {t("Kaydet")}
           </button>
         </Card>
       )}

@@ -1,3 +1,5 @@
+import { t } from "./i18n";
+
 export type FoodLibrarySource = "manual" | "off";
 
 export type FoodLibraryItem = {
@@ -43,7 +45,7 @@ export function normalizeFoodLibraryItem(item: Partial<FoodLibraryItem>): FoodLi
   const now = new Date().toISOString();
   return {
     id: item.id ?? `local-${Math.random().toString(36).slice(2, 9)}`,
-    name: typeof item.name === "string" && item.name.trim() ? item.name.trim() : "Urun",
+    name: typeof item.name === "string" && item.name.trim() ? item.name.trim() : t("Urun"),
     caloriesPer100: Number(item.caloriesPer100) || 0,
     proteinPer100: Number(item.proteinPer100) || undefined,
     carbsPer100: Number(item.carbsPer100) || undefined,

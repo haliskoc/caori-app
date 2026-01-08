@@ -6,6 +6,7 @@ import { and, eq, gte, lte } from "drizzle-orm";
 import { toSafeNumber } from "@/lib/security";
 import { buildReportData } from "@/lib/report";
 import type { ActivityType, Entry, MealType } from "@/lib/types";
+import { t } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +49,7 @@ function normalizeEntry(row: EntryRow): Entry | null {
     return {
       id: row.id,
       type: "food",
-      name: row.name ?? "Belirtilmedi",
+      name: row.name ?? t("Belirtilmedi"),
       calories: row.calories ?? 0,
       mealType: allowedMeals.includes(row.mealType as MealType)
         ? (row.mealType as MealType)

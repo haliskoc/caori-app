@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/app-providers";
+import { t } from "@/lib/i18n";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -15,8 +16,8 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cal AI - Manuel Takip",
-  description: "Kalori, su ve aktivite takibi için sade bir platform.",
+  title: t("Cal AI - Manuel Takip"),
+  description: t("Kalori, su ve aktivite takibi için sade bir platform."),
 };
 
 export default function RootLayout({

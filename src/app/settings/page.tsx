@@ -5,6 +5,9 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { Card } from "@/components/card";
 import { useTracker } from "@/components/tracker-provider";
 import { entriesFromCsv, entriesToCsv, parseCsv } from "@/lib/csv";
+import { getIntlLocale, setLocale, t } from "@/lib/i18n";
+import { useLocaleValue } from "@/components/locale-provider";
+import { localeOptions } from "@/locales/manifest";
 
 export default function SettingsPage() {
   const { user, isLoading } = useUser();
@@ -36,6 +39,7 @@ export default function SettingsPage() {
   const [notificationStatus, setNotificationStatus] = useState<
     NotificationPermission | "unsupported"
   >("default");
+  const locale = useLocaleValue();
 
   useEffect(() => {
     setWaterGoal(String(goals.waterGoalMl));
@@ -62,7 +66,7 @@ export default function SettingsPage() {
     link.download = `calai-kayitlari-${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     window.URL.revokeObjectURL(url);
-    setCsvMessage("CSV dışa aktarıldı.");
+    setCsvMessage(t("CSV dışa aktarıldı."));
   }
 
   async function handleCsvImport(file: File) {
@@ -73,22 +77,26 @@ export default function SettingsPage() {
       const rows = parseCsv(text);
       const importedEntries = entriesFromCsv(rows);
       const count = await addEntries(importedEntries, { mode: "merge", source: "csv" });
-      setCsvMessage(count > 0 ? `${count} kayıt içe aktarıldı.` : "CSV içinde kayıt bulunamadı.");
+      setCsvMessage(
+        count > 0
+          ? t("{count} kayıt içe aktarıldı.", { count })
+          : t("CSV içinde kayıt bulunamadı.")
+      );
     } catch {
-      setCsvMessage("CSV okunamadı. Formatı kontrol edin.");
+      setCsvMessage(t("CSV okunamadı. Formatı kontrol edin."));
     } finally {
       setIsCsvImporting(false);
     }
   }
 
   const accentOptions = [
-    { value: "amber", label: "Amber", swatch: "bg-amber-500" },
-    { value: "teal", label: "Teal", swatch: "bg-teal-500" },
-    { value: "rose", label: "Rose", swatch: "bg-rose-500" },
+    { value: "amber", label: t("Amber"), swatch: "bg-amber-500" },
+    { value: "teal", label: t("Teal"), swatch: "bg-teal-500" },
+    { value: "rose", label: t("Rose"), swatch: "bg-rose-500" },
   ] as const;
 
   const auditPreview = auditLog.slice(0, 10);
-  const auditFormatter = new Intl.DateTimeFormat("tr-TR", {
+  const auditFormatter = new Intl.DateTimeFormat(getIntlLocale(locale), {
     day: "2-digit",
     month: "short",
     hour: "2-digit",
@@ -99,15 +107,15 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <Card className="space-y-3">
         <div>
-          <p className="text-sm font-semibold">Hesap</p>
+          <p className="text-sm font-semibold">{t("Hesap")}</p>
           <p className="text-xs text-muted">
-            {dataMode === "remote" ? "Bulut (Neon) aktif" : "Yerel cihaz modu"}
+            {dataMode === "remote" ? t("Bulut (Neon) aktif") : t("Yerel cihaz modu")}
           </p>
         </div>
         <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs text-muted">
           {dataMode === "remote"
-            ? "Bulut modu aktif. Verileriniz Neon veritabanında saklanır."
-            : "Yerel depolama modu aktif. Verileriniz sadece bu cihazda saklanır."}
+            ? t("Bulut modu aktif. Verileriniz Neon veritabanında saklanır.")
+            : t("Yerel depolama modu aktif. Verileriniz sadece bu cihazda saklanır.")}
         </div>
         <div className="flex flex-wrap gap-2">
           {/*
@@ -138,41 +146,66 @@ export default function SettingsPage() {
               }}
               className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-sm font-semibold text-amber-700"
             >
-              {isImporting ? "Taşınıyor..." : "Cihazdaki kayıtları taşı"}
+              {isImporting ? t("Taşınıyor...") : t("Cihazdaki kayıtları taşı")}
             </button>
           )}
         </div>
       {importedCount !== null && (
-        <p className="text-xs text-muted">{importedCount} kayıt taşındı.</p>
+        <p className="text-xs text-muted">{t("{count} kayıt taşındı.", { count: importedCount })}</p>
       )}
     </Card>
 
       <Card className="space-y-3">
         <div>
-          <p className="text-sm font-semibold">Rapor Dışa Aktarım</p>
-          <p className="text-xs text-muted">Grafikli PDF + Excel çıktısı</p>
+          <p className="text-sm font-semibold">{t("Dil")}</p>
+          <p className="text-xs text-muted">{t("Uygulama dili")}</p>
+        </div>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <select
+            value={locale}
+            onChange={(event) => setLocale(event.target.value)}
+            className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs sm:max-w-[200px]"
+          >
+            {localeOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {t(option.label)}
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-muted">
+            {t("Yeni dil dosyalarını public/locales/{code}.json olarak ekleyebilirsin.", {
+              code: "en",
+            })}
+          </p>
+        </div>
+      </Card>
+
+      <Card className="space-y-3">
+        <div>
+          <p className="text-sm font-semibold">{t("Rapor Dışa Aktarım")}</p>
+          <p className="text-xs text-muted">{t("Grafikli PDF + Excel çıktısı")}</p>
         </div>
         <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs text-muted">
-          Rapor ekranından PDF veya Excel olarak dışa aktarabilirsin.
+          {t("Rapor ekranından PDF veya Excel olarak dışa aktarabilirsin.")}
         </div>
         <div className="flex flex-wrap gap-2">
           <a
             href="/report"
             className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
           >
-            Raporu Aç
+            {t("Raporu Aç")}
           </a>
         </div>
       </Card>
 
       <Card className="space-y-3">
         <div>
-          <p className="text-sm font-semibold">Hedefler</p>
-          <p className="text-xs text-muted">Yerel cihazınızda saklanır</p>
+          <p className="text-sm font-semibold">{t("Hedefler")}</p>
+          <p className="text-xs text-muted">{t("Yerel cihazınızda saklanır")}</p>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-xs text-muted">Günlük Su Hedefi (ml)</label>
+            <label className="text-xs text-muted">{t("Günlük Su Hedefi (ml)")}</label>
             <input
               value={waterGoal}
               onChange={(event) => setWaterGoal(event.target.value)}
@@ -182,7 +215,7 @@ export default function SettingsPage() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs text-muted">Günlük Kalori Hedefi</label>
+            <label className="text-xs text-muted">{t("Günlük Kalori Hedefi")}</label>
             <input
               value={calorieGoal}
               onChange={(event) => setCalorieGoal(event.target.value)}
@@ -192,7 +225,7 @@ export default function SettingsPage() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs text-muted">Günlük Aktivite Hedefi (dk)</label>
+            <label className="text-xs text-muted">{t("Günlük Aktivite Hedefi (dk)")}</label>
             <input
               value={activityGoal}
               onChange={(event) => setActivityGoal(event.target.value)}
@@ -202,7 +235,7 @@ export default function SettingsPage() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs text-muted">Günlük Öğün Hedefi (adet)</label>
+            <label className="text-xs text-muted">{t("Günlük Öğün Hedefi (adet)")}</label>
             <input
               value={mealGoal}
               onChange={(event) => setMealGoal(event.target.value)}
@@ -212,7 +245,7 @@ export default function SettingsPage() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs text-muted">Hedef Kilo (kg)</label>
+            <label className="text-xs text-muted">{t("Hedef Kilo (kg)")}</label>
             <input
               value={weightGoal}
               onChange={(event) => setWeightGoal(event.target.value)}
@@ -231,17 +264,17 @@ export default function SettingsPage() {
               mealGoalCount: Number(mealGoal),
               weightGoalKg: Number(weightGoal),
             });
-          }}
+        }}
           className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
         >
-          Hedefleri Güncelle
+          {t("Hedefleri Güncelle")}
         </button>
       </Card>
 
       <Card className="space-y-4">
         <div>
-          <p className="text-sm font-semibold">Tema ve Görünüm</p>
-          <p className="text-xs text-muted">Aydınlık veya dim mod + vurgu renkleri.</p>
+          <p className="text-sm font-semibold">{t("Tema ve Görünüm")}</p>
+          <p className="text-xs text-muted">{t("Aydınlık veya dim mod + vurgu renkleri.")}</p>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <button
@@ -251,8 +284,8 @@ export default function SettingsPage() {
                 : "border-amber-100 bg-white text-muted hover:text-ink"
               }`}
           >
-            <p className="text-sm font-semibold">Aydınlık</p>
-            <p className="text-[11px] text-muted">Yüksek kontrast, net arayüz.</p>
+            <p className="text-sm font-semibold">{t("Aydınlık")}</p>
+            <p className="text-[11px] text-muted">{t("Yüksek kontrast, net arayüz.")}</p>
           </button>
           <button
             onClick={() => updateTheme({ mode: "dim" })}
@@ -261,8 +294,8 @@ export default function SettingsPage() {
                 : "border-amber-100 bg-white text-muted hover:text-ink"
               }`}
           >
-            <p className="text-sm font-semibold">Dim</p>
-            <p className="text-[11px] text-muted">Daha yumuşak ve sakin tonlar.</p>
+            <p className="text-sm font-semibold">{t("Dim")}</p>
+            <p className="text-[11px] text-muted">{t("Daha yumuşak ve sakin tonlar.")}</p>
           </button>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -284,14 +317,14 @@ export default function SettingsPage() {
 
       <Card className="space-y-4">
         <div>
-          <p className="text-sm font-semibold">Hatırlatıcılar</p>
-          <p className="text-xs text-muted">Tarayıcı bildirimi ile günlük hatırlatma.</p>
+          <p className="text-sm font-semibold">{t("Hatırlatıcılar")}</p>
+          <p className="text-xs text-muted">{t("Tarayıcı bildirimi ile günlük hatırlatma.")}</p>
         </div>
         <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs text-muted">
-          {notificationStatus === "unsupported" && "Tarayıcı bildirimleri desteklenmiyor."}
-          {notificationStatus === "default" && "Bildirim izni verilmedi."}
-          {notificationStatus === "denied" && "Bildirim izni reddedildi."}
-          {notificationStatus === "granted" && "Bildirim izni açık."}
+          {notificationStatus === "unsupported" && t("Tarayıcı bildirimleri desteklenmiyor.")}
+          {notificationStatus === "default" && t("Bildirim izni verilmedi.")}
+          {notificationStatus === "denied" && t("Bildirim izni reddedildi.")}
+          {notificationStatus === "granted" && t("Bildirim izni açık.")}
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="flex items-center gap-2 text-xs text-muted">
@@ -301,7 +334,7 @@ export default function SettingsPage() {
               onChange={(event) => updateReminder({ enabled: event.target.checked })}
               className="h-4 w-4 accent-orange-500"
             />
-            Günlük hatırlatma
+            {t("Günlük hatırlatma")}
           </label>
           <input
             type="time"
@@ -321,21 +354,21 @@ export default function SettingsPage() {
               }}
               className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs text-muted hover:text-ink sm:w-auto"
             >
-              İzin Ver
+              {t("İzin Ver")}
             </button>
           )}
         </div>
         {reminder.enabled && notificationStatus !== "granted" && notificationStatus !== "unsupported" && (
           <p className="text-xs text-muted">
-            Hatırlatma için tarayıcı izni gereklidir.
+            {t("Hatırlatma için tarayıcı izni gereklidir.")}
           </p>
         )}
       </Card>
 
       <Card className="space-y-4">
         <div>
-          <p className="text-sm font-semibold">Veri Yönetimi</p>
-          <p className="text-xs text-muted">CSV içe/dışa aktarma (cihaz veya bulut).</p>
+          <p className="text-sm font-semibold">{t("Veri Yönetimi")}</p>
+          <p className="text-xs text-muted">{t("CSV içe/dışa aktarma (cihaz veya bulut).")}</p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <button
@@ -343,10 +376,10 @@ export default function SettingsPage() {
             className="w-full rounded-xl border border-amber-100 bg-white px-4 py-2 text-xs text-muted hover:text-ink sm:w-auto"
             disabled={entries.length === 0}
           >
-            CSV Dışa Aktar
+            {t("CSV Dışa Aktar")}
           </button>
           <label className="w-full cursor-pointer rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 sm:w-auto">
-            {isCsvImporting ? "İçe aktarılıyor..." : "CSV İçe Aktar"}
+            {isCsvImporting ? t("İçe aktarılıyor...") : t("CSV İçe Aktar")}
             <input
               type="file"
               accept=".csv"
@@ -368,19 +401,19 @@ export default function SettingsPage() {
       <Card className="space-y-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-semibold">Değişiklik Geçmişi</p>
-            <p className="text-xs text-muted">Son işlemler cihazda saklanır.</p>
+            <p className="text-sm font-semibold">{t("Değişiklik Geçmişi")}</p>
+            <p className="text-xs text-muted">{t("Son işlemler cihazda saklanır.")}</p>
           </div>
           <button
             onClick={clearAuditLog}
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs text-muted hover:text-ink sm:w-auto"
             disabled={auditLog.length === 0}
           >
-            Temizle
+            {t("Temizle")}
           </button>
         </div>
         {auditPreview.length === 0 && (
-          <p className="text-xs text-muted">Henüz kayıtlı bir işlem yok.</p>
+          <p className="text-xs text-muted">{t("Henüz kayıtlı bir işlem yok.")}</p>
         )}
         {auditPreview.length > 0 && (
           <div className="space-y-2 text-xs text-muted">
@@ -432,12 +465,12 @@ export default function SettingsPage() {
 
       <Card className="space-y-4">
         <div>
-          <p className="text-sm font-semibold">Özellik Bayrakları</p>
-          <p className="text-xs text-muted">AI özellikleri varsayılan olarak kapalı</p>
+          <p className="text-sm font-semibold">{t("Özellik Bayrakları")}</p>
+          <p className="text-xs text-muted">{t("AI özellikleri varsayılan olarak kapalı")}</p>
         </div>
         <div className="space-y-3">
           <label className="flex items-center justify-between rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs">
-            <span className="text-muted">AI Görsel Tanıma</span>
+            <span className="text-muted">{t("AI Görsel Tanıma")}</span>
             <input
               type="checkbox"
               checked={flags.aiVisual}

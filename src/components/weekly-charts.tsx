@@ -14,6 +14,7 @@ import {
 import { WeeklySummary } from "@/lib/types";
 import { formatShortDate } from "@/lib/utils";
 import { Card } from "@/components/card";
+import { t } from "@/lib/i18n";
 
 type WeeklyChartsProps = {
   summary: WeeklySummary;
@@ -35,13 +36,13 @@ export function WeeklyCharts({ summary, hasEntries = true }: WeeklyChartsProps) 
     <div className="grid gap-4 lg:grid-cols-2">
       <Card className="min-h-[260px]">
         <div className="mb-3">
-          <p className="text-sm font-semibold">Haftalık Kalori Dengesi</p>
-          <p className="text-xs text-muted">Girilen ve tahmini yakılan kalori</p>
+          <p className="text-sm font-semibold">{t("Haftalık Kalori Dengesi")}</p>
+          <p className="text-xs text-muted">{t("Girilen ve tahmini yakılan kalori")}</p>
         </div>
         <div className="h-40 w-full">
           {isEmpty ? (
             <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 text-xs text-muted">
-              Henüz veri yok. İlk kayıtlar grafiği dolduracak.
+              {t("Henüz veri yok. İlk kayıtlar grafiği dolduracak.")}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
@@ -82,13 +83,13 @@ export function WeeklyCharts({ summary, hasEntries = true }: WeeklyChartsProps) 
 
       <Card className="min-h-[260px]">
         <div className="mb-3">
-          <p className="text-sm font-semibold">Haftalık Su Alımı</p>
-          <p className="text-xs text-muted">Hedefe yaklaşma</p>
+          <p className="text-sm font-semibold">{t("Haftalık Su Alımı")}</p>
+          <p className="text-xs text-muted">{t("Hedefe yaklaşma")}</p>
         </div>
         <div className="h-40 w-full">
           {isEmpty ? (
             <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 text-xs text-muted">
-              Su takibi başladığında burada görünecek.
+              {t("Su takibi başladığında burada görünecek.")}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">

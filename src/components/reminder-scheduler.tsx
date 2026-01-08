@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useTracker } from "@/components/tracker-provider";
 import { getDayKey } from "@/lib/utils";
+import { t } from "@/lib/i18n";
 
 export function ReminderScheduler() {
   const { reminder, updateReminder, dailySummary, goals } = useTracker();
@@ -33,8 +34,11 @@ export function ReminderScheduler() {
       }
       const waterLeft = Math.max(goals.waterGoalMl - dailySummary.waterMl, 0);
       const netCalories = dailySummary.caloriesIn - dailySummary.caloriesOut;
-      const body = `Net: ${netCalories} kcal • Su: ${Math.round(waterLeft)} ml kaldı`;
-      new Notification("Cal AI Hatırlatma", { body });
+      const body = t("Net: {net} kcal • Su: {water} ml kaldı", {
+        net: netCalories,
+        water: Math.round(waterLeft),
+      });
+      new Notification(t("Cal AI Hatırlatma"), { body });
       updateReminder({ lastNotifiedDay: todayKey });
     };
 

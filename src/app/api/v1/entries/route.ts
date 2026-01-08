@@ -5,6 +5,7 @@ import { entries, users } from "@/lib/schema";
 import { getDb, ensureUser } from "@/lib/db";
 import { createId } from "@/lib/utils";
 import { isSameOrigin, toSafeNumber } from "@/lib/security";
+import { t } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -66,7 +67,7 @@ export async function POST(request: Request) {
     type,
     name:
       type === "food"
-        ? String(body?.name ?? "Belirtilmedi").trim().slice(0, 120)
+        ? String(body?.name ?? t("Belirtilmedi")).trim().slice(0, 120)
         : null,
     calories:
       type === "food"

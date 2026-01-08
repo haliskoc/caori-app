@@ -8,6 +8,7 @@ import { useTracker } from "@/components/tracker-provider";
 import { DAY_MS, getDayKey } from "@/lib/utils";
 import { loadProfile, saveProfile, type ProfileInfo } from "@/lib/profile";
 import { MealType } from "@/lib/types";
+import { getIntlLocale, t } from "@/lib/i18n";
 
 type DayBucket = {
   caloriesIn: number;
@@ -216,10 +217,10 @@ function getInitials(name: string) {
 }
 
 function getBmiLabel(bmi: number) {
-  if (bmi < 18.5) return "Zayıf";
-  if (bmi < 25) return "Normal";
-  if (bmi < 30) return "Fazla";
-  return "Yüksek";
+  if (bmi < 18.5) return t("Zayıf");
+  if (bmi < 25) return t("Normal");
+  if (bmi < 30) return t("Fazla");
+  return t("Yüksek");
 }
 
 function getOptionLabel<T extends { value: string; label: string }>(
@@ -398,15 +399,15 @@ export default function ProfilePage() {
   const weightKg = Number(profile.weightKg);
   const age = Number(profile.age);
   const bmi = heightCm > 0 && weightKg > 0 ? weightKg / Math.pow(heightCm / 100, 2) : null;
-  const ageLabel = Number.isFinite(age) && age > 0 ? `${age} yaş` : "-";
+  const ageLabel = Number.isFinite(age) && age > 0 ? t("{value} yaş", { value: age }) : "-";
 
-  const numberFormat = useMemo(() => new Intl.NumberFormat("tr-TR"), []);
+  const numberFormat = useMemo(() => new Intl.NumberFormat(getIntlLocale()), []);
   const formatNumber = (value: number) => numberFormat.format(Math.round(value));
 
   const mealRate =
     stats.daysCount > 0 ? Math.round((stats.mealGoalDays / stats.daysCount) * 100) : 0;
-  const mainGoalLabel = getOptionLabel(goalOptions, profile.mainGoal);
-  const sportLevelLabel = getOptionLabel(sportLevelOptions, profile.sportLevel);
+  const mainGoalLabel = t(getOptionLabel(goalOptions, profile.mainGoal));
+  const sportLevelLabel = t(getOptionLabel(sportLevelOptions, profile.sportLevel));
 
   const badgeProgress = {
     streak: stats.currentStreak,
@@ -430,18 +431,20 @@ export default function ProfilePage() {
                 {getInitials(profile.fullName || user?.name || "")}
               </div>
               <div>
-                <p className="text-sm font-semibold text-ink">Profil</p>
+                <p className="text-sm font-semibold text-ink">{t("Profil")}</p>
                 <p className="text-xs text-muted">
-                  {profile.fullName || user?.name || "İsmini ekle"}
+                  {profile.fullName || user?.name || t("İsmini ekle")}
                 </p>
                 <p className="text-[11px] text-muted">
-                  {user?.email ? `E-posta: ${user.email}` : "Yerel profil"}
+                  {user?.email
+                    ? t("E-posta: {value}", { value: user.email })
+                    : t("Yerel profil")}
                 </p>
               </div>
             </div>
             <div className="w-full sm:min-w-[200px] sm:w-auto">
               <div className="flex items-center justify-between text-[11px] text-muted">
-                <span>Profil tamamlama</span>
+                <span>{t("Profil tamamlama")}</span>
                 <span>%{profileCompletion}</span>
               </div>
               <div className="mt-2 h-2 rounded-full bg-amber-100">
@@ -455,39 +458,44 @@ export default function ProfilePage() {
 
           <div className="grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Mevcut seri</p>
-              <p className="mt-1 text-lg font-semibold text-ink">{stats.currentStreak} gün</p>
-            </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Öğün hedef günleri</p>
-              <p className="mt-1 text-lg font-semibold text-ink">{stats.mealGoalDays} gün</p>
-            </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Su hedefi</p>
+              <p className="text-muted">{t("Mevcut seri")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
-                {Math.round(goals.waterGoalMl / 1000)} L
+                {t("{value} gün", { value: stats.currentStreak })}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+              <p className="text-muted">{t("Öğün hedef günleri")}</p>
+              <p className="mt-1 text-lg font-semibold text-ink">
+                {t("{value} gün", { value: stats.mealGoalDays })}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+              <p className="text-muted">{t("Su hedefi")}</p>
+              <p className="mt-1 text-lg font-semibold text-ink">
+                {t("{value} L", { value: Math.round(goals.waterGoalMl / 1000) })}
               </p>
             </div>
           </div>
 
           {bmi && (
             <div className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-amber-900">
-              BMI: {bmi.toFixed(1)} • {getBmiLabel(bmi)} aralık
+              {t("BMI: {value} • {label} aralık", {
+                value: bmi.toFixed(1),
+                label: getBmiLabel(bmi),
+              })}
             </div>
           )}
           <div className="grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Yaş</p>
-              <p className="mt-1 text-lg font-semibold text-ink">
-                {ageLabel}
-              </p>
+              <p className="text-muted">{t("Yaş")}</p>
+              <p className="mt-1 text-lg font-semibold text-ink">{ageLabel}</p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Ana hedef</p>
+              <p className="text-muted">{t("Ana hedef")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">{mainGoalLabel}</p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Spor seviyesi</p>
+              <p className="text-muted">{t("Spor seviyesi")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">{sportLevelLabel}</p>
             </div>
           </div>
@@ -495,18 +503,18 @@ export default function ProfilePage() {
 
         <Card className="space-y-4">
           <div>
-            <p className="text-sm font-semibold">Pro Bağlantıları</p>
-            <p className="text-xs text-muted">Premium modüllerini bu panelden yönetin.</p>
+            <p className="text-sm font-semibold">{t("Pro Bağlantıları")}</p>
+            <p className="text-xs text-muted">{t("Premium modüllerini bu panelden yönetin.")}</p>
           </div>
           <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-muted">Plan</span>
+              <span className="text-muted">{t("Plan")}</span>
               <span className="rounded-full bg-amber-100 px-3 py-1 text-[11px] text-amber-700">
-                Ücretsiz
+                {t("Ücretsiz")}
               </span>
             </div>
             <p className="mt-2 text-[11px] text-muted">
-              Pro plan ile gelişmiş analiz, sınırsız kayıt ve özel raporlar açılır.
+              {t("Pro plan ile gelişmiş analiz, sınırsız kayıt ve özel raporlar açılır.")}
             </p>
           </div>
           <div className="space-y-2">
@@ -514,19 +522,19 @@ export default function ProfilePage() {
               href="/#pricing"
               className="block w-full rounded-xl bg-amber-600 px-4 py-2 text-center text-xs font-semibold text-white hover:bg-amber-700"
             >
-              Premiuma Geç
+              {t("Premiuma Geç")}
             </Link>
             <a
               href={user ? "/api/integrations/google/auth" : "/auth/login"}
               className="block w-full rounded-xl border border-amber-100 bg-white px-4 py-2 text-center text-xs font-semibold text-amber-700 hover:border-amber-200"
             >
-              Google Fit Bağla
+              {t("Google Fit Bağla")}
             </a>
             <Link
               href="/settings"
               className="block w-full rounded-xl border border-amber-100 bg-white px-4 py-2 text-center text-xs text-muted hover:text-ink"
             >
-              Pro Ayarları
+              {t("Pro Ayarları")}
             </Link>
           </div>
         </Card>
@@ -535,12 +543,12 @@ export default function ProfilePage() {
       <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
         <Card className="space-y-4">
           <div>
-            <p className="text-sm font-semibold">Kişisel Bilgiler</p>
-            <p className="text-xs text-muted">Profiliniz kişiselleşsin, hedefleriniz netleşsin.</p>
+            <p className="text-sm font-semibold">{t("Kişisel Bilgiler")}</p>
+            <p className="text-xs text-muted">{t("Profiliniz kişiselleşsin, hedefleriniz netleşsin.")}</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Ad Soyad</label>
+              <label className="text-[11px] text-muted">{t("Ad Soyad")}</label>
               <input
                 value={profile.fullName}
                 onChange={(event) => {
@@ -548,11 +556,11 @@ export default function ProfilePage() {
                   setSaveMessage(null);
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-                placeholder="İsim"
+                placeholder={t("İsim")}
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Yaş</label>
+              <label className="text-[11px] text-muted">{t("Yaş")}</label>
               <input
                 value={profile.age}
                 onChange={(event) => {
@@ -560,12 +568,12 @@ export default function ProfilePage() {
                   setSaveMessage(null);
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-                placeholder="26"
+                placeholder={t("26")}
                 inputMode="numeric"
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Boy (cm)</label>
+              <label className="text-[11px] text-muted">{t("Boy (cm)")}</label>
               <input
                 value={profile.heightCm}
                 onChange={(event) => {
@@ -573,12 +581,12 @@ export default function ProfilePage() {
                   setSaveMessage(null);
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-                placeholder="175"
+                placeholder={t("175")}
                 inputMode="numeric"
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Kilo (kg)</label>
+              <label className="text-[11px] text-muted">{t("Kilo (kg)")}</label>
               <input
                 value={profile.weightKg}
                 onChange={(event) => {
@@ -586,7 +594,7 @@ export default function ProfilePage() {
                   setSaveMessage(null);
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-                placeholder="70"
+                placeholder={t("70")}
                 inputMode="numeric"
               />
             </div>
@@ -594,7 +602,7 @@ export default function ProfilePage() {
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Ana hedef</label>
+              <label className="text-[11px] text-muted">{t("Ana hedef")}</label>
               <select
                 value={profile.mainGoal}
                 onChange={(event) => {
@@ -606,16 +614,16 @@ export default function ProfilePage() {
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
               >
-                <option value="">Seç</option>
+                <option value="">{t("Seç")}</option>
                 {goalOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.label)}
                   </option>
                 ))}
               </select>
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Spor seviyesi</label>
+              <label className="text-[11px] text-muted">{t("Spor seviyesi")}</label>
               <select
                 value={profile.sportLevel}
                 onChange={(event) => {
@@ -627,16 +635,16 @@ export default function ProfilePage() {
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
               >
-                <option value="">Seç</option>
+                <option value="">{t("Seç")}</option>
                 {sportLevelOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.label)}
                   </option>
                 ))}
               </select>
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Haftalık spor</label>
+              <label className="text-[11px] text-muted">{t("Haftalık spor")}</label>
               <select
                 value={profile.workoutDays}
                 onChange={(event) => {
@@ -648,16 +656,16 @@ export default function ProfilePage() {
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
               >
-                <option value="">Seç</option>
+                <option value="">{t("Seç")}</option>
                 {workoutDaysOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.label)}
                   </option>
                 ))}
               </select>
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Spor yeri</label>
+              <label className="text-[11px] text-muted">{t("Spor yeri")}</label>
               <select
                 value={profile.workoutPlace}
                 onChange={(event) => {
@@ -669,16 +677,16 @@ export default function ProfilePage() {
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
               >
-                <option value="">Seç</option>
+                <option value="">{t("Seç")}</option>
                 {workoutPlaceOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.label)}
                   </option>
                 ))}
               </select>
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Ekipman durumu</label>
+              <label className="text-[11px] text-muted">{t("Ekipman durumu")}</label>
               <select
                 value={profile.equipmentLevel}
                 onChange={(event) => {
@@ -690,10 +698,10 @@ export default function ProfilePage() {
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
               >
-                <option value="">Seç</option>
+                <option value="">{t("Seç")}</option>
                 {equipmentOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.label)}
                   </option>
                 ))}
               </select>
@@ -702,7 +710,7 @@ export default function ProfilePage() {
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Sakatlık</label>
+              <label className="text-[11px] text-muted">{t("Sakatlık")}</label>
               <select
                 value={profile.injury}
                 onChange={(event) => {
@@ -714,16 +722,16 @@ export default function ProfilePage() {
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
               >
-                <option value="">Seç</option>
+                <option value="">{t("Seç")}</option>
                 {injuryOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.label)}
                   </option>
                 ))}
               </select>
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Doktor kısıtı</label>
+              <label className="text-[11px] text-muted">{t("Doktor kısıtı")}</label>
               <select
                 value={profile.doctorRestriction}
                 onChange={(event) => {
@@ -735,10 +743,10 @@ export default function ProfilePage() {
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
               >
-                <option value="">Seç</option>
+                <option value="">{t("Seç")}</option>
                 {doctorRestrictionOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.label)}
                   </option>
                 ))}
               </select>
@@ -747,7 +755,7 @@ export default function ProfilePage() {
 
           {profile.injury === "other" && (
             <div className="mt-4 space-y-1">
-              <label className="text-[11px] text-muted">Sakatlık detayı</label>
+              <label className="text-[11px] text-muted">{t("Sakatlık detayı")}</label>
               <input
                 value={profile.injuryDetail}
                 onChange={(event) => {
@@ -755,14 +763,14 @@ export default function ProfilePage() {
                   setSaveMessage(null);
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-                placeholder="Kısa açıklama"
+                placeholder={t("Kısa açıklama")}
               />
             </div>
           )}
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-[11px] text-muted">Bizi nereden duydun?</label>
+              <label className="text-[11px] text-muted">{t("Bizi nereden duydun?")}</label>
               <select
                 value={profile.referralSource}
                 onChange={(event) => {
@@ -774,10 +782,10 @@ export default function ProfilePage() {
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
               >
-                <option value="">Seç</option>
+                <option value="">{t("Seç")}</option>
                 {referralOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.label)}
                   </option>
                 ))}
               </select>
@@ -785,7 +793,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="mt-4 space-y-1">
-            <label className="text-[11px] text-muted">Beklentin</label>
+            <label className="text-[11px] text-muted">{t("Beklentin")}</label>
             <textarea
               value={profile.expectation}
               onChange={(event) => {
@@ -793,7 +801,7 @@ export default function ProfilePage() {
                 setSaveMessage(null);
               }}
               className="min-h-[90px] w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
-              placeholder="Kısa not (opsiyonel)..."
+              placeholder={t("Kısa not (opsiyonel)...")}
             />
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -812,24 +820,24 @@ export default function ProfilePage() {
                     if (res.ok) {
                       const data = (await res.json()) as ProfileInfo;
                       setProfile(data);
-                      setSaveMessage("Profil kaydedildi.");
+                      setSaveMessage(t("Profil kaydedildi."));
                     } else {
-                      setSaveMessage("Profil kaydedilemedi.");
+                      setSaveMessage(t("Profil kaydedilemedi."));
                     }
                   } catch {
-                    setSaveMessage("Profil kaydedilemedi.");
+                    setSaveMessage(t("Profil kaydedilemedi."));
                   } finally {
                     setIsSaving(false);
                   }
                   return;
                 }
                 saveProfile(profile);
-                setSaveMessage("Profil kaydedildi.");
+                setSaveMessage(t("Profil kaydedildi."));
                 setIsSaving(false);
               }}
               className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
             >
-              {isSaving ? "Kaydediliyor..." : "Kaydet"}
+              {isSaving ? t("Kaydediliyor...") : t("Kaydet")}
             </button>
             {saveMessage && <span className="text-xs text-muted">{saveMessage}</span>}
           </div>
@@ -837,66 +845,79 @@ export default function ProfilePage() {
 
         <Card className="space-y-4">
           <div>
-            <p className="text-sm font-semibold">Genel İstatistikler</p>
-            <p className="text-xs text-muted">Tüm kayıtların özet görünümü.</p>
+            <p className="text-sm font-semibold">{t("Genel İstatistikler")}</p>
+            <p className="text-xs text-muted">{t("Tüm kayıtların özet görünümü.")}</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Toplam kayıt</p>
+              <p className="text-muted">{t("Toplam kayıt")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">{formatNumber(stats.totalEntries)}</p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Takip edilen gün</p>
+              <p className="text-muted">{t("Takip edilen gün")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">{formatNumber(stats.daysCount)}</p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Günlük ort. kalori</p>
+              <p className="text-muted">{t("Günlük ort. kalori")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
-                {formatNumber(stats.daysCount ? stats.totalCaloriesIn / stats.daysCount : 0)} kcal
+                {t("{value} kcal", {
+                  value: formatNumber(stats.daysCount ? stats.totalCaloriesIn / stats.daysCount : 0),
+                })}
               </p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Günlük ort. su</p>
+              <p className="text-muted">{t("Günlük ort. su")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
-                {formatNumber(stats.daysCount ? stats.totalWater / stats.daysCount : 0)} ml
+                {t("{value} ml", {
+                  value: formatNumber(stats.daysCount ? stats.totalWater / stats.daysCount : 0),
+                })}
               </p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Aktivite kalorisi</p>
+              <p className="text-muted">{t("Aktivite kalorisi")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
-                {formatNumber(stats.totalCaloriesOut)} kcal
+                {t("{value} kcal", { value: formatNumber(stats.totalCaloriesOut) })}
               </p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Öğün hedefi oranı</p>
+              <p className="text-muted">{t("Öğün hedefi oranı")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">%{mealRate}</p>
             </div>
           </div>
           <div className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-amber-900">
-            En uzun seri: {stats.longestStreak} gün • Mevcut seri: {stats.currentStreak} gün
+            {t("En uzun seri: {longest} gün • Mevcut seri: {current} gün", {
+              longest: stats.longestStreak,
+              current: stats.currentStreak,
+            })}
           </div>
           <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs text-muted">
-            Su serisi: {stats.currentWaterStreak} gün • Aktivite serisi:{" "}
-            {stats.currentActivityStreak} gün • Öğün serisi: {stats.currentMealStreak} gün
+            {t(
+              "Su serisi: {water} gün • Aktivite serisi: {activity} gün • Öğün serisi: {meal} gün",
+              {
+                water: stats.currentWaterStreak,
+                activity: stats.currentActivityStreak,
+                meal: stats.currentMealStreak,
+              }
+            )}
           </div>
         </Card>
       </section>
 
       <Card className="space-y-4">
         <div>
-          <p className="text-sm font-semibold">Rozetler</p>
+          <p className="text-sm font-semibold">{t("Rozetler")}</p>
           <p className="text-xs text-muted">
-            Seri, su, aktivite ve öğün disiplini hedeflerine göre rozetler açılır.
+            {t("Seri, su, aktivite ve öğün disiplini hedeflerine göre rozetler açılır.")}
           </p>
         </div>
         {entries.length === 0 && (
           <div className="rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 px-4 py-4 text-xs text-muted">
-            İlk kayıtlarını eklediğinde rozetler görünür.
+            {t("İlk kayıtlarını eklediğinde rozetler görünür.")}
           </div>
         )}
         <div className="grid gap-4 lg:grid-cols-2">
           <div className="space-y-3">
-            <p className="text-xs font-semibold text-muted">Seri Rozetleri</p>
+            <p className="text-xs font-semibold text-muted">{t("Seri Rozetleri")}</p>
             {streakBadges.map((badge) => (
               <BadgeCard
                 key={badge.id}
@@ -906,19 +927,19 @@ export default function ProfilePage() {
             ))}
           </div>
           <div className="space-y-3">
-            <p className="text-xs font-semibold text-muted">Öğün Rozetleri</p>
+            <p className="text-xs font-semibold text-muted">{t("Öğün Rozetleri")}</p>
             {mealBadges.map((badge) => (
               <BadgeCard key={badge.id} badge={badge} progress={badgeProgress.meal} />
             ))}
           </div>
           <div className="space-y-3">
-            <p className="text-xs font-semibold text-muted">Su Rozetleri</p>
+            <p className="text-xs font-semibold text-muted">{t("Su Rozetleri")}</p>
             {waterBadges.map((badge) => (
               <BadgeCard key={badge.id} badge={badge} progress={badgeProgress.water} />
             ))}
           </div>
           <div className="space-y-3">
-            <p className="text-xs font-semibold text-muted">Aktivite Rozetleri</p>
+            <p className="text-xs font-semibold text-muted">{t("Aktivite Rozetleri")}</p>
             {activityBadges.map((badge) => (
               <BadgeCard
                 key={badge.id}
@@ -950,11 +971,11 @@ function BadgeCard({ badge, progress }: { badge: BadgeDefinition; progress: numb
         <div
           className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${badge.tone} text-xs font-semibold ${badge.accent}`}
         >
-          {badge.label}
+          {t(badge.label)}
         </div>
         <div className="flex-1 space-y-2">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-ink">{badge.title}</p>
+            <p className="text-sm font-semibold text-ink">{t(badge.title)}</p>
             <span
               className={`rounded-full px-2 py-0.5 text-[10px] ${
                 achieved
@@ -962,15 +983,15 @@ function BadgeCard({ badge, progress }: { badge: BadgeDefinition; progress: numb
                   : "bg-amber-50 text-muted"
               }`}
             >
-              {achieved ? "Açıldı" : "Kilitli"}
+              {achieved ? t("Açıldı") : t("Kilitli")}
             </span>
           </div>
-          <p className="text-xs text-muted">{badge.description}</p>
+          <p className="text-xs text-muted">{t(badge.description)}</p>
           <div className="h-1.5 rounded-full bg-amber-100">
             <div className="h-1.5 rounded-full bg-accent" style={{ width: `${percent}%` }} />
           </div>
           <div className="text-[10px] text-muted">
-            {clamped}/{badge.threshold} gün
+            {t("{value}/{threshold} gün", { value: clamped, threshold: badge.threshold })}
           </div>
         </div>
       </div>

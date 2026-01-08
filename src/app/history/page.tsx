@@ -5,19 +5,7 @@ import { Card } from "@/components/card";
 import { useTracker } from "@/components/tracker-provider";
 import { ActivityType, MealType } from "@/lib/types";
 import { createId, formatShortDate, getDayKey } from "@/lib/utils";
-
-const mealLabels: Record<MealType, string> = {
-  breakfast: "Kahvaltı",
-  lunch: "Öğle",
-  dinner: "Akşam",
-  snack: "Atıştırmalık",
-};
-
-const activityLabels: Record<ActivityType, string> = {
-  walking: "Yürümek",
-  running: "Koşu",
-  gym: "Salon",
-};
+import { t } from "@/lib/i18n";
 
 type FilterType = "all" | "food" | "water" | "activity";
 type MealFilter = "all" | MealType;
@@ -76,6 +64,17 @@ export default function HistoryPage() {
   const [savedViews, setSavedViews] = useState<SavedView[]>(() => loadSavedViews());
   const [viewName, setViewName] = useState("");
   const [activeViewId, setActiveViewId] = useState<string | null>(null);
+  const mealLabels: Record<MealType, string> = {
+    breakfast: t("Kahvaltı"),
+    lunch: t("Öğle"),
+    dinner: t("Akşam"),
+    snack: t("Atıştırmalık"),
+  };
+  const activityLabels: Record<ActivityType, string> = {
+    walking: t("Yürümek"),
+    running: t("Koşu"),
+    gym: t("Salon"),
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -106,7 +105,7 @@ export default function HistoryPage() {
           entry.type === "food"
             ? entry.name
             : entry.type === "water"
-              ? "Su"
+              ? t("Su")
               : activityLabels[entry.activityType];
         return label.toLowerCase().includes(normalized);
       });
@@ -151,8 +150,8 @@ export default function HistoryPage() {
     <div className="space-y-6">
       <Card className="space-y-4">
         <div>
-          <p className="text-sm font-semibold">Geçmiş Kayıtlar</p>
-          <p className="text-xs text-muted">Filtreleyip kayıtları hızlıca bulun.</p>
+          <p className="text-sm font-semibold">{t("Geçmiş Kayıtlar")}</p>
+          <p className="text-xs text-muted">{t("Filtreleyip kayıtları hızlıca bulun.")}</p>
         </div>
         <div className="grid gap-3 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
           <input
@@ -161,7 +160,7 @@ export default function HistoryPage() {
               setQuery(event.target.value);
               setActiveViewId(null);
             }}
-            placeholder="Ara: öğün, aktivite..."
+            placeholder={t("Ara: öğün, aktivite...")}
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
           />
           <select
@@ -176,10 +175,10 @@ export default function HistoryPage() {
             }}
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
           >
-            <option value="all">Tüm Tipler</option>
-            <option value="food">Yemek</option>
-            <option value="water">Su</option>
-            <option value="activity">Aktivite</option>
+            <option value="all">{t("Tüm Tipler")}</option>
+            <option value="food">{t("Yemek")}</option>
+            <option value="water">{t("Su")}</option>
+            <option value="activity">{t("Aktivite")}</option>
           </select>
           <select
             value={mealFilter}
@@ -190,7 +189,7 @@ export default function HistoryPage() {
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
             disabled={typeFilter !== "food"}
           >
-            <option value="all">Tüm Öğünler</option>
+            <option value="all">{t("Tüm Öğünler")}</option>
             {Object.entries(mealLabels).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
@@ -207,10 +206,10 @@ export default function HistoryPage() {
             }}
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
           >
-            <option value="all">Tüm Zamanlar</option>
-            <option value="7">Son 7 Gün</option>
-            <option value="30">Son 30 Gün</option>
-            <option value="90">Son 90 Gün</option>
+            <option value="all">{t("Tüm Zamanlar")}</option>
+            <option value="7">{t("Son {value} Gün", { value: 7 })}</option>
+            <option value="30">{t("Son {value} Gün", { value: 30 })}</option>
+            <option value="90">{t("Son {value} Gün", { value: 90 })}</option>
           </select>
           <select
             value={sortOrder}
@@ -220,14 +219,14 @@ export default function HistoryPage() {
             }}
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
           >
-            <option value="newest">En Yeni</option>
-            <option value="oldest">En Eski</option>
+            <option value="newest">{t("En Yeni")}</option>
+            <option value="oldest">{t("En Eski")}</option>
           </select>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <input
               value={viewName}
               onChange={(event) => setViewName(event.target.value)}
-              placeholder="Görünüm adı"
+              placeholder={t("Görünüm adı")}
               className="w-full flex-1 rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
             />
             <button
@@ -253,7 +252,7 @@ export default function HistoryPage() {
               }}
               className="w-full rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 sm:w-auto"
             >
-              Görünüm Kaydet
+              {t("Görünüm Kaydet")}
             </button>
             {hasFilters && (
               <button
@@ -267,7 +266,7 @@ export default function HistoryPage() {
                 }}
                 className="w-full rounded-xl border border-amber-100 bg-white px-4 py-2 text-xs text-muted hover:text-ink sm:w-auto"
               >
-                Filtreyi temizle
+                {t("Filtreyi temizle")}
               </button>
             )}
           </div>
@@ -303,7 +302,7 @@ export default function HistoryPage() {
                     }
                   }}
                   className="text-[11px] text-muted hover:text-ink"
-                  aria-label={`${view.name} görünümünü sil`}
+                  aria-label={t("{name} görünümünü sil", { name: view.name })}
                 >
                   ×
                 </button>
@@ -315,13 +314,13 @@ export default function HistoryPage() {
 
       {entries.length === 0 && (
         <Card className="text-center text-sm text-muted">
-          Henüz kayıt yok. İlk girişinizi ekleyin.
+          {t("Henüz kayıt yok. İlk girişinizi ekleyin.")}
         </Card>
       )}
 
       {entries.length > 0 && dayKeys.length === 0 && (
         <Card className="text-center text-sm text-muted">
-          Filtrelere uygun kayıt bulunamadı.
+          {t("Filtrelere uygun kayıt bulunamadı.")}
         </Card>
       )}
 
@@ -330,7 +329,7 @@ export default function HistoryPage() {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm font-semibold">{formatShortDate(day)}</p>
             <span className="rounded-full bg-amber-50 px-3 py-1 text-[11px] text-muted">
-              {groups[day].length} kayıt
+              {t("{value} kayıt", { value: groups[day].length })}
             </span>
           </div>
           <div className="space-y-2">
@@ -344,14 +343,17 @@ export default function HistoryPage() {
                     <div>
                       <p className="text-sm font-semibold text-ink">{entry.name}</p>
                       <p className="text-xs text-muted">
-                        {mealLabels[entry.mealType]} • {entry.calories} kcal
+                        {t("{meal} • {calorie} kcal", {
+                          meal: mealLabels[entry.mealType],
+                          calorie: entry.calories,
+                        })}
                       </p>
                     </div>
                   )}
                   {entry.type === "water" && (
                     <div>
-                      <p className="text-sm font-semibold text-ink">Su</p>
-                      <p className="text-xs text-muted">{entry.amountMl} ml</p>
+                      <p className="text-sm font-semibold text-ink">{t("Su")}</p>
+                      <p className="text-xs text-muted">{t("{value} ml", { value: entry.amountMl })}</p>
                     </div>
                   )}
                   {entry.type === "activity" && (
@@ -360,7 +362,10 @@ export default function HistoryPage() {
                         {activityLabels[entry.activityType]}
                       </p>
                       <p className="text-xs text-muted">
-                        {entry.durationMin} dk • {entry.estimatedCalories} kcal (tahmini)
+                        {t("{duration} dk • {calorie} kcal (tahmini)", {
+                          duration: entry.durationMin,
+                          calorie: entry.estimatedCalories,
+                        })}
                       </p>
                     </div>
                   )}
@@ -369,7 +374,7 @@ export default function HistoryPage() {
                   onClick={() => removeEntry(entry.id)}
                   className="mt-2 rounded-full border border-amber-100 px-3 py-1 text-[11px] text-muted hover:text-ink sm:mt-0"
                 >
-                  Sil
+                  {t("Sil")}
                 </button>
               </div>
             ))}

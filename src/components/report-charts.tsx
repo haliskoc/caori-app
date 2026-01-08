@@ -15,6 +15,7 @@ import {
 import { DailySummary } from "@/lib/types";
 import { formatShortDate } from "@/lib/utils";
 import { Card } from "@/components/card";
+import { t } from "@/lib/i18n";
 
 type ReportChartsProps = {
   summary: DailySummary[];
@@ -46,16 +47,16 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
 
   return (
     <div className="grid gap-4 lg:grid-cols-2 print-charts">
-      <div className="print-chart" data-report-chart data-chart-title="Kalori Dengesi">
+      <div className="print-chart" data-report-chart data-chart-title={t("Kalori Dengesi")}>
         <Card className="min-h-[260px]">
         <div className="mb-3">
-          <p className="text-sm font-semibold">Kalori Dengesi</p>
-          <p className="text-xs text-muted">Girilen ve yakılan kalori trendi</p>
+          <p className="text-sm font-semibold">{t("Kalori Dengesi")}</p>
+          <p className="text-xs text-muted">{t("Girilen ve yakılan kalori trendi")}</p>
         </div>
         <div className="h-44 w-full">
           {isEmpty ? (
             <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 text-xs text-muted">
-              Henüz veri yok. İlk kayıtlar grafiği dolduracak.
+              {t("Henüz veri yok. İlk kayıtlar grafiği dolduracak.")}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
@@ -93,21 +94,21 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
           )}
         </div>
         <p className="mt-3 text-[11px] text-muted">
-          Enerji dengesinin hareketini takip edin.
+          {t("Enerji dengesinin hareketini takip edin.")}
         </p>
       </Card>
       </div>
 
-      <div className="print-chart" data-report-chart data-chart-title="Su Alımı">
+      <div className="print-chart" data-report-chart data-chart-title={t("Su Alımı")}>
         <Card className="min-h-[260px]">
         <div className="mb-3">
-          <p className="text-sm font-semibold">Su Alımı</p>
-          <p className="text-xs text-muted">Günlük su trendi</p>
+          <p className="text-sm font-semibold">{t("Su Alımı")}</p>
+          <p className="text-xs text-muted">{t("Günlük su trendi")}</p>
         </div>
         <div className="h-44 w-full">
           {isEmpty ? (
             <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 text-xs text-muted">
-              Su takibi başladığında burada görünecek.
+              {t("Su takibi başladığında burada görünecek.")}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
@@ -129,24 +130,24 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
             </ResponsiveContainer>
           )}
         </div>
-        <p className="mt-3 text-[11px] text-muted">Hedefe yaklaşan günleri vurgular.</p>
+        <p className="mt-3 text-[11px] text-muted">{t("Hedefe yaklaşan günleri vurgular.")}</p>
       </Card>
       </div>
 
       <div
         className="print-chart lg:col-span-2"
         data-report-chart
-        data-chart-title="Makro Dağılımı"
+        data-chart-title={t("Makro Dağılımı")}
       >
         <Card className="min-h-[260px] lg:col-span-2">
         <div className="mb-3">
-          <p className="text-sm font-semibold">Makro Dağılımı</p>
-          <p className="text-xs text-muted">Protein / Karbonhidrat / Yağ</p>
+          <p className="text-sm font-semibold">{t("Makro Dağılımı")}</p>
+          <p className="text-xs text-muted">{t("Protein / Karbonhidrat / Yağ")}</p>
         </div>
         <div className="h-48 w-full">
           {isEmpty ? (
             <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 text-xs text-muted">
-              Makro verisi oluştuğunda burada görünecek.
+              {t("Makro verisi oluştuğunda burada görünecek.")}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
@@ -168,10 +169,10 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
                   iconType="circle"
                   formatter={(value) =>
                     value === "proteinG"
-                      ? "Protein"
+                      ? t("Protein")
                       : value === "carbsG"
-                        ? "Karbonhidrat"
-                        : "Yağ"
+                        ? t("Karbonhidrat")
+                        : t("Yağ")
                   }
                 />
                 <Bar dataKey="proteinG" stackId="macro" fill="#ef476f" />
@@ -182,7 +183,7 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
           )}
         </div>
         <p className="mt-3 text-[11px] text-muted">
-          Makro dengesini haftalık ritimle izleyin.
+          {t("Makro dengesini haftalık ritimle izleyin.")}
         </p>
       </Card>
       </div>

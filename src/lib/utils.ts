@@ -1,4 +1,5 @@
 import { Entry, DailySummary } from "./types";
+import { getIntlLocale } from "./i18n";
 
 export const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -24,9 +25,10 @@ export function getLastNDays(n: number, from = new Date()) {
   });
 }
 
-export function formatShortDate(dateKey: string) {
+export function formatShortDate(dateKey: string, locale?: string) {
   const date = new Date(`${dateKey}T00:00:00`);
-  return new Intl.DateTimeFormat("tr-TR", {
+  const resolvedLocale = locale ?? getIntlLocale();
+  return new Intl.DateTimeFormat(resolvedLocale, {
     weekday: "short",
     day: "numeric",
     month: "short",

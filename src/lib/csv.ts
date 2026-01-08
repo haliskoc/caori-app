@@ -1,5 +1,6 @@
 import { ActivityType, Entry, MealType } from "./types";
 import { createId } from "./utils";
+import { t } from "./i18n";
 
 function normalizeHeader(value: string) {
   return value.trim().toLowerCase();
@@ -88,7 +89,7 @@ export function entriesFromCsv(rows: string[][]): Entry[] {
         return {
           id,
           type: "food" as const,
-          name: (hasHeader ? get(row, "name") : row[2])?.trim() || "Belirtilmedi",
+          name: (hasHeader ? get(row, "name") : row[2])?.trim() || t("Belirtilmedi"),
           calories: Number(hasHeader ? get(row, "calories") : row[3]) || 0,
           mealType: ((hasHeader ? get(row, "mealtype") : row[4])?.trim() ||
             "snack") as MealType,
