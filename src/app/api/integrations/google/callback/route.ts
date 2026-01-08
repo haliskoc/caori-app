@@ -14,7 +14,8 @@ export const GET = async (req: NextRequest) => {
   const code = searchParams.get("code");
   const error = searchParams.get("error");
   const state = searchParams.get("state");
-  const storedState = cookies().get("calai_gfit_state")?.value;
+  const cookieStore = await cookies();
+  const storedState = cookieStore.get("calai_gfit_state")?.value;
 
   if (error) {
     return NextResponse.json({ error }, { status: 400 });
