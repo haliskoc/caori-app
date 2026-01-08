@@ -13,7 +13,7 @@ const navItems = [
   { href: "/dashboard", label: "Panel", icon: "⌂" },
   { href: "/add-entry", label: "Ekle", icon: "+" },
   { href: "/history", label: "Geçmiş", icon: "◎" },
-  { href: "/profile", label: "Profil", icon: "👤" },
+  { href: "/profile", label: "Profil", icon: "◍" },
   { href: "/settings", label: "Ayarlar", icon: "⚙" },
 ];
 
