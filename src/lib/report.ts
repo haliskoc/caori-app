@@ -99,7 +99,7 @@ function buildMotivation(input: {
   return lines.join(" ");
 }
 
-type ReportEntry = Omit<Entry, "timestamp"> & { timestamp: string | Date };
+type ReportEntry = Entry & { timestamp: string | Date };
 
 export function buildReportData(
   entries: ReportEntry[],
