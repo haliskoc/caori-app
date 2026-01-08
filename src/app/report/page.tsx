@@ -535,103 +535,166 @@ export default function ReportPage() {
   <meta charset="utf-8" />
   <title>${t("Cal AI Rapor")}</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     
     @page {
       size: A4;
       margin: 15mm;
+      @bottom-right {
+        content: counter(page) " / " counter(pages);
+        font-family: 'Inter', sans-serif;
+        font-size: 10px;
+        color: #999;
+      }
     }
     
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', sans-serif;
       color: #1a1a1a;
-      background: white;
+      background: #ffffff;
       margin: 0;
       padding: 0;
-      line-height: 1.5;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
+      line-height: 1.4;
     }
 
-    h1, h2, h3, h4 { margin: 0; font-weight: 700; }
-    
     .cover-page {
-      height: 260mm;
+      height: 275mm;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
       page-break-after: always;
-      position: relative;
-      background: radial-gradient(circle at top right, #fff5eb, transparent),
-                  radial-gradient(circle at bottom left, #fff0e0, transparent);
+      background: radial-gradient(circle at 10% 10%, #fffbf0 0%, transparent 40%),
+                  radial-gradient(circle at 90% 90%, #fff5e6 0%, transparent 40%),
+                  #ffffff;
     }
     
-    .logo {
-      font-size: 80px;
-      font-weight: 800;
+    .cover-logo {
+      width: 120px;
+      height: 120px;
+      background: #ff7a00;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 40px;
+      box-shadow: 0 20px 40px rgba(255, 122, 0, 0.2);
+    }
+    
+    .cover-logo span {
+      color: white;
+      font-size: 60px;
+      font-weight: 900;
+      letter-spacing: -3px;
+    }
+    
+    .report-badge {
+      background: #fff0e0;
       color: #ff7a00;
-      letter-spacing: -2px;
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
       margin-bottom: 20px;
     }
     
     .report-title {
-      font-size: 32px;
+      font-size: 48px;
+      font-weight: 800;
       color: #1a1a1a;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
+      margin: 0 0 10px 0;
+      letter-spacing: -1px;
     }
     
     .user-info {
-      font-size: 18px;
+      font-size: 20px;
       color: #666;
-      margin-bottom: 40px;
-    }
-    
-    .date-range {
-      font-size: 14px;
-      color: #999;
+      font-weight: 500;
       margin-bottom: 60px;
     }
     
-    .score-circle {
-      width: 200px;
-      height: 200px;
-      border-radius: 100px;
-      border: 8px solid #ff7a00;
+    .score-container {
+      position: relative;
+      margin-bottom: 80px;
+    }
+    
+    .score-ring {
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      border: 12px solid #ff7a00;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      margin-bottom: 60px;
       background: white;
-      box-shadow: 0 20px 40px rgba(255, 122, 0, 0.1);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.05);
     }
     
     .score-value {
-      font-size: 64px;
-      font-weight: 800;
+      font-size: 80px;
+      font-weight: 900;
       color: #ff7a00;
       line-height: 1;
     }
     
     .score-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #666;
+      font-size: 14px;
+      font-weight: 700;
+      color: #999;
       text-transform: uppercase;
+      letter-spacing: 1px;
       margin-top: 5px;
     }
     
-    .cover-footer {
-      position: absolute;
-      bottom: 20px;
-      font-size: 12px;
+    .cover-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      width: 100%;
+      max-width: 600px;
+    }
+    
+    .cover-stat-item h4 {
+      font-size: 11px;
       color: #999;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 0 0 8px 0;
+    }
+    
+    .cover-stat-item p {
+      font-size: 24px;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin: 0;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 30px;
+    }
+    
+    .page-header-logo {
+      font-weight: 800;
+      color: #ff7a00;
+      font-size: 18px;
+    }
+    
+    .page-header-info {
+      font-size: 11px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .section {
@@ -639,165 +702,450 @@ export default function ReportPage() {
       page-break-inside: avoid;
     }
     
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .section-icon {
+      width: 32px;
+      height: 32px;
+      background: #fff0e0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    
     .section-title {
       font-size: 20px;
+      font-weight: 800;
       color: #1a1a1a;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #f0f0f0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
     
-    .grid-3 {
+    .insight-card {
+      background: linear-gradient(135deg, #fffcf5 0%, #fff8eb 100%);
+      border: 1px solid #ffe8cc;
+      border-radius: 20px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .insight-card:before {
+      content: '"';
+      position: absolute;
+      top: -20px;
+      right: 10px;
+      font-size: 120px;
+      color: #ff7a00;
+      opacity: 0.05;
+      font-family: serif;
+    }
+    
+    .insight-text {
+      font-size: 16px;
+      color: #444;
+      line-height: 1.6;
+      font-weight: 500;
+      font-style: italic;
+    }
+    
+    .stat-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
+      gap: 16px;
     }
     
-    .card {
-      background: #fafafa;
-      border-radius: 12px;
-      padding: 20px;
+    .stat-card {
+      background: #ffffff;
       border: 1px solid #f0f0f0;
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.3s ease;
     }
     
-    .stat-label {
+    .stat-card:hover { background: #fafafa; }
+    
+    .stat-card-label {
       font-size: 11px;
-      color: #666;
+      font-weight: 700;
+      color: #999;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
     }
     
-    .stat-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: #1a1a1a;
-    }
-    
-    .motivation-card {
-      background: #fff8f0;
-      border-left: 4px solid #ff7a00;
-      padding: 20px;
-      border-radius: 0 12px 12px 0;
-      font-style: italic;
-      color: #444;
-      font-size: 15px;
-      line-height: 1.6;
-    }
-    
-    .list-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid #f5f5f5;
-    }
-    
-    .list-item-title {
-      font-weight: 600;
-      font-size: 14px;
-    }
-    
-    .list-item-meta {
-      font-size: 12px;
-      color: #999;
-      margin-left: 10px;
-    }
-    
-    .list-item-value {
-      font-weight: 700;
-      color: #ff7a00;
-      font-size: 14px;
-    }
-    
-    .day-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-    }
-    
-    .day-card {
-      padding: 15px;
-      border: 1px solid #f0f0f0;
-      border-radius: 12px;
-      text-align: center;
-    }
-    
-    .day-card-date {
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-    
-    .day-card-score {
-      font-size: 28px;
+    .stat-card-value {
+      font-size: 26px;
       font-weight: 800;
-      color: #ff7a00;
-      margin-bottom: 5px;
-    }
-    
-    .day-card-stats {
-      font-size: 11px;
-      color: #666;
+      color: #1a1a1a;
       display: flex;
-      justify-content: center;
-      gap: 10px;
+      align-items: baseline;
+      gap: 4px;
     }
     
-    table {
+    .stat-card-unit {
+      font-size: 12px;
+      font-weight: 600;
+      color: #999;
+    }
+    
+    .modern-table {
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
+      border-collapse: separate;
+      border-spacing: 0 8px;
     }
     
-    th {
+    .modern-table th {
       text-align: left;
       font-size: 11px;
-      text-transform: uppercase;
+      font-weight: 700;
       color: #999;
-      padding: 10px;
-      border-bottom: 2px solid #f0f0f0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 0 16px;
     }
     
-    td {
-      padding: 12px 10px;
+    .modern-table td {
+      background: #fafafa;
+      padding: 16px;
       font-size: 13px;
-      border-bottom: 1px solid #f5f5f5;
     }
     
-    .text-accent { color: #ff7a00; font-weight: 700; }
+    .modern-table tr td:first-child { border-radius: 12px 0 0 12px; }
+    .modern-table tr td:last-child { border-radius: 0 12px 12px 0; }
     
-    .chart-block {
-      margin-bottom: 30px;
-      page-break-inside: avoid;
+    .progress-bar {
+      height: 6px;
+      background: #eee;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+      width: 60px;
     }
     
-    .section-subtitle {
+    .progress-fill {
+      height: 100%;
+      background: #ff7a00;
+    }
+    
+    .pill {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    
+    .pill-accent { background: #fff0e0; color: #ff7a00; }
+    
+    .chart-container {
+      background: #ffffff;
+      border: 1px solid #f0f0f0;
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .chart-header {
       font-size: 14px;
-      margin-bottom: 10px;
+      font-weight: 700;
       color: #666;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
     }
     
     .chart-img {
       width: 100%;
-      border-radius: 8px;
-      border: 1px solid #f0f0f0;
+      height: auto;
+      border-radius: 12px;
     }
 
     .footer {
-      text-align: center;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+      margin-top: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #bbb;
       font-size: 10px;
-      color: #ccc;
-      margin-top: 40px;
     }
   </style>
 </head>
 <body>
   <div class="cover-page">
-    <div class="logo">Cal AI</div>
+    <div class="cover-logo"><span>C</span></div>
+    <div class="report-badge">${t("Beslenme Raporu")}</div>
+    <h1 class="report-title">${t("Performans Analizi")}</h1>
+    <div class="user-info">${escapeHtml(name)} • ${escapeHtml(rangeLabel)}</div>
+    
+    <div class="score-container">
+      <div class="score-ring">
+        <div class="score-value">${report.adherenceScore}</div>
+        <div class="score-label">${t("Uyum Skoru")}</div>
+      </div>
+    </div>
+    
+    <div class="cover-stats">
+      <div class="cover-stat-item">
+        <h4>${t("Toplam Kalori")}</h4>
+        <p>${formatNumber(report.totals.caloriesIn)}</p>
+      </div>
+      <div class="cover-stat-item">
+        <h4>${t("Aktif Günler")}</h4>
+        <p>${report.activeDays} / ${report.rangeDays}</p>
+      </div>
+      <div class="cover-stat-item">
+        <h4>${t("Kayıt Sayısı")}</h4>
+        <p>${report.entryCount}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content" style="padding: 20mm;">
+    <div class="page-header">
+      <div class="page-header-logo">Cal AI</div>
+      <div class="page-header-info">${escapeHtml(name)} • ${new Date().toLocaleDateString("tr-TR")}</div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">✨</div>
+        <h2 class="section-title">${t("Kişisel Analiz ve Motivasyon")}</h2>
+      </div>
+      <div class="insight-card">
+        <div class="insight-text">${escapeHtml(report.comment)}</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">📊</div>
+        <h2 class="section-title">${t("Genel Performans Özeti")}</h2>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-card-label">${t("Ort. Kalori")}</div>
+          <div class="stat-card-value">${formatNumber(report.averages.caloriesIn)} <span class="stat-card-unit">kcal</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">${t("Net Değişim")}</div>
+          <div class="stat-card-value">${formatNumber(report.totals.netCalories)} <span class="stat-card-unit">kcal</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">${t("Su Tüketimi")}</div>
+          <div class="stat-card-value">${formatNumber(report.totals.waterMl)} <span class="stat-card-unit">ml</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">${t("Aktivite Süresi")}</div>
+          <div class="stat-card-value">${formatNumber(report.totals.activityMin)} <span class="stat-card-unit">dk</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">${t("Yürüyüş")}</div>
+          <div class="stat-card-value">${formatNumber(report.totals.activityMin)} <span class="stat-card-unit">dk</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">${t("Öğün Ritmi")}</div>
+          <div class="stat-card-value">${report.averages.mealCount} <span class="stat-card-unit">${t(
+      "öğün/gün"
+    )}</span></div>
+        </div>
+      </div>
+    </div>
+
+    ${
+      report.effectiveDays.length > 0
+        ? `
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">🏆</div>
+        <h2 class="section-title">${t("Zirve Günler")}</h2>
+      </div>
+      <div class="stat-grid">
+        ${report.effectiveDays
+          .map(
+            (day) => `
+          <div class="stat-card" style="text-align: center; background: #fdfaf5">
+            <div class="stat-card-label">${formatShortDate(day.date)}</div>
+            <div class="stat-card-value" style="justify-content: center; color: #ff7a00">%${
+              day.score
+            }</div>
+            <div style="font-size: 10px; color: #999; margin-top: 8px;">${formatNumber(
+              day.caloriesIn
+            )} kcal • ${day.activityMin} dk</div>
+          </div>
+        `
+          )
+          .join("")}
+      </div>
+    </div>
+    `
+        : ""
+    }
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon">🍎</div>
+          <h2 class="section-title">${t("Beslenme Tercihleri")}</h2>
+        </div>
+        <div class="stat-card" style="padding: 10px 20px;">
+          ${
+            report.topFoods.length > 0
+              ? report.topFoods
+                  .map(
+                    (food) => `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f6f6f6;">
+              <div style="font-size: 14px; font-weight: 600;">${escapeHtml(food.name)}</div>
+              <div style="font-size: 13px; font-weight: 700; color: #ff7a00;">${formatNumber(
+                food.calories
+              )} kcal</div>
+            </div>
+          `
+                  )
+                  .join("")
+              : `<p style="padding: 20px 0; color: #999; font-size: 13px;">${t(
+                  "Henüz veri yok"
+                )}</p>`
+          }
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon">🏃</div>
+          <h2 class="section-title">${t("Aktivite Özeti")}</h2>
+        </div>
+        <div class="stat-card" style="padding: 10px 20px;">
+          ${
+            report.topActivities.length > 0
+              ? report.topActivities
+                  .map(
+                    (act) => `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f6f6f6;">
+              <div style="font-size: 14px; font-weight: 600;">${escapeHtml(
+                act.activityType
+              )}</div>
+              <div style="font-size: 13px; font-weight: 700; color: #ff7a00;">${
+                act.durationMin
+              } dk</div>
+            </div>
+          `
+                  )
+                  .join("")
+              : `<p style="padding: 20px 0; color: #999; font-size: 13px;">${t(
+                  "Henüz veri yok"
+                )}</p>`
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="section" style="page-break-before: always;">
+      <div class="section-header">
+        <div class="section-icon">📈</div>
+        <h2 class="section-title">${t("Görsel Veri Analizi")}</h2>
+      </div>
+      ${charts
+        .map(
+          (chart) => `
+        <div class="chart-container">
+          <div class="chart-header">
+            <span>${escapeHtml(chart.title)}</span>
+            <span class="pill pill-accent">${rangeLabel}</span>
+          </div>
+          <img src="${chart.dataUrl}" class="chart-img" />
+        </div>
+      `
+        )
+        .join("")}
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">📅</div>
+        <h2 class="section-title">${t("Haftalık Karşılaştırma")}</h2>
+      </div>
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>${t("Dönem")}</th>
+            <th>${t("Uyum")}</th>
+            <th>${t("Kalori")}</th>
+            <th>${t("Su")}</th>
+            <th>${t("Aktivite")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${report.weekly
+            .map(
+              (week) => `
+            <tr>
+              <td><strong>${formatShortDate(week.weekStart)}</strong></td>
+              <td style="color: #ff7a00; font-weight: 700;">%${week.adherenceScore}</td>
+              <td>${formatDelta(week.deltas.caloriesIn, "kcal")}</td>
+              <td>${formatDelta(week.deltas.waterMl, "ml")}</td>
+              <td>${formatDelta(week.deltas.activityMin, "dk")}</td>
+            </tr>
+          `
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section" style="page-break-before: always;">
+      <div class="section-header">
+        <div class="section-icon">📝</div>
+        <h2 class="section-title">${t("Günlük Veri Kayıtları")}</h2>
+      </div>
+      <table class="modern-table" style="font-size: 11px;">
+        <thead>
+          <tr>
+            <th>${t("Tarih")}</th>
+            <th>${t("Kalori")}</th>
+            <th>${t("Yakılan")}</th>
+            <th>${t("Su")}</th>
+            <th>${t("Akt.")}</th>
+            <th>P</th>
+            <th>K</th>
+            <th>Y</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${report.daily
+            .map(
+              (day) => `
+            <tr>
+              <td>${formatShortDate(day.date)}</td>
+              <td>${formatNumber(day.caloriesIn)}</td>
+              <td>${formatNumber(day.caloriesOut)}</td>
+              <td>${formatNumber(day.waterMl)}</td>
+              <td>${day.activityMin}</td>
+              <td>${formatNumber(day.proteinG)}g</td>
+              <td>${formatNumber(day.carbsG)}g</td>
+              <td>${formatNumber(day.fatG)}g</td>
+            </tr>
+          `
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <div>CAL AI • ANALYTICS ENGINE v2.0</div>
+      <div>${new Date().getFullYear()} © Cal AI. Tüm hakları saklıdır.</div>
+    </div>
+  </div>
+</body>
+</html>
+    `;
     <h1 class="report-title">${t("Performans Analizi")}</h1>
     <div class="user-info">${escapeHtml(name)} • ${escapeHtml(rangeLabel)}</div>
     <div class="date-range">${escapeHtml(formatDateFull(report.startDate))} - ${escapeHtml(
