@@ -379,6 +379,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           calories: entry.calories,
           mealType: entry.mealType,
         });
+        void loadRemoteData();
       }
       return;
     }
@@ -411,6 +412,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
         const created = (await response.json()) as Entry;
         setEntries((prev) => [created, ...prev]);
         recordAudit("add", "Su eklendi", { amountMl: entry.amountMl });
+        void loadRemoteData();
       }
       return;
     }
@@ -451,6 +453,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           activityType: entry.activityType,
           durationMin: entry.durationMin,
         });
+        void loadRemoteData();
       }
       return;
     }

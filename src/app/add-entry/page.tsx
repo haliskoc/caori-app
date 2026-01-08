@@ -38,6 +38,7 @@ export default function AddEntryPage() {
 
   const [searchResults, setSearchResults] = useState<OFFProduct[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [selectedFromSearch, setSelectedFromSearch] = useState(false);
   const [barcodeInput, setBarcodeInput] = useState("");
   const [isBarcodeSearching, setIsBarcodeSearching] = useState(false);
   const [barcodeMessage, setBarcodeMessage] = useState<string | null>(null);
@@ -157,6 +158,7 @@ export default function AddEntryPage() {
         skipSearchRef.current = true;
         setSearchResults([]);
         setFoodName(product.product_name);
+        setSelectedFromSearch(true);
         const kcal = product.nutriments?.["energy-kcal_100g"];
         if (typeof kcal === "number") {
           setFoodCalories(String(Math.round(kcal)));
@@ -319,7 +321,10 @@ export default function AddEntryPage() {
           </div>
           <input
             value={foodName}
-            onChange={(event) => setFoodName(event.target.value)}
+            onChange={(event) => {
+              setFoodName(event.target.value);
+              setSelectedFromSearch(false);
+            }}
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
             placeholder="Ürün Ara veya Manuel Gir..."
           />
@@ -332,9 +337,11 @@ export default function AddEntryPage() {
                 <button
                   key={product.code}
                   onClick={() => {
+                    skipSearchRef.current = true;
                     setFoodName(product.product_name);
+                    setSelectedFromSearch(true);
                     const kcal = product.nutriments["energy-kcal_100g"];
-                    if (kcal) setFoodCalories(String(Math.round(kcal)));
+                    if (typeof kcal === "number") setFoodCalories(String(Math.round(kcal)));
                     setSearchResults([]);
                   }}
                   className="flex w-full items-center gap-3 rounded-lg bg-white p-2 text-left text-xs transition hover:bg-amber-100/50"
@@ -352,7 +359,10 @@ export default function AddEntryPage() {
               ))}
             </div>
           )}
-          {foodName.length > 2 && !isSearching && searchResults.length === 0 && (
+          {foodName.length > 2 &&
+            !isSearching &&
+            searchResults.length === 0 &&
+            !selectedFromSearch && (
             <div className="rounded-xl border border-dashed border-amber-100 bg-amber-50/50 px-3 py-3 text-xs text-muted">
               Sonuç bulunamadı. Manuel kalori girişi yapabilirsiniz.
             </div>
@@ -384,6 +394,7 @@ export default function AddEntryPage() {
               addFood({ name: foodName || "Belirtilmedi", calories: Number(foodCalories), mealType });
               setFoodName("");
               setFoodCalories("");
+              setSelectedFromSearch(false);
             }}
             className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
           >
