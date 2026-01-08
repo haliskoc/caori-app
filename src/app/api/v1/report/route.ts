@@ -6,6 +6,8 @@ import { and, eq, gte, lte } from "drizzle-orm";
 import { toSafeNumber } from "@/lib/security";
 import { buildReportData } from "@/lib/report";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   const session = await auth0.getSession();
   if (!session?.user?.sub) {

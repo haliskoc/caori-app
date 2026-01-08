@@ -154,19 +154,34 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [auditLog, dataMode]);
 
+  function mergeEntries(primary: Entry[], secondary: Entry[]) {
+    const merged = new Map<string, Entry>();
+    for (const entry of primary) {
+      merged.set(entry.id, entry);
+    }
+    for (const entry of secondary) {
+      if (!merged.has(entry.id)) {
+        merged.set(entry.id, entry);
+      }
+    }
+    return sortEntries(Array.from(merged.values()));
+  }
+
   const loadRemoteData = useCallback(async () => {
     try {
       const [entriesRes, goalsRes, settingsRes, auditRes] = await Promise.all([
-        fetch("/api/v1/entries", { credentials: "include" }),
-        fetch("/api/v1/goals", { credentials: "include" }),
-        fetch("/api/v1/settings", { credentials: "include" }),
-        fetch("/api/v1/audit", { credentials: "include" }),
+        fetch("/api/v1/entries", { credentials: "include", cache: "no-store" }),
+        fetch("/api/v1/goals", { credentials: "include", cache: "no-store" }),
+        fetch("/api/v1/settings", { credentials: "include", cache: "no-store" }),
+        fetch("/api/v1/audit", { credentials: "include", cache: "no-store" }),
       ]);
       if (entriesRes.ok) {
         const data = (await entriesRes.json()) as Entry[];
         const normalized = Array.isArray(data) ? data.map(normalizeEntry) : [];
-        setEntries(normalized);
-        saveEntries(normalized);
+        const localEntries = loadEntries();
+        const merged = mergeEntries(normalized, localEntries);
+        setEntries(merged);
+        saveEntries(merged);
       } else {
         const localEntries = loadEntries();
         if (localEntries.length > 0) {
@@ -215,8 +230,10 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     if (user?.sub) {
-      // reset local-only state before loading remote data
-      setEntries([]);
+      const localSnapshot = loadEntries();
+      if (localSnapshot.length > 0) {
+        setEntries(localSnapshot);
+      }
       setGoals(DEFAULT_GOALS);
       setAuditLog([]);
       // eslint-disable-next-line react-hooks/set-state-in-effect

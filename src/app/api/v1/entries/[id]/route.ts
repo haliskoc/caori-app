@@ -5,6 +5,8 @@ import { entries } from "@/lib/schema";
 import { getDb } from "@/lib/db";
 import { isSameOrigin } from "@/lib/security";
 
+export const dynamic = "force-dynamic";
+
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }

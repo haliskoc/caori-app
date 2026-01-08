@@ -6,6 +6,8 @@ import { eq } from "drizzle-orm";
 import { defaultProfile, type ProfileInfo } from "@/lib/profile";
 import { isSameOrigin } from "@/lib/security";
 
+export const dynamic = "force-dynamic";
+
 const MAIN_GOALS = new Set([
   "fat_burn",
   "muscle_gain",

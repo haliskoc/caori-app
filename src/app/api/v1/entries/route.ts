@@ -6,6 +6,8 @@ import { getDb, ensureUser } from "@/lib/db";
 import { createId } from "@/lib/utils";
 import { isSameOrigin, toSafeNumber } from "@/lib/security";
 
+export const dynamic = "force-dynamic";
+
 const allowedTypes = new Set(["food", "water", "activity"]);
 const allowedMeals = new Set(["breakfast", "lunch", "dinner", "snack"]);
 const allowedActivities = new Set(["walking", "running", "gym"]);

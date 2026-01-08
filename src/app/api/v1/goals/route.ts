@@ -5,6 +5,8 @@ import { goals } from "@/lib/schema";
 import { getDb, ensureUser } from "@/lib/db";
 import { isSameOrigin, toSafeNumber } from "@/lib/security";
 
+export const dynamic = "force-dynamic";
+
 async function ensureGoals(userId: string) {
   const db = getDb();
   await db.insert(goals).values({ userId }).onConflictDoNothing();

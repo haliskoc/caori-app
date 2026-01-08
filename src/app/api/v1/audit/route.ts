@@ -7,6 +7,8 @@ import { createId } from "@/lib/utils";
 import type { AuditEvent } from "@/lib/audit";
 import { isSameOrigin } from "@/lib/security";
 
+export const dynamic = "force-dynamic";
+
 const MAX_AUDIT = 150;
 const ALLOWED_ACTIONS = new Set([
   "add",

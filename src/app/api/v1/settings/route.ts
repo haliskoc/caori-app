@@ -8,6 +8,8 @@ import { defaultReminder, type ReminderSettings } from "@/lib/reminders";
 import { defaultFlags, type FeatureFlags } from "@/lib/flags";
 import { isSameOrigin } from "@/lib/security";
 
+export const dynamic = "force-dynamic";
+
 type SettingsPayload = {
   theme?: Partial<ThemeSettings>;
   reminder?: Partial<ReminderSettings>;
