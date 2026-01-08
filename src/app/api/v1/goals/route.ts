@@ -46,6 +46,21 @@ export async function PUT(request: Request) {
     max: 20000,
     integer: true,
   });
+  const activityGoalMin = toSafeNumber(body?.activityGoalMin, 30, {
+    min: 0,
+    max: 1000,
+    integer: true,
+  });
+  const mealGoalCount = toSafeNumber(body?.mealGoalCount, 3, {
+    min: 0,
+    max: 10,
+    integer: true,
+  });
+  const weightGoalKg = toSafeNumber(body?.weightGoalKg, 0, {
+    min: 0,
+    max: 500,
+    integer: true,
+  });
 
   await ensureUser(session.user);
   const db = getDb();
@@ -55,6 +70,9 @@ export async function PUT(request: Request) {
       userId: session.user.sub,
       waterGoalMl,
       calorieGoal,
+      activityGoalMin,
+      mealGoalCount,
+      weightGoalKg,
       updatedAt: new Date(),
     })
     .onConflictDoUpdate({
@@ -62,6 +80,9 @@ export async function PUT(request: Request) {
       set: {
         waterGoalMl,
         calorieGoal,
+        activityGoalMin,
+        mealGoalCount,
+        weightGoalKg,
         updatedAt: new Date(),
       },
     });

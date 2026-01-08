@@ -31,6 +31,9 @@ export const goals = pgTable("goals", {
     .references(() => users.id, { onDelete: "cascade" }),
   waterGoalMl: integer("water_goal_ml").notNull().default(2500),
   calorieGoal: integer("calorie_goal").notNull().default(2200),
+  activityGoalMin: integer("activity_goal_min").notNull().default(30),
+  mealGoalCount: integer("meal_goal_count").notNull().default(3),
+  weightGoalKg: integer("weight_goal_kg").notNull().default(0),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
@@ -53,6 +56,24 @@ export const entries = pgTable("entries", {
   fatG: integer("fat_g"),
   timestamp: timestamp("timestamp", { withTimezone: true }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+export const foodLibrary = pgTable("food_library", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  caloriesPer100: integer("calories_per_100"),
+  proteinPer100: integer("protein_per_100"),
+  carbsPer100: integer("carbs_per_100"),
+  fatPer100: integer("fat_per_100"),
+  barcode: text("barcode"),
+  imageUrl: text("image_url"),
+  source: text("source").notNull().default("manual"),
+  favorite: boolean("favorite").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
 export const profiles = pgTable("profiles", {

@@ -98,7 +98,13 @@ export async function GET(request: NextRequest) {
     normalized,
     rangeDays,
     goalRow
-      ? { calorieGoal: goalRow.calorieGoal, waterGoalMl: goalRow.waterGoalMl }
+      ? {
+          calorieGoal: goalRow.calorieGoal,
+          waterGoalMl: goalRow.waterGoalMl,
+          activityGoalMin: goalRow.activityGoalMin ?? 30,
+          mealGoalCount: goalRow.mealGoalCount ?? 3,
+          weightGoalKg: goalRow.weightGoalKg ?? 0,
+        }
       : undefined
   );
 

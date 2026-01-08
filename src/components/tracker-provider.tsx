@@ -14,6 +14,7 @@ import type {
   ActivityType,
   Entry,
   FoodEntry,
+  Goals,
   MealType,
   WaterEntry,
 } from "@/lib/types";
@@ -29,11 +30,6 @@ import {
 } from "@/lib/audit";
 import { ThemeSettings, applyTheme, loadTheme, saveTheme } from "@/lib/theme";
 import { ReminderSettings, loadReminder, saveReminder } from "@/lib/reminders";
-
-type Goals = {
-  waterGoalMl: number;
-  calorieGoal: number;
-};
 
 type TrackerContextValue = {
   entries: Entry[];
@@ -83,7 +79,13 @@ type TrackerContextValue = {
 const TrackerContext = createContext<TrackerContextValue | null>(null);
 
 const GOALS_KEY = "calai.goals.v1";
-const DEFAULT_GOALS: Goals = { waterGoalMl: 2500, calorieGoal: 2200 };
+const DEFAULT_GOALS: Goals = {
+  waterGoalMl: 2500,
+  calorieGoal: 2200,
+  activityGoalMin: 30,
+  mealGoalCount: 3,
+  weightGoalKg: 0,
+};
 
 function loadGoals(): Goals {
   if (typeof window === "undefined") {
@@ -193,6 +195,9 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
         setGoals({
           waterGoalMl: data?.waterGoalMl ?? DEFAULT_GOALS.waterGoalMl,
           calorieGoal: data?.calorieGoal ?? DEFAULT_GOALS.calorieGoal,
+          activityGoalMin: data?.activityGoalMin ?? DEFAULT_GOALS.activityGoalMin,
+          mealGoalCount: data?.mealGoalCount ?? DEFAULT_GOALS.mealGoalCount,
+          weightGoalKg: data?.weightGoalKg ?? DEFAULT_GOALS.weightGoalKg,
         });
       }
       if (settingsRes.ok) {
@@ -610,10 +615,16 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
         setGoals({
           waterGoalMl: data?.waterGoalMl ?? updated.waterGoalMl,
           calorieGoal: data?.calorieGoal ?? updated.calorieGoal,
+          activityGoalMin: data?.activityGoalMin ?? updated.activityGoalMin,
+          mealGoalCount: data?.mealGoalCount ?? updated.mealGoalCount,
+          weightGoalKg: data?.weightGoalKg ?? updated.weightGoalKg,
         });
         recordAudit("update-goals", "Hedefler güncellendi", {
           waterGoalMl: data?.waterGoalMl ?? updated.waterGoalMl,
           calorieGoal: data?.calorieGoal ?? updated.calorieGoal,
+          activityGoalMin: data?.activityGoalMin ?? updated.activityGoalMin,
+          mealGoalCount: data?.mealGoalCount ?? updated.mealGoalCount,
+          weightGoalKg: data?.weightGoalKg ?? updated.weightGoalKg,
         });
         return;
       }

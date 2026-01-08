@@ -352,4 +352,23 @@ html[data-app="true"] select:focus {
   .print-page {
     max-width: none;
   }
+
+  .print-charts {
+    display: block;
+    break-before: page;
+    page-break-before: always;
+  }
+
+  .print-chart {
+    width: 100%;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .print-chart:last-of-type {
+    break-after: auto;
+    page-break-after: auto;
+  }
 }

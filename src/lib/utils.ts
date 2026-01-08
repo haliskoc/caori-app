@@ -37,8 +37,10 @@ export function buildWeeklySummary(entries: Entry[], days = 7): DailySummary[] {
   const dayKeys = getLastNDays(days);
   return dayKeys.map((date) => {
     const dailyEntries = entries.filter((entry) => getDayKey(entry.timestamp) === date);
+    const mealSet = new Set<string>();
     const caloriesIn = dailyEntries.reduce((sum, entry) => {
       if (entry.type === "food") {
+        mealSet.add(entry.mealType);
         return sum + entry.calories;
       }
       return sum;
@@ -46,6 +48,12 @@ export function buildWeeklySummary(entries: Entry[], days = 7): DailySummary[] {
     const caloriesOut = dailyEntries.reduce((sum, entry) => {
       if (entry.type === "activity") {
         return sum + entry.estimatedCalories;
+      }
+      return sum;
+    }, 0);
+    const activityMin = dailyEntries.reduce((sum, entry) => {
+      if (entry.type === "activity") {
+        return sum + entry.durationMin;
       }
       return sum;
     }, 0);
@@ -73,6 +81,16 @@ export function buildWeeklySummary(entries: Entry[], days = 7): DailySummary[] {
       }
       return sum;
     }, 0);
-    return { date, caloriesIn, caloriesOut, waterMl, proteinG, carbsG, fatG };
+    return {
+      date,
+      caloriesIn,
+      caloriesOut,
+      waterMl,
+      activityMin,
+      mealCount: mealSet.size,
+      proteinG,
+      carbsG,
+      fatG,
+    };
   });
 }

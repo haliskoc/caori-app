@@ -6,6 +6,8 @@ export type ReportTotals = {
   caloriesOut: number;
   netCalories: number;
   waterMl: number;
+  activityMin: number;
+  mealCount: number;
   proteinG: number;
   carbsG: number;
   fatG: number;
@@ -15,6 +17,8 @@ export type ReportAverages = {
   caloriesIn: number;
   caloriesOut: number;
   waterMl: number;
+  activityMin: number;
+  mealCount: number;
   proteinG: number;
   carbsG: number;
   fatG: number;
@@ -35,6 +39,33 @@ export type ReportTopActivity = {
 export type ReportGoals = {
   calorieGoal: number;
   waterGoalMl: number;
+  activityGoalMin: number;
+  mealGoalCount: number;
+  weightGoalKg: number;
+};
+
+export type WeeklyDeviation = {
+  weekStart: string;
+  weekEnd: string;
+  days: number;
+  totals: ReportTotals;
+  deltas: {
+    caloriesIn: number;
+    waterMl: number;
+    activityMin: number;
+    mealCount: number;
+  };
+  adherenceScore: number;
+};
+
+export type EffectiveDay = {
+  date: string;
+  score: number;
+  caloriesIn: number;
+  caloriesOut: number;
+  waterMl: number;
+  activityMin: number;
+  mealCount: number;
 };
 
 export type ReportData = {
@@ -48,6 +79,9 @@ export type ReportData = {
   averages: ReportAverages;
   topFoods: ReportTopFood[];
   topActivities: ReportTopActivity[];
+  weekly: WeeklyDeviation[];
+  adherenceScore: number;
+  effectiveDays: EffectiveDay[];
   goals?: ReportGoals;
   comment: string;
 };
@@ -62,6 +96,8 @@ function buildMotivation(input: {
   const lines: string[] = [];
   const calorieGoal = input.goals?.calorieGoal ?? 2200;
   const waterGoalMl = input.goals?.waterGoalMl ?? 2500;
+  const activityGoalMin = input.goals?.activityGoalMin ?? 30;
+  const mealGoalCount = input.goals?.mealGoalCount ?? 3;
 
   if (input.averages.caloriesIn > calorieGoal + 200) {
     lines.push(
@@ -81,10 +117,18 @@ function buildMotivation(input: {
     lines.push("Aktivite tarafı iyi; hareketliliği sürdürmek hedefe yaklaşmanı hızlandırır.");
   }
 
+  if (input.averages.activityMin < activityGoalMin * 0.7) {
+    lines.push("Hareket süren hedefinin altında. Günlük 10-15 dakika ekleme etkili olur.");
+  }
+
   if (input.averages.waterMl < waterGoalMl * 0.7) {
     lines.push("Su alımın hedefin altında. Gün içinde 1-2 bardak ekleyerek dengeleyebilirsin.");
   } else {
     lines.push("Su takibin iyi, bu tempo toparlanmayı destekler.");
+  }
+
+  if (input.averages.mealCount < mealGoalCount - 1) {
+    lines.push("Öğün düzeni dağınık görünüyor. Ana öğünleri sabitlemek dengeyi artırır.");
   }
 
   if (input.macroCoverage < 0.4) {
@@ -109,16 +153,20 @@ export function buildReportData(
   const safeDays = Math.max(1, Math.min(90, Math.round(rangeDays || 30)));
   const dayKeys = getLastNDays(safeDays);
   const dayMap = new Map<string, DailySummary>();
+  const mealSets = new Map<string, Set<string>>();
   for (const key of dayKeys) {
     dayMap.set(key, {
       date: key,
       caloriesIn: 0,
       caloriesOut: 0,
       waterMl: 0,
+      activityMin: 0,
+      mealCount: 0,
       proteinG: 0,
       carbsG: 0,
       fatG: 0,
     });
+    mealSets.set(key, new Set());
   }
 
   for (const entry of entries) {
@@ -132,13 +180,21 @@ export function buildReportData(
       bucket.proteinG += entry.proteinG ?? 0;
       bucket.carbsG += entry.carbsG ?? 0;
       bucket.fatG += entry.fatG ?? 0;
+      mealSets.get(key)?.add(entry.mealType);
     }
     if (entry.type === "activity") {
       bucket.caloriesOut += entry.estimatedCalories;
+      bucket.activityMin += entry.durationMin;
     }
     if (entry.type === "water") {
       bucket.waterMl += entry.amountMl;
     }
+  }
+
+  for (const key of dayKeys) {
+    const bucket = dayMap.get(key);
+    if (!bucket) continue;
+    bucket.mealCount = mealSets.get(key)?.size ?? 0;
   }
 
   const daily = dayKeys.map((key) => dayMap.get(key)!);
@@ -147,6 +203,8 @@ export function buildReportData(
       acc.caloriesIn += day.caloriesIn;
       acc.caloriesOut += day.caloriesOut;
       acc.waterMl += day.waterMl;
+      acc.activityMin += day.activityMin;
+      acc.mealCount += day.mealCount;
       acc.proteinG += day.proteinG;
       acc.carbsG += day.carbsG;
       acc.fatG += day.fatG;
@@ -157,6 +215,8 @@ export function buildReportData(
       caloriesOut: 0,
       netCalories: 0,
       waterMl: 0,
+      activityMin: 0,
+      mealCount: 0,
       proteinG: 0,
       carbsG: 0,
       fatG: 0,
@@ -168,6 +228,8 @@ export function buildReportData(
     caloriesIn: Math.round(totals.caloriesIn / safeDays),
     caloriesOut: Math.round(totals.caloriesOut / safeDays),
     waterMl: Math.round(totals.waterMl / safeDays),
+    activityMin: Math.round(totals.activityMin / safeDays),
+    mealCount: Math.round(totals.mealCount / safeDays),
     proteinG: Math.round(totals.proteinG / safeDays),
     carbsG: Math.round(totals.carbsG / safeDays),
     fatG: Math.round(totals.fatG / safeDays),
@@ -216,6 +278,125 @@ export function buildReportData(
   ).length;
 
   const macroCoverage = foodCount === 0 ? 0 : macroCount / foodCount;
+  const safeGoals: ReportGoals = {
+    calorieGoal: goals?.calorieGoal ?? 2200,
+    waterGoalMl: goals?.waterGoalMl ?? 2500,
+    activityGoalMin: goals?.activityGoalMin ?? 30,
+    mealGoalCount: goals?.mealGoalCount ?? 3,
+    weightGoalKg: goals?.weightGoalKg ?? 0,
+  };
+
+  const getDayScore = (day: DailySummary) => {
+    const scores: number[] = [];
+    if (safeGoals.calorieGoal > 0) {
+      const diff = Math.abs(day.caloriesIn - safeGoals.calorieGoal);
+      const score = 1 - Math.min(diff / safeGoals.calorieGoal, 1);
+      scores.push(score);
+    }
+    if (safeGoals.waterGoalMl > 0) {
+      scores.push(Math.min(day.waterMl / safeGoals.waterGoalMl, 1));
+    }
+    if (safeGoals.activityGoalMin > 0) {
+      scores.push(Math.min(day.activityMin / safeGoals.activityGoalMin, 1));
+    }
+    if (safeGoals.mealGoalCount > 0) {
+      scores.push(Math.min(day.mealCount / safeGoals.mealGoalCount, 1));
+    }
+    if (scores.length === 0) {
+      return 0;
+    }
+    return scores.reduce((sum, value) => sum + value, 0) / scores.length;
+  };
+
+  const scoredDays = daily.map((day) => ({
+    day,
+    score: getDayScore(day),
+  }));
+
+  const adherenceScore = scoredDays.length
+    ? Math.round(
+        (scoredDays.reduce((sum, item) => sum + item.score, 0) / scoredDays.length) * 100
+      )
+    : 0;
+
+  const effectiveDays = scoredDays
+    .filter(
+      (item) =>
+        item.day.caloriesIn + item.day.caloriesOut + item.day.waterMl + item.day.activityMin >
+        0
+    )
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map((item) => ({
+      date: item.day.date,
+      score: Math.round(item.score * 100),
+      caloriesIn: item.day.caloriesIn,
+      caloriesOut: item.day.caloriesOut,
+      waterMl: item.day.waterMl,
+      activityMin: item.day.activityMin,
+      mealCount: item.day.mealCount,
+    }));
+
+  const weekly: WeeklyDeviation[] = [];
+  for (let i = 0; i < daily.length; i += 7) {
+    const chunk = daily.slice(i, i + 7);
+    const chunkTotals = chunk.reduce<ReportTotals>(
+      (acc, day) => {
+        acc.caloriesIn += day.caloriesIn;
+        acc.caloriesOut += day.caloriesOut;
+        acc.waterMl += day.waterMl;
+        acc.activityMin += day.activityMin;
+        acc.mealCount += day.mealCount;
+        acc.proteinG += day.proteinG;
+        acc.carbsG += day.carbsG;
+        acc.fatG += day.fatG;
+        return acc;
+      },
+      {
+        caloriesIn: 0,
+        caloriesOut: 0,
+        netCalories: 0,
+        waterMl: 0,
+        activityMin: 0,
+        mealCount: 0,
+        proteinG: 0,
+        carbsG: 0,
+        fatG: 0,
+      }
+    );
+    chunkTotals.netCalories = chunkTotals.caloriesIn - chunkTotals.caloriesOut;
+    const days = chunk.length;
+    const deltaCalories =
+      safeGoals.calorieGoal > 0 ? chunkTotals.caloriesIn - safeGoals.calorieGoal * days : 0;
+    const deltaWater =
+      safeGoals.waterGoalMl > 0 ? chunkTotals.waterMl - safeGoals.waterGoalMl * days : 0;
+    const deltaActivity =
+      safeGoals.activityGoalMin > 0
+        ? chunkTotals.activityMin - safeGoals.activityGoalMin * days
+        : 0;
+    const deltaMeals =
+      safeGoals.mealGoalCount > 0
+        ? chunkTotals.mealCount - safeGoals.mealGoalCount * days
+        : 0;
+    const weekScore = chunk.length
+      ? Math.round(
+          (chunk.reduce((sum, day) => sum + getDayScore(day), 0) / chunk.length) * 100
+        )
+      : 0;
+    weekly.push({
+      weekStart: chunk[0]?.date ?? "",
+      weekEnd: chunk[chunk.length - 1]?.date ?? "",
+      days,
+      totals: chunkTotals,
+      deltas: {
+        caloriesIn: Math.round(deltaCalories),
+        waterMl: Math.round(deltaWater),
+        activityMin: Math.round(deltaActivity),
+        mealCount: Math.round(deltaMeals),
+      },
+      adherenceScore: weekScore,
+    });
+  }
 
   return {
     rangeDays: safeDays,
@@ -228,13 +409,16 @@ export function buildReportData(
     averages,
     topFoods,
     topActivities,
-    goals,
+    weekly,
+    adherenceScore,
+    effectiveDays,
+    goals: safeGoals,
     comment: buildMotivation({
       averages,
       activeDays,
       rangeDays: safeDays,
       macroCoverage,
-      goals,
+      goals: safeGoals,
     }),
   };
 }

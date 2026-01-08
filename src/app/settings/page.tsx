@@ -26,6 +26,9 @@ export default function SettingsPage() {
   } = useTracker();
   const [waterGoal, setWaterGoal] = useState(String(goals.waterGoalMl));
   const [calorieGoal, setCalorieGoal] = useState(String(goals.calorieGoal));
+  const [activityGoal, setActivityGoal] = useState(String(goals.activityGoalMin));
+  const [mealGoal, setMealGoal] = useState(String(goals.mealGoalCount));
+  const [weightGoal, setWeightGoal] = useState(String(goals.weightGoalKg));
   const [importedCount, setImportedCount] = useState<number | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [csvMessage, setCsvMessage] = useState<string | null>(null);
@@ -37,6 +40,9 @@ export default function SettingsPage() {
   useEffect(() => {
     setWaterGoal(String(goals.waterGoalMl));
     setCalorieGoal(String(goals.calorieGoal));
+    setActivityGoal(String(goals.activityGoalMin));
+    setMealGoal(String(goals.mealGoalCount));
+    setWeightGoal(String(goals.weightGoalKg));
   }, [goals]);
 
   useEffect(() => {
@@ -143,18 +149,18 @@ export default function SettingsPage() {
 
       <Card className="space-y-3">
         <div>
-          <p className="text-sm font-semibold">PDF Rapor</p>
-          <p className="text-xs text-muted">Grafikli özet + motivasyon notu</p>
+          <p className="text-sm font-semibold">Rapor Dışa Aktarım</p>
+          <p className="text-xs text-muted">Grafikli PDF + Excel çıktısı</p>
         </div>
         <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs text-muted">
-          Raporu açıp tarayıcıdan PDF olarak kaydedebilirsin.
+          Rapor ekranından PDF veya Excel olarak dışa aktarabilirsin.
         </div>
         <div className="flex flex-wrap gap-2">
           <a
             href="/report"
             className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
           >
-            PDF Raporu Aç
+            Raporu Aç
           </a>
         </div>
       </Card>
@@ -185,12 +191,45 @@ export default function SettingsPage() {
               min="0"
             />
           </div>
+          <div className="space-y-2">
+            <label className="text-xs text-muted">Günlük Aktivite Hedefi (dk)</label>
+            <input
+              value={activityGoal}
+              onChange={(event) => setActivityGoal(event.target.value)}
+              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              type="number"
+              min="0"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs text-muted">Günlük Öğün Hedefi (adet)</label>
+            <input
+              value={mealGoal}
+              onChange={(event) => setMealGoal(event.target.value)}
+              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              type="number"
+              min="0"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs text-muted">Hedef Kilo (kg)</label>
+            <input
+              value={weightGoal}
+              onChange={(event) => setWeightGoal(event.target.value)}
+              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              type="number"
+              min="0"
+            />
+          </div>
         </div>
         <button
           onClick={() => {
             updateGoals({
               waterGoalMl: Number(waterGoal),
               calorieGoal: Number(calorieGoal),
+              activityGoalMin: Number(activityGoal),
+              mealGoalCount: Number(mealGoal),
+              weightGoalKg: Number(weightGoal),
             });
           }}
           className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"

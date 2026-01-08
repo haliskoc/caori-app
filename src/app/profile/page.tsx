@@ -13,6 +13,7 @@ type DayBucket = {
   caloriesIn: number;
   caloriesOut: number;
   waterMl: number;
+  activityMin: number;
   meals: Set<MealType>;
 };
 
@@ -21,7 +22,7 @@ type BadgeDefinition = {
   title: string;
   description: string;
   threshold: number;
-  category: "streak" | "meal";
+  category: "streak" | "meal" | "water" | "activity";
   tone: string;
   accent: string;
   label: string;
@@ -143,6 +144,66 @@ const badgeDefinitions: BadgeDefinition[] = [
     accent: "text-cyan-700",
     label: "21G",
   },
+  {
+    id: "water-3",
+    title: "Su Başlangıcı",
+    description: "3 gün su hedefi",
+    threshold: 3,
+    category: "water",
+    tone: "from-sky-200 via-sky-100 to-white",
+    accent: "text-sky-700",
+    label: "3G",
+  },
+  {
+    id: "water-7",
+    title: "Su İstikrarı",
+    description: "7 gün su hedefi",
+    threshold: 7,
+    category: "water",
+    tone: "from-blue-200 via-blue-100 to-white",
+    accent: "text-blue-700",
+    label: "7G",
+  },
+  {
+    id: "water-21",
+    title: "Su Disiplini",
+    description: "21 gün su hedefi",
+    threshold: 21,
+    category: "water",
+    tone: "from-cyan-200 via-cyan-100 to-white",
+    accent: "text-cyan-700",
+    label: "21G",
+  },
+  {
+    id: "activity-3",
+    title: "Aktivite Başlangıcı",
+    description: "3 gün aktivite hedefi",
+    threshold: 3,
+    category: "activity",
+    tone: "from-lime-200 via-lime-100 to-white",
+    accent: "text-lime-700",
+    label: "3G",
+  },
+  {
+    id: "activity-7",
+    title: "Aktivite İstikrarı",
+    description: "7 gün aktivite hedefi",
+    threshold: 7,
+    category: "activity",
+    tone: "from-green-200 via-green-100 to-white",
+    accent: "text-green-700",
+    label: "7G",
+  },
+  {
+    id: "activity-21",
+    title: "Aktivite Disiplini",
+    description: "21 gün aktivite hedefi",
+    threshold: 21,
+    category: "activity",
+    tone: "from-emerald-200 via-emerald-100 to-white",
+    accent: "text-emerald-700",
+    label: "21G",
+  },
 ];
 
 function getInitials(name: string) {
@@ -207,7 +268,13 @@ export default function ProfilePage() {
       const dayKey = getDayKey(entry.timestamp);
       let bucket = dayMap.get(dayKey);
       if (!bucket) {
-        bucket = { caloriesIn: 0, caloriesOut: 0, waterMl: 0, meals: new Set() };
+        bucket = {
+          caloriesIn: 0,
+          caloriesOut: 0,
+          waterMl: 0,
+          activityMin: 0,
+          meals: new Set(),
+        };
         dayMap.set(dayKey, bucket);
       }
       if (entry.type === "food") {
@@ -219,6 +286,7 @@ export default function ProfilePage() {
       }
       if (entry.type === "activity") {
         bucket.caloriesOut += entry.estimatedCalories;
+        bucket.activityMin += entry.durationMin;
       }
     }
 
@@ -229,7 +297,11 @@ export default function ProfilePage() {
     let totalCaloriesIn = 0;
     let totalCaloriesOut = 0;
     let totalWater = 0;
-    let fullMealDays = 0;
+    let totalActivityMin = 0;
+    let mealGoalDays = 0;
+    const waterGoalDays = new Set<string>();
+    const activityGoalDays = new Set<string>();
+    const mealGoalDaySet = new Set<string>();
 
     for (const key of dayKeys) {
       const bucket = dayMap.get(key);
@@ -237,21 +309,32 @@ export default function ProfilePage() {
       totalCaloriesIn += bucket.caloriesIn;
       totalCaloriesOut += bucket.caloriesOut;
       totalWater += bucket.waterMl;
-      if (
-        bucket.meals.has("breakfast") &&
-        bucket.meals.has("lunch") &&
-        bucket.meals.has("dinner")
-      ) {
-        fullMealDays += 1;
+      totalActivityMin += bucket.activityMin;
+      if (goals.waterGoalMl > 0 && bucket.waterMl >= goals.waterGoalMl) {
+        waterGoalDays.add(key);
+      }
+      if (goals.activityGoalMin > 0 && bucket.activityMin >= goals.activityGoalMin) {
+        activityGoalDays.add(key);
+      }
+      if (goals.mealGoalCount > 0 && bucket.meals.size >= goals.mealGoalCount) {
+        mealGoalDays += 1;
+        mealGoalDaySet.add(key);
       }
     }
+    const getCurrentStreak = (targetDays: Set<string>) => {
+      let streak = 0;
+      let cursor = new Date();
+      while (targetDays.has(getDayKey(cursor))) {
+        streak += 1;
+        cursor = new Date(cursor.getTime() - DAY_MS);
+      }
+      return streak;
+    };
 
-    let currentStreak = 0;
-    let cursor = new Date();
-    while (daySet.has(getDayKey(cursor))) {
-      currentStreak += 1;
-      cursor = new Date(cursor.getTime() - DAY_MS);
-    }
+    const currentStreak = getCurrentStreak(daySet);
+    const currentWaterStreak = getCurrentStreak(waterGoalDays);
+    const currentActivityStreak = getCurrentStreak(activityGoalDays);
+    const currentMealStreak = getCurrentStreak(mealGoalDaySet);
 
     let longestStreak = 0;
     let running = 0;
@@ -275,11 +358,15 @@ export default function ProfilePage() {
       totalCaloriesIn,
       totalCaloriesOut,
       totalWater,
-      fullMealDays,
+      totalActivityMin,
+      mealGoalDays,
       currentStreak,
+      currentWaterStreak,
+      currentActivityStreak,
+      currentMealStreak,
       longestStreak,
     };
-  }, [entries]);
+  }, [entries, goals]);
 
   const profileCompletion = useMemo(() => {
     const requiredFields: Array<keyof ProfileInfo> = [
@@ -316,17 +403,22 @@ export default function ProfilePage() {
   const numberFormat = useMemo(() => new Intl.NumberFormat("tr-TR"), []);
   const formatNumber = (value: number) => numberFormat.format(Math.round(value));
 
-  const mealRate = stats.daysCount > 0 ? Math.round((stats.fullMealDays / stats.daysCount) * 100) : 0;
+  const mealRate =
+    stats.daysCount > 0 ? Math.round((stats.mealGoalDays / stats.daysCount) * 100) : 0;
   const mainGoalLabel = getOptionLabel(goalOptions, profile.mainGoal);
   const sportLevelLabel = getOptionLabel(sportLevelOptions, profile.sportLevel);
 
   const badgeProgress = {
     streak: stats.currentStreak,
-    meal: stats.fullMealDays,
+    meal: stats.currentMealStreak,
+    water: stats.currentWaterStreak,
+    activity: stats.currentActivityStreak,
   };
 
   const streakBadges = badgeDefinitions.filter((badge) => badge.category === "streak");
   const mealBadges = badgeDefinitions.filter((badge) => badge.category === "meal");
+  const waterBadges = badgeDefinitions.filter((badge) => badge.category === "water");
+  const activityBadges = badgeDefinitions.filter((badge) => badge.category === "activity");
 
   return (
     <div className="space-y-6">
@@ -367,8 +459,8 @@ export default function ProfilePage() {
               <p className="mt-1 text-lg font-semibold text-ink">{stats.currentStreak} gün</p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Tam öğün günleri</p>
-              <p className="mt-1 text-lg font-semibold text-ink">{stats.fullMealDays} gün</p>
+              <p className="text-muted">Öğün hedef günleri</p>
+              <p className="mt-1 text-lg font-semibold text-ink">{stats.mealGoalDays} gün</p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">Su hedefi</p>
@@ -776,12 +868,16 @@ export default function ProfilePage() {
               </p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">Tam öğün oranı</p>
+              <p className="text-muted">Öğün hedefi oranı</p>
               <p className="mt-1 text-lg font-semibold text-ink">%{mealRate}</p>
             </div>
           </div>
           <div className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-amber-900">
             En uzun seri: {stats.longestStreak} gün • Mevcut seri: {stats.currentStreak} gün
+          </div>
+          <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs text-muted">
+            Su serisi: {stats.currentWaterStreak} gün • Aktivite serisi:{" "}
+            {stats.currentActivityStreak} gün • Öğün serisi: {stats.currentMealStreak} gün
           </div>
         </Card>
       </section>
@@ -790,7 +886,7 @@ export default function ProfilePage() {
         <div>
           <p className="text-sm font-semibold">Rozetler</p>
           <p className="text-xs text-muted">
-            Seri ve öğün disiplini hedeflerine göre rozetler otomatik açılır.
+            Seri, su, aktivite ve öğün disiplini hedeflerine göre rozetler açılır.
           </p>
         </div>
         {entries.length === 0 && (
@@ -813,6 +909,22 @@ export default function ProfilePage() {
             <p className="text-xs font-semibold text-muted">Öğün Rozetleri</p>
             {mealBadges.map((badge) => (
               <BadgeCard key={badge.id} badge={badge} progress={badgeProgress.meal} />
+            ))}
+          </div>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold text-muted">Su Rozetleri</p>
+            {waterBadges.map((badge) => (
+              <BadgeCard key={badge.id} badge={badge} progress={badgeProgress.water} />
+            ))}
+          </div>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold text-muted">Aktivite Rozetleri</p>
+            {activityBadges.map((badge) => (
+              <BadgeCard
+                key={badge.id}
+                badge={badge}
+                progress={badgeProgress.activity}
+              />
             ))}
           </div>
         </div>

@@ -45,8 +45,9 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
     );
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <Card className="min-h-[260px]">
+    <div className="grid gap-4 lg:grid-cols-2 print-charts">
+      <div className="print-chart" data-report-chart data-chart-title="Kalori Dengesi">
+        <Card className="min-h-[260px]">
         <div className="mb-3">
           <p className="text-sm font-semibold">Kalori Dengesi</p>
           <p className="text-xs text-muted">Girilen ve yakılan kalori trendi</p>
@@ -74,16 +75,16 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
                 <Area
                   type="monotone"
                   dataKey="caloriesIn"
-                  stroke="#ff7a00"
-                  fill="#ff7a00"
-                  fillOpacity={0.15}
+                  stroke="#f26419"
+                  fill="#f26419"
+                  fillOpacity={0.18}
                   strokeWidth={2}
                 />
                 <Area
                   type="monotone"
                   dataKey="caloriesOut"
-                  stroke="#ffb56b"
-                  fill="#ffb56b"
+                  stroke="#1b9aaa"
+                  fill="#1b9aaa"
                   fillOpacity={0.2}
                   strokeWidth={2}
                 />
@@ -91,9 +92,14 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
             </ResponsiveContainer>
           )}
         </div>
+        <p className="mt-3 text-[11px] text-muted">
+          Enerji dengesinin hareketini takip edin.
+        </p>
       </Card>
+      </div>
 
-      <Card className="min-h-[260px]">
+      <div className="print-chart" data-report-chart data-chart-title="Su Alımı">
+        <Card className="min-h-[260px]">
         <div className="mb-3">
           <p className="text-sm font-semibold">Su Alımı</p>
           <p className="text-xs text-muted">Günlük su trendi</p>
@@ -118,14 +124,21 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
                     fontSize: "12px",
                   }}
                 />
-                <Bar dataKey="waterMl" fill="#ff7a00" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="waterMl" fill="#3d5a80" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
         </div>
+        <p className="mt-3 text-[11px] text-muted">Hedefe yaklaşan günleri vurgular.</p>
       </Card>
+      </div>
 
-      <Card className="min-h-[260px] lg:col-span-2">
+      <div
+        className="print-chart lg:col-span-2"
+        data-report-chart
+        data-chart-title="Makro Dağılımı"
+      >
+        <Card className="min-h-[260px] lg:col-span-2">
         <div className="mb-3">
           <p className="text-sm font-semibold">Makro Dağılımı</p>
           <p className="text-xs text-muted">Protein / Karbonhidrat / Yağ</p>
@@ -150,15 +163,29 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
                     fontSize: "12px",
                   }}
                 />
-                <Legend wrapperStyle={{ fontSize: "11px" }} />
-                <Bar dataKey="proteinG" stackId="macro" fill="#ff7a00" />
-                <Bar dataKey="carbsG" stackId="macro" fill="#ffb56b" />
-                <Bar dataKey="fatG" stackId="macro" fill="#ffddae" />
+                <Legend
+                  wrapperStyle={{ fontSize: "11px" }}
+                  iconType="circle"
+                  formatter={(value) =>
+                    value === "proteinG"
+                      ? "Protein"
+                      : value === "carbsG"
+                        ? "Karbonhidrat"
+                        : "Yağ"
+                  }
+                />
+                <Bar dataKey="proteinG" stackId="macro" fill="#ef476f" />
+                <Bar dataKey="carbsG" stackId="macro" fill="#ffd166" />
+                <Bar dataKey="fatG" stackId="macro" fill="#06d6a0" />
               </BarChart>
             </ResponsiveContainer>
           )}
         </div>
+        <p className="mt-3 text-[11px] text-muted">
+          Makro dengesini haftalık ritimle izleyin.
+        </p>
       </Card>
+      </div>
     </div>
   );
 }

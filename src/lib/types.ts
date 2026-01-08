@@ -32,11 +32,21 @@ export type ActivityEntry = {
 
 export type Entry = FoodEntry | WaterEntry | ActivityEntry;
 
+export type Goals = {
+  waterGoalMl: number;
+  calorieGoal: number;
+  activityGoalMin: number;
+  mealGoalCount: number;
+  weightGoalKg: number;
+};
+
 export type DailySummary = {
   date: string;
   caloriesIn: number;
   caloriesOut: number;
   waterMl: number;
+  activityMin: number;
+  mealCount: number;
   proteinG: number;
   carbsG: number;
   fatG: number;
