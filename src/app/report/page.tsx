@@ -1197,12 +1197,23 @@ export default function ReportPage() {
       </div>
 
       <section className={sectionClass("overview")}>
-        <Card className="space-y-4">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="space-y-2">
-              <p className="text-sm font-semibold">{t("Motivasyon Notu")}</p>
-              <p className="text-sm text-muted">{report.comment}</p>
-              <p className="text-xs text-muted">
+        <div className="grid gap-6 lg:grid-cols-3">
+          <Card className="flex flex-col items-center justify-center bg-gradient-to-br from-amber-50/50 to-white py-10 lg:col-span-1">
+            <div className="relative mb-4 flex h-40 w-40 flex-col items-center justify-center rounded-full border-[6px] border-[#ff7a00] bg-white shadow-xl shadow-amber-900/5">
+              <span className="text-5xl font-black text-[#ff7a00]">%{report.adherenceScore}</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("Uyum Skoru")}</span>
+            </div>
+            <div className="text-center">
+              <p className="text-sm font-semibold text-ink">{t("Performans Durumu")}</p>
+              <p className="text-xs text-muted-foreground">{rangeLabel}</p>
+            </div>
+          </Card>
+
+          <Card className="lg:col-span-2 space-y-6">
+            <div className="space-y-2 text-center sm:text-left">
+              <p className="text-sm font-bold uppercase tracking-widest text-[#ff7a00]">{t("Analiz Notu")}</p>
+              <p className="text-lg font-medium leading-relaxed text-ink italic">"{report.comment}"</p>
+              <p className="text-xs text-muted-foreground">
                 {t("Aktif gün: {active}/{range} • Toplam kayıt: {count}", {
                   active: report.activeDays,
                   range: report.rangeDays,
@@ -1210,82 +1221,68 @@ export default function ReportPage() {
                 })}
               </p>
             </div>
-            <div className="rounded-2xl border border-amber-100 bg-amber-50/70 px-4 py-3 text-center">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-muted">
-                {t("Hedef Uyum Skoru")}
-              </p>
-              <p className="mt-1 text-3xl font-semibold text-ink">%{report.adherenceScore}</p>
-              <p className="text-[11px] text-muted">{rangeLabel}</p>
+            
+            <div className="grid gap-3 sm:grid-cols-3 text-center">
+              <div className="rounded-2xl bg-amber-50/40 p-3 border border-amber-100/50">
+                <p className="text-[10px] uppercase font-bold text-muted-foreground">{t("Toplam Kalori")}</p>
+                <p className="text-xl font-bold text-ink mt-1">{formatNumber(report.totals.caloriesIn)}</p>
+                <p className="text-[10px] text-muted-foreground">kcal</p>
+              </div>
+              <div className="rounded-2xl bg-amber-50/40 p-3 border border-amber-100/50">
+                <p className="text-[10px] uppercase font-bold text-muted-foreground">{t("Günlük Ort.")}</p>
+                <p className="text-xl font-bold text-ink mt-1">{formatNumber(report.averages.caloriesIn)}</p>
+                <p className="text-[10px] text-muted-foreground">kcal</p>
+              </div>
+              <div className="rounded-2xl bg-amber-50/40 p-3 border border-amber-100/50">
+                <p className="text-[10px] uppercase font-bold text-muted-foreground">{t("Net Kalori")}</p>
+                <p className="text-xl font-bold text-ink mt-1">{formatNumber(report.totals.netCalories)}</p>
+                <p className="text-[10px] text-muted-foreground">kcal</p>
+              </div>
             </div>
+          </Card>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-2xl border border-amber-100 bg-white px-4 py-4 shadow-sm">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("Su Tüketimi")}</p>
+            <p className="mt-2 text-2xl font-bold text-ink">
+              {t("{value} ml", { value: formatNumber(report.totals.waterMl) })}
+            </p>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              {t("Günlük ort. {value} ml", { value: formatNumber(report.averages.waterMl) })}
+            </p>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">{t("Toplam kalori")}</p>
-              <p className="mt-1 text-lg font-semibold text-ink">
-                {t("{value} kcal", { value: formatNumber(report.totals.caloriesIn) })}
-              </p>
-              <p className="text-[11px] text-muted">
-                {t("Net {value} kcal", { value: formatNumber(report.totals.netCalories) })}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">{t("Aktivite kalorisi")}</p>
-              <p className="mt-1 text-lg font-semibold text-ink">
-                {t("{value} kcal", { value: formatNumber(report.totals.caloriesOut) })}
-              </p>
-              <p className="text-[11px] text-muted">
-                {t("Günlük ort. {value}", { value: formatNumber(report.averages.caloriesOut) })}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">{t("Su toplamı")}</p>
-              <p className="mt-1 text-lg font-semibold text-ink">
-                {t("{value} ml", { value: formatNumber(report.totals.waterMl) })}
-              </p>
-              <p className="text-[11px] text-muted">
-                {t("Günlük ort. {value} ml", { value: formatNumber(report.averages.waterMl) })}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">{t("Aktivite süresi")}</p>
-              <p className="mt-1 text-lg font-semibold text-ink">
-                {t("{value} dk", { value: formatNumber(report.totals.activityMin) })}
-              </p>
-              <p className="text-[11px] text-muted">
-                {t("Günlük ort. {value} dk", { value: formatNumber(report.averages.activityMin) })}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">{t("Öğün ritmi")}</p>
-              <p className="mt-1 text-lg font-semibold text-ink">
-                {t("{value} öğün/gün", { value: formatNumber(report.averages.mealCount) })}
-              </p>
-              <p className="text-[11px] text-muted">
-                {t("Toplam {value} öğün", { value: formatNumber(report.totals.mealCount) })}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">{t("Makro toplamı")}</p>
-              <p className="mt-1 text-lg font-semibold text-ink">
-                {t("{value} g", {
-                  value: formatNumber(
-                    report.totals.proteinG + report.totals.carbsG + report.totals.fatG
-                  ),
-                })}
-              </p>
-              <p className="text-[11px] text-muted">
-                {t(
-                  "P {protein} • K {carb} • Y {fat}",
-                  {
-                    protein: formatNumber(report.averages.proteinG),
-                    carb: formatNumber(report.averages.carbsG),
-                    fat: formatNumber(report.averages.fatG),
-                  }
-                )}
-              </p>
-            </div>
+          <div className="rounded-2xl border border-amber-100 bg-white px-4 py-4 shadow-sm">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("Aktivite")}</p>
+            <p className="mt-2 text-2xl font-bold text-ink">
+              {t("{value} dk", { value: formatNumber(report.totals.activityMin) })}
+            </p>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              {t("Günlük ort. {value} dk", { value: formatNumber(report.averages.activityMin) })}
+            </p>
           </div>
-        </Card>
+          <div className="rounded-2xl border border-amber-100 bg-white px-4 py-4 shadow-sm">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("Öğün Ritmi")}</p>
+            <p className="mt-2 text-2xl font-bold text-ink">
+              {t("{value} öğün/gün", { value: formatNumber(report.averages.mealCount) })}
+            </p>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              {t("Toplam {value} öğün", { value: formatNumber(report.totals.mealCount) })}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-amber-100 bg-white px-4 py-4 shadow-sm">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("Ort. Protein")}</p>
+            <p className="mt-2 text-2xl font-bold text-ink">
+              {t("{value} g", { value: formatNumber(report.averages.proteinG) })}
+            </p>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              {t("K {carb} • Y {fat}", {
+                carb: formatNumber(report.averages.carbsG),
+                fat: formatNumber(report.averages.fatG),
+              })}
+            </p>
+          </div>
+        </div>
 
         <Card className="space-y-4">
           <div>
@@ -1521,24 +1518,27 @@ export default function ReportPage() {
       </section>
 
       <section className={sectionClass("insights")}>
-        <div className="grid gap-4 lg:grid-cols-2">
-          <Card className="space-y-3">
-            <div>
-              <p className="text-sm font-semibold">{t("Öne Çıkan Öğünler")}</p>
-              <p className="text-xs text-muted">{t("En çok kalori getiren seçimler")}</p>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Card className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-700">🍎</div>
+              <div>
+                <p className="text-sm font-bold text-ink">{t("Öne Çıkan Öğünler")}</p>
+                <p className="text-xs text-muted-foreground">{t("En çok kalori getiren seçimler")}</p>
+              </div>
             </div>
             {report.topFoods.length === 0 ? (
-              <p className="text-xs text-muted">{t("Henüz öğün kaydı yok.")}</p>
+              <p className="text-xs text-muted-foreground py-4 text-center">{t("Henüz öğün kaydı yok.")}</p>
             ) : (
-              <div className="space-y-2 text-sm">
+              <div className="divide-y divide-amber-50">
                 {report.topFoods.map((food) => (
-                  <div key={food.name} className="flex items-center justify-between">
-                    <span className="truncate">{food.name}</span>
-                    <span className="text-xs text-muted">
-                      {t("{calorie} kcal • {count} kez", {
-                        calorie: formatNumber(food.calories),
-                        count: food.count,
-                      })}
+                  <div key={food.name} className="flex items-center justify-between py-3">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold text-ink truncate max-w-[180px]">{food.name}</span>
+                      <span className="text-[10px] text-muted-foreground">{food.count} {t("kez tüketildi")}</span>
+                    </div>
+                    <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+                      {formatNumber(food.calories)} kcal
                     </span>
                   </div>
                 ))}
@@ -1546,25 +1546,28 @@ export default function ReportPage() {
             )}
           </Card>
 
-          <Card className="space-y-3">
-            <div>
-              <p className="text-sm font-semibold">{t("Öne Çıkan Aktiviteler")}</p>
-              <p className="text-xs text-muted">{t("Hareket yoğunluğu özeti")}</p>
+          <Card className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-700">🏃</div>
+              <div>
+                <p className="text-sm font-bold text-ink">{t("Öne Çıkan Aktiviteler")}</p>
+                <p className="text-xs text-muted-foreground">{t("Hareket yoğunluğu özeti")}</p>
+              </div>
             </div>
             {report.topActivities.length === 0 ? (
-              <p className="text-xs text-muted">{t("Henüz aktivite kaydı yok.")}</p>
+              <p className="text-xs text-muted-foreground py-4 text-center">{t("Henüz aktivite kaydı yok.")}</p>
             ) : (
-              <div className="space-y-2 text-sm">
+              <div className="divide-y divide-amber-50">
                 {report.topActivities.map((activity) => (
-                  <div key={activity.activityType} className="flex items-center justify-between">
-                    <span>
-                      {activityLabels[activity.activityType as ActivityType] ?? t("Aktivite")}
-                    </span>
-                    <span className="text-xs text-muted">
-                      {t("{calorie} kcal • {duration} dk", {
-                        calorie: formatNumber(activity.calories),
-                        duration: formatNumber(activity.durationMin),
-                      })}
+                  <div key={activity.activityType} className="flex items-center justify-between py-3">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold text-ink">
+                        {activityLabels[activity.activityType as ActivityType] ?? t("Aktivite")}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">{formatNumber(activity.durationMin)} {t("dakika")}</span>
+                    </div>
+                    <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+                      {formatNumber(activity.calories)} kcal
                     </span>
                   </div>
                 ))}
