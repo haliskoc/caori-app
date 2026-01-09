@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import { Card } from "@/components/card";
 import { useTracker } from "@/components/tracker-provider";
 import { entriesFromCsv, entriesToCsv, parseCsv } from "@/lib/csv";
@@ -10,7 +9,6 @@ import { useLocaleValue } from "@/components/locale-provider";
 import { localeOptions } from "@/locales/manifest";
 
 export default function SettingsPage() {
-  const { user, isLoading } = useUser();
   const {
     goals,
     updateGoals,
@@ -32,6 +30,9 @@ export default function SettingsPage() {
   const [activityGoal, setActivityGoal] = useState(String(goals.activityGoalMin));
   const [mealGoal, setMealGoal] = useState(String(goals.mealGoalCount));
   const [weightGoal, setWeightGoal] = useState(String(goals.weightGoalKg));
+  const [proteinGoal, setProteinGoal] = useState(String(goals.proteinGoalG));
+  const [carbsGoal, setCarbsGoal] = useState(String(goals.carbsGoalG));
+  const [fatGoal, setFatGoal] = useState(String(goals.fatGoalG));
   const [importedCount, setImportedCount] = useState<number | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [csvMessage, setCsvMessage] = useState<string | null>(null);
@@ -47,6 +48,9 @@ export default function SettingsPage() {
     setActivityGoal(String(goals.activityGoalMin));
     setMealGoal(String(goals.mealGoalCount));
     setWeightGoal(String(goals.weightGoalKg));
+    setProteinGoal(String(goals.proteinGoalG));
+    setCarbsGoal(String(goals.carbsGoalG));
+    setFatGoal(String(goals.fatGoalG));
   }, [goals]);
 
   useEffect(() => {
@@ -254,6 +258,36 @@ export default function SettingsPage() {
               min="0"
             />
           </div>
+          <div className="space-y-2">
+            <label className="text-xs text-muted">{t("Protein Hedefi (g)")}</label>
+            <input
+              value={proteinGoal}
+              onChange={(event) => setProteinGoal(event.target.value)}
+              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              type="number"
+              min="0"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs text-muted">{t("Karbonhidrat Hedefi (g)")}</label>
+            <input
+              value={carbsGoal}
+              onChange={(event) => setCarbsGoal(event.target.value)}
+              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              type="number"
+              min="0"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs text-muted">{t("Yağ Hedefi (g)")}</label>
+            <input
+              value={fatGoal}
+              onChange={(event) => setFatGoal(event.target.value)}
+              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              type="number"
+              min="0"
+            />
+          </div>
         </div>
         <button
           onClick={() => {
@@ -263,6 +297,9 @@ export default function SettingsPage() {
               activityGoalMin: Number(activityGoal),
               mealGoalCount: Number(mealGoal),
               weightGoalKg: Number(weightGoal),
+              proteinGoalG: Number(proteinGoal),
+              carbsGoalG: Number(carbsGoal),
+              fatGoalG: Number(fatGoal),
             });
         }}
           className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"

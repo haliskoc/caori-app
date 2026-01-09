@@ -6,7 +6,12 @@ export async function proxy(request: Request) {
   const authRes = await auth0.middleware(request);
   const { pathname, origin } = new URL(request.url);
 
-  if (pathname.startsWith("/auth") || pathname === "/") {
+  if (
+    pathname.startsWith("/auth") ||
+    pathname === "/" ||
+    pathname.startsWith("/share") ||
+    pathname.startsWith("/api/v1/share")
+  ) {
     return authRes;
   }
 

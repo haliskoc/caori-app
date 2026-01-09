@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect */
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -24,13 +26,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isAppMode, setIsAppMode] = useState(false);
   const [showSplash, setShowSplash] = useState(false);
-
-  // Landing Page için AppShell UI'ını gösterme
-  if (pathname === "/") {
-    return <>{children}</>;
-  }
+  const hideShell = pathname === "/" || pathname.startsWith("/share");
 
   useEffect(() => {
+    if (hideShell) {
+      return;
+    }
     if (isLoading || !user) {
       setShowOnboarding(false);
       return;
@@ -62,9 +63,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return () => {
       active = false;
     };
-  }, [isLoading, pathname, user]);
+  }, [hideShell, isLoading, pathname, user]);
 
   useEffect(() => {
+    if (hideShell) {
+      return;
+    }
     if (typeof window === "undefined") {
       return;
     }
@@ -108,7 +112,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     };
     media?.addEventListener?.("change", handleChange);
     return () => media?.removeEventListener?.("change", handleChange);
-  }, []);
+  }, [hideShell]);
+
+  // Landing Page ve paylaşım ekranlarında AppShell UI'ını gösterme
+  if (hideShell) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="app-root min-h-screen bg-app text-ink">

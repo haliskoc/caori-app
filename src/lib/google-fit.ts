@@ -2,9 +2,8 @@ import { google } from "googleapis";
 import type { fitness_v1 } from "googleapis";
 import type { Credentials } from "google-auth-library";
 import { getDb } from "@/lib/db";
-import { googleFitTokens, entries, goals } from "@/lib/schema";
-import { eq, and, gte, lte } from "drizzle-orm";
-import { nanoid } from "nanoid";
+import { googleFitTokens } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,

@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect */
+
 import React, {
   createContext,
   useCallback,
@@ -16,6 +18,7 @@ import type {
   FoodEntry,
   Goals,
   MealType,
+  MeasurementEntry,
   WaterEntry,
 } from "@/lib/types";
 import { loadEntries, saveEntries } from "@/lib/storage";
@@ -30,6 +33,12 @@ import {
 } from "@/lib/audit";
 import { ThemeSettings, applyTheme, loadTheme, saveTheme } from "@/lib/theme";
 import { ReminderSettings, loadReminder, saveReminder } from "@/lib/reminders";
+import {
+  loadMeasurements,
+  saveMeasurements,
+  normalizeMeasurement,
+  measurementUnits,
+} from "@/lib/measurements";
 import { t } from "@/lib/i18n";
 
 type TrackerContextValue = {
@@ -54,6 +63,7 @@ type TrackerContextValue = {
     options?: { mode?: "merge" | "replace"; source?: string }
   ) => Promise<number>;
   removeEntry: (id: string) => Promise<void>;
+  updateEntry: (id: string, input: Entry) => Promise<void>;
   dailySummary: {
     caloriesIn: number;
     caloriesOut: number;
@@ -75,6 +85,16 @@ type TrackerContextValue = {
   clearAuditLog: () => void;
   dataMode: "local" | "remote";
   importLocalEntries: () => Promise<number>;
+  measurements: MeasurementEntry[];
+  addMeasurement: (input: {
+    type: MeasurementEntry["type"];
+    value: number;
+    unit?: string;
+    timestamp?: string;
+  }) => Promise<void>;
+  updateMeasurement: (id: string, input: Partial<MeasurementEntry>) => Promise<void>;
+  removeMeasurement: (id: string) => Promise<void>;
+  importLocalMeasurements: () => Promise<number>;
 };
 
 const TrackerContext = createContext<TrackerContextValue | null>(null);
@@ -86,7 +106,101 @@ const DEFAULT_GOALS: Goals = {
   activityGoalMin: 30,
   mealGoalCount: 3,
   weightGoalKg: 0,
+  proteinGoalG: 0,
+  carbsGoalG: 0,
+  fatGoalG: 0,
 };
+
+const MEAL_TYPES: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
+const ACTIVITY_TYPES: ActivityType[] = [
+  "walking",
+  "running",
+  "gym",
+  "cycling",
+  "swimming",
+  "yoga",
+  "hiit",
+  "pilates",
+  "stairs",
+];
+
+function normalizeEntry(entry: Entry): Entry {
+  const timestampDate = new Date(entry.timestamp);
+  const timestamp = Number.isNaN(timestampDate.getTime())
+    ? new Date().toISOString()
+    : timestampDate.toISOString();
+  const id = entry.id || createId();
+  if (entry.type === "food") {
+    return {
+      id,
+      type: "food",
+      name: entry.name?.trim() || t("Belirtilmedi"),
+      calories: Number(entry.calories) || 0,
+      mealType: MEAL_TYPES.includes(entry.mealType) ? entry.mealType : "snack",
+      amountG: Number.isFinite(Number(entry.amountG)) ? Number(entry.amountG) : undefined,
+      proteinG: Number.isFinite(Number(entry.proteinG)) ? Number(entry.proteinG) : undefined,
+      carbsG: Number.isFinite(Number(entry.carbsG)) ? Number(entry.carbsG) : undefined,
+      fatG: Number.isFinite(Number(entry.fatG)) ? Number(entry.fatG) : undefined,
+      timestamp,
+    };
+  }
+  if (entry.type === "water") {
+    return {
+      id,
+      type: "water",
+      amountMl: Number(entry.amountMl) || 0,
+      timestamp,
+    };
+  }
+  return {
+    id,
+    type: "activity",
+    activityType: ACTIVITY_TYPES.includes(entry.activityType)
+      ? entry.activityType
+      : "walking",
+    durationMin: Number(entry.durationMin) || 0,
+    estimatedCalories: Number(entry.estimatedCalories) || 0,
+    timestamp,
+  };
+}
+
+function sortEntries(list: Entry[]) {
+  return [...list].sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
+}
+
+function mergeEntries(primary: Entry[], secondary: Entry[]) {
+  const merged = new Map<string, Entry>();
+  for (const entry of primary) {
+    merged.set(entry.id, entry);
+  }
+  for (const entry of secondary) {
+    if (!merged.has(entry.id)) {
+      merged.set(entry.id, entry);
+    }
+  }
+  return sortEntries(Array.from(merged.values()));
+}
+
+function sortMeasurements(list: MeasurementEntry[]) {
+  return [...list].sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
+}
+
+function mergeMeasurements(primary: MeasurementEntry[], secondary: MeasurementEntry[]) {
+  const merged = new Map<string, MeasurementEntry>();
+  for (const entry of primary) {
+    merged.set(entry.id, entry);
+  }
+  for (const entry of secondary) {
+    if (!merged.has(entry.id)) {
+      merged.set(entry.id, entry);
+    }
+  }
+  return sortMeasurements(Array.from(merged.values()));
+}
 
 function loadGoals(): Goals {
   if (typeof window === "undefined") {
@@ -119,8 +233,11 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<ThemeSettings>(() => loadTheme());
   const [reminder, setReminder] = useState<ReminderSettings>(() => loadReminder());
   const [auditLog, setAuditLog] = useState<AuditEvent[]>(() => loadAuditLog());
+  const [measurements, setMeasurements] = useState<MeasurementEntry[]>(() =>
+    loadMeasurements()
+  );
   const dataMode: "local" | "remote" = user?.sub ? "remote" : "local";
-  const autoSyncRef = useRef(false);
+  const autoSyncRef = useRef({ entries: false, measurements: false });
 
   useEffect(() => {
     saveEntries(entries);
@@ -157,26 +274,20 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [auditLog, dataMode]);
 
-  function mergeEntries(primary: Entry[], secondary: Entry[]) {
-    const merged = new Map<string, Entry>();
-    for (const entry of primary) {
-      merged.set(entry.id, entry);
+  useEffect(() => {
+    if (dataMode === "local") {
+      saveMeasurements(measurements);
     }
-    for (const entry of secondary) {
-      if (!merged.has(entry.id)) {
-        merged.set(entry.id, entry);
-      }
-    }
-    return sortEntries(Array.from(merged.values()));
-  }
+  }, [dataMode, measurements]);
 
   const loadRemoteData = useCallback(async () => {
     try {
-      const [entriesRes, goalsRes, settingsRes, auditRes] = await Promise.all([
+      const [entriesRes, goalsRes, settingsRes, auditRes, measurementsRes] = await Promise.all([
         fetch("/api/v1/entries", { credentials: "include", cache: "no-store" }),
         fetch("/api/v1/goals", { credentials: "include", cache: "no-store" }),
         fetch("/api/v1/settings", { credentials: "include", cache: "no-store" }),
         fetch("/api/v1/audit", { credentials: "include", cache: "no-store" }),
+        fetch("/api/v1/measurements", { credentials: "include", cache: "no-store" }),
       ]);
       if (entriesRes.ok) {
         const data = (await entriesRes.json()) as Entry[];
@@ -199,6 +310,9 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           activityGoalMin: data?.activityGoalMin ?? DEFAULT_GOALS.activityGoalMin,
           mealGoalCount: data?.mealGoalCount ?? DEFAULT_GOALS.mealGoalCount,
           weightGoalKg: data?.weightGoalKg ?? DEFAULT_GOALS.weightGoalKg,
+          proteinGoalG: data?.proteinGoalG ?? DEFAULT_GOALS.proteinGoalG,
+          carbsGoalG: data?.carbsGoalG ?? DEFAULT_GOALS.carbsGoalG,
+          fatGoalG: data?.fatGoalG ?? DEFAULT_GOALS.fatGoalG,
         });
       }
       if (settingsRes.ok) {
@@ -221,6 +335,23 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
         const data = (await auditRes.json()) as AuditEvent[];
         setAuditLog(Array.isArray(data) ? data : []);
       }
+      if (measurementsRes.ok) {
+        const data = (await measurementsRes.json()) as MeasurementEntry[];
+        const normalized = Array.isArray(data)
+          ? data
+              .map((entry) => normalizeMeasurement(entry))
+              .filter((entry): entry is MeasurementEntry => Boolean(entry))
+          : [];
+        const localMeasurements = loadMeasurements();
+        const merged = mergeMeasurements(normalized, localMeasurements);
+        setMeasurements(merged);
+        saveMeasurements(merged);
+      } else {
+        const localMeasurements = loadMeasurements();
+        if (localMeasurements.length > 0) {
+          setMeasurements(localMeasurements);
+        }
+      }
     } catch {
       // ignore network errors for MVP
     }
@@ -229,6 +360,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   const hydrateLocal = useCallback(() => {
     setEntries(loadEntries());
     setGoals(loadGoals());
+    setMeasurements(loadMeasurements());
   }, []);
 
   useEffect(() => {
@@ -242,11 +374,10 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       }
       setGoals(DEFAULT_GOALS);
       setAuditLog([]);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       void loadRemoteData();
       return;
     }
-    autoSyncRef.current = false;
+    autoSyncRef.current = { entries: false, measurements: false };
     hydrateLocal();
   }, [hydrateLocal, isLoading, loadRemoteData, user]);
 
@@ -337,52 +468,6 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     },
     [dataMode]
   );
-
-  function normalizeEntry(entry: Entry): Entry {
-    const timestampDate = new Date(entry.timestamp);
-    const timestamp = Number.isNaN(timestampDate.getTime())
-      ? new Date().toISOString()
-      : timestampDate.toISOString();
-    const id = entry.id || createId();
-    if (entry.type === "food") {
-      const mealType: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
-      return {
-        id,
-        type: "food",
-        name: entry.name?.trim() || t("Belirtilmedi"),
-        calories: Number(entry.calories) || 0,
-        mealType: mealType.includes(entry.mealType) ? entry.mealType : "snack",
-        amountG: Number.isFinite(Number(entry.amountG)) ? Number(entry.amountG) : undefined,
-        proteinG: Number.isFinite(Number(entry.proteinG)) ? Number(entry.proteinG) : undefined,
-        carbsG: Number.isFinite(Number(entry.carbsG)) ? Number(entry.carbsG) : undefined,
-        fatG: Number.isFinite(Number(entry.fatG)) ? Number(entry.fatG) : undefined,
-        timestamp,
-      };
-    }
-    if (entry.type === "water") {
-      return {
-        id,
-        type: "water",
-        amountMl: Number(entry.amountMl) || 0,
-        timestamp,
-      };
-    }
-    const activityType: ActivityType[] = ["walking", "running", "gym"];
-    return {
-      id,
-      type: "activity",
-      activityType: activityType.includes(entry.activityType) ? entry.activityType : "walking",
-      durationMin: Number(entry.durationMin) || 0,
-      estimatedCalories: Number(entry.estimatedCalories) || 0,
-      timestamp,
-    };
-  }
-
-  function sortEntries(list: Entry[]) {
-    return [...list].sort(
-      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    );
-  }
 
   async function addEntries(
     items: Entry[],
@@ -619,6 +704,9 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           activityGoalMin: data?.activityGoalMin ?? updated.activityGoalMin,
           mealGoalCount: data?.mealGoalCount ?? updated.mealGoalCount,
           weightGoalKg: data?.weightGoalKg ?? updated.weightGoalKg,
+          proteinGoalG: data?.proteinGoalG ?? updated.proteinGoalG,
+          carbsGoalG: data?.carbsGoalG ?? updated.carbsGoalG,
+          fatGoalG: data?.fatGoalG ?? updated.fatGoalG,
         });
         recordAudit("update-goals", t("Hedefler güncellendi"), {
           waterGoalMl: data?.waterGoalMl ?? updated.waterGoalMl,
@@ -626,12 +714,119 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           activityGoalMin: data?.activityGoalMin ?? updated.activityGoalMin,
           mealGoalCount: data?.mealGoalCount ?? updated.mealGoalCount,
           weightGoalKg: data?.weightGoalKg ?? updated.weightGoalKg,
+          proteinGoalG: data?.proteinGoalG ?? updated.proteinGoalG,
+          carbsGoalG: data?.carbsGoalG ?? updated.carbsGoalG,
+          fatGoalG: data?.fatGoalG ?? updated.fatGoalG,
         });
         return;
       }
     }
     setGoals(updated);
     recordAudit("update-goals", t("Hedefler güncellendi"), updated);
+  }
+
+  async function updateEntry(id: string, input: Entry) {
+    const normalized = normalizeEntry(input);
+    if (dataMode === "remote") {
+      const response = await fetch(`/api/v1/entries/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ ...normalized, type: normalized.type }),
+      });
+      if (response.ok) {
+        const updated = (await response.json()) as Entry;
+        const nextEntry = normalizeEntry(updated);
+        setEntries((prev) =>
+          prev.map((entry) => (entry.id === id ? nextEntry : entry))
+        );
+        recordAudit("update-entry", t("Kayıt güncellendi"), {
+          type: nextEntry.type,
+        });
+        void loadRemoteData();
+        return;
+      }
+    }
+    setEntries((prev) => prev.map((entry) => (entry.id === id ? normalized : entry)));
+    recordAudit("update-entry", t("Kayıt güncellendi"), { type: normalized.type });
+  }
+
+  async function addMeasurement(input: {
+    type: MeasurementEntry["type"];
+    value: number;
+    unit?: string;
+    timestamp?: string;
+  }) {
+    const timestamp = input.timestamp ?? new Date().toISOString();
+    const entry: MeasurementEntry = {
+      id: createId(),
+      type: input.type,
+      value: Number(input.value) || 0,
+      unit: input.unit || measurementUnits[input.type],
+      timestamp,
+    };
+    if (dataMode === "remote") {
+      const response = await fetch("/api/v1/measurements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(entry),
+      });
+      if (response.ok) {
+        const created = (await response.json()) as MeasurementEntry;
+        const normalized = normalizeMeasurement(created);
+        if (normalized) {
+          setMeasurements((prev) => sortMeasurements([normalized, ...prev]));
+        }
+        recordAudit("measurement", t("Ölçüm eklendi"), {
+          type: entry.type,
+        });
+        void loadRemoteData();
+        return;
+      }
+    }
+    setMeasurements((prev) => sortMeasurements([entry, ...prev]));
+    recordAudit("measurement", t("Ölçüm eklendi"), { type: entry.type });
+  }
+
+  async function updateMeasurement(id: string, input: Partial<MeasurementEntry>) {
+    if (dataMode === "remote") {
+      const response = await fetch(`/api/v1/measurements/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(input),
+      });
+      if (response.ok) {
+        const updated = (await response.json()) as MeasurementEntry;
+        const normalized = normalizeMeasurement(updated);
+        if (normalized) {
+          setMeasurements((prev) =>
+            prev.map((entry) => (entry.id === id ? normalized : entry))
+          );
+        }
+        recordAudit("measurement", t("Ölçüm güncellendi"), { id });
+        void loadRemoteData();
+        return;
+      }
+    }
+    setMeasurements((prev) =>
+      prev.map((entry) =>
+        entry.id === id ? { ...entry, ...input, id: entry.id } : entry
+      )
+    );
+    recordAudit("measurement", t("Ölçüm güncellendi"), { id });
+  }
+
+  async function removeMeasurement(id: string) {
+    if (dataMode === "remote") {
+      await fetch(`/api/v1/measurements/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+    }
+    setMeasurements((prev) => prev.filter((entry) => entry.id !== id));
+    recordAudit("measurement", t("Ölçüm silindi"), { id });
   }
 
   function updateFlags(next: Partial<FeatureFlags>) {
@@ -707,15 +902,52 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     return importedTotal;
   }, [dataMode, loadRemoteData, recordAudit]);
 
+  const importLocalMeasurements = useCallback(async () => {
+    if (dataMode !== "remote") {
+      return 0;
+    }
+    const local = loadMeasurements();
+    if (local.length === 0) {
+      return 0;
+    }
+    const batchSize = 150;
+    let importedTotal = 0;
+    for (let index = 0; index < local.length; index += batchSize) {
+      const batch = local.slice(index, index + batchSize);
+      const response = await fetch("/api/v1/measurements/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ entries: batch }),
+      });
+      if (!response.ok) {
+        break;
+      }
+      const data = (await response.json()) as { imported: number } | null;
+      importedTotal += data?.imported ?? batch.length;
+    }
+    if (importedTotal > 0) {
+      await loadRemoteData();
+      recordAudit("measurement", t("Yerel ölçümler buluta taşındı"), {
+        count: importedTotal,
+      });
+    }
+    return importedTotal;
+  }, [dataMode, loadRemoteData, recordAudit]);
+
   useEffect(() => {
     if (dataMode !== "remote") {
       return;
     }
-    if (!autoSyncRef.current) {
-      autoSyncRef.current = true;
+    if (!autoSyncRef.current.entries) {
+      autoSyncRef.current.entries = true;
       void importLocalEntries();
     }
-  }, [dataMode, importLocalEntries]);
+    if (!autoSyncRef.current.measurements) {
+      autoSyncRef.current.measurements = true;
+      void importLocalMeasurements();
+    }
+  }, [dataMode, importLocalEntries, importLocalMeasurements]);
 
   useEffect(() => {
     if (dataMode !== "remote") {
@@ -723,10 +955,11 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     }
     function handleOnline() {
       void importLocalEntries();
+      void importLocalMeasurements();
     }
     window.addEventListener("online", handleOnline);
     return () => window.removeEventListener("online", handleOnline);
-  }, [dataMode, importLocalEntries]);
+  }, [dataMode, importLocalEntries, importLocalMeasurements]);
 
   const value: TrackerContextValue = {
     entries,
@@ -735,6 +968,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     addActivity,
     addEntries,
     removeEntry,
+    updateEntry,
     dailySummary,
     weeklySummary,
     goals,
@@ -749,6 +983,11 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     clearAuditLog,
     dataMode,
     importLocalEntries,
+    measurements,
+    addMeasurement,
+    updateMeasurement,
+    removeMeasurement,
+    importLocalMeasurements,
   };
 
   return <TrackerContext.Provider value={value}>{children}</TrackerContext.Provider>;

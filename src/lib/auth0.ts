@@ -31,7 +31,7 @@ export const auth0 = new Auth0Client({
       secure: isProduction,
     },
   },
-  async onCallback(error, context, session) {
+  async onCallback(error, context) {
     if (error) {
       console.error("Auth0 callback error:", error.message);
       return NextResponse.redirect(new URL("/", appBaseUrl));

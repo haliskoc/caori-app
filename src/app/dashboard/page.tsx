@@ -23,6 +23,12 @@ export default function DashboardPage() {
   const netCalories = dailySummary.caloriesIn - dailySummary.caloriesOut;
   const waterLeft = Math.max(goals.waterGoalMl - dailySummary.waterMl, 0);
   const hasEntries = entries.length > 0;
+  const macroGoals = [
+    { key: "protein", label: t("Protein Hedefi"), goal: goals.proteinGoalG, value: dailySummary.proteinG },
+    { key: "carbs", label: t("Karbonhidrat Hedefi"), goal: goals.carbsGoalG, value: dailySummary.carbsG },
+    { key: "fat", label: t("Yağ Hedefi"), goal: goals.fatGoalG, value: dailySummary.fatG },
+  ];
+  const hasMacroGoals = macroGoals.some((goal) => goal.goal > 0);
 
   return (
     <div className="space-y-6">
@@ -65,6 +71,34 @@ export default function DashboardPage() {
               <p className="text-xl font-semibold text-ink">{t("{value} g", { value: Math.round(dailySummary.fatG) })}</p>
             </div>
           </div>
+          {hasMacroGoals && (
+            <div className="rounded-2xl border border-amber-100 bg-white p-4">
+              <p className="text-xs font-semibold text-ink">{t("Makro Hedef Takibi")}</p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                {macroGoals.map((macro) => (
+                  <div key={macro.key} className="space-y-1 text-xs">
+                    <div className="flex items-center justify-between text-[11px] text-muted">
+                      <span>{macro.label}</span>
+                      <span>
+                        {t("{value}/{goal} g", {
+                          value: Math.round(macro.value),
+                          goal: Math.round(macro.goal),
+                        })}
+                      </span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
+                      <div
+                        className="h-full rounded-full bg-amber-600"
+                        style={{
+                          width: `${macro.goal > 0 ? Math.min(100, (macro.value / macro.goal) * 100) : 0}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="rounded-2xl border border-amber-100 bg-white p-4">
             <div className="flex items-center gap-2 text-xs text-muted">

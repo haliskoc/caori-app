@@ -13,7 +13,17 @@ export const dynamic = "force-dynamic";
 type EntryRow = typeof entries.$inferSelect;
 
 const allowedMeals: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
-const allowedActivities: ActivityType[] = ["walking", "running", "gym"];
+const allowedActivities: ActivityType[] = [
+  "walking",
+  "running",
+  "gym",
+  "cycling",
+  "swimming",
+  "yoga",
+  "hiit",
+  "pilates",
+  "stairs",
+];
 
 function toIso(value: unknown) {
   const date = value instanceof Date ? value : new Date(String(value));
@@ -105,6 +115,9 @@ export async function GET(request: NextRequest) {
           activityGoalMin: goalRow.activityGoalMin ?? 30,
           mealGoalCount: goalRow.mealGoalCount ?? 3,
           weightGoalKg: goalRow.weightGoalKg ?? 0,
+          proteinGoalG: goalRow.proteinGoalG ?? 0,
+          carbsGoalG: goalRow.carbsGoalG ?? 0,
+          fatGoalG: goalRow.fatGoalG ?? 0,
         }
       : undefined
   );

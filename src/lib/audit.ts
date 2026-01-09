@@ -3,12 +3,14 @@ import { createId } from "./utils";
 export type AuditAction =
   | "add"
   | "remove"
+  | "update-entry"
   | "update-goals"
   | "update-flags"
   | "import"
   | "theme"
   | "reminder"
-  | "onboarding";
+  | "onboarding"
+  | "measurement";
 
 export type AuditEvent = {
   id: string;

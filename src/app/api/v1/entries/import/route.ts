@@ -10,7 +10,17 @@ export const dynamic = "force-dynamic";
 
 const allowedTypes = new Set(["food", "water", "activity"]);
 const allowedMeals = new Set(["breakfast", "lunch", "dinner", "snack"]);
-const allowedActivities = new Set(["walking", "running", "gym"]);
+const allowedActivities = new Set([
+  "walking",
+  "running",
+  "gym",
+  "cycling",
+  "swimming",
+  "yoga",
+  "hiit",
+  "pilates",
+  "stairs",
+]);
 const MAX_IMPORT = 500;
 
 function toOptionalNumber(value: unknown, options: { min: number; max: number }) {

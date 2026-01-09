@@ -5,10 +5,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { Card } from "@/components/card";
 import { useTracker } from "@/components/tracker-provider";
-import { DAY_MS, getDayKey } from "@/lib/utils";
+import { DAY_MS, formatShortDate, getDayKey } from "@/lib/utils";
 import { loadProfile, saveProfile, type ProfileInfo } from "@/lib/profile";
-import { MealType } from "@/lib/types";
+import { MeasurementType, MealType } from "@/lib/types";
 import { getIntlLocale, t } from "@/lib/i18n";
+import { measurementLabels, measurementUnits } from "@/lib/measurements";
 
 type DayBucket = {
   caloriesIn: number;
@@ -232,11 +233,18 @@ function getOptionLabel<T extends { value: string; label: string }>(
 
 export default function ProfilePage() {
   const { user } = useUser();
-  const { entries, goals } = useTracker();
+  const { entries, goals, measurements, addMeasurement, removeMeasurement } = useTracker();
   const [profile, setProfile] = useState<ProfileInfo>(() => loadProfile());
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const isRemote = Boolean(user?.sub);
+  const [measurementType, setMeasurementType] = useState<MeasurementType>("weight");
+  const [measurementValue, setMeasurementValue] = useState("");
+  const [measurementTimestamp, setMeasurementTimestamp] = useState(() => {
+    const now = new Date();
+    const offset = now.getTimezoneOffset();
+    return new Date(now.getTime() - offset * 60000).toISOString().slice(0, 16);
+  });
 
   useEffect(() => {
     if (!isRemote) {
@@ -369,6 +377,15 @@ export default function ProfilePage() {
     };
   }, [entries, goals]);
 
+  const sortedMeasurements = useMemo(
+    () =>
+      [...measurements].sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      ),
+    [measurements]
+  );
+  const latestWeight = sortedMeasurements.find((entry) => entry.type === "weight")?.value ?? null;
+
   const profileCompletion = useMemo(() => {
     const requiredFields: Array<keyof ProfileInfo> = [
       "age",
@@ -499,6 +516,118 @@ export default function ProfilePage() {
               <p className="mt-1 text-lg font-semibold text-ink">{sportLevelLabel}</p>
             </div>
           </div>
+        </Card>
+
+        <Card className="space-y-4">
+          <div>
+            <p className="text-sm font-semibold">{t("Kilo & Ölçüm Takibi")}</p>
+            <p className="text-xs text-muted">
+              {t("Kilo, bel, kalça ve diğer ölçümleri düzenli ekleyin.")}
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+              <p className="text-muted">{t("Güncel kilo")}</p>
+              <p className="mt-1 text-lg font-semibold text-ink">
+                {latestWeight !== null
+                  ? t("{value} kg", { value: formatNumber(latestWeight) })
+                  : "-"}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+              <p className="text-muted">{t("Toplam ölçüm")}</p>
+              <p className="mt-1 text-lg font-semibold text-ink">
+                {formatNumber(measurements.length)}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+              <p className="text-muted">{t("Son kayıt")}</p>
+              <p className="mt-1 text-lg font-semibold text-ink">
+                {sortedMeasurements[0]
+                  ? formatShortDate(getDayKey(sortedMeasurements[0].timestamp))
+                  : "-"}
+              </p>
+            </div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-[1fr_0.8fr_1fr_auto]">
+            <select
+              value={measurementType}
+              onChange={(event) => setMeasurementType(event.target.value as MeasurementType)}
+              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
+            >
+              {Object.entries(measurementLabels).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <input
+              value={measurementValue}
+              onChange={(event) => setMeasurementValue(event.target.value)}
+              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
+              placeholder={t("Değer ({unit})", { unit: measurementUnits[measurementType] })}
+              type="number"
+              min="0"
+            />
+            <input
+              value={measurementTimestamp}
+              onChange={(event) => setMeasurementTimestamp(event.target.value)}
+              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
+              type="datetime-local"
+            />
+            <button
+              onClick={async () => {
+                const value = Number(measurementValue);
+                if (!Number.isFinite(value) || value <= 0) {
+                  return;
+                }
+                const timestamp = new Date(measurementTimestamp);
+                if (Number.isNaN(timestamp.getTime())) {
+                  return;
+                }
+                await addMeasurement({
+                  type: measurementType,
+                  value,
+                  unit: measurementUnits[measurementType],
+                  timestamp: timestamp.toISOString(),
+                });
+                setMeasurementValue("");
+              }}
+              className="rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700"
+            >
+              {t("Ekle")}
+            </button>
+          </div>
+          {sortedMeasurements.length > 0 && (
+            <div className="space-y-2 text-xs text-muted">
+              {sortedMeasurements.slice(0, 8).map((entry) => (
+                <div
+                  key={entry.id}
+                  className="flex flex-col gap-2 rounded-2xl border border-amber-100 bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-ink">
+                      {measurementLabels[entry.type]}
+                    </span>
+                    <span className="text-[11px] text-muted">
+                      {formatShortDate(getDayKey(entry.timestamp))}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="rounded-full bg-amber-50 px-3 py-1 text-[11px] text-amber-700">
+                      {entry.value} {entry.unit}
+                    </span>
+                    <button
+                      onClick={() => removeMeasurement(entry.id)}
+                      className="rounded-full border border-amber-100 px-3 py-1 text-[11px] text-muted"
+                    >
+                      {t("Sil")}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </Card>
 
         <Card className="space-y-4">

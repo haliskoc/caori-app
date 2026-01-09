@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/card";
 import { useTracker } from "@/components/tracker-provider";
-import { ActivityType, MealType } from "@/lib/types";
+import { ActivityType, Entry, MealType } from "@/lib/types";
 import { createId, formatShortDate, getDayKey } from "@/lib/utils";
 import { t } from "@/lib/i18n";
+import { activityLabels } from "@/lib/activity";
 
 type FilterType = "all" | "food" | "water" | "activity";
 type MealFilter = "all" | MealType;
@@ -55,7 +56,7 @@ function filtersMatch(a: FilterState, b: FilterState) {
 }
 
 export default function HistoryPage() {
-  const { entries, removeEntry } = useTracker();
+  const { entries, removeEntry, addEntries, updateEntry } = useTracker();
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<FilterType>("all");
   const [mealFilter, setMealFilter] = useState<MealFilter>("all");
@@ -64,16 +65,15 @@ export default function HistoryPage() {
   const [savedViews, setSavedViews] = useState<SavedView[]>(() => loadSavedViews());
   const [viewName, setViewName] = useState("");
   const [activeViewId, setActiveViewId] = useState<string | null>(null);
+  const [lastDeleted, setLastDeleted] = useState<Entry | null>(null);
+  const [undoTimeoutId, setUndoTimeoutId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState<Entry | null>(null);
   const mealLabels: Record<MealType, string> = {
     breakfast: t("Kahvaltı"),
     lunch: t("Öğle"),
     dinner: t("Akşam"),
     snack: t("Atıştırmalık"),
-  };
-  const activityLabels: Record<ActivityType, string> = {
-    walking: t("Yürümek"),
-    running: t("Koşu"),
-    gym: t("Salon"),
   };
 
   useEffect(() => {
@@ -82,6 +82,66 @@ export default function HistoryPage() {
     }
     window.localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(savedViews));
   }, [savedViews]);
+
+  const toDateTimeLocal = (value: string) => {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+    const offset = date.getTimezoneOffset();
+    const local = new Date(date.getTime() - offset * 60000);
+    return local.toISOString().slice(0, 16);
+  };
+
+  const fromDateTimeLocal = (value: string) => {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return new Date().toISOString();
+    }
+    return date.toISOString();
+  };
+
+  const handleDelete = (entry: Entry) => {
+    void removeEntry(entry.id);
+    setLastDeleted(entry);
+    if (undoTimeoutId) {
+      window.clearTimeout(undoTimeoutId);
+    }
+    const timeout = window.setTimeout(() => {
+      setLastDeleted(null);
+    }, 6000);
+    setUndoTimeoutId(timeout);
+  };
+
+  const handleUndo = () => {
+    if (!lastDeleted) {
+      return;
+    }
+    void addEntries([lastDeleted], { mode: "merge", source: "undo" });
+    setLastDeleted(null);
+    if (undoTimeoutId) {
+      window.clearTimeout(undoTimeoutId);
+    }
+    setUndoTimeoutId(null);
+  };
+
+  const startEdit = (entry: Entry) => {
+    setEditingId(entry.id);
+    setEditDraft(entry);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditDraft(null);
+  };
+
+  const saveEdit = async () => {
+    if (!editDraft) {
+      return;
+    }
+    await updateEntry(editDraft.id, editDraft);
+    cancelEdit();
+  };
 
   const filteredEntries = useMemo(() => {
     let list = entries;
@@ -106,7 +166,7 @@ export default function HistoryPage() {
             ? entry.name
             : entry.type === "water"
               ? t("Su")
-              : activityLabels[entry.activityType];
+            : activityLabels[entry.activityType] ?? t("Aktivite");
         return label.toLowerCase().includes(normalized);
       });
     }
@@ -312,6 +372,27 @@ export default function HistoryPage() {
         )}
       </Card>
 
+      {lastDeleted && (
+        <Card className="flex flex-col items-start justify-between gap-2 text-xs sm:flex-row sm:items-center">
+          <span className="text-muted">
+            {t("Kayıt silindi: {label}", {
+              label:
+                lastDeleted.type === "food"
+                  ? lastDeleted.name
+                  : lastDeleted.type === "water"
+                    ? t("Su")
+                    : activityLabels[lastDeleted.activityType] ?? t("Aktivite"),
+            })}
+          </span>
+          <button
+            onClick={handleUndo}
+            className="rounded-full border border-amber-100 bg-white px-3 py-1 text-xs font-semibold text-amber-700"
+          >
+            {t("Geri al")}
+          </button>
+        </Card>
+      )}
+
       {entries.length === 0 && (
         <Card className="text-center text-sm text-muted">
           {t("Henüz kayıt yok. İlk girişinizi ekleyin.")}
@@ -336,46 +417,284 @@ export default function HistoryPage() {
             {groups[day].map((entry) => (
               <div
                 key={entry.id}
-                className="flex flex-col gap-1 rounded-2xl border border-amber-100 bg-white px-3 py-2 text-xs sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-2 rounded-2xl border border-amber-100 bg-white px-3 py-2 text-xs"
               >
-                <div>
-                  {entry.type === "food" && (
-                    <div>
-                      <p className="text-sm font-semibold text-ink">{entry.name}</p>
-                      <p className="text-xs text-muted">
-                        {t("{meal} • {calorie} kcal", {
-                          meal: mealLabels[entry.mealType],
-                          calorie: entry.calories,
-                        })}
-                      </p>
-                    </div>
-                  )}
-                  {entry.type === "water" && (
-                    <div>
-                      <p className="text-sm font-semibold text-ink">{t("Su")}</p>
-                      <p className="text-xs text-muted">{t("{value} ml", { value: entry.amountMl })}</p>
-                    </div>
-                  )}
-                  {entry.type === "activity" && (
-                    <div>
-                      <p className="text-sm font-semibold text-ink">
-                        {activityLabels[entry.activityType]}
-                      </p>
-                      <p className="text-xs text-muted">
-                        {t("{duration} dk • {calorie} kcal (tahmini)", {
-                          duration: entry.durationMin,
-                          calorie: entry.estimatedCalories,
-                        })}
-                      </p>
-                    </div>
-                  )}
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    {entry.type === "food" && (
+                      <div>
+                        <p className="text-sm font-semibold text-ink">{entry.name}</p>
+                        <p className="text-xs text-muted">
+                          {t("{meal} • {calorie} kcal", {
+                            meal: mealLabels[entry.mealType],
+                            calorie: entry.calories,
+                          })}
+                        </p>
+                      </div>
+                    )}
+                    {entry.type === "water" && (
+                      <div>
+                        <p className="text-sm font-semibold text-ink">{t("Su")}</p>
+                        <p className="text-xs text-muted">
+                          {t("{value} ml", { value: entry.amountMl })}
+                        </p>
+                      </div>
+                    )}
+                    {entry.type === "activity" && (
+                      <div>
+                        <p className="text-sm font-semibold text-ink">
+                          {activityLabels[entry.activityType] ?? t("Aktivite")}
+                        </p>
+                        <p className="text-xs text-muted">
+                          {t("{duration} dk • {calorie} kcal (tahmini)", {
+                            duration: entry.durationMin,
+                            calorie: entry.estimatedCalories,
+                          })}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => startEdit(entry)}
+                      className="rounded-full border border-amber-100 px-3 py-1 text-[11px] text-muted hover:text-ink"
+                    >
+                      {t("Düzenle")}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(entry)}
+                      className="rounded-full border border-amber-100 px-3 py-1 text-[11px] text-muted hover:text-ink"
+                    >
+                      {t("Sil")}
+                    </button>
+                  </div>
                 </div>
-                <button
-                  onClick={() => removeEntry(entry.id)}
-                  className="mt-2 rounded-full border border-amber-100 px-3 py-1 text-[11px] text-muted hover:text-ink sm:mt-0"
-                >
-                  {t("Sil")}
-                </button>
+                {editingId === entry.id && editDraft?.id === entry.id && (
+                  <div className="rounded-xl border border-amber-100 bg-amber-50/40 p-3">
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      <div className="space-y-1">
+                        <label className="text-[11px] text-muted">{t("Tarih/Saat")}</label>
+                        <input
+                          type="datetime-local"
+                          value={toDateTimeLocal(editDraft.timestamp)}
+                          onChange={(event) =>
+                            setEditDraft((prev) =>
+                              prev ? { ...prev, timestamp: fromDateTimeLocal(event.target.value) } : prev
+                            )
+                          }
+                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                        />
+                      </div>
+                      {editDraft.type === "food" && (
+                        <div className="space-y-1">
+                          <label className="text-[11px] text-muted">{t("Öğün")}</label>
+                          <select
+                            value={editDraft.mealType}
+                            onChange={(event) =>
+                              setEditDraft((prev) =>
+                                prev && prev.type === "food"
+                                  ? { ...prev, mealType: event.target.value as MealType }
+                                  : prev
+                              )
+                            }
+                            className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          >
+                            {Object.entries(mealLabels).map(([value, label]) => (
+                              <option key={value} value={value}>
+                                {label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                      {editDraft.type === "activity" && (
+                        <div className="space-y-1">
+                          <label className="text-[11px] text-muted">{t("Aktivite")}</label>
+                          <select
+                            value={editDraft.activityType}
+                            onChange={(event) =>
+                              setEditDraft((prev) =>
+                                prev && prev.type === "activity"
+                                  ? { ...prev, activityType: event.target.value as ActivityType }
+                                  : prev
+                              )
+                            }
+                            className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          >
+                            {Object.entries(activityLabels).map(([value, label]) => (
+                              <option key={value} value={value}>
+                                {label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                    {editDraft.type === "food" && (
+                      <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                        <input
+                          value={editDraft.name}
+                          onChange={(event) =>
+                            setEditDraft((prev) =>
+                              prev && prev.type === "food" ? { ...prev, name: event.target.value } : prev
+                            )
+                          }
+                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          placeholder={t("Yemek adı")}
+                        />
+                        <input
+                          value={editDraft.calories}
+                          onChange={(event) =>
+                            setEditDraft((prev) =>
+                              prev && prev.type === "food"
+                                ? { ...prev, calories: Number(event.target.value) || 0 }
+                                : prev
+                            )
+                          }
+                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          placeholder={t("Kalori")}
+                          type="number"
+                          min="0"
+                        />
+                        <input
+                          value={editDraft.proteinG ?? ""}
+                          onChange={(event) =>
+                            setEditDraft((prev) =>
+                              prev && prev.type === "food"
+                                ? {
+                                    ...prev,
+                                    proteinG: event.target.value ? Number(event.target.value) : undefined,
+                                  }
+                                : prev
+                            )
+                          }
+                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          placeholder={t("Protein (g)")}
+                          type="number"
+                          min="0"
+                        />
+                        <input
+                          value={editDraft.carbsG ?? ""}
+                          onChange={(event) =>
+                            setEditDraft((prev) =>
+                              prev && prev.type === "food"
+                                ? {
+                                    ...prev,
+                                    carbsG: event.target.value ? Number(event.target.value) : undefined,
+                                  }
+                                : prev
+                            )
+                          }
+                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          placeholder={t("Karbonhidrat (g)")}
+                          type="number"
+                          min="0"
+                        />
+                        <input
+                          value={editDraft.fatG ?? ""}
+                          onChange={(event) =>
+                            setEditDraft((prev) =>
+                              prev && prev.type === "food"
+                                ? {
+                                    ...prev,
+                                    fatG: event.target.value ? Number(event.target.value) : undefined,
+                                  }
+                                : prev
+                            )
+                          }
+                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          placeholder={t("Yağ (g)")}
+                          type="number"
+                          min="0"
+                        />
+                        <input
+                          value={editDraft.amountG ?? ""}
+                          onChange={(event) =>
+                            setEditDraft((prev) =>
+                              prev && prev.type === "food"
+                                ? {
+                                    ...prev,
+                                    amountG: event.target.value ? Number(event.target.value) : undefined,
+                                  }
+                                : prev
+                            )
+                          }
+                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          placeholder={t("Miktar (g)")}
+                          type="number"
+                          min="0"
+                        />
+                      </div>
+                    )}
+                    {editDraft.type === "water" && (
+                      <div className="mt-2">
+                        <input
+                          value={editDraft.amountMl}
+                          onChange={(event) =>
+                            setEditDraft((prev) =>
+                              prev && prev.type === "water"
+                                ? { ...prev, amountMl: Number(event.target.value) || 0 }
+                                : prev
+                            )
+                          }
+                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          placeholder={t("Miktar (ml)")}
+                          type="number"
+                          min="0"
+                        />
+                      </div>
+                    )}
+                    {editDraft.type === "activity" && (
+                      <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                        <input
+                          value={editDraft.durationMin}
+                          onChange={(event) =>
+                            setEditDraft((prev) =>
+                              prev && prev.type === "activity"
+                                ? { ...prev, durationMin: Number(event.target.value) || 0 }
+                                : prev
+                            )
+                          }
+                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          placeholder={t("Süre (dk)")}
+                          type="number"
+                          min="0"
+                        />
+                        <input
+                          value={editDraft.estimatedCalories}
+                          onChange={(event) =>
+                            setEditDraft((prev) =>
+                              prev && prev.type === "activity"
+                                ? {
+                                    ...prev,
+                                    estimatedCalories: Number(event.target.value) || 0,
+                                  }
+                                : prev
+                            )
+                          }
+                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          placeholder={t("Tahmini kalori")}
+                          type="number"
+                          min="0"
+                        />
+                      </div>
+                    )}
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <button
+                        onClick={saveEdit}
+                        className="rounded-full bg-amber-600 px-3 py-1 text-[11px] font-semibold text-white"
+                      >
+                        {t("Kaydet")}
+                      </button>
+                      <button
+                        onClick={cancelEdit}
+                        className="rounded-full border border-amber-100 px-3 py-1 text-[11px] text-muted"
+                      >
+                        {t("Vazgeç")}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -2,6 +2,7 @@ import {
   boolean,
   integer,
   pgTable,
+  numeric,
   text,
   timestamp,
   bigint,
@@ -34,6 +35,9 @@ export const goals = pgTable("goals", {
   activityGoalMin: integer("activity_goal_min").notNull().default(30),
   mealGoalCount: integer("meal_goal_count").notNull().default(3),
   weightGoalKg: integer("weight_goal_kg").notNull().default(0),
+  proteinGoalG: integer("protein_goal_g").notNull().default(0),
+  carbsGoalG: integer("carbs_goal_g").notNull().default(0),
+  fatGoalG: integer("fat_goal_g").notNull().default(0),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
@@ -121,5 +125,27 @@ export const auditLog = pgTable("audit_log", {
   detail: text("detail").notNull(),
   meta: jsonb("meta"),
   timestamp: timestamp("timestamp", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+export const measurements = pgTable("measurements", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  type: text("type").notNull(),
+  value: numeric("value", { precision: 6, scale: 2, mode: "number" }).notNull(),
+  unit: text("unit").notNull(),
+  timestamp: timestamp("timestamp", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+export const reportShares = pgTable("report_shares", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  rangeDays: integer("range_days").notNull().default(30),
+  expiresAt: timestamp("expires_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });

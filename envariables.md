@@ -1,43 +1,43 @@
 # Recommended for most uses
 
-DATABASE_URL=postgresql://neondb_owner:npg_FCO7Z0DwHaGN@ep-winter-bar-a431i38f-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
+DATABASE_URL=<POSTGRES_CONNECTION_STRING>
 
 
 # For uses requiring a connection without pgbouncer
 
-DATABASE_URL_UNPOOLED=postgresql://neondb_owner:npg_FCO7Z0DwHaGN@ep-winter-bar-a431i38f.us-east-1.aws.neon.tech/neondb?sslmode=require
+DATABASE_URL_UNPOOLED=<POSTGRES_CONNECTION_STRING_UNPOOLED>
 
 
 # Parameters for constructing your own connection string
 
-PGHOST=ep-winter-bar-a431i38f-pooler.us-east-1.aws.neon.tech
+PGHOST=<POSTGRES_HOST>
 
-PGHOST_UNPOOLED=ep-winter-bar-a431i38f.us-east-1.aws.neon.tech
+PGHOST_UNPOOLED=<POSTGRES_HOST_UNPOOLED>
 
-PGUSER=neondb_owner
+PGUSER=<POSTGRES_USER>
 
-PGDATABASE=neondb
+PGDATABASE=<POSTGRES_DATABASE>
 
-PGPASSWORD=npg_FCO7Z0DwHaGN
+PGPASSWORD=<POSTGRES_PASSWORD>
 
 
 # Parameters for Vercel Postgres Templates
 
-POSTGRES_URL=postgresql://neondb_owner:npg_FCO7Z0DwHaGN@ep-winter-bar-a431i38f-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
+POSTGRES_URL=<POSTGRES_CONNECTION_STRING>
 
-POSTGRES_URL_NON_POOLING=postgresql://neondb_owner:npg_FCO7Z0DwHaGN@ep-winter-bar-a431i38f.us-east-1.aws.neon.tech/neondb?sslmode=require
+POSTGRES_URL_NON_POOLING=<POSTGRES_CONNECTION_STRING_UNPOOLED>
 
-POSTGRES_USER=neondb_owner
+POSTGRES_USER=<POSTGRES_USER>
 
-POSTGRES_HOST=ep-winter-bar-a431i38f-pooler.us-east-1.aws.neon.tech
+POSTGRES_HOST=<POSTGRES_HOST>
 
-POSTGRES_PASSWORD=npg_FCO7Z0DwHaGN
+POSTGRES_PASSWORD=<POSTGRES_PASSWORD>
 
-POSTGRES_DATABASE=neondb
+POSTGRES_DATABASE=<POSTGRES_DATABASE>
 
-POSTGRES_URL_NO_SSL=postgresql://neondb_owner:npg_FCO7Z0DwHaGN@ep-winter-bar-a431i38f-pooler.us-east-1.aws.neon.tech/neondb
+POSTGRES_URL_NO_SSL=<POSTGRES_CONNECTION_STRING_NO_SSL>
 
-POSTGRES_PRISMA_URL=postgresql://neondb_owner:npg_FCO7Z0DwHaGN@ep-winter-bar-a431i38f-pooler.us-east-1.aws.neon.tech/neondb?connect_timeout=15&sslmode=require
+POSTGRES_PRISMA_URL=<POSTGRES_PRISMA_URL>
 
 
 # Neon Auth environment variables for Next.js

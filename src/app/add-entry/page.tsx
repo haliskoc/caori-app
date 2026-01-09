@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useUser } from "@auth0/nextjs-auth0/client";
 import { Card } from "@/components/card";
 import { Tooltip } from "@/components/tooltip";
 import { useTracker } from "@/components/tracker-provider";
 import { ActivityType, MealType } from "@/lib/types";
+import { activityOptions, estimateActivityCalories } from "@/lib/activity";
 import { OFFProduct } from "@/lib/off";
 import {
   FoodLibraryItem,
@@ -15,6 +17,7 @@ import {
 } from "@/lib/food-library";
 import { createId } from "@/lib/utils";
 import { t } from "@/lib/i18n";
+import { loadProfile } from "@/lib/profile";
 
 type TabKey = "food" | "water" | "activity";
 
@@ -25,7 +28,8 @@ type BarcodeDetectorConstructor = new (options?: { formats?: string[] }) => {
 };
 
 export default function AddEntryPage() {
-  const { addFood, addWater, addActivity, dataMode } = useTracker();
+  const { addFood, addWater, addActivity, dataMode, measurements } = useTracker();
+  const { user } = useUser();
   const [tab, setTab] = useState<TabKey>("food");
   const mealLabels: Record<MealType, string> = {
     breakfast: t("Kahvaltı"),
@@ -33,11 +37,11 @@ export default function AddEntryPage() {
     dinner: t("Akşam"),
     snack: t("Atıştırmalık"),
   };
-  const activityLabels: Record<ActivityType, string> = {
-    walking: t("Yürümek"),
-    running: t("Koşu"),
-    gym: t("Salon"),
-  };
+  const [profileWeightKg, setProfileWeightKg] = useState<number | null>(() => {
+    const localProfile = loadProfile();
+    const weight = Number(localProfile.weightKg);
+    return Number.isFinite(weight) && weight > 0 ? weight : null;
+  });
 
   const [foodName, setFoodName] = useState("");
   const [foodCalories, setFoodCalories] = useState("");
@@ -145,6 +149,29 @@ export default function AddEntryPage() {
     }
     setSupportsBarcodeDetector("BarcodeDetector" in window);
   }, []);
+
+  useEffect(() => {
+    if (dataMode !== "remote" || !user?.sub) {
+      const localProfile = loadProfile();
+      const weight = Number(localProfile.weightKg);
+      setProfileWeightKg(Number.isFinite(weight) && weight > 0 ? weight : null);
+      return;
+    }
+    let active = true;
+    fetch("/api/v1/profile", { credentials: "include", cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!active || !data) {
+          return;
+        }
+        const weight = Number(data?.weightKg);
+        setProfileWeightKg(Number.isFinite(weight) && weight > 0 ? weight : null);
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [dataMode, user?.sub]);
 
   useEffect(() => {
     let active = true;
@@ -558,9 +585,37 @@ export default function AddEntryPage() {
 
   const [waterAmount, setWaterAmount] = useState("250");
 
+  const latestWeight = useMemo(() => {
+    const weights = measurements
+      .filter((entry) => entry.type === "weight")
+      .sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
+    return weights[0]?.value ?? null;
+  }, [measurements]);
+  const weightForCalc = latestWeight ?? profileWeightKg ?? null;
+
   const [activityType, setActivityType] = useState<ActivityType>("walking");
   const [activityDuration, setActivityDuration] = useState("30");
   const [activityCalories, setActivityCalories] = useState("150");
+  const [activityAuto, setActivityAuto] = useState(true);
+
+  useEffect(() => {
+    if (!activityAuto) {
+      return;
+    }
+    const durationMin = Number(activityDuration);
+    const calculated = estimateActivityCalories({
+      type: activityType,
+      durationMin,
+      weightKg: weightForCalc,
+    });
+    if (!Number.isFinite(calculated) || calculated <= 0) {
+      setActivityCalories("");
+      return;
+    }
+    setActivityCalories(String(calculated));
+  }, [activityAuto, activityDuration, activityType, weightForCalc]);
 
   return (
     <div className="space-y-6">
@@ -931,9 +986,9 @@ export default function AddEntryPage() {
             onChange={(event) => setActivityType(event.target.value as ActivityType)}
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
           >
-            {Object.entries(activityLabels).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
+            {activityOptions.map((option) => (
+              <option key={option.type} value={option.type}>
+                {option.label}
               </option>
             ))}
           </select>
@@ -948,12 +1003,47 @@ export default function AddEntryPage() {
             />
             <input
               value={activityCalories}
-              onChange={(event) => setActivityCalories(event.target.value)}
+              onChange={(event) => {
+                setActivityCalories(event.target.value);
+                setActivityAuto(false);
+              }}
               className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
               placeholder={t("Tahmini kalori")}
               type="number"
               min="0"
             />
+          </div>
+          <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted">
+            <span>
+              {t("MET hesabı: {weight}", {
+                weight:
+                  weightForCalc !== null
+                    ? t("{value} kg", { value: Math.round(weightForCalc) })
+                    : t("varsayılan"),
+              })}
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setActivityAuto(true);
+                const calculated = estimateActivityCalories({
+                  type: activityType,
+                  durationMin: Number(activityDuration),
+                  weightKg: weightForCalc,
+                });
+                if (calculated > 0) {
+                  setActivityCalories(String(calculated));
+                }
+              }}
+              className="rounded-full border border-amber-100 bg-white px-3 py-1 text-[11px] font-semibold text-amber-700"
+            >
+              {t("Oto hesapla")}
+            </button>
+            {!activityAuto && (
+              <span className="rounded-full bg-amber-50 px-2 py-1 text-[10px] text-amber-700">
+                {t("Manuel")}
+              </span>
+            )}
           </div>
           <button
             onClick={() => {

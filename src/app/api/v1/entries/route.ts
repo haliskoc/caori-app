@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth0 } from "@/lib/auth0";
 import { desc, eq } from "drizzle-orm";
-import { entries, users } from "@/lib/schema";
+import { entries } from "@/lib/schema";
 import { getDb, ensureUser } from "@/lib/db";
 import { createId } from "@/lib/utils";
 import { isSameOrigin, toSafeNumber } from "@/lib/security";
@@ -11,7 +11,17 @@ export const dynamic = "force-dynamic";
 
 const allowedTypes = new Set(["food", "water", "activity"]);
 const allowedMeals = new Set(["breakfast", "lunch", "dinner", "snack"]);
-const allowedActivities = new Set(["walking", "running", "gym"]);
+const allowedActivities = new Set([
+  "walking",
+  "running",
+  "gym",
+  "cycling",
+  "swimming",
+  "yoga",
+  "hiit",
+  "pilates",
+  "stairs",
+]);
 
 function toOptionalNumber(value: unknown, options: { min: number; max: number }) {
   if (value === null || value === undefined || value === "") {

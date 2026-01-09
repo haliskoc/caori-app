@@ -4,27 +4,27 @@ import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { Card } from "@/components/card";
 import { ReportCharts } from "@/components/report-charts";
+import { MeasurementTrends } from "@/components/measurement-trends";
 import { useTracker } from "@/components/tracker-provider";
 import { buildReportData, type ReportData } from "@/lib/report";
 import { formatShortDate } from "@/lib/utils";
 import { ActivityType } from "@/lib/types";
 import { defaultProfile, loadProfile, type ProfileInfo } from "@/lib/profile";
 import { getIntlLocale, t } from "@/lib/i18n";
+import { activityLabels } from "@/lib/activity";
 
 export default function ReportPage() {
   const { user } = useUser();
-  const { entries, goals, dataMode } = useTracker();
+  const { entries, goals, dataMode, measurements } = useTracker();
   const [rangeDays, setRangeDays] = useState(30);
   const [remoteReport, setRemoteReport] = useState<ReportData | null>(null);
   const [profile, setProfile] = useState<ProfileInfo>(() => loadProfile());
+  const [shareLink, setShareLink] = useState<string | null>(null);
+  const [shareStatus, setShareStatus] = useState<string | null>(null);
+  const [isSharing, setIsSharing] = useState(false);
   const [activeSection, setActiveSection] = useState<
     "overview" | "weekly" | "trends" | "insights" | "details"
   >("overview");
-  const activityLabels: Record<ActivityType, string> = {
-    walking: t("Yürümek"),
-    running: t("Koşu"),
-    gym: t("Salon"),
-  };
 
   const localReport = useMemo(
     () => buildReportData(entries, rangeDays, goals),
@@ -81,6 +81,9 @@ export default function ReportPage() {
   const activityGoalMin = report.goals?.activityGoalMin;
   const mealGoalCount = report.goals?.mealGoalCount;
   const weightGoalKg = report.goals?.weightGoalKg;
+  const proteinGoalG = report.goals?.proteinGoalG;
+  const carbsGoalG = report.goals?.carbsGoalG;
+  const fatGoalG = report.goals?.fatGoalG;
   const safeCalorieGoal =
     typeof calorieGoal === "number" && calorieGoal > 0 ? calorieGoal : null;
   const safeWaterGoalMl =
@@ -91,11 +94,20 @@ export default function ReportPage() {
     typeof mealGoalCount === "number" && mealGoalCount > 0 ? mealGoalCount : null;
   const safeWeightGoalKg =
     typeof weightGoalKg === "number" && weightGoalKg > 0 ? weightGoalKg : null;
+  const safeProteinGoalG =
+    typeof proteinGoalG === "number" && proteinGoalG > 0 ? proteinGoalG : null;
+  const safeCarbsGoalG =
+    typeof carbsGoalG === "number" && carbsGoalG > 0 ? carbsGoalG : null;
+  const safeFatGoalG =
+    typeof fatGoalG === "number" && fatGoalG > 0 ? fatGoalG : null;
   const hasGoals =
     safeCalorieGoal !== null ||
     safeWaterGoalMl !== null ||
     safeActivityGoalMin !== null ||
-    safeMealGoalCount !== null;
+    safeMealGoalCount !== null ||
+    safeProteinGoalG !== null ||
+    safeCarbsGoalG !== null ||
+    safeFatGoalG !== null;
   const caloriePercent =
     safeCalorieGoal !== null
       ? Math.round((report.averages.caloriesIn / safeCalorieGoal) * 100)
@@ -112,6 +124,18 @@ export default function ReportPage() {
     safeMealGoalCount !== null
       ? Math.round((report.averages.mealCount / safeMealGoalCount) * 100)
       : null;
+  const proteinPercent =
+    safeProteinGoalG !== null
+      ? Math.round((report.averages.proteinG / safeProteinGoalG) * 100)
+      : null;
+  const carbsPercent =
+    safeCarbsGoalG !== null
+      ? Math.round((report.averages.carbsG / safeCarbsGoalG) * 100)
+      : null;
+  const fatPercent =
+    safeFatGoalG !== null
+      ? Math.round((report.averages.fatG / safeFatGoalG) * 100)
+      : null;
   const calorieDelta =
     safeCalorieGoal !== null ? report.averages.caloriesIn - safeCalorieGoal : null;
   const waterDelta =
@@ -120,6 +144,12 @@ export default function ReportPage() {
     safeActivityGoalMin !== null ? report.averages.activityMin - safeActivityGoalMin : null;
   const mealDelta =
     safeMealGoalCount !== null ? report.averages.mealCount - safeMealGoalCount : null;
+  const proteinDelta =
+    safeProteinGoalG !== null ? report.averages.proteinG - safeProteinGoalG : null;
+  const carbsDelta =
+    safeCarbsGoalG !== null ? report.averages.carbsG - safeCarbsGoalG : null;
+  const fatDelta =
+    safeFatGoalG !== null ? report.averages.fatG - safeFatGoalG : null;
   const currentWeightKg = Number(profile.weightKg);
   const safeCurrentWeight =
     Number.isFinite(currentWeightKg) && currentWeightKg > 0 ? currentWeightKg : null;
@@ -1080,6 +1110,35 @@ export default function ReportPage() {
     });
   };
 
+  const handleShare = async () => {
+    if (dataMode !== "remote") {
+      setShareStatus(t("Paylaşmak için giriş yapın."));
+      return;
+    }
+    setIsSharing(true);
+    setShareStatus(null);
+    try {
+      const res = await fetch("/api/v1/report/share", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ rangeDays }),
+      });
+      if (!res.ok) {
+        setShareStatus(t("Paylaşım oluşturulamadı."));
+        return;
+      }
+      const payload = (await res.json()) as { token: string };
+      const link = `${window.location.origin}/share/${payload.token}`;
+      setShareLink(link);
+      setShareStatus(t("Paylaşım bağlantısı hazır."));
+    } catch {
+      setShareStatus(t("Paylaşım oluşturulamadı."));
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
   return (
     <div className="print-page space-y-8">
       <div className="print-watermark">
@@ -1123,8 +1182,43 @@ export default function ReportPage() {
           >
             {t("Excel Olarak İndir")}
           </button>
+          <button
+            onClick={handleShare}
+            className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700"
+          >
+            {isSharing ? t("Paylaşılıyor...") : t("Paylaş")}
+          </button>
         </div>
       </header>
+
+      {(shareLink || shareStatus) && (
+        <Card className="print-hidden space-y-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold">{t("Paylaşım Bağlantısı")}</p>
+              <p className="text-xs text-muted">
+                {t("Bağlantı açık rapor görünümüne yönlendirir.")}
+              </p>
+            </div>
+            {shareStatus && <span className="text-[11px] text-muted">{shareStatus}</span>}
+          </div>
+          {shareLink && (
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <input
+                value={shareLink}
+                readOnly
+                className="w-full flex-1 rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
+              />
+              <button
+                onClick={() => navigator.clipboard?.writeText(shareLink)}
+                className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700"
+              >
+                {t("Kopyala")}
+              </button>
+            </div>
+          )}
+        </Card>
+      )}
 
       {/* Print Cover Page */}
       <div className="hidden print:block print-cover-page">
@@ -1212,7 +1306,9 @@ export default function ReportPage() {
           <Card className="lg:col-span-2 space-y-6">
             <div className="space-y-2 text-center sm:text-left">
               <p className="text-sm font-bold uppercase tracking-widest text-[#ff7a00]">{t("Analiz Notu")}</p>
-              <p className="text-lg font-medium leading-relaxed text-ink italic">"{report.comment}"</p>
+              <p className="text-lg font-medium leading-relaxed text-ink italic">
+                &ldquo;{report.comment}&rdquo;
+              </p>
               <p className="text-xs text-muted-foreground">
                 {t("Aktif gün: {active}/{range} • Toplam kayıt: {count}", {
                   active: report.activeDays,
@@ -1290,7 +1386,7 @@ export default function ReportPage() {
             <p className="text-xs text-muted">{t("Ortalama değerler ile hedef karşılaştırması")}</p>
           </div>
           {hasGoals ? (
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted">{t("Kalori hedefi")}</span>
@@ -1388,6 +1484,81 @@ export default function ReportPage() {
                   {t("{value} sapma • %{percent}", {
                     value: formatDelta(mealDelta, t("öğün")),
                     percent: mealPercent ?? 0,
+                  })}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted">{t("Protein hedefi")}</span>
+                  {safeProteinGoalG !== null ? (
+                    <span className="font-semibold text-ink">
+                      {formatNumber(report.averages.proteinG)} /{" "}
+                      {t("{value} g", { value: formatNumber(safeProteinGoalG) })}
+                    </span>
+                  ) : (
+                    <span className="text-muted">{t("Hedef yok")}</span>
+                  )}
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
+                  <div
+                    className="h-full rounded-full bg-amber-600"
+                    style={{ width: `${Math.min(100, proteinPercent ?? 0)}%` }}
+                  />
+                </div>
+                <p className="text-[11px] text-muted">
+                  {t("{value} sapma • %{percent}", {
+                    value: formatDelta(proteinDelta, t("g")),
+                    percent: proteinPercent ?? 0,
+                  })}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted">{t("Karbonhidrat hedefi")}</span>
+                  {safeCarbsGoalG !== null ? (
+                    <span className="font-semibold text-ink">
+                      {formatNumber(report.averages.carbsG)} /{" "}
+                      {t("{value} g", { value: formatNumber(safeCarbsGoalG) })}
+                    </span>
+                  ) : (
+                    <span className="text-muted">{t("Hedef yok")}</span>
+                  )}
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
+                  <div
+                    className="h-full rounded-full bg-amber-600"
+                    style={{ width: `${Math.min(100, carbsPercent ?? 0)}%` }}
+                  />
+                </div>
+                <p className="text-[11px] text-muted">
+                  {t("{value} sapma • %{percent}", {
+                    value: formatDelta(carbsDelta, t("g")),
+                    percent: carbsPercent ?? 0,
+                  })}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted">{t("Yağ hedefi")}</span>
+                  {safeFatGoalG !== null ? (
+                    <span className="font-semibold text-ink">
+                      {formatNumber(report.averages.fatG)} /{" "}
+                      {t("{value} g", { value: formatNumber(safeFatGoalG) })}
+                    </span>
+                  ) : (
+                    <span className="text-muted">{t("Hedef yok")}</span>
+                  )}
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
+                  <div
+                    className="h-full rounded-full bg-amber-600"
+                    style={{ width: `${Math.min(100, fatPercent ?? 0)}%` }}
+                  />
+                </div>
+                <p className="text-[11px] text-muted">
+                  {t("{value} sapma • %{percent}", {
+                    value: formatDelta(fatDelta, t("g")),
+                    percent: fatPercent ?? 0,
                   })}
                 </p>
               </div>
@@ -1515,6 +1686,9 @@ export default function ReportPage() {
           <p className="text-xs text-muted">{t("Kalori, su ve makro değişimleri")}</p>
         </div>
         <ReportCharts summary={report.daily} hasEntries={report.entryCount > 0} />
+        <div className="mt-4">
+          <MeasurementTrends measurements={measurements} rangeDays={report.rangeDays} />
+        </div>
       </section>
 
       <section className={sectionClass("insights")}>

@@ -13,12 +13,14 @@ const MAX_AUDIT = 150;
 const ALLOWED_ACTIONS = new Set([
   "add",
   "remove",
+  "update-entry",
   "update-goals",
   "update-flags",
   "import",
   "theme",
   "reminder",
   "onboarding",
+  "measurement",
 ]);
 
 export async function GET() {

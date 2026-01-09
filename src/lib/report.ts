@@ -43,6 +43,9 @@ export type ReportGoals = {
   activityGoalMin: number;
   mealGoalCount: number;
   weightGoalKg: number;
+  proteinGoalG: number;
+  carbsGoalG: number;
+  fatGoalG: number;
 };
 
 export type WeeklyDeviation = {
@@ -99,6 +102,9 @@ function buildMotivation(input: {
   const waterGoalMl = input.goals?.waterGoalMl ?? 2500;
   const activityGoalMin = input.goals?.activityGoalMin ?? 30;
   const mealGoalCount = input.goals?.mealGoalCount ?? 3;
+  const proteinGoalG = input.goals?.proteinGoalG ?? 0;
+  const carbsGoalG = input.goals?.carbsGoalG ?? 0;
+  const fatGoalG = input.goals?.fatGoalG ?? 0;
 
   if (input.averages.caloriesIn > calorieGoal + 200) {
     lines.push(
@@ -146,6 +152,16 @@ function buildMotivation(input: {
     lines.push(
       t("Makro bilgisi eksik kayıtlar var. Ürün seçimiyle daha net takip yapabilirsin.")
     );
+  }
+
+  if (proteinGoalG > 0 && input.averages.proteinG < proteinGoalG * 0.8) {
+    lines.push(t("Protein hedefinin altında kalmışsın. Günlük protein dağılımını güçlendir."));
+  }
+  if (carbsGoalG > 0 && input.averages.carbsG < carbsGoalG * 0.8) {
+    lines.push(t("Karbonhidrat hedefi düşük görünüyor. Enerji dengesi için artırabilirsin."));
+  }
+  if (fatGoalG > 0 && input.averages.fatG < fatGoalG * 0.8) {
+    lines.push(t("Yağ hedefi düşük. Sağlıklı yağ kaynaklarını eklemeyi dene."));
   }
 
   if (input.activeDays < Math.max(3, Math.round(input.rangeDays * 0.4))) {
@@ -297,6 +313,9 @@ export function buildReportData(
     activityGoalMin: goals?.activityGoalMin ?? 30,
     mealGoalCount: goals?.mealGoalCount ?? 3,
     weightGoalKg: goals?.weightGoalKg ?? 0,
+    proteinGoalG: goals?.proteinGoalG ?? 0,
+    carbsGoalG: goals?.carbsGoalG ?? 0,
+    fatGoalG: goals?.fatGoalG ?? 0,
   };
 
   const getDayScore = (day: DailySummary) => {

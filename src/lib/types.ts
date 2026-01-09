@@ -1,5 +1,16 @@
 export type MealType = "breakfast" | "lunch" | "dinner" | "snack";
-export type ActivityType = "walking" | "running" | "gym";
+export type ActivityType =
+  | "walking"
+  | "running"
+  | "gym"
+  | "cycling"
+  | "swimming"
+  | "yoga"
+  | "hiit"
+  | "pilates"
+  | "stairs";
+
+export type MeasurementType = "weight" | "waist" | "hip" | "chest" | "bodyFat";
 
 export type FoodEntry = {
   id: string;
@@ -38,6 +49,9 @@ export type Goals = {
   activityGoalMin: number;
   mealGoalCount: number;
   weightGoalKg: number;
+  proteinGoalG: number;
+  carbsGoalG: number;
+  fatGoalG: number;
 };
 
 export type DailySummary = {
@@ -53,3 +67,11 @@ export type DailySummary = {
 };
 
 export type WeeklySummary = DailySummary[];
+
+export type MeasurementEntry = {
+  id: string;
+  type: MeasurementType;
+  value: number;
+  unit: string;
+  timestamp: string;
+};

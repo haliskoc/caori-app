@@ -61,6 +61,21 @@ export async function PUT(request: Request) {
     max: 500,
     integer: true,
   });
+  const proteinGoalG = toSafeNumber(body?.proteinGoalG, 0, {
+    min: 0,
+    max: 1000,
+    integer: true,
+  });
+  const carbsGoalG = toSafeNumber(body?.carbsGoalG, 0, {
+    min: 0,
+    max: 1500,
+    integer: true,
+  });
+  const fatGoalG = toSafeNumber(body?.fatGoalG, 0, {
+    min: 0,
+    max: 500,
+    integer: true,
+  });
 
   await ensureUser(session.user);
   const db = getDb();
@@ -73,6 +88,9 @@ export async function PUT(request: Request) {
       activityGoalMin,
       mealGoalCount,
       weightGoalKg,
+      proteinGoalG,
+      carbsGoalG,
+      fatGoalG,
       updatedAt: new Date(),
     })
     .onConflictDoUpdate({
@@ -83,6 +101,9 @@ export async function PUT(request: Request) {
         activityGoalMin,
         mealGoalCount,
         weightGoalKg,
+        proteinGoalG,
+        carbsGoalG,
+        fatGoalG,
         updatedAt: new Date(),
       },
     });
