@@ -36,7 +36,8 @@ export function getLocale(): Locale {
     return defaultLocale;
   }
   const stored = window.localStorage.getItem(LOCALE_KEY);
-  return normalizeLocale(stored || defaultLocale);
+  const browserLocale = typeof navigator === "undefined" ? "" : navigator.language;
+  return normalizeLocale(stored || browserLocale || defaultLocale);
 }
 
 export function setLocale(locale: Locale) {

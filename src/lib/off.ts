@@ -1,4 +1,5 @@
 import { t } from "./i18n";
+import { normalizeBarcode, parseServingSizeToGrams } from "./food-utils";
 
 export interface OFFProduct {
   product_name: string;
@@ -10,6 +11,7 @@ export interface OFFProduct {
   };
   image_url?: string;
   code: string;
+  serving_size_g?: number;
 }
 
 type OFFApiProduct = {
@@ -23,6 +25,11 @@ type OFFApiProduct = {
   };
   image_url?: string;
   code?: string;
+  serving_size?: string;
+  serving_quantity?: number;
+  serving_quantity_unit?: string;
+  product_quantity?: number;
+  product_quantity_unit?: string;
 };
 
 type OFFSearchResponse = {
@@ -37,12 +44,12 @@ type OFFBarcodeResponse = {
 const WORLD_OFF = "https://world.openfoodfacts.org";
 const TR_OFF = "https://tr.openfoodfacts.org";
 
-function normalizeBarcode(input: string) {
-  return input.replace(/\D/g, "");
-}
-
 function mapProduct(product: OFFApiProduct | undefined, fallbackCode: string): OFFProduct | null {
   if (!product) return null;
+  const servingSize =
+    parseServingSizeToGrams(product.serving_size) ??
+    parseServingSizeToGrams(product.serving_quantity, product.serving_quantity_unit) ??
+    parseServingSizeToGrams(product.product_quantity, product.product_quantity_unit);
   return {
     product_name: product.product_name || product.product_name_tr || t("Bilinmeyen Ürün"),
     nutriments: {
@@ -53,6 +60,7 @@ function mapProduct(product: OFFApiProduct | undefined, fallbackCode: string): O
     },
     image_url: product.image_url,
     code: product.code ?? fallbackCode,
+    serving_size_g: servingSize,
   };
 }
 
@@ -89,6 +97,10 @@ export const searchFood = async (query: string): Promise<OFFProduct[]> => {
       },
       image_url: p.image_url,
       code: p.code ?? `unknown-${index}`,
+      serving_size_g:
+        parseServingSizeToGrams(p.serving_size) ??
+        parseServingSizeToGrams(p.serving_quantity, p.serving_quantity_unit) ??
+        parseServingSizeToGrams(p.product_quantity, p.product_quantity_unit),
     }));
   } catch (error) {
     console.error("Open Food Facts search error:", error);

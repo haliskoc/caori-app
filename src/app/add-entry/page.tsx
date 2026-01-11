@@ -501,6 +501,9 @@ export default function AddEntryPage() {
           carbs: product.nutriments?.carbohydrates_100g,
           fat: product.nutriments?.fat_100g,
         });
+        if (typeof product.serving_size_g === "number" && product.serving_size_g > 0) {
+          setFoodAmount(String(Math.round(product.serving_size_g)));
+        }
         const kcal = product.nutriments?.["energy-kcal_100g"];
         if (typeof kcal === "number") {
           setFoodCalories(String(Math.round(kcal)));
@@ -741,6 +744,12 @@ export default function AddEntryPage() {
                         carbs: product.nutriments?.carbohydrates_100g,
                         fat: product.nutriments?.fat_100g,
                       });
+                      if (
+                        typeof product.serving_size_g === "number" &&
+                        product.serving_size_g > 0
+                      ) {
+                        setFoodAmount(String(Math.round(product.serving_size_g)));
+                      }
                       const kcal = product.nutriments["energy-kcal_100g"];
                       if (typeof kcal === "number") setFoodCalories(String(Math.round(kcal)));
                       setSearchResults([]);

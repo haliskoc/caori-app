@@ -21,6 +21,9 @@ Create `.env.local` based on `.env.example`:
 - `AUTH0_CLIENT_ID`
 - `AUTH0_CLIENT_SECRET`
 - `DATABASE_URL` (Neon pooled connection string recommended for Vercel)
+- `USDA_FDC_API_KEY` (optional, FoodData Central search)
+- `FOODREPO_API_TOKEN` (optional, FoodRepo search)
+- `FOODREPO_API_BASE` (optional override, default `https://www.foodrepo.org/api/v3`)
 
 ## Auth0 Setup (Google + Apple)
 

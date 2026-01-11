@@ -1,4 +1,4 @@
-import { searchFood, getFoodByBarcode } from "@/lib/off";
+import { getFoodByBarcodeAll, searchFoodAll } from "@/lib/food-sources";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
@@ -7,12 +7,12 @@ export const GET = async (req: NextRequest) => {
   const barcode = searchParams.get("barcode");
 
   if (barcode) {
-    const product = await getFoodByBarcode(barcode);
+    const product = await getFoodByBarcodeAll(barcode);
     return NextResponse.json(product);
   }
 
   if (q) {
-    const products = await searchFood(q);
+    const products = await searchFoodAll(q);
     return NextResponse.json(products);
   }
 
