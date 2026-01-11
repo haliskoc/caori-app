@@ -102,8 +102,7 @@ export const getFoodByBarcode = async (barcode: string): Promise<OFFProduct | nu
     if (!normalized) {
       return null;
     }
-    const preferTr = normalized.startsWith("868") || normalized.startsWith("869");
-    const domains = preferTr ? [TR_OFF, WORLD_OFF] : [WORLD_OFF, TR_OFF];
+    const domains = [WORLD_OFF, TR_OFF];
     for (const domain of domains) {
       const product = await fetchBarcodeFrom(domain, normalized);
       if (product) {

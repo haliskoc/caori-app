@@ -2,15 +2,17 @@ import { NextResponse } from "next/server";
 import { auth0 } from "@/lib/auth0";
 import { getDb, ensureUser } from "@/lib/db";
 import { integrations } from "@/lib/schema";
-import { integrationProviders } from "@/lib/integrations";
+import { integrationProviders, type IntegrationProviderId } from "@/lib/integrations";
 import { createId } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { isSameOrigin } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 
-const providerIds = new Set(integrationProviders.map((provider) => provider.id));
+const providerIds = new Set<IntegrationProviderId>(integrationProviders.map((provider) => provider.id));
 const allowedStatuses = new Set(["connected", "pending", "disconnected"]);
+const isIntegrationProviderId = (value: string): value is IntegrationProviderId =>
+  providerIds.has(value as IntegrationProviderId);
 
 type IntegrationUpdatePayload = {
   provider?: string;
@@ -56,7 +58,8 @@ export async function POST(request: Request) {
   }
 
   const body = (await request.json()) as IntegrationUpdatePayload;
-  if (!body.provider || !providerIds.has(body.provider)) {
+  const provider = body.provider;
+  if (!provider || !isIntegrationProviderId(provider)) {
     return NextResponse.json({ error: "Invalid provider" }, { status: 400 });
   }
 
@@ -70,7 +73,7 @@ export async function POST(request: Request) {
   const [existing] = await db
     .select()
     .from(integrations)
-    .where(and(eq(integrations.userId, session.user.sub), eq(integrations.provider, body.provider)))
+    .where(and(eq(integrations.userId, session.user.sub), eq(integrations.provider, provider)))
     .limit(1);
 
   if (existing) {
@@ -87,7 +90,7 @@ export async function POST(request: Request) {
     .values({
       id: createId(),
       userId: session.user.sub,
-      provider: body.provider,
+      provider,
       status,
       updatedAt: new Date(),
     })

@@ -498,7 +498,7 @@ export default function ReportPage() {
     const insightSection = `
     <div class="section">
       <div class="section-header">
-        <div class="section-icon">🧠</div>
+        <div class="section-icon" aria-hidden="true"></div>
         <h2 class="section-title">${t("Kişisel Yorumlar")}</h2>
       </div>
       ${
@@ -711,14 +711,23 @@ export default function ReportPage() {
     }
     
     .section-icon {
-      width: 32px;
-      height: 32px;
-      background: #fff0e0;
+      width: 28px;
+      height: 28px;
+      background: #fff4e8;
+      border: 1px solid #ffe2c2;
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+    }
+
+    .section-icon::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      background: #ff7a00;
+      border-radius: 999px;
+      opacity: 0.75;
     }
     
     .section-title {
@@ -986,7 +995,7 @@ export default function ReportPage() {
 
     <div class="section">
       <div class="section-header">
-        <div class="section-icon">✨</div>
+        <div class="section-icon" aria-hidden="true"></div>
         <h2 class="section-title">${t("Kişisel Analiz ve Motivasyon")}</h2>
       </div>
       <div class="insight-card">
@@ -998,7 +1007,7 @@ export default function ReportPage() {
 
     <div class="section">
       <div class="section-header">
-        <div class="section-icon">📊</div>
+        <div class="section-icon" aria-hidden="true"></div>
         <h2 class="section-title">${t("Genel Performans Özeti")}</h2>
       </div>
       <div class="stat-grid">
@@ -1036,7 +1045,7 @@ export default function ReportPage() {
         ? `
     <div class="section">
       <div class="section-header">
-        <div class="section-icon">🏆</div>
+        <div class="section-icon" aria-hidden="true"></div>
         <h2 class="section-title">${t("Zirve Günler")}</h2>
       </div>
       <div class="stat-grid">
@@ -1064,7 +1073,7 @@ export default function ReportPage() {
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
       <div class="section">
         <div class="section-header">
-          <div class="section-icon">🍎</div>
+          <div class="section-icon" aria-hidden="true"></div>
           <h2 class="section-title">${t("Beslenme Tercihleri")}</h2>
         </div>
         <div class="stat-card" style="padding: 10px 20px;">
@@ -1090,7 +1099,7 @@ export default function ReportPage() {
       </div>
       <div class="section">
         <div class="section-header">
-          <div class="section-icon">🏃</div>
+          <div class="section-icon" aria-hidden="true"></div>
           <h2 class="section-title">${t("Aktivite Özeti")}</h2>
         </div>
         <div class="stat-card" style="padding: 10px 20px;">
@@ -1120,7 +1129,7 @@ export default function ReportPage() {
 
     <div class="section" style="page-break-before: always;">
       <div class="section-header">
-        <div class="section-icon">📈</div>
+        <div class="section-icon" aria-hidden="true"></div>
         <h2 class="section-title">${t("Görsel Veri Analizi")}</h2>
       </div>
       ${charts
@@ -1140,7 +1149,7 @@ export default function ReportPage() {
 
     <div class="section">
       <div class="section-header">
-        <div class="section-icon">📅</div>
+        <div class="section-icon" aria-hidden="true"></div>
         <h2 class="section-title">${t("Haftalık Karşılaştırma")}</h2>
       </div>
       <table class="modern-table">
@@ -1173,7 +1182,7 @@ export default function ReportPage() {
 
     <div class="section" style="page-break-before: always;">
       <div class="section-header">
-        <div class="section-icon">📝</div>
+        <div class="section-icon" aria-hidden="true"></div>
         <h2 class="section-title">${t("Günlük Veri Kayıtları")}</h2>
       </div>
       <table class="modern-table" style="font-size: 11px;">
