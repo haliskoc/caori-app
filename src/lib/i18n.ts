@@ -1,10 +1,12 @@
+import en from "@/locales/en.json";
 import tr from "@/locales/tr.json";
 
 export type Locale = string;
 
-export const defaultLocale = "tr";
+export const defaultLocale = "en";
 
 const dictionaries: Record<string, Record<string, unknown>> = {
+  en,
   tr,
 };
 
@@ -21,6 +23,7 @@ export function normalizeLocale(value?: string | null): Locale {
   if (!trimmed) return defaultLocale;
   const lower = trimmed.toLowerCase();
   if (lower.startsWith("tr")) return "tr";
+  if (lower.startsWith("en")) return "en";
   if (lower.includes("-")) {
     const base = lower.split("-")[0];
     return base || defaultLocale;
@@ -33,7 +36,7 @@ export function getLocale(): Locale {
     return defaultLocale;
   }
   const stored = window.localStorage.getItem(LOCALE_KEY);
-  return normalizeLocale(stored || window.navigator.language);
+  return normalizeLocale(stored || defaultLocale);
 }
 
 export function setLocale(locale: Locale) {
@@ -54,7 +57,9 @@ export function applyLocaleToDocument(locale?: Locale) {
 
 export function getIntlLocale(locale?: Locale) {
   const next = normalizeLocale(locale ?? defaultLocale);
-  return next === "tr" ? "tr-TR" : next;
+  if (next === "tr") return "tr-TR";
+  if (next === "en") return "en-US";
+  return next;
 }
 
 function getValue(dictionary: Record<string, unknown>, key: string) {

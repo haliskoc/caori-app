@@ -34,7 +34,11 @@ export function WeeklyCharts({ summary, hasEntries = true }: WeeklyChartsProps) 
 
   return (
     <div className="grid gap-4 lg:grid-cols-2">
-      <Card className="min-h-[260px]">
+      <Card
+        className="min-h-[260px]"
+        data-report-chart
+        data-chart-title={t("Haftalık Kalori Dengesi")}
+      >
         <div className="mb-3">
           <p className="text-sm font-semibold">{t("Haftalık Kalori Dengesi")}</p>
           <p className="text-xs text-muted">{t("Girilen ve tahmini yakılan kalori")}</p>
@@ -81,7 +85,11 @@ export function WeeklyCharts({ summary, hasEntries = true }: WeeklyChartsProps) 
         </div>
       </Card>
 
-      <Card className="min-h-[260px]">
+      <Card
+        className="min-h-[260px]"
+        data-report-chart
+        data-chart-title={t("Haftalık Su Alımı")}
+      >
         <div className="mb-3">
           <p className="text-sm font-semibold">{t("Haftalık Su Alımı")}</p>
           <p className="text-xs text-muted">{t("Hedefe yaklaşma")}</p>

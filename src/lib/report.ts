@@ -48,6 +48,15 @@ export type ReportGoals = {
   fatGoalG: number;
 };
 
+export type ReportInsightTone = "positive" | "warning" | "neutral";
+
+export type ReportInsight = {
+  id: string;
+  title: string;
+  message: string;
+  tone: ReportInsightTone;
+};
+
 export type WeeklyDeviation = {
   weekStart: string;
   weekEnd: string;
@@ -88,6 +97,7 @@ export type ReportData = {
   effectiveDays: EffectiveDay[];
   goals?: ReportGoals;
   comment: string;
+  insights: ReportInsight[];
 };
 
 function buildMotivation(input: {
@@ -170,6 +180,216 @@ function buildMotivation(input: {
 
   lines.push(t("Küçük adımlar büyük değişimi başlatır. Devam et!"));
   return lines.join(" ");
+}
+
+function buildInsights(input: {
+  averages: ReportAverages;
+  activeDays: number;
+  rangeDays: number;
+  macroCoverage: number;
+  goals?: ReportGoals;
+}) {
+  const insights: ReportInsight[] = [];
+  const calorieGoal = input.goals?.calorieGoal ?? 2200;
+  const waterGoalMl = input.goals?.waterGoalMl ?? 2500;
+  const activityGoalMin = input.goals?.activityGoalMin ?? 30;
+  const mealGoalCount = input.goals?.mealGoalCount ?? 3;
+  const proteinGoalG = input.goals?.proteinGoalG ?? 0;
+  const carbsGoalG = input.goals?.carbsGoalG ?? 0;
+  const fatGoalG = input.goals?.fatGoalG ?? 0;
+
+  const push = (id: string, title: string, message: string, tone: ReportInsightTone) => {
+    insights.push({ id, title, message, tone });
+  };
+
+  if (calorieGoal > 0) {
+    const diff = Math.round(input.averages.caloriesIn - calorieGoal);
+    if (diff > 200) {
+      push(
+        "calories-high",
+        t("Kalori Ortalaması Yüksek"),
+        t("Günlük ortalama {avg} kcal ile hedefinin {delta} kcal üzerindesin.", {
+          avg: Math.round(input.averages.caloriesIn),
+          delta: diff,
+        }),
+        "warning"
+      );
+    } else if (diff < -300) {
+      push(
+        "calories-low",
+        t("Kalori Ortalaması Düşük"),
+        t("Günlük ortalama {avg} kcal ile hedefinin {delta} kcal altındasın.", {
+          avg: Math.round(input.averages.caloriesIn),
+          delta: Math.abs(diff),
+        }),
+        "warning"
+      );
+    } else {
+      push(
+        "calories-on",
+        t("Kalori Dengesi İyi"),
+        t("Günlük ortalama {avg} kcal ile hedefe yakınsın.", {
+          avg: Math.round(input.averages.caloriesIn),
+        }),
+        "positive"
+      );
+    }
+  }
+
+  if (waterGoalMl > 0) {
+    const ratio = input.averages.waterMl / waterGoalMl;
+    if (ratio < 0.7) {
+      push(
+        "water-low",
+        t("Su Tüketimi Düşük"),
+        t("Günlük ortalama {avg} ml ile hedefinin yaklaşık %{pct} altındasın.", {
+          avg: Math.round(input.averages.waterMl),
+          pct: Math.round((1 - ratio) * 100),
+        }),
+        "warning"
+      );
+    } else if (ratio >= 1) {
+      push(
+        "water-strong",
+        t("Su Takibi Güçlü"),
+        t("Günlük ortalama {avg} ml ile hedefi karşılıyorsun.", {
+          avg: Math.round(input.averages.waterMl),
+        }),
+        "positive"
+      );
+    } else {
+      push(
+        "water-near",
+        t("Suya Yaklaştın"),
+        t("Günlük ortalama {avg} ml ile hedefe yaklaşmışsın.", {
+          avg: Math.round(input.averages.waterMl),
+        }),
+        "neutral"
+      );
+    }
+  }
+
+  if (activityGoalMin > 0) {
+    const ratio = input.averages.activityMin / activityGoalMin;
+    if (ratio < 0.6) {
+      push(
+        "activity-low",
+        t("Aktivite Süresi Düşük"),
+        t("Günlük {avg} dk ile hedefinin gerisindesin. 10 dk eklemek fark yaratır.", {
+          avg: Math.round(input.averages.activityMin),
+        }),
+        "warning"
+      );
+    } else if (ratio >= 1) {
+      push(
+        "activity-strong",
+        t("Aktivite Hedefi Güçlü"),
+        t("Günlük {avg} dk ile hedefi karşılıyorsun.", {
+          avg: Math.round(input.averages.activityMin),
+        }),
+        "positive"
+      );
+    } else {
+      push(
+        "activity-near",
+        t("Aktiviteye Yaklaştın"),
+        t("Günlük {avg} dk ile hedefe oldukça yakınsın.", {
+          avg: Math.round(input.averages.activityMin),
+        }),
+        "neutral"
+      );
+    }
+  }
+
+  if (mealGoalCount > 0) {
+    const diff = Math.round(input.averages.mealCount - mealGoalCount);
+    if (diff < -1) {
+      push(
+        "meals-low",
+        t("Öğün Ritmi Düşük"),
+        t("Günlük ortalama {avg} öğün ile hedefinin altındasın.", {
+          avg: Math.round(input.averages.mealCount),
+        }),
+        "warning"
+      );
+    } else if (diff >= 0) {
+      push(
+        "meals-on",
+        t("Öğün Ritmi Dengeli"),
+        t("Günlük ortalama {avg} öğün ile planını koruyorsun.", {
+          avg: Math.round(input.averages.mealCount),
+        }),
+        "positive"
+      );
+    }
+  }
+
+  if (input.macroCoverage < 0.4) {
+    push(
+      "macro-coverage",
+      t("Makro Verisi Eksik"),
+      t("Makro bilgisi eklenen öğünlerin oranı düşük. Ürün seçimiyle netleştir."),
+      "warning"
+    );
+  }
+
+  if (proteinGoalG > 0 && input.averages.proteinG < proteinGoalG * 0.8) {
+    push(
+      "protein-low",
+      t("Protein Hedefi Düşük"),
+      t("Günlük ortalama {avg} g protein ile hedefe yaklaş.", {
+        avg: Math.round(input.averages.proteinG),
+      }),
+      "warning"
+    );
+  }
+
+  if (carbsGoalG > 0 && input.averages.carbsG < carbsGoalG * 0.8) {
+    push(
+      "carb-low",
+      t("Karbonhidrat Düşük"),
+      t("Günlük ortalama {avg} g karbonhidrat ile enerji dengesini artırabilirsin.", {
+        avg: Math.round(input.averages.carbsG),
+      }),
+      "neutral"
+    );
+  }
+
+  if (fatGoalG > 0 && input.averages.fatG < fatGoalG * 0.8) {
+    push(
+      "fat-low",
+      t("Yağ Hedefi Düşük"),
+      t("Günlük ortalama {avg} g yağ ile sağlıklı yağları artırmayı dene.", {
+        avg: Math.round(input.averages.fatG),
+      }),
+      "neutral"
+    );
+  }
+
+  const activeRatio = input.rangeDays ? input.activeDays / input.rangeDays : 0;
+  if (activeRatio < 0.45) {
+    push(
+      "consistency-low",
+      t("Takip Sürekliliği Zayıf"),
+      t("Son {range} günde {active} gün kayıt var. Düzeni artırmak analizleri güçlendirir.", {
+        range: input.rangeDays,
+        active: input.activeDays,
+      }),
+      "warning"
+    );
+  } else if (activeRatio >= 0.75) {
+    push(
+      "consistency-strong",
+      t("Takip Sürekliliği Güçlü"),
+      t("Son {range} günün {active} gününde kayıt var. Ritmi koruyorsun.", {
+        range: input.rangeDays,
+        active: input.activeDays,
+      }),
+      "positive"
+    );
+  }
+
+  return insights.slice(0, 6);
 }
 
 type ReportEntry = Entry & { timestamp: string | Date };
@@ -446,6 +666,13 @@ export function buildReportData(
     effectiveDays,
     goals: safeGoals,
     comment: buildMotivation({
+      averages,
+      activeDays,
+      rangeDays: safeDays,
+      macroCoverage,
+      goals: safeGoals,
+    }),
+    insights: buildInsights({
       averages,
       activeDays,
       rangeDays: safeDays,

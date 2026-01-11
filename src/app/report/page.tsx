@@ -5,6 +5,7 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { Card } from "@/components/card";
 import { ReportCharts } from "@/components/report-charts";
 import { MeasurementTrends } from "@/components/measurement-trends";
+import { WeeklyCharts } from "@/components/weekly-charts";
 import { useTracker } from "@/components/tracker-provider";
 import { buildReportData, type ReportData } from "@/lib/report";
 import { formatShortDate } from "@/lib/utils";
@@ -74,6 +75,7 @@ export default function ReportPage() {
   }, [dataMode]);
 
   const report = remoteReport ?? localReport;
+  const insights = report.insights ?? [];
   const name = user?.name ?? user?.email ?? t("Kullanıcı");
   const rangeLabel = t("Son {value} gün", { value: report.rangeDays });
   const calorieGoal = report.goals?.calorieGoal;
@@ -157,7 +159,8 @@ export default function ReportPage() {
     safeWeightGoalKg !== null && safeCurrentWeight !== null
       ? Math.round((safeCurrentWeight - safeWeightGoalKg) * 10) / 10
       : null;
-  const numberFormat = useMemo(() => new Intl.NumberFormat(getIntlLocale()), []);
+  const intlLocale = useMemo(() => getIntlLocale(), []);
+  const numberFormat = useMemo(() => new Intl.NumberFormat(intlLocale), [intlLocale]);
   const formatNumber = (value: number) => numberFormat.format(Math.round(value));
   const sections = [
     { key: "overview", label: t("Özet") },
@@ -172,6 +175,27 @@ export default function ReportPage() {
     if (value === null) return "-";
     const sign = value > 0 ? "+" : value < 0 ? "-" : "";
     return `${sign}${formatNumber(Math.abs(value))} ${unit}`.trim();
+  };
+  const insightToneStyles = (tone: string) => {
+    if (tone === "warning") {
+      return {
+        card: "border-rose-100 bg-rose-50/70",
+        badge: "bg-rose-100 text-rose-700",
+        label: t("Dikkat"),
+      };
+    }
+    if (tone === "positive") {
+      return {
+        card: "border-emerald-100 bg-emerald-50/70",
+        badge: "bg-emerald-100 text-emerald-700",
+        label: t("Güçlü"),
+      };
+    }
+    return {
+      card: "border-slate-100 bg-slate-50/70",
+      badge: "bg-slate-100 text-slate-700",
+      label: t("Not"),
+    };
   };
 
   const handleExcelExport = async () => {
@@ -336,7 +360,7 @@ export default function ReportPage() {
             </div>
             <p style="margin-top: 40px; font-size: 10px; color: #999;">
               ${t("Rapor Tarihi: {date}", {
-                date: new Date().toLocaleDateString("tr-TR", {
+                date: new Date().toLocaleDateString(intlLocale, {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
@@ -471,9 +495,42 @@ export default function ReportPage() {
       })
     );
 
+    const insightSection = `
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">🧠</div>
+        <h2 class="section-title">${t("Kişisel Yorumlar")}</h2>
+      </div>
+      ${
+        insights.length === 0
+          ? `<div class="insight-empty">${t(
+              "Henüz kişisel analiz yok. Daha fazla kayıt ekleyin."
+            )}</div>`
+          : `<div class="insight-grid">
+          ${insights
+            .map((insight) => {
+              const tone =
+                insight.tone === "warning"
+                  ? "warning"
+                  : insight.tone === "positive"
+                    ? "positive"
+                    : "neutral";
+              return `
+            <div class="insight-item ${tone}">
+              <div class="insight-title">${escapeHtml(insight.title)}</div>
+              <div class="insight-message">${escapeHtml(insight.message)}</div>
+            </div>
+          `;
+            })
+            .join("")}
+        </div>`
+      }
+    </div>
+    `;
+
     const html = `
 <!DOCTYPE html>
-<html lang="tr">
+  <html lang="${intlLocale}">
 <head>
   <meta charset="utf-8" />
   <title>${t("Cal AI Rapor")}</title>
@@ -643,6 +700,7 @@ export default function ReportPage() {
     .section {
       margin-bottom: 40px;
       page-break-inside: avoid;
+      break-inside: avoid;
     }
     
     .section-header {
@@ -696,6 +754,57 @@ export default function ReportPage() {
       font-weight: 500;
       font-style: italic;
     }
+
+    .insight-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .insight-item {
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid #eee;
+      background: #fafafa;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .insight-item.warning {
+      background: #fff5f5;
+      border-color: #fbd5d5;
+    }
+
+    .insight-item.positive {
+      background: #f0fff4;
+      border-color: #c6f6d5;
+    }
+
+    .insight-item.neutral {
+      background: #f7f7f8;
+      border-color: #e5e7eb;
+    }
+
+    .insight-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #1a1a1a;
+    }
+
+    .insight-message {
+      font-size: 12px;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .insight-empty {
+      padding: 16px;
+      border-radius: 16px;
+      background: #f7f7f8;
+      font-size: 12px;
+      color: #777;
+    }
     
     .stat-grid {
       display: grid;
@@ -709,6 +818,8 @@ export default function ReportPage() {
       border-radius: 16px;
       padding: 20px;
       transition: all 0.3s ease;
+      break-inside: avoid;
+      page-break-inside: avoid;
     }
     
     .stat-card:hover { background: #fafafa; }
@@ -741,6 +852,11 @@ export default function ReportPage() {
       width: 100%;
       border-collapse: separate;
       border-spacing: 0 8px;
+    }
+
+    .modern-table tr {
+      break-inside: avoid;
+      page-break-inside: avoid;
     }
     
     .modern-table th {
@@ -792,6 +908,8 @@ export default function ReportPage() {
       border-radius: 20px;
       padding: 24px;
       margin-bottom: 24px;
+      break-inside: avoid;
+      page-break-inside: avoid;
     }
     
     .chart-header {
@@ -807,6 +925,15 @@ export default function ReportPage() {
       width: 100%;
       height: auto;
       border-radius: 12px;
+      max-height: 320px;
+      object-fit: contain;
+    }
+
+    .cover-stats,
+    .stat-grid,
+    .insight-grid {
+      break-inside: avoid;
+      page-break-inside: avoid;
     }
 
     .footer {
@@ -854,7 +981,7 @@ export default function ReportPage() {
   <div class="page-content" style="padding: 20mm;">
     <div class="page-header">
       <div class="page-header-logo">Cal AI</div>
-      <div class="page-header-info">${escapeHtml(name)} • ${new Date().toLocaleDateString("tr-TR")}</div>
+      <div class="page-header-info">${escapeHtml(name)} • ${new Date().toLocaleDateString(intlLocale)}</div>
     </div>
 
     <div class="section">
@@ -866,6 +993,8 @@ export default function ReportPage() {
         <div class="insight-text">${escapeHtml(report.comment)}</div>
       </div>
     </div>
+
+    ${insightSection}
 
     <div class="section">
       <div class="section-header">
@@ -1103,7 +1232,7 @@ export default function ReportPage() {
 
   const formatDateFull = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString("tr-TR", {
+    return date.toLocaleDateString(intlLocale, {
       day: "numeric",
       month: "long",
       year: "numeric",
@@ -1143,7 +1272,7 @@ export default function ReportPage() {
     <div className="print-page space-y-8">
       <div className="print-watermark">
         {t("Cal AI • {date}", {
-          date: new Date().toLocaleDateString("tr-TR", {
+          date: new Date().toLocaleDateString(intlLocale, {
             day: "numeric",
             month: "long",
             year: "numeric",
@@ -1262,7 +1391,7 @@ export default function ReportPage() {
           
           <div className="mt-24 text-[10px] text-muted-foreground uppercase tracking-tighter">
             {t("Rapor Tarihi: {date}", {
-              date: new Date().toLocaleDateString("tr-TR", {
+              date: new Date().toLocaleDateString(intlLocale, {
                 day: "numeric",
                 month: "long",
                 year: "numeric",
@@ -1593,6 +1722,7 @@ export default function ReportPage() {
       </section>
 
       <section className={sectionClass("weekly")}>
+        <WeeklyCharts summary={report.daily.slice(-7)} hasEntries={report.entryCount > 0} />
         <Card className="space-y-3">
           <div>
             <p className="text-sm font-semibold">{t("Haftalık Sapma Analizi")}</p>
@@ -1692,6 +1822,43 @@ export default function ReportPage() {
       </section>
 
       <section className={sectionClass("insights")}>
+        <Card className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-700">🧭</div>
+            <div>
+              <p className="text-sm font-bold text-ink">{t("Kişisel Yorumlar")}</p>
+              <p className="text-xs text-muted-foreground">{t("Öne çıkan metrik değerlendirmeleri")}</p>
+            </div>
+          </div>
+          {insights.length === 0 ? (
+            <p className="py-4 text-center text-xs text-muted-foreground">
+              {t("Henüz kişisel analiz yok. Daha fazla kayıt ekleyin.")}
+            </p>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {insights.map((insight) => {
+                const tone = insightToneStyles(insight.tone);
+                return (
+                  <div
+                    key={insight.id}
+                    className={`rounded-2xl border px-4 py-3 ${tone.card}`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-xs font-semibold text-ink">{insight.title}</p>
+                      <span
+                        className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-wide ${tone.badge}`}
+                      >
+                        {tone.label}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-[11px] text-muted-foreground">{insight.message}</p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </Card>
+
         <div className="grid gap-6 lg:grid-cols-2">
           <Card className="space-y-4">
             <div className="flex items-center gap-3">

@@ -251,7 +251,10 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="features" className="relative py-20">
+        <section
+          id="features"
+          className="relative py-20 motion-safe:animate-[fade-up_0.9s_ease-out]"
+        >
           <div className="mx-auto max-w-6xl px-4 md:px-6">
             <div className="mb-12 max-w-2xl">
               <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
@@ -285,7 +288,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="steps" className="py-20">
+        <section id="steps" className="py-20 motion-safe:animate-[fade-up_0.9s_ease-out]">
           <div className="mx-auto max-w-6xl px-4 md:px-6">
             <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
               <div>
@@ -325,7 +328,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="schedule" className="py-20">
+        <section id="schedule" className="py-20 motion-safe:animate-[fade-up_0.9s_ease-out]">
           <div className="mx-auto grid max-w-6xl gap-10 px-4 md:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <div>
               <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
@@ -387,7 +390,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="templates" className="py-20">
+        <section id="templates" className="py-20 motion-safe:animate-[fade-up_0.9s_ease-out]">
           <div className="mx-auto max-w-6xl px-4 md:px-6">
             <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
               <div>
@@ -436,7 +439,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="py-20">
+        <section className="py-20 motion-safe:animate-[fade-up_0.9s_ease-out]">
           <div className="mx-auto max-w-6xl px-4 md:px-6">
             <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
               <div className="rounded-3xl border border-gray-100 bg-white/80 p-6 shadow-sm">
@@ -490,7 +493,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="pricing" className="py-20">
+        <section id="pricing" className="py-20 motion-safe:animate-[fade-up_0.9s_ease-out]">
           <div className="mx-auto max-w-6xl px-4 md:px-6">
             <div className="mb-12 max-w-2xl">
               <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
@@ -560,7 +563,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="py-20">
+        <section className="py-20 motion-safe:animate-[fade-up_0.9s_ease-out]">
           <div className="mx-auto max-w-6xl px-4 md:px-6">
             <div className="rounded-3xl border border-gray-100 bg-white/80 p-10 shadow-sm">
               <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">

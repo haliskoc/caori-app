@@ -149,3 +149,19 @@ export const reportShares = pgTable("report_shares", {
   expiresAt: timestamp("expires_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
+
+export const integrations = pgTable("integrations", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  provider: text("provider").notNull(),
+  status: text("status").notNull().default("disconnected"),
+  accessToken: text("access_token"),
+  refreshToken: text("refresh_token"),
+  expiryDate: bigint("expiry_date", { mode: "number" }),
+  scopes: text("scopes"),
+  meta: jsonb("meta"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+});

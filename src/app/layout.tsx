@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/app-providers";
-import { t } from "@/lib/i18n";
+import { defaultLocale, t } from "@/lib/i18n";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr">
+    <html lang={defaultLocale}>
       <body className={`${spaceGrotesk.variable} ${spaceMono.variable} antialiased`}>
         <AppProviders>{children}</AppProviders>
       </body>

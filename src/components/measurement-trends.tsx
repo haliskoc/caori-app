@@ -33,6 +33,10 @@ export function MeasurementTrends({ measurements, rangeDays }: MeasurementTrends
   const [selectedType, setSelectedType] = useState<MeasurementType>("weight");
   const activeType =
     availableTypes.includes(selectedType) ? selectedType : availableTypes[0] ?? "weight";
+  const chartTitle =
+    measurements.length > 0
+      ? `${t("Kilo & Ölçüm Trendleri")} • ${measurementLabels[activeType]}`
+      : t("Kilo & Ölçüm Trendleri");
 
   const data = useMemo(() => {
     const cutoff = new Date();
@@ -55,7 +59,7 @@ export function MeasurementTrends({ measurements, rangeDays }: MeasurementTrends
 
   if (measurements.length === 0) {
     return (
-      <Card className="min-h-[240px]">
+    <Card className="min-h-[240px]" data-report-chart data-chart-title={chartTitle}>
         <div className="mb-3">
           <p className="text-sm font-semibold">{t("Kilo & Ölçüm Trendleri")}</p>
           <p className="text-xs text-muted">{t("Ölçüm eklediğinizde çizgi oluşur.")}</p>
@@ -68,7 +72,7 @@ export function MeasurementTrends({ measurements, rangeDays }: MeasurementTrends
   }
 
   return (
-    <Card className="min-h-[260px]">
+    <Card className="min-h-[260px]" data-report-chart data-chart-title={chartTitle}>
       <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm font-semibold">{t("Kilo & Ölçüm Trendleri")}</p>

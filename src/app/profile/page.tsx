@@ -10,6 +10,7 @@ import { loadProfile, saveProfile, type ProfileInfo } from "@/lib/profile";
 import { MeasurementType, MealType } from "@/lib/types";
 import { getIntlLocale, t } from "@/lib/i18n";
 import { measurementLabels, measurementUnits } from "@/lib/measurements";
+import { integrationProviders } from "@/lib/integrations";
 
 type DayBucket = {
   caloriesIn: number;
@@ -653,18 +654,53 @@ export default function ProfilePage() {
             >
               {t("Premiuma Geç")}
             </Link>
-            <a
-              href={user ? "/api/integrations/google/auth" : "/auth/login"}
-              className="block w-full rounded-xl border border-amber-100 bg-white px-4 py-2 text-center text-xs font-semibold text-amber-700 hover:border-amber-200"
-            >
-              {t("Google Fit Bağla")}
-            </a>
             <Link
               href="/settings"
               className="block w-full rounded-xl border border-amber-100 bg-white px-4 py-2 text-center text-xs text-muted hover:text-ink"
             >
               {t("Pro Ayarları")}
             </Link>
+          </div>
+        </Card>
+
+        <Card className="space-y-4">
+          <div>
+            <p className="text-sm font-semibold">{t("Entegrasyonlar")}</p>
+            <p className="text-xs text-muted">{t("Sağlık platformlarını bağla")}</p>
+          </div>
+          <div className="grid gap-3">
+            {integrationProviders.map((provider) => {
+              const isAvailable = provider.availability === "available";
+              return (
+                <div
+                  key={provider.id}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-100 bg-white px-4 py-3"
+                >
+                  <div>
+                    <p className="text-sm font-semibold text-ink">{t(provider.labelKey)}</p>
+                    <p className="text-[11px] text-muted">{t(provider.descriptionKey)}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {provider.tag && (
+                      <span className="rounded-full border border-amber-100 bg-amber-50 px-3 py-1 text-[10px] font-semibold text-amber-700">
+                        {provider.tag}
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      disabled={!isAvailable}
+                      className={`rounded-full px-3 py-1 text-[10px] font-semibold ${
+                        isAvailable
+                          ? "bg-amber-600 text-white"
+                          : "border border-amber-100 bg-amber-50 text-amber-500"
+                      }`}
+                    >
+                      {t(isAvailable ? "Bağlan" : "Yakında")}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </Card>
       </section>

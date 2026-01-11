@@ -28,6 +28,8 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
     caloriesIn: day.caloriesIn,
     caloriesOut: day.caloriesOut,
     waterMl: day.waterMl,
+    activityMin: day.activityMin,
+    mealCount: day.mealCount,
     proteinG: day.proteinG,
     carbsG: day.carbsG,
     fatG: day.fatG,
@@ -40,6 +42,8 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
         day.caloriesIn === 0 &&
         day.caloriesOut === 0 &&
         day.waterMl === 0 &&
+        day.activityMin === 0 &&
+        day.mealCount === 0 &&
         day.proteinG === 0 &&
         day.carbsG === 0 &&
         day.fatG === 0
@@ -131,6 +135,83 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
           )}
         </div>
         <p className="mt-3 text-[11px] text-muted">{t("Hedefe yaklaşan günleri vurgular.")}</p>
+      </Card>
+      </div>
+
+      <div className="print-chart" data-report-chart data-chart-title={t("Aktivite Süresi")}>
+        <Card className="min-h-[260px]">
+        <div className="mb-3">
+          <p className="text-sm font-semibold">{t("Aktivite Süresi")}</p>
+          <p className="text-xs text-muted">{t("Günlük hareket dakikaları")}</p>
+        </div>
+        <div className="h-44 w-full">
+          {isEmpty ? (
+            <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 text-xs text-muted">
+              {t("Aktivite kayıtları başladığında burada görünecek.")}
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f3e3d4" />
+                <XAxis dataKey="name" tick={{ fill: "#6f5f52", fontSize: 11 }} />
+                <YAxis tick={{ fill: "#6f5f52", fontSize: 11 }} width={36} />
+                <Tooltip
+                  cursor={{ stroke: "#ffb56b", strokeWidth: 1 }}
+                  contentStyle={{
+                    background: "rgba(255,255,255,0.95)",
+                    borderRadius: "12px",
+                    border: "1px solid #f4d8bd",
+                    fontSize: "12px",
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="activityMin"
+                  stroke="#2a9d8f"
+                  fill="#2a9d8f"
+                  fillOpacity={0.2}
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+        <p className="mt-3 text-[11px] text-muted">{t("Aktivite temposunu görselleştirir.")}</p>
+      </Card>
+      </div>
+
+      <div className="print-chart" data-report-chart data-chart-title={t("Öğün Sayısı")}>
+        <Card className="min-h-[260px]">
+        <div className="mb-3">
+          <p className="text-sm font-semibold">{t("Öğün Sayısı")}</p>
+          <p className="text-xs text-muted">{t("Günlük öğün ritmi")}</p>
+        </div>
+        <div className="h-44 w-full">
+          {isEmpty ? (
+            <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 text-xs text-muted">
+              {t("Öğün kayıtları başladığında burada görünecek.")}
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f3e3d4" />
+                <XAxis dataKey="name" tick={{ fill: "#6f5f52", fontSize: 11 }} />
+                <YAxis tick={{ fill: "#6f5f52", fontSize: 11 }} width={36} />
+                <Tooltip
+                  cursor={{ fill: "rgba(255,122,0,0.12)" }}
+                  contentStyle={{
+                    background: "rgba(255,255,255,0.95)",
+                    borderRadius: "12px",
+                    border: "1px solid #f4d8bd",
+                    fontSize: "12px",
+                  }}
+                />
+                <Bar dataKey="mealCount" fill="#e9c46a" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+        <p className="mt-3 text-[11px] text-muted">{t("Öğün düzenini gün gün izleyin.")}</p>
       </Card>
       </div>
 
