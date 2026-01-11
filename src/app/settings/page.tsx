@@ -167,7 +167,10 @@ export default function SettingsPage() {
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <select
             value={locale}
-            onChange={(event) => setLocale(event.target.value)}
+            onChange={(event) => {
+              setLocale(event.target.value);
+              window.location.reload();
+            }}
             className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs sm:max-w-[200px]"
           >
             {localeOptions.map((option) => (
