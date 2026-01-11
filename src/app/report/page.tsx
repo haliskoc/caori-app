@@ -334,8 +334,253 @@ export default function ReportPage() {
             .stat-item { text-align: center; }
             .stat-value { font-size: 24px; font-weight: bold; }
             .stat-label { font-size: 12px; color: #6f5f52; }
-          </style>
-        </head>
+
+
+    :root {
+      --ink: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --paper: #ffffff;
+      --accent: #ff7a00;
+    }
+
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji",
+        "Segoe UI Emoji";
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .cover-page {
+      background: var(--paper) !important;
+      height: auto;
+      padding: 20mm 0 8mm;
+      justify-content: flex-start;
+    }
+
+    .cover-logo,
+    .section-icon {
+      display: none !important;
+    }
+
+    .report-badge {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      letter-spacing: 0.08em;
+    }
+
+    .report-title {
+      font-size: 32px;
+      letter-spacing: -0.02em;
+      margin: 0 0 8px 0;
+    }
+
+    .user-info {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .score-container {
+      margin: 0 0 18px;
+    }
+
+    .score-ring {
+      width: auto;
+      height: auto;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      box-shadow: none;
+      padding: 14px 18px;
+      gap: 6px;
+    }
+
+    .score-value {
+      font-size: 44px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .score-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    .cover-stats {
+      gap: 12px;
+      max-width: 680px;
+    }
+
+    .cover-stat-item {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    .cover-stat-item h4 {
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .cover-stat-item p {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .page-header {
+      border-bottom-color: var(--line);
+    }
+
+    .page-header-logo {
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .page-header-info {
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .section-header {
+      gap: 0;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .insight-card {
+      background: var(--paper) !important;
+      border-color: var(--line) !important;
+    }
+
+    .insight-card:before {
+      content: none !important;
+    }
+
+    .insight-text {
+      font-style: normal;
+      font-size: 13px;
+      color: var(--ink);
+    }
+
+    .insight-item {
+      background: var(--paper);
+      border-color: var(--line);
+    }
+
+    .insight-item.warning,
+    .insight-item.positive,
+    .insight-item.neutral {
+      background: var(--paper);
+      border-color: var(--line);
+    }
+
+    .stat-grid {
+      gap: 12px;
+    }
+
+    .stat-card {
+      border-color: var(--line);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .stat-card:hover {
+      background: var(--paper);
+    }
+
+    .stat-card-label {
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .stat-card-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .stat-card-unit {
+      color: var(--muted);
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+      padding: 2px 10px;
+      font-weight: 600;
+    }
+
+    .pill-accent {
+      border-color: rgba(255, 122, 0, 0.35);
+      color: var(--accent);
+    }
+
+    .chart-container {
+      border-color: var(--line);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .chart-header {
+      color: var(--ink);
+    }
+
+    .modern-table {
+      border-spacing: 0;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .modern-table th {
+      background: #f9fafb;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modern-table td {
+      background: transparent;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+    }
+
+    .modern-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .modern-table tr td:first-child,
+    .modern-table tr td:last-child {
+      border-radius: 0;
+    }
+
+    .footer {
+      border-top-color: var(--line);
+      color: var(--muted);
+    }
+
+  </style>
+ </head>
         <body>
           <div class="cover-page">
             <div class="cover-title">Cal AI</div>
@@ -535,7 +780,6 @@ export default function ReportPage() {
   <meta charset="utf-8" />
   <title>${t("Cal AI Rapor")}</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     
     @page {
       size: A4;
