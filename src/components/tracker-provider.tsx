@@ -99,6 +99,7 @@ type TrackerContextValue = {
 };
 
 const TrackerContext = createContext<TrackerContextValue | null>(null);
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 const GOALS_KEY = "calai.goals.v1";
 const DEFAULT_GOALS: Goals = {
@@ -293,13 +294,13 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   const loadRemoteData = useCallback(async () => {
     try {
       const auditPromise = AUDIT_ENABLED
-        ? fetch("/api/v1/audit", { credentials: "include", cache: "no-store" })
+        ? fetch(`${API_BASE_URL}/api/v1/audit`, { credentials: "include", cache: "no-store" })
         : Promise.resolve(null);
       const [entriesRes, goalsRes, settingsRes, measurementsRes, auditRes] = await Promise.all([
-        fetch("/api/v1/entries", { credentials: "include", cache: "no-store" }),
-        fetch("/api/v1/goals", { credentials: "include", cache: "no-store" }),
-        fetch("/api/v1/settings", { credentials: "include", cache: "no-store" }),
-        fetch("/api/v1/measurements", { credentials: "include", cache: "no-store" }),
+        fetch(`${API_BASE_URL}/api/v1/entries`, { credentials: "include", cache: "no-store" }),
+        fetch(`${API_BASE_URL}/api/v1/goals`, { credentials: "include", cache: "no-store" }),
+        fetch(`${API_BASE_URL}/api/v1/settings`, { credentials: "include", cache: "no-store" }),
+        fetch(`${API_BASE_URL}/api/v1/measurements`, { credentials: "include", cache: "no-store" }),
         auditPromise,
       ]);
       if (entriesRes.ok) {
@@ -352,8 +353,8 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
         const data = (await measurementsRes.json()) as MeasurementEntry[];
         const normalized = Array.isArray(data)
           ? data
-              .map((entry) => normalizeMeasurement(entry))
-              .filter((entry): entry is MeasurementEntry => Boolean(entry))
+            .map((entry) => normalizeMeasurement(entry))
+            .filter((entry): entry is MeasurementEntry => Boolean(entry))
           : [];
         const localMeasurements = loadMeasurements();
         const merged = mergeMeasurements(normalized, localMeasurements);
@@ -449,7 +450,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       try {
-        await fetch("/api/v1/settings", {
+        await fetch(`${API_BASE_URL}/api/v1/settings`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -474,7 +475,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       const event = buildAuditEvent({ action, detail, meta });
       setAuditLog((prev) => appendAuditEvent(event, prev));
       if (dataMode === "remote") {
-        void fetch("/api/v1/audit", {
+        void fetch(`${API_BASE_URL}/api/v1/audit`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -495,7 +496,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     const normalized = items.map(normalizeEntry);
     const mode = options?.mode ?? "merge";
     if (dataMode === "remote") {
-      const response = await fetch("/api/v1/entries/import", {
+      const response = await fetch(`${API_BASE_URL}/api/v1/entries/import`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -551,7 +552,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       timestamp: new Date().toISOString(),
     };
     if (dataMode === "remote") {
-      const response = await fetch("/api/v1/entries", {
+      const response = await fetch(`${API_BASE_URL}/api/v1/entries`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -576,6 +577,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           mealType: entry.mealType,
         });
         void loadRemoteData();
+        return;
       } else {
         setEntries((prev) => {
           const next = [entry, ...prev];
@@ -587,7 +589,6 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           mealType: entry.mealType,
         });
       }
-      return;
     }
     setEntries((prev) => [entry, ...prev]);
     recordAudit("add", t("Yemek eklendi"), {
@@ -604,7 +605,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       timestamp: new Date().toISOString(),
     };
     if (dataMode === "remote") {
-      const response = await fetch("/api/v1/entries", {
+      const response = await fetch(`${API_BASE_URL}/api/v1/entries`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -620,6 +621,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
         setEntries((prev) => [normalized, ...prev]);
         recordAudit("add", t("Su eklendi"), { amountMl: entry.amountMl });
         void loadRemoteData();
+        return;
       } else {
         setEntries((prev) => {
           const next = [entry, ...prev];
@@ -650,7 +652,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       timestamp: new Date().toISOString(),
     };
     if (dataMode === "remote") {
-      const response = await fetch("/api/v1/entries", {
+      const response = await fetch(`${API_BASE_URL}/api/v1/entries`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -672,6 +674,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           durationMin: entry.durationMin,
         });
         void loadRemoteData();
+        return;
       } else {
         setEntries((prev) => {
           const next = [entry, ...prev];
@@ -695,7 +698,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   async function removeEntry(id: string) {
     const target = entries.find((entry) => entry.id === id);
     if (dataMode === "remote") {
-      await fetch(`/api/v1/entries/${id}`, {
+      await fetch(`${API_BASE_URL}/api/v1/entries/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -709,7 +712,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   async function updateGoals(next: Partial<Goals>) {
     const updated = { ...goals, ...next };
     if (dataMode === "remote") {
-      const response = await fetch("/api/v1/goals", {
+      const response = await fetch(`${API_BASE_URL}/api/v1/goals`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -747,7 +750,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   async function updateEntry(id: string, input: Entry) {
     const normalized = normalizeEntry(input);
     if (dataMode === "remote") {
-      const response = await fetch(`/api/v1/entries/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/entries/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -785,7 +788,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       timestamp,
     };
     if (dataMode === "remote") {
-      const response = await fetch("/api/v1/measurements", {
+      const response = await fetch(`${API_BASE_URL}/api/v1/measurements`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -810,7 +813,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
 
   async function updateMeasurement(id: string, input: Partial<MeasurementEntry>) {
     if (dataMode === "remote") {
-      const response = await fetch(`/api/v1/measurements/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/measurements/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -839,7 +842,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
 
   async function removeMeasurement(id: string) {
     if (dataMode === "remote") {
-      await fetch(`/api/v1/measurements/${id}`, {
+      await fetch(`${API_BASE_URL}/api/v1/measurements/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -886,7 +889,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     }
     setAuditLog([]);
     if (dataMode === "remote") {
-      void fetch("/api/v1/audit", {
+      void fetch(`${API_BASE_URL}/api/v1/audit`, {
         method: "DELETE",
         credentials: "include",
       }).catch(() => undefined);
@@ -905,7 +908,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     let importedTotal = 0;
     for (let index = 0; index < localEntries.length; index += batchSize) {
       const batch = localEntries.slice(index, index + batchSize);
-      const response = await fetch("/api/v1/entries/import", {
+      const response = await fetch(`${API_BASE_URL}/api/v1/entries/import`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -936,7 +939,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     let importedTotal = 0;
     for (let index = 0; index < local.length; index += batchSize) {
       const batch = local.slice(index, index + batchSize);
-      const response = await fetch("/api/v1/measurements/import", {
+      const response = await fetch(`${API_BASE_URL}/api/v1/measurements/import`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
