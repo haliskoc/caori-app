@@ -85,10 +85,9 @@ Kısıtlamalar:
 - Türkçe cevap ver.
         `.trim();
 
-        // Initialize Chat with correct system instruction placement
+        // Initialize Chat with gemini-pro (Stable)
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash",
-            systemInstruction: systemInstruction
+            model: "gemini-pro",
         });
 
         const chatHistory = history?.map((msg: any) => ({
@@ -97,7 +96,17 @@ Kısıtlamalar:
         })) || [];
 
         const chat = model.startChat({
-            history: chatHistory,
+            history: [
+                {
+                    role: "user",
+                    parts: [{ text: systemInstruction }]
+                },
+                {
+                    role: "model",
+                    parts: [{ text: "Anlaşıldı. Calmet Sağlık Koçu olarak nasıl yardımcı olabilirim?" }]
+                },
+                ...chatHistory
+            ],
             generationConfig: {
                 maxOutputTokens: 800,
             },
