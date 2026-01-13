@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { t } from "@/lib/i18n";
+
+export const metadata: Metadata = {
+  title: t("İletişim"),
+  description: t("Calmet destek ekibiyle iletişime geçin. Soru, öneri ve geri bildirimleriniz için bize yazın."),
+};
 
 export default function ContactPage() {
   return (

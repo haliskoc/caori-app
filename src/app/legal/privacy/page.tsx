@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { t } from "@/lib/i18n";
+
+export const metadata: Metadata = {
+  title: t("Gizlilik Politikası"),
+  description: t("Calmet gizlilik politikası ve veri güvenliği hakkında detaylı bilgi."),
+};
 
 export default function PrivacyPolicyPage() {
   return (

@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { t } from "@/lib/i18n";
+
+export const metadata: Metadata = {
+  title: t("Yardım Merkezi"),
+  description: t("Calmet kullanım rehberi, hesap yönetimi ve sıkça sorulan sorular."),
+};
 
 export default function HelpPage() {
   const topics = [

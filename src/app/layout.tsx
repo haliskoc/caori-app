@@ -95,9 +95,26 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const breadcrumbData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Calmet",
+        "item": "https://calmet.ai"
+      }
+    ]
+  };
+
   return (
     <html lang={defaultLocale} className="scroll-smooth">
       <body className={`${outfit.variable} ${spaceMono.variable} antialiased font-sans`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+        />
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

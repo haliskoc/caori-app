@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { t } from "@/lib/i18n";
+
+export const metadata: Metadata = {
+  title: t("KVKK Aydınlatma Metni"),
+  description: t("Calmet KVKK ve kişisel verilerin korunması hakkında aydınlatma metni."),
+};
 
 export default function KvkkPage() {
   return (

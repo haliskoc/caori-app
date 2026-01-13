@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { t } from "@/lib/i18n";
+
+export const metadata: Metadata = {
+  title: t("Sıkça Sorulan Sorular"),
+  description: t("Calmet hakkında en çok sorulan soruların cevaplarını burada bulabilirsiniz."),
+};
 
 export default function FaqPage() {
   const faqs = [
