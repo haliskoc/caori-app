@@ -10,14 +10,15 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core";
 
-export const userPlans = pgEnum("user_plan", ["free", "pro", "ai_plus"]);
+// Removed enum to stay robust against db synchronization issues
+// export const userPlans = pgEnum("user_plan", ["free", "pro", "ai_plus"]);
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
   email: text("email"),
   name: text("name"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  plan: userPlans("plan").default("free").notNull(),
+  plan: text("plan").default("free").notNull(),
   subscriptionStatus: text("subscription_status").default("active"), // active, past_due, canceled
   usageCount: integer("usage_count").default(0),
   lastReset: timestamp("last_reset", { withTimezone: true }),
