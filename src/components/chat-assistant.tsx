@@ -102,7 +102,7 @@ export function ChatAssistant() {
     }
 
     return (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
+        <div className="fixed bottom-24 right-4 z-50 flex flex-col items-end gap-4 sm:bottom-6 sm:right-6">
             {/* Chat Window */}
             {isOpen && (
                 <div className="w-[360px] overflow-hidden rounded-2xl border border-amber-100 bg-white shadow-2xl animate-[fade-up_0.2s_ease-out]">
