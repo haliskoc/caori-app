@@ -6,5 +6,5 @@ const apiKey = process.env.GOOGLE_AI_API_KEY?.trim();
 export const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
 
 export const AI_MODELS = {
-    GEMINI_PRO: "gemini-pro",
+    GEMINI_FLASH: "gemini-1.5-flash",
 };

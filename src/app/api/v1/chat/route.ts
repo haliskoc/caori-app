@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
         }
 
         // Initialize Chat
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         const systemInstruction = `
 Rol: Sen Calmet uygulamasının "Health Coach" adındaki yapay zeka asistanısın. 
