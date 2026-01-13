@@ -5,11 +5,17 @@ import { Bot, Send, X, Sparkles, User, Loader2, Copy, Check } from "lucide-react
 import Link from "next/link";
 import { t, getLocale } from "@/lib/i18n";
 import ReactMarkdown from "react-markdown";
+import { useTracker } from "@/components/tracker-provider";
 
 type Message = {
     id: string;
     role: "user" | "list";
     content: string;
+};
+
+type PendingConfirmation = {
+    action: "log_food" | "log_water";
+    data: unknown;
 };
 
 type ChatAssistantProps = {
@@ -19,6 +25,7 @@ type ChatAssistantProps = {
 };
 
 export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: ChatAssistantProps) {
+    const tracker = useTracker();
     const [internalOpen, setInternalOpen] = useState(false);
     const open = isOpen ?? internalOpen;
     const setOpen = (next: boolean) => {
@@ -34,6 +41,7 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
     const [isLimitReached, setIsLimitReached] = useState(false);
     const [limitPlan, setLimitPlan] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [pendingConfirmation, setPendingConfirmation] = useState<PendingConfirmation | null>(null);
     const scrollAnchorRef = useRef<HTMLDivElement>(null);
 
     // Her açıldığında sohbeti sıfırla
@@ -130,12 +138,33 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                     },
                 ]);
             } else if (data.reply) {
+                let cleanReply = data.reply;
+                const jsonMatch = data.reply.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+
+                if (jsonMatch) {
+                    try {
+                        const jsonStr = jsonMatch[1];
+                        const command = JSON.parse(jsonStr);
+                        // Remove JSON from displayed message
+                        cleanReply = data.reply.replace(jsonMatch[0], "").trim();
+
+                        cleanReply = data.reply.replace(jsonMatch[0], "").trim();
+
+                        setPendingConfirmation({
+                            action: command.action,
+                            data: command.data
+                        });
+                    } catch (e) {
+                        console.error("Failed to parse AI command", e);
+                    }
+                }
+
                 setMessages((prev) => [
                     ...prev,
                     {
                         id: Date.now().toString(),
                         role: "list",
-                        content: data.reply,
+                        content: cleanReply,
                     },
                 ]);
             } else {
@@ -265,6 +294,58 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                                         {t("Limit yarın sıfırlanır.")}
                                     </p>
                                 )}
+                            </div>
+                        )}
+                        {/* Pending Confirmation Card */}
+                        {pendingConfirmation && (
+                            <div className="flex justify-end animate-[fade-up_0.2s_ease-out]">
+                                <div className="max-w-[85%] rounded-[1.25rem] bg-emerald-50 border border-emerald-100 p-4 shadow-sm rounded-tr-none">
+                                    <h4 className="text-sm font-bold text-emerald-900 mb-2">{t("Bunu ekleyeyim mi?")}</h4>
+                                    <div className="bg-white rounded-xl p-3 border border-emerald-100 mb-3 shadow-sm">
+                                        <p className="text-sm font-semibold text-gray-900">
+                                            {pendingConfirmation.action === "log_food"
+                                                ? (pendingConfirmation.data as any).name
+                                                : t("Su İçimi")}
+                                        </p>
+                                        <div className="flex items-baseline gap-1 mt-1">
+                                            <span className="text-lg font-black text-emerald-600">
+                                                {pendingConfirmation.action === "log_food"
+                                                    ? (pendingConfirmation.data as any).calories
+                                                    : (pendingConfirmation.data as any).amountMl}
+                                            </span>
+                                            <span className="text-xs font-bold text-gray-400">
+                                                {pendingConfirmation.action === "log_food" ? "kcal" : "ml"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => {
+                                                setPendingConfirmation(null);
+                                                setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: t("İşlem iptal edildi.") }]);
+                                            }}
+                                            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-200 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors"
+                                        >
+                                            <X className="h-4 w-4" />
+                                            {t("Hayır")}
+                                        </button>
+                                        <button
+                                            onClick={async () => {
+                                                if (pendingConfirmation.action === "log_food") {
+                                                    await tracker.addFood(pendingConfirmation.data as any);
+                                                } else {
+                                                    await tracker.addWater(pendingConfirmation.data as any);
+                                                }
+                                                setPendingConfirmation(null);
+                                                setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: t("Başarıyla eklendi! ✅") }]);
+                                            }}
+                                            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition-colors"
+                                        >
+                                            <Check className="h-4 w-4" />
+                                            {t("Evet")}
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         )}
                         <div ref={scrollAnchorRef} />
