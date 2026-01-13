@@ -9,6 +9,7 @@ export async function proxy(request: Request) {
   if (
     pathname.startsWith("/auth") ||
     pathname === "/" ||
+    pathname === "/login" ||
     pathname.startsWith("/share") ||
     pathname.startsWith("/api/v1/share")
   ) {

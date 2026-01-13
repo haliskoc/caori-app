@@ -19,11 +19,11 @@ client secret
 
 allowed callbeck url 
 
-https://cal-ai-track.vercel.app/auth/callback , https://cal-ai-track.vercel.app/api/auth/callback
+https://calmet-app.vercel.app/auth/callback , https://calmet-app.vercel.app/api/auth/callback
 
 aloowd log out url 
 
-https://cal-ai-track.vercel.app
+https://calmet-app.vercel.app
 
 
 
