@@ -23,7 +23,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [showSplash, setShowSplash] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
-  const hideShell = pathname === "/" || pathname.startsWith("/share") || pathname.startsWith("/login");
+  const hideShell =
+    pathname === "/" ||
+    pathname.startsWith("/share") ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/pricing") ||
+    pathname.startsWith("/help") ||
+    pathname.startsWith("/faq") ||
+    pathname.startsWith("/contact") ||
+    pathname.startsWith("/legal");
 
   useEffect(() => {
     if (hideShell) {
@@ -225,7 +233,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Link>
 
                 <a
-                  href="/auth/logout"
+                  href="/auth/logout?returnTo=/"
                   className="hidden sm:flex ml-2 h-9 w-9 items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:bg-rose-50 hover:text-rose-600 transition-all shadow-sm"
                   title={t("Çıkış")}
                 >

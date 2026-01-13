@@ -60,7 +60,7 @@ export default function PricingPage() {
             icon: <Star className="h-6 w-6 text-emerald-300" />,
             color: "emerald",
             buttonText: t("Hemen Başla"),
-            buttonHref: "/login",
+            buttonHref: "/auth/login?screen_hint=signup",
             popular: false,
         },
         {

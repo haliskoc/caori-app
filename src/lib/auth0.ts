@@ -1,7 +1,11 @@
 import { Auth0Client } from "@auth0/nextjs-auth0/server";
 import { NextResponse } from "next/server";
 
-const appBaseUrl = process.env.APP_BASE_URL || process.env.AUTH0_BASE_URL || "http://localhost:3000";
+const appBaseUrl =
+  process.env.APP_BASE_URL ||
+  process.env.AUTH0_BASE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ||
+  "http://localhost:3000";
 const isProduction = process.env.NODE_ENV === "production";
 
 let domain = process.env.AUTH0_DOMAIN;

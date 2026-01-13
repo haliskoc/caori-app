@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { ArrowRight, BarChart3, Calendar, Check, ChefHat, Sparkles, Activity, ShieldCheck } from "lucide-react";
 import { t } from "@/lib/i18n";
 
@@ -56,10 +56,13 @@ export default function LandingPage() {
             </Link>
           </nav>
           <div className="flex items-center gap-4">
-            <Link href="/login" className="hidden text-sm font-bold text-gray-900 hover:text-emerald-600 transition-colors sm:inline">
+            <Link
+              href="/auth/login"
+              className="hidden text-sm font-bold text-gray-900 hover:text-emerald-600 transition-colors sm:inline"
+            >
               {t("Giriş Yap")}
             </Link>
-            <Link href="/login">
+            <Link href="/auth/login?screen_hint=signup">
               <span className="rounded-2xl bg-emerald-600 px-6 py-2.5 text-sm font-black text-white shadow-lg shadow-emerald-200 transition-all hover:bg-gray-900 hover:shadow-gray-200 active:scale-95">
                 {t("Ücretsiz Başla")}
               </span>
@@ -93,7 +96,7 @@ export default function LandingPage() {
               {t("Ücretlendirme")}
             </Link>
             <Link
-              href="/login"
+              href="/auth/login?screen_hint=signup"
               className="rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-200"
               onClick={() => setMobileMenuOpen(false)}
             >
@@ -128,7 +131,7 @@ export default function LandingPage() {
               </p>
 
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center justify-center pt-4">
-                <Link href="/login" className="group">
+                <Link href="/auth/login?screen_hint=signup" className="group">
                   <span className="flex h-14 items-center justify-center gap-3 rounded-[2rem] bg-gray-900 px-10 text-base font-black text-white shadow-2xl transition-all hover:-translate-y-1 hover:bg-emerald-600 active:scale-95">
                     {t("Hemen Başla")}
                     <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -253,7 +256,7 @@ export default function LandingPage() {
               {t("Daha İyi Bir Sen İçin")} <br />
               <span className="text-emerald-400">{t("Bugün İlk Adımı At.")}</span>
             </h2>
-            <Link href="/login">
+            <Link href="/auth/login?screen_hint=signup">
               <span className="inline-flex h-16 items-center justify-center gap-3 rounded-[2rem] bg-white px-12 text-lg font-black text-gray-900 shadow-2xl transition-all hover:bg-emerald-400 hover:scale-105 active:scale-95">
                 {t("Ücretsiz Hesabını Oluştur")}
                 <ArrowRight className="h-5 w-5" />
@@ -283,17 +286,40 @@ export default function LandingPage() {
           </div>
 
           {[
-            { title: t("Ürün"), links: [t("Özellikler"), t("Ücretlendirme"), t("Yol Haritası")] },
-            { title: t("Destek"), links: [t("Yardım Merkezi"), t("Sıkça Sorulanlar"), t("İletişim")] },
-            { title: t("Yasal"), links: [t("Gizlilik Politikası"), t("Kullanım Şartları"), t("KVKK")] }
+            {
+              title: t("Ürün"),
+              links: [
+                { label: t("Özellikler"), href: "/#features" },
+                { label: t("Ücretlendirme"), href: "/pricing" },
+              ],
+            },
+            {
+              title: t("Destek"),
+              links: [
+                { label: t("Yardım Merkezi"), href: "/help" },
+                { label: t("Sıkça Sorulanlar"), href: "/faq" },
+                { label: t("İletişim"), href: "/contact" },
+              ],
+            },
+            {
+              title: t("Yasal"),
+              links: [
+                { label: t("Gizlilik Politikası"), href: "/legal/privacy" },
+                { label: t("Kullanım Şartları"), href: "/legal/terms" },
+                { label: t("KVKK"), href: "/legal/kvkk" },
+              ],
+            },
           ].map((col, idx) => (
             <div key={idx} className="space-y-6">
               <h4 className="text-sm font-black uppercase tracking-widest text-gray-900">{col.title}</h4>
               <ul className="space-y-4">
                 {col.links.map((link, lIdx) => (
                   <li key={lIdx}>
-                    <Link href="#" className="text-sm font-bold text-gray-500 hover:text-emerald-600 transition-colors">
-                      {link}
+                    <Link
+                      href={link.href}
+                      className="text-sm font-bold text-gray-500 hover:text-emerald-600 transition-colors"
+                    >
+                      {link.label}
                     </Link>
                   </li>
                 ))}

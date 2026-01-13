@@ -10,6 +10,11 @@ export async function proxy(request: Request) {
     pathname.startsWith("/auth") ||
     pathname === "/" ||
     pathname === "/login" ||
+    pathname === "/pricing" ||
+    pathname === "/help" ||
+    pathname === "/faq" ||
+    pathname === "/contact" ||
+    pathname.startsWith("/legal") ||
     pathname.startsWith("/share") ||
     pathname.startsWith("/api/v1/share")
   ) {
