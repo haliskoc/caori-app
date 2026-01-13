@@ -331,12 +331,12 @@ export default function SettingsPage() {
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <button
             onClick={downloadCsv}
-            className="w-full rounded-xl border border-emerald-100 bg-white px-4 py-2.5 text-xs font-black text-emerald-700 hover:bg-emerald-50 transition-colors sm:w-auto"
+            className="flex w-full items-center justify-center rounded-xl border border-emerald-100 bg-white px-4 py-2.5 text-center text-xs font-black text-emerald-700 hover:bg-emerald-50 transition-colors sm:w-auto"
             disabled={entries.length === 0}
           >
             {t("CSV Dışa Aktar")}
           </button>
-          <label className="w-full cursor-pointer rounded-xl bg-emerald-600 px-6 py-2.5 text-xs font-black text-white hover:bg-gray-900 shadow-lg shadow-emerald-100 transition-all active:scale-95 sm:w-auto">
+          <label className="flex w-full cursor-pointer items-center justify-center rounded-xl bg-emerald-600 px-6 py-2.5 text-center text-xs font-black text-white hover:bg-gray-900 shadow-lg shadow-emerald-100 transition-all active:scale-95 sm:w-auto">
             {isCsvImporting ? t("İçe aktarılıyor...") : t("CSV İçe Aktar")}
             <input
               type="file"

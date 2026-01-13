@@ -260,19 +260,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </main>
       </div>
 
-      <nav className="app-nav fixed bottom-6 left-1/2 z-20 w-[min(94vw,420px)] -translate-x-1/2 rounded-[2.2rem] border border-emerald-100/60 bg-white/80 px-4 pb-3 pt-7 shadow-[0_20px_45px_rgba(16,185,129,0.2)] backdrop-blur-lg print-hidden">
+      <nav className="app-nav fixed bottom-6 left-1/2 z-20 w-[min(90vw,380px)] -translate-x-1/2 rounded-[1.75rem] border border-emerald-100/60 bg-white/85 px-3 pb-2.5 pt-6 shadow-[0_18px_40px_rgba(16,185,129,0.18)] backdrop-blur-lg print-hidden">
         <div className="relative flex items-center justify-between">
           {[
             { href: "/dashboard", label: "Panel", icon: "⌂" },
             { href: "/add-entry", label: "Ekle", icon: "+" },
           ].map((item) => {
-            const active = pathname === item.href;
+            const active = pathname === item.href && !chatOpen;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex w-16 flex-col items-center gap-1 rounded-2xl px-2 py-2 text-[10px] font-bold transition-all ${active
-                  ? "bg-emerald-600 text-white shadow-lg scale-105"
+                className={`flex w-14 flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-[10px] font-bold transition-all ${active
+                  ? "bg-emerald-600 text-white shadow-md scale-105"
                   : "text-gray-400 hover:text-emerald-600 hover:bg-emerald-50/50"
                   }`}
               >
@@ -291,22 +291,34 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               : "bg-emerald-700 text-white shadow-emerald-200 hover:bg-emerald-800"
               }`}
           >
-            <span className="flex h-16 w-16 items-center justify-center text-2xl">✺</span>
+            <span className="flex h-14 w-14 items-center justify-center">
+              <span className="flex h-9 w-9 items-center justify-center rounded-md bg-emerald-500 shadow-inner">
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="h-5 w-5 fill-white"
+                >
+                  <path d="M9.5 3a1 1 0 0 0 0 2h5a1 1 0 1 0 0-2h-5Z" />
+                  <path d="M6 8.5A3.5 3.5 0 0 1 9.5 5h5A3.5 3.5 0 0 1 18 8.5v6A3.5 3.5 0 0 1 14.5 18h-5A3.5 3.5 0 0 1 6 14.5v-6Zm3.5 1.25a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5Zm5 0a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5ZM10 14a1 1 0 0 0 0 2h4a1 1 0 1 0 0-2h-4Z" />
+                  <path d="M4 11a1 1 0 0 0 0 2h1v-2H4Zm15 0v2h1a1 1 0 1 0 0-2h-1Z" />
+                </svg>
+              </span>
+            </span>
           </button>
 
-          <div className="w-16" aria-hidden="true" />
+          <div className="w-14" aria-hidden="true" />
 
           {[
             { href: "/profile", label: "Profil", icon: "◍" },
             { href: "/settings", label: "Ayar", icon: "⚙" },
           ].map((item) => {
-            const active = pathname === item.href;
+            const active = pathname === item.href && !chatOpen;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex w-16 flex-col items-center gap-1 rounded-2xl px-2 py-2 text-[10px] font-bold transition-all ${active
-                  ? "bg-emerald-600 text-white shadow-lg scale-105"
+                className={`flex w-14 flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-[10px] font-bold transition-all ${active
+                  ? "bg-emerald-600 text-white shadow-md scale-105"
                   : "text-gray-400 hover:text-emerald-600 hover:bg-emerald-50/50"
                   }`}
               >
