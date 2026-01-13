@@ -1,13 +1,20 @@
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth0 } from "@/lib/auth0";
 import { getDb } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { genAI } from "@/lib/ai";
+import { ensureUser } from "@/lib/db";
 
-export async function POST(req: Request) {
-    const session = await auth0.getSession();
+export async function POST(req: NextRequest) {
+    let session;
+    try {
+        session = await auth0.getSession(req);
+    } catch (e) {
+        console.error("Auth0 Session Error:", e);
+    }
+
     if (!session?.user) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -19,6 +26,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Message is required" }, { status: 400 });
         }
 
+        await ensureUser(session.user as any);
         const db = getDb();
         const [userRecord] = await db
             .select()
@@ -121,9 +129,10 @@ Kısıtlamalar:
 
         return NextResponse.json({ reply: text });
     } catch (error: any) {
-        console.error("Chat API Error:", error);
+        console.error("Chat API Critical Error:", error);
+        if (error.stack) console.error(error.stack);
         return NextResponse.json(
-            { error: "Bir hata oluştu. Lütfen tekrar deneyin." },
+            { error: error.message || "Bir hata oluştu. Lütfen tekrar deneyin." },
             { status: 500 }
         );
     }

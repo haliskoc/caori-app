@@ -56,9 +56,14 @@ export function ChatAssistant() {
                 body: JSON.stringify({ message: userMessage.content, history }),
             });
 
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                throw new Error(errorData.error || `Sunucu hatası: ${res.status}`);
+            }
+
             const data = await res.json();
 
-            if (res.status === 403 && data.limitReached) {
+            if (data.limitReached) {
                 setIsLimitReached(true);
                 setMessages((prev) => [
                     ...prev,
@@ -82,13 +87,13 @@ export function ChatAssistant() {
             } else {
                 throw new Error(data.error || "Unknown error");
             }
-        } catch (error) {
+        } catch (error: any) {
             setMessages((prev) => [
                 ...prev,
                 {
                     id: Date.now().toString(),
                     role: "list",
-                    content: t("Bir bağlantı hatası oluştu. Lütfen tekrar dene."),
+                    content: t(error.message || "Bir bağlantı hatası oluştu. Lütfen tekrar dene."),
                 },
             ]);
         } finally {
@@ -137,8 +142,8 @@ export function ChatAssistant() {
                                 </div>
                                 <div
                                     className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed shadow-sm ${m.role === "user"
-                                            ? "bg-gray-900 text-white rounded-tr-none"
-                                            : "bg-white text-gray-700 border border-amber-100/50 rounded-tl-none"
+                                        ? "bg-gray-900 text-white rounded-tr-none"
+                                        : "bg-white text-gray-700 border border-amber-100/50 rounded-tl-none"
                                         }`}
                                 >
                                     {m.content}
