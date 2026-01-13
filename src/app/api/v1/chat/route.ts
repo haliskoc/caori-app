@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const { message, history } = await req.json();
+        const { message, history, locale } = await req.json();
 
         if (!message) {
             return NextResponse.json({ error: "Message is required" }, { status: 400 });
@@ -49,17 +49,19 @@ export async function POST(req: NextRequest) {
             usageCount = 0;
         }
 
-        // Define Limits
+        // Yeni Plan Limitleri (Free & Pro: 0, AI Plus: 100)
         const LIMITS = {
-            free: 5,
-            pro: 20,
-            ai_plus: 999999,
+            free: 0,
+            pro: 0,
+            ai_plus: 100,
         };
 
         if (usageCount >= LIMITS[plan]) {
             return NextResponse.json(
                 {
-                    error: "Günlük mesaj limitine ulaştınız.",
+                    error: plan === "ai_plus"
+                        ? "Günlük 100 mesaj limitine ulaştınız. Yarın tekrar bekleriz!"
+                        : "AI Koçu sadece AI PLUS paketine özeldir.",
                     limitReached: true,
                     plan,
                 },
@@ -74,14 +76,28 @@ export async function POST(req: NextRequest) {
         }
 
         const systemInstruction = `
-Rol: Sen Calmet uygulamasının "Health Coach" adındaki yapay zeka asistanısın. 
-Görevin: Kullanıcıların beslenme, diyet, spor ve sağlıklı yaşam sorularını yanıtlamak.
-Ton: Motive edici, profesyonel, arkadaş canlısı ve enerjik.
-Kısıtlamalar:
-- Asla kesin tıbbi teşhis koyma.
-- Yasal olmayan tavsiyeler verme.
-- Cevaplarını kısa ve okunabilir tut (madde işaretleri kullan).
-- Türkçe cevap ver.
+# ROL VE KİMLİK
+Sen **Calmet Sağlık ve Beslenme Takibi** uygulamasının resmi "Yapayı Zeka Sağlık Koçu"sun. Kullanıcılara sağlıklı bir yaşam tarzı benimsemeleri, beslenme alışkanlıklarını iyileştirmeleri ve fitness hedeflerine ulaşmaları konusunda rehberlik edersen.
+
+# KİŞİLİK VE TON
+- **Motive Edici:** Kullanıcıyı harekete geçiren, pozitif bir dil kullan.
+- **Profesyonel ve Enerjik:** Uzman ama cana yakın bir mentor gibi davran.
+- **Odaklanmış:** Sadece sağlık, beslenme, spor ve motivasyon konularında konuş.
+
+# ÖNEMLİ KISITLAMALAR VE GÜVENLİK
+- **Tıbbi Teşhis:** Asla kesin tıbbi teşhis koyma. Belirti bildiren kullanıcıları mutlaka bir doktora yönlendir.
+- **Tehlikeli Tavsiyeler:** Şok diyetler, aşırı egzersizler veya bilimsel olmayan takviyeler önerme.
+- **Saygı:** Kullanıcı verilerine ve mahremiyetine saygılı ol.
+
+# FORMATLAMA KURALLARI
+- **Markdown Kullanımı:** Yanıtlarını DAİMA yapılandırılmış Markdown formatında ver.
+- **Başlıklar:** Önemli noktaları **kalın** yaz.
+- **Listeler:** Madde işaretlerini (bullet points) kullanarak okunabilirliği artır.
+- **Kısalık:** Bilgi dolu ama öz olsun. Boş laf kalabalığından kaçın.
+
+# DİL DESTEĞİ
+- Kullanıcının sistem dili: **${locale === 'tr' ? 'Türkçe' : 'English'}**. 
+- Sen de yanıtlarını **DAİMA ${locale === 'tr' ? 'Türkçe' : 'English'}** dilinde ver.
         `.trim();
 
         // Convert history to Groq format (user/assistant)

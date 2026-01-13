@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fff7f0;
+  --background: #fffcf9;
   --surface: #ffffff;
-  --ink: #1e1a15;
-  --muted: #6f5f52;
-  --accent: #ff7a00;
-  --accent-strong: #ff6a00;
-  --accent-soft: #ffd1a1;
-  --ring: #ffbe7a;
-  --shadow-soft: 0 12px 30px rgba(255, 122, 0, 0.12);
-  --shadow-strong: 0 22px 60px rgba(39, 24, 12, 0.18);
-  --bg-spot-1: #fff1e3;
-  --bg-spot-2: #ffe1c7;
+  --ink: #1a1c1e;
+  --muted: #64748b;
+  --accent: #10b981; /* Emerald Primary */
+  --accent-strong: #059669;
+  --accent-soft: #d1fae5;
+  --ring: #10b981;
+  --shadow-soft: 0 12px 30px rgba(16, 185, 129, 0.08);
+  --shadow-strong: 0 22px 60px rgba(15, 23, 42, 0.12);
+  --bg-spot-1: #f0fdf4;
+  --bg-spot-2: #fffbeb;
 }
 
 :root[data-theme="dim"] {
@@ -50,18 +50,18 @@
 }
 
 :root[data-app="true"] {
-  --background: #f9f4ee;
-  --surface: #fffdf9;
-  --ink: #1f1b16;
-  --muted: #6a5a52;
-  --accent: #ff7a00;
-  --accent-strong: #ff6a00;
-  --accent-soft: #ffd1a1;
-  --ring: #ffbe7a;
-  --shadow-soft: 0 16px 36px rgba(255, 107, 44, 0.16);
-  --shadow-strong: 0 32px 64px rgba(27, 17, 10, 0.22);
-  --bg-spot-1: #fff0e0;
-  --bg-spot-2: #ffe2c0;
+  --background: #fffbf7;
+  --surface: #ffffff;
+  --ink: #0f172a;
+  --muted: #475569;
+  --accent: #10b981;
+  --accent-strong: #059669;
+  --accent-soft: #ecfdf5;
+  --ring: #34d399;
+  --shadow-soft: 0 16px 36px rgba(16, 185, 129, 0.12);
+  --shadow-strong: 0 32px 64px rgba(15, 23, 42, 0.15);
+  --bg-spot-1: #f0fdfa;
+  --bg-spot-2: #fff7ed;
 }
 
 :root[data-app="true"][data-theme="dim"] {
@@ -85,7 +85,7 @@
   --color-app: var(--background);
   --shadow-soft: var(--shadow-soft);
   --shadow-strong: var(--shadow-strong);
-  --font-sans: var(--font-space-grotesk);
+  --font-sans: var(--font-outfit);
   --font-mono: var(--font-space-mono);
 }
 
@@ -94,7 +94,7 @@ body {
     radial-gradient(circle at 90% 10%, var(--bg-spot-2) 0, transparent 40%),
     var(--background);
   color: var(--ink);
-  font-family: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  font-family: var(--font-outfit), "Outfit", sans-serif;
 }
 
 html[data-app="true"] body {

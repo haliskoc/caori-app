@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Space_Mono } from "next/font/google";
+import { Outfit, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/app-providers";
 import { defaultLocale, t } from "@/lib/i18n";
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
 });
 
@@ -16,8 +16,8 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: t("Cal AI - Manuel Takip"),
-  description: t("Kalori, su ve aktivite takibi için sade bir platform."),
+  title: t("Calmet - Sağlıklı Yaşam Takibi"),
+  description: t("Kalori, su ve aktivite takibi için profesyonel sağlık platformu."),
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang={defaultLocale}>
-      <body className={`${spaceGrotesk.variable} ${spaceMono.variable} antialiased`}>
+      <body className={`${outfit.variable} ${spaceMono.variable} antialiased font-sans`}>
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

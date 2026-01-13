@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Bot, Send, X, Sparkles, User, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { t } from "@/lib/i18n";
+import { t, getLocale } from "@/lib/i18n";
+import ReactMarkdown from "react-markdown";
 
 type Message = {
     id: string;
@@ -13,23 +14,31 @@ type Message = {
 
 export function ChatAssistant() {
     const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: "welcome",
-            role: "list",
-            content: t("Merhaba! Ben Calmet AI. Beslenme veya antrenmanla ilgili ne sormak istersin?"),
-        },
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isLimitReached, setIsLimitReached] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
 
+    // Her açıldığında sohbeti sıfırla
+    useEffect(() => {
+        if (isOpen) {
+            setMessages([
+                {
+                    id: "welcome",
+                    role: "list",
+                    content: t("Merhaba! Ben Calmet AI Sağlık Koçunuz. Bugün beslenme veya antrenman hedefleriniz için size nasıl yardımcı olabilirim?"),
+                },
+            ]);
+            setIsLimitReached(false);
+        }
+    }, [isOpen]);
+
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
-    }, [messages, isOpen]);
+    }, [messages, isOpen, isLoading]);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -53,7 +62,11 @@ export function ChatAssistant() {
             const res = await fetch("/api/v1/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: userMessage.content, history }),
+                body: JSON.stringify({
+                    message: userMessage.content,
+                    history,
+                    locale: getLocale()
+                }),
             });
 
             if (!res.ok) {
@@ -115,7 +128,7 @@ export function ChatAssistant() {
                             <div>
                                 <h3 className="text-sm font-bold text-gray-900">{t("Calmet AI")}</h3>
                                 <p className="text-[10px] text-amber-600 font-medium tracking-wide uppercase">
-                                    {t("Sağlık Asistanı")}
+                                    {t("Sağlık Koçu")}
                                 </p>
                             </div>
                         </div>
@@ -141,12 +154,18 @@ export function ChatAssistant() {
                                     {m.role === "user" ? <User className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
                                 </div>
                                 <div
-                                    className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed shadow-sm ${m.role === "user"
+                                    className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${m.role === "user"
                                         ? "bg-gray-900 text-white rounded-tr-none"
                                         : "bg-white text-gray-700 border border-amber-100/50 rounded-tl-none"
                                         }`}
                                 >
-                                    {m.content}
+                                    {m.role === "list" ? (
+                                        <article className="prose prose-sm prose-amber max-w-none prose-p:leading-relaxed prose-li:my-1">
+                                            <ReactMarkdown>{m.content}</ReactMarkdown>
+                                        </article>
+                                    ) : (
+                                        m.content
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -188,7 +207,7 @@ export function ChatAssistant() {
                                 onChange={(e) => setInput(e.target.value)}
                                 placeholder={isLimitReached ? t("Limit doldu...") : t("Bir şeyler sor...")}
                                 disabled={isLoading || isLimitReached}
-                                className="w-full rounded-xl border-0 bg-gray-50 pl-4 pr-12 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:ring-2 focus:ring-amber-500/20 disabled:opacity-50 transition-all"
+                                className="w-full rounded-xl border-0 bg-gray-50 b-0 pl-4 pr-12 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:ring-2 focus:ring-amber-500/20 disabled:opacity-50 transition-all outline-none"
                             />
                             <button
                                 type="submit"
