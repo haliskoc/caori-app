@@ -23,6 +23,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [showSplash, setShowSplash] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [logoutHref, setLogoutHref] = useState("/auth/logout");
   const hideShell =
     pathname === "/" ||
     pathname.startsWith("/share") ||
@@ -73,6 +74,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setChatOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const origin = window.location.origin;
+    setLogoutHref(`/auth/logout?returnTo=${encodeURIComponent(origin)}`);
+  }, []);
 
   useEffect(() => {
     if (!user?.sub || hideShell) {
@@ -233,7 +242,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Link>
 
                 <a
-                  href="/auth/logout?returnTo=/"
+                  href={logoutHref}
                   className="hidden sm:flex ml-2 h-9 w-9 items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:bg-rose-50 hover:text-rose-600 transition-all shadow-sm"
                   title={t("Çıkış")}
                 >
@@ -286,24 +295,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             type="button"
             onClick={() => setChatOpen((prev) => !prev)}
             aria-label={t("AI")}
-            className={`absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white shadow-xl transition-all ${chatOpen
-              ? "bg-emerald-600 text-white shadow-emerald-300"
-              : "bg-emerald-700 text-white shadow-emerald-200 hover:bg-emerald-800"
+            className={`absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg transition-all ${chatOpen
+              ? "bg-emerald-600 shadow-emerald-300"
+              : "bg-emerald-700 shadow-emerald-200 hover:bg-emerald-800"
               }`}
           >
-            <span className="flex h-14 w-14 items-center justify-center">
-              <span className="flex h-9 w-9 items-center justify-center rounded-md bg-emerald-500 shadow-inner">
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="h-5 w-5 fill-white"
-                >
-                  <path d="M9.5 3a1 1 0 0 0 0 2h5a1 1 0 1 0 0-2h-5Z" />
-                  <path d="M6 8.5A3.5 3.5 0 0 1 9.5 5h5A3.5 3.5 0 0 1 18 8.5v6A3.5 3.5 0 0 1 14.5 18h-5A3.5 3.5 0 0 1 6 14.5v-6Zm3.5 1.25a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5Zm5 0a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5ZM10 14a1 1 0 0 0 0 2h4a1 1 0 1 0 0-2h-4Z" />
-                  <path d="M4 11a1 1 0 0 0 0 2h1v-2H4Zm15 0v2h1a1 1 0 1 0 0-2h-1Z" />
-                </svg>
-              </span>
-            </span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" className="h-6 w-6 fill-white">
+              <path d="M9.5 3a1 1 0 0 0 0 2h5a1 1 0 1 0 0-2h-5Z" />
+              <path d="M6 8.5A3.5 3.5 0 0 1 9.5 5h5A3.5 3.5 0 0 1 18 8.5v6A3.5 3.5 0 0 1 14.5 18h-5A3.5 3.5 0 0 1 6 14.5v-6Zm3.5 1.25a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5Zm5 0a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5ZM10 14a1 1 0 0 0 0 2h4a1 1 0 1 0 0-2h-4Z" />
+              <path d="M4 11a1 1 0 0 0 0 2h1v-2H4Zm15 0v2h1a1 1 0 1 0 0-2h-1Z" />
+            </svg>
           </button>
 
           <div className="w-14" aria-hidden="true" />
