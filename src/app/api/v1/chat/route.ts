@@ -4,7 +4,7 @@ import { auth0 } from "@/lib/auth0";
 import { getDb } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
-import { genAI } from "@/lib/ai";
+import { groq, AI_MODELS } from "@/lib/ai";
 import { ensureUser } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
@@ -67,10 +67,9 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        if (!genAI) {
-            // Fallback response if no API key is set
+        if (!groq) {
             return NextResponse.json({
-                reply: "AI servisi şu an yapılandırılmadı (API Key eksik). Lütfen yönetici ile iletişime geçin.",
+                reply: "AI servisi şu an yapılandırılmadı (GROQ_API_KEY eksik). Lütfen yönetici ile iletişime geçin.",
             });
         }
 
@@ -85,36 +84,24 @@ Kısıtlamalar:
 - Türkçe cevap ver.
         `.trim();
 
-        // Initialize Chat with user-supported available model
-        const model = genAI.getGenerativeModel({
-            model: "gemini-2.0-flash-exp",
+        // Convert history to Groq format (user/assistant)
+        const messages = [
+            { role: "system", content: systemInstruction },
+            ...(history?.map((msg: any) => ({
+                role: msg.role === "list" || msg.role === "model" ? "assistant" : "user",
+                content: msg.content
+            })) || []),
+            { role: "user", content: message }
+        ];
+
+        const chatCompletion = await groq.chat.completions.create({
+            messages: messages as any,
+            model: AI_MODELS.LLAMA3_8B, // llama-3.1-8b-instant
+            temperature: 0.7,
+            max_tokens: 1024,
         });
 
-        const chatHistory = history?.map((msg: any) => ({
-            role: msg.role === "user" ? "user" : "model",
-            parts: [{ text: msg.content }],
-        })) || [];
-
-        const chat = model.startChat({
-            history: [
-                {
-                    role: "user",
-                    parts: [{ text: systemInstruction }]
-                },
-                {
-                    role: "model",
-                    parts: [{ text: "Anlaşıldı. Calmet Sağlık Koçu olarak nasıl yardımcı olabilirim?" }]
-                },
-                ...chatHistory
-            ],
-            generationConfig: {
-                maxOutputTokens: 800,
-            },
-        });
-
-        const result = await chat.sendMessage(message);
-        const response = await result.response;
-        const text = response.text();
+        const text = chatCompletion.choices[0]?.message?.content || "Cevap üretilemedi.";
 
         // Increment Usage
         await db

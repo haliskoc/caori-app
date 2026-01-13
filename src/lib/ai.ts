@@ -1,10 +1,12 @@
-"1"
-import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const apiKey = process.env.GOOGLE_AI_API_KEY?.trim();
+import Groq from "groq-sdk";
 
-export const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
+const apiKey = process.env.GROQ_API_KEY?.trim();
+
+export const groq = apiKey ? new Groq({ apiKey }) : null;
 
 export const AI_MODELS = {
-    GEMINI_FLASH: "gemini-1.5-flash",
+    LLAMA3_8B: "llama-3.1-8b-instant",
+    LLAMA3_70B: "llama-3.3-70b-versatile",
+    MIXTRAL_8X7B: "mixtral-8x7b-32768",
 };
