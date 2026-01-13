@@ -39,10 +39,11 @@ export function saveTheme(theme: ThemeSettings) {
   window.localStorage.setItem(THEME_KEY, JSON.stringify(theme));
 }
 
-export function applyTheme(theme: ThemeSettings) {
+export function applyTheme(_theme: ThemeSettings) {
   if (typeof document === "undefined") {
     return;
   }
+  void _theme;
   const root = document.documentElement;
   // Tek görünüm için temayı sabitleyelim
   root.removeAttribute("data-theme");

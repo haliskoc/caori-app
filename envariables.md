@@ -47,3 +47,8 @@ NEXT_PUBLIC_STACK_PROJECT_ID=****************************
 NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY=****************************************
 
 STACK_SECRET_SERVER_KEY=***********************
+
+
+# AI provider (set in Vercel/CI secrets, not in repo)
+
+GROQ_API_KEY=<GROQ_API_KEY>

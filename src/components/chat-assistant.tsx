@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Bot, Send, X, Sparkles, User, Loader2 } from "lucide-react";
+import { Bot, Send, X, Sparkles, User, Loader2, Copy, Check } from "lucide-react";
 import Link from "next/link";
 import { t, getLocale } from "@/lib/i18n";
 import ReactMarkdown from "react-markdown";
@@ -33,6 +33,7 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
     const [isLoading, setIsLoading] = useState(false);
     const [isLimitReached, setIsLimitReached] = useState(false);
     const [limitPlan, setLimitPlan] = useState<string | null>(null);
+    const [copiedId, setCopiedId] = useState<string | null>(null);
     const scrollAnchorRef = useRef<HTMLDivElement>(null);
 
     // Her açıldığında sohbeti sıfırla
@@ -53,6 +54,29 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
     useEffect(() => {
         scrollAnchorRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }, [messages, open, isLoading]);
+
+    async function copyMessage(message: Message) {
+        const text = message.content.trim();
+        if (!text) return;
+        try {
+            if (navigator?.clipboard?.writeText) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                const textarea = document.createElement("textarea");
+                textarea.value = text;
+                textarea.style.position = "fixed";
+                textarea.style.opacity = "0";
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                textarea.remove();
+            }
+            setCopiedId(message.id);
+            window.setTimeout(() => setCopiedId((prev) => (prev === message.id ? null : prev)), 1600);
+        } catch {
+            // ignore clipboard errors
+        }
+    }
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -139,7 +163,7 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
         <div className="fixed bottom-24 left-1/2 z-50 flex flex-col items-center gap-4 -translate-x-1/2 sm:bottom-6 sm:right-6 sm:left-auto sm:translate-x-0 sm:items-end">
             {/* Chat Window */}
             {open && (
-                <div className="w-[min(92vw,380px)] overflow-hidden rounded-[2rem] border border-emerald-100 bg-white shadow-2xl animate-[fade-up_0.2s_ease-out] flex flex-col max-h-[70vh] sm:max-h-none sm:w-[380px]">
+                <div className="w-[min(92vw,380px)] overflow-hidden rounded-[2rem] border border-emerald-100 bg-white shadow-2xl animate-[fade-up_0.2s_ease-out] flex flex-col max-h-[70vh] sm:max-h-[70vh] sm:w-[380px]">
                     {/* Header */}
                     <div className="flex items-center justify-between border-b border-emerald-50 bg-gradient-to-r from-emerald-50 to-white px-5 py-4">
                         <div className="flex items-center gap-3">
@@ -180,13 +204,31 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                                         : "bg-white text-gray-700 border border-emerald-50 rounded-tl-none"
                                         }`}
                                 >
-                                    {m.role === "list" ? (
-                                        <article className="prose prose-sm prose-emerald max-w-none prose-p:leading-relaxed prose-li:my-1 font-medium">
-                                            <ReactMarkdown>{m.content}</ReactMarkdown>
-                                        </article>
-                                    ) : (
-                                        m.content
-                                    )}
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="flex-1">
+                                            {m.role === "list" ? (
+                                                <article className="prose prose-sm prose-emerald max-w-none prose-p:leading-relaxed prose-li:my-1 font-medium">
+                                                    <ReactMarkdown>{m.content}</ReactMarkdown>
+                                                </article>
+                                            ) : (
+                                                m.content
+                                            )}
+                                        </div>
+                                        {m.role !== "user" && (
+                                            <button
+                                                type="button"
+                                                onClick={() => copyMessage(m)}
+                                                className="rounded-lg border border-emerald-100 bg-emerald-50 p-1.5 text-emerald-700 hover:bg-emerald-100"
+                                                aria-label={t("Kopyala")}
+                                            >
+                                                {copiedId === m.id ? (
+                                                    <Check className="h-3.5 w-3.5" />
+                                                ) : (
+                                                    <Copy className="h-3.5 w-3.5" />
+                                                )}
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         ))}

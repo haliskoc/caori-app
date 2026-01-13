@@ -19,8 +19,6 @@ export default function SettingsPage() {
     importLocalEntries,
     entries,
     addEntries,
-    theme,
-    updateTheme,
     reminder,
     updateReminder,
   } = useTracker();
@@ -91,12 +89,6 @@ export default function SettingsPage() {
       setIsCsvImporting(false);
     }
   }
-
-  const accentOptions = [
-    { value: "amber", label: t("Amber"), swatch: "bg-amber-500" },
-    { value: "teal", label: t("Teal"), swatch: "bg-teal-500" },
-    { value: "rose", label: t("Rose"), swatch: "bg-rose-500" },
-  ] as const;
 
   return (
     <div className="space-y-6">

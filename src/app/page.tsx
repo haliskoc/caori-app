@@ -1,12 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { ArrowRight, BarChart3, Calendar, Check, ChefHat, Lock, Sparkles, Activity, ShieldCheck } from "lucide-react";
+import { ArrowRight, BarChart3, Calendar, Check, ChefHat, Sparkles, Activity, ShieldCheck } from "lucide-react";
 import { t } from "@/lib/i18n";
 
 export default function LandingPage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const featureCards = [
     {
       title: t("Kişiye Özel Diyet Takvimi"),
@@ -34,30 +33,13 @@ export default function LandingPage() {
     },
   ];
 
-  const steps = [
-    {
-      title: t("Hedefleri Belirle"),
-      description: t(
-        "Kilo, enerji ve aktivite hedeflerini girin. Sistem size uygun aralığı hesaplar."
-      ),
-    },
-    {
-      title: t("Planını Üret"),
-      description: t("AI, 7 günlük takvimi ve öğün dağılımını otomatik oluşturur."),
-    },
-    {
-      title: t("Takip ve Revize"),
-      description: t("İlerleme grafikleri ile rotayı güncelleyin, plan kendini yeniler."),
-    },
-  ];
-
   return (
     <div className="min-h-screen text-ink font-sans bg-[#fffcf9]">
       <header className="sticky top-0 z-50 w-full border-b border-emerald-100/50 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
             <div className="h-9 w-9 overflow-hidden rounded-xl bg-white shadow-sm border border-emerald-100 p-1">
-              <img src="/logo.png" alt="Calmet" className="h-full w-full object-contain" />
+              <Image src="/logo.png" alt="Calmet" width={36} height={36} className="h-full w-full object-contain" />
             </div>
             <span className="text-xl font-black tracking-tight text-gray-900">
               Calmet
@@ -66,9 +48,6 @@ export default function LandingPage() {
           <nav className="hidden items-center gap-8 md:flex">
             <Link href="#features" className="text-sm font-bold text-gray-500 hover:text-emerald-600 transition-colors">
               {t("Özellikler")}
-            </Link>
-            <Link href="#steps" className="text-sm font-bold text-gray-500 hover:text-emerald-600 transition-colors">
-              {t("Nasıl Çalışır")}
             </Link>
             <Link href="/pricing" className="text-sm font-bold text-gray-500 hover:text-emerald-600 transition-colors">
               {t("Ücretlendirme")}
@@ -262,7 +241,7 @@ export default function LandingPage() {
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 overflow-hidden rounded-xl bg-white shadow-sm border border-emerald-100 p-1">
-                <img src="/logo.png" alt="Calmet" className="h-full w-full object-contain" />
+                <Image src="/logo.png" alt="Calmet" width={64} height={64} className="h-full w-full object-contain" />
               </div>
               <span className="text-xl font-black tracking-tight text-gray-900">
                 Calmet

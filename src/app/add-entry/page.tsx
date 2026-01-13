@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { Card } from "@/components/card";
@@ -760,7 +761,14 @@ export default function AddEntryPage() {
                     className="flex w-full items-center gap-3 rounded-lg bg-white p-2 text-left text-xs transition hover:bg-emerald-100/50"
                   >
                     {product.image_url && (
-                      <img src={product.image_url} alt="" className="h-8 w-8 rounded object-cover" />
+                      <Image
+                        src={product.image_url}
+                        alt=""
+                        width={32}
+                        height={32}
+                        className="h-8 w-8 rounded object-cover"
+                        unoptimized
+                      />
                     )}
                     <div className="flex-1 overflow-hidden">
                       <p className="truncate font-semibold text-emerald-900">{product.product_name}</p>
@@ -905,10 +913,13 @@ export default function AddEntryPage() {
                     className="flex flex-wrap items-center gap-3 rounded-xl border border-emerald-100 bg-white px-3 py-2 text-xs"
                   >
                     {item.imageUrl && (
-                      <img
+                      <Image
                         src={item.imageUrl}
                         alt=""
+                        width={36}
+                        height={36}
                         className="h-9 w-9 rounded object-cover"
+                        unoptimized
                       />
                     )}
                     <div className="min-w-[120px] flex-1">

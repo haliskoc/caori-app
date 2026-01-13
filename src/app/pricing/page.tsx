@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, X, Zap, Crown, Bot, ArrowRight, Star, Sparkles, ShieldCheck, Rocket } from "lucide-react";
+import { Check, X, Zap, Bot, ArrowRight, Star, Sparkles, ShieldCheck, Rocket } from "lucide-react";
 import { t } from "@/lib/i18n";
 
 export default function PricingPage() {

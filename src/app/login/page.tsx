@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Chrome, Mail, ArrowLeft, ShieldCheck, Sparkles } from "lucide-react";
 import { t } from "@/lib/i18n";
@@ -27,7 +28,7 @@ export default function LoginPage() {
                 <div className="text-center space-y-6">
                     <Link href="/" className="inline-flex items-center gap-4 transition-transform hover:scale-105">
                         <div className="h-14 w-14 overflow-hidden rounded-2xl bg-white shadow-xl border border-emerald-100 p-1.5 ring-4 ring-emerald-50">
-                            <img src="/logo.png" alt="Calmet" className="h-full w-full object-contain" />
+                            <Image src="/logo.png" alt="Calmet" width={56} height={56} className="h-full w-full object-contain" />
                         </div>
                         <div className="text-left">
                             <span className="text-2xl font-black tracking-tight text-gray-900 block">

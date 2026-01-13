@@ -2,11 +2,12 @@
 
 /* eslint-disable react-hooks/set-state-in-effect */
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { Bot, LogOut, Sparkles, User, Settings } from "lucide-react";
+import { LogOut, Sparkles } from "lucide-react";
 import { ChatAssistant } from "@/components/chat-assistant";
 import { CommandPalette } from "@/components/command-palette";
 import { OnboardingModal } from "@/components/onboarding-modal";
@@ -166,9 +167,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {/* Logo Section */}
           <Link href="/dashboard" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
             <div className="relative h-10 w-10 overflow-hidden rounded-xl shadow-md sm:h-12 sm:w-12 bg-white">
-              <img
+              <Image
                 src="/logo.png"
                 alt="Calmet Logo"
+                width={48}
+                height={48}
                 className="h-full w-full object-contain p-1"
               />
             </div>
@@ -204,7 +207,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Link href="/profile" className="group relative">
                   <div className="h-10 w-10 overflow-hidden rounded-full border-2 border-white shadow-lg ring-1 ring-emerald-50 transition-all group-hover:scale-110">
                     {user.picture ? (
-                      <img src={user.picture} alt={user.name || "User"} className="h-full w-full object-cover" />
+                      <Image
+                        src={user.picture}
+                        alt={user.name || "User"}
+                        width={56}
+                        height={56}
+                        className="h-full w-full object-cover"
+                        unoptimized
+                      />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-emerald-100 text-emerald-600 font-bold">
                         {user.name?.charAt(0)}

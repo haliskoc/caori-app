@@ -7,7 +7,6 @@ import {
   timestamp,
   bigint,
   jsonb,
-  pgEnum,
 } from "drizzle-orm/pg-core";
 
 // Removed enum to stay robust against db synchronization issues
