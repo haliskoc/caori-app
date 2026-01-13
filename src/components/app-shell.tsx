@@ -272,7 +272,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={item.href!}
                 className={`flex flex-col items-center gap-1 rounded-[1.5rem] px-2 py-3 text-[10px] font-bold transition-all ${active
                   ? "bg-emerald-600 text-white shadow-lg scale-105"
                   : "text-gray-400 hover:text-emerald-600 hover:bg-emerald-50/50"
