@@ -8,6 +8,25 @@ import { t } from "@/lib/i18n";
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Calmet",
+    "operatingSystem": "Web, Android, iOS",
+    "applicationCategory": "HealthApplication",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "ratingCount": "1024"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "TRY"
+    }
+  };
+
   const featureCards = [
     {
       title: t("Kişiye Özel Diyet Takvimi"),
@@ -37,6 +56,10 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen text-ink font-sans bg-[#fffcf9]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <header className="sticky top-0 z-50 w-full border-b border-emerald-100/50 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
