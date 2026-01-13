@@ -85,9 +85,9 @@ Kısıtlamalar:
 - Türkçe cevap ver.
         `.trim();
 
-        // Initialize Chat with gemini-pro (Stable)
+        // Initialize Chat with user-supported available model
         const model = genAI.getGenerativeModel({
-            model: "gemini-pro",
+            model: "gemini-2.0-flash-exp",
         });
 
         const chatHistory = history?.map((msg: any) => ({
