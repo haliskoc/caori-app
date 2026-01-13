@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@auth0/nextjs-auth0/client";
+import { ChatAssistant } from "@/components/chat-assistant";
 import { CommandPalette } from "@/components/command-palette";
 import { OnboardingModal } from "@/components/onboarding-modal";
 import { ReminderScheduler } from "@/components/reminder-scheduler";
@@ -201,6 +202,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </nav>
       <CommandPalette />
       <OnboardingModal isOpen={showOnboarding} onComplete={() => setShowOnboarding(false)} />
+      {user && <ChatAssistant />}
     </div>
   );
 }

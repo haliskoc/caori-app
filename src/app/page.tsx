@@ -90,7 +90,7 @@ export default function LandingPage() {
             <Link href="#templates" className="text-sm font-medium hover:text-amber-600 transition-colors">
               {t("Ogun Sablonlari")}
             </Link>
-            <Link href="#pricing" className="text-sm font-medium hover:text-amber-600 transition-colors">
+            <Link href="/pricing" className="text-sm font-medium hover:text-amber-600 transition-colors">
               {t("Ucretlendirme")}
             </Link>
           </nav>
@@ -132,7 +132,7 @@ export default function LandingPage() {
               <Link href="#templates" onClick={() => setMobileMenuOpen(false)}>
                 {t("Ogun Sablonlari")}
               </Link>
-              <Link href="#pricing" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/pricing" onClick={() => setMobileMenuOpen(false)}>
                 {t("Ucretlendirme")}
               </Link>
               <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
