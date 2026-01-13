@@ -17,7 +17,7 @@ export async function proxy(request: Request) {
 
   const session = await auth0.getSession(request as NextRequest);
   if (!session) {
-    return NextResponse.redirect(new URL("/auth/login", origin));
+    return NextResponse.redirect(new URL("/login", origin));
   }
 
   return authRes;

@@ -95,14 +95,14 @@ export default function LandingPage() {
             </Link>
           </nav>
           <div className="flex items-center gap-2">
-            <a href="/auth/login" className="hidden text-sm font-medium hover:text-amber-600 transition-colors sm:inline">
+            <Link href="/login" className="hidden text-sm font-medium hover:text-amber-600 transition-colors sm:inline">
               {t("Giris Yap")}
-            </a>
-            <a href="/auth/login?screen_hint=signup&returnTo=%2Fdashboard%3Fonboarding%3D1">
+            </Link>
+            <Link href="/login">
               <span className="rounded-xl bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-700">
                 {t("Kayit Ol")}
               </span>
-            </a>
+            </Link>
             <button
               type="button"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
@@ -135,9 +135,9 @@ export default function LandingPage() {
               <Link href="#pricing" onClick={() => setMobileMenuOpen(false)}>
                 {t("Ucretlendirme")}
               </Link>
-              <a href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
                 {t("Giris Yap")}
-              </a>
+              </Link>
             </nav>
           </div>
         )}
@@ -165,17 +165,17 @@ export default function LandingPage() {
                 )}
               </p>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <a href="/auth/login?screen_hint=signup&returnTo=%2Fdashboard%3Fonboarding%3D1" className="w-full sm:w-auto">
+                <Link href="/login" className="w-full sm:w-auto">
                   <span className="flex h-12 items-center justify-center gap-2 rounded-xl bg-gray-900 px-6 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-gray-800">
                     {t("Hemen Basla")}
                     <ArrowRight className="h-4 w-4" />
                   </span>
-                </a>
-                <a href="/auth/login" className="w-full sm:w-auto">
+                </Link>
+                <Link href="/login" className="w-full sm:w-auto">
                   <span className="flex h-12 items-center justify-center rounded-xl border border-gray-200 bg-white px-6 text-sm font-semibold text-gray-900 transition-all hover:-translate-y-0.5 hover:bg-gray-50">
                     {t("Giris Yap")}
                   </span>
-                </a>
+                </Link>
               </div>
               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                 <div className="rounded-full bg-white/70 px-4 py-2 shadow-sm">
@@ -403,12 +403,12 @@ export default function LandingPage() {
                   )}
                 </p>
               </div>
-              <a href="/auth/login?screen_hint=signup&returnTo=%2Fdashboard%3Fonboarding%3D1">
+              <Link href="/login">
                 <span className="inline-flex items-center gap-2 text-sm font-semibold text-amber-700 transition-colors hover:text-amber-800">
                   {t("Sablonlara Eris")}
                   <ArrowRight className="h-4 w-4" />
                 </span>
-              </a>
+              </Link>
             </div>
             <div className="mt-8 grid gap-6 md:grid-cols-3">
               {templateMeals.map((meal) => (
@@ -522,11 +522,11 @@ export default function LandingPage() {
                     {t("Temel grafikler")}
                   </li>
                 </ul>
-                <a href="/auth/login?screen_hint=signup&returnTo=%2Fdashboard%3Fonboarding%3D1">
+                <Link href="/login">
                   <span className="mt-8 inline-flex w-full items-center justify-center rounded-xl border border-gray-200 bg-white py-3 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50">
                     {t("Ucretsiz Basla")}
                   </span>
-                </a>
+                </Link>
               </div>
               <div className="relative rounded-3xl border border-amber-200 bg-amber-50 p-7 shadow-sm">
                 <div className="absolute -top-4 right-6 rounded-full bg-amber-600 px-3 py-1 text-xs font-semibold text-white shadow-sm">
@@ -553,11 +553,11 @@ export default function LandingPage() {
                     {t("Oncelikli destek")}
                   </li>
                 </ul>
-                <a href="/auth/login?screen_hint=signup&returnTo=%2Fdashboard%3Fonboarding%3D1">
+                <Link href="/login">
                   <span className="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-amber-600 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-700">
                     {t("Premiuma Gec")}
                   </span>
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -578,16 +578,16 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
-                  <a href="/auth/login">
+                  <Link href="/login">
                     <span className="inline-flex h-12 items-center justify-center rounded-xl border border-gray-200 bg-white px-6 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50">
                       {t("Giris Yap")}
                     </span>
-                  </a>
-                  <a href="/auth/login?screen_hint=signup&returnTo=%2Fdashboard%3Fonboarding%3D1">
+                  </Link>
+                  <Link href="/login">
                     <span className="inline-flex h-12 items-center justify-center rounded-xl bg-gray-900 px-6 text-sm font-semibold text-white transition-colors hover:bg-gray-800">
                       {t("Kayit Ol")}
                     </span>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

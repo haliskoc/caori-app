@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Card } from "@/components/card";
 import { useTracker } from "@/components/tracker-provider";
@@ -124,12 +125,12 @@ export default function SettingsPage() {
         <div className="flex flex-wrap gap-2">
           {/*
           {!isLoading && !user && (
-            <a
-              href="/auth/login"
+            <Link
+              href="/login"
               className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
             >
-              Giriş Yap
-            </a>
+              {t("Giriş Yap")}
+            </Link>
           )}
           {user && (
             <a
@@ -154,10 +155,10 @@ export default function SettingsPage() {
             </button>
           )}
         </div>
-      {importedCount !== null && (
-        <p className="text-xs text-muted">{t("{count} kayıt taşındı.", { count: importedCount })}</p>
-      )}
-    </Card>
+        {importedCount !== null && (
+          <p className="text-xs text-muted">{t("{count} kayıt taşındı.", { count: importedCount })}</p>
+        )}
+      </Card>
 
       <Card className="space-y-3">
         <div>
@@ -304,7 +305,7 @@ export default function SettingsPage() {
               carbsGoalG: Number(carbsGoal),
               fatGoalG: Number(fatGoal),
             });
-        }}
+          }}
           className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
         >
           {t("Hedefleri Güncelle")}
@@ -320,8 +321,8 @@ export default function SettingsPage() {
           <button
             onClick={() => updateTheme({ mode: "light" })}
             className={`rounded-2xl border px-4 py-3 text-left text-xs transition ${theme.mode === "light"
-                ? "border-amber-300 bg-amber-50 text-amber-700"
-                : "border-amber-100 bg-white text-muted hover:text-ink"
+              ? "border-amber-300 bg-amber-50 text-amber-700"
+              : "border-amber-100 bg-white text-muted hover:text-ink"
               }`}
           >
             <p className="text-sm font-semibold">{t("Aydınlık")}</p>
@@ -330,8 +331,8 @@ export default function SettingsPage() {
           <button
             onClick={() => updateTheme({ mode: "dim" })}
             className={`rounded-2xl border px-4 py-3 text-left text-xs transition ${theme.mode === "dim"
-                ? "border-amber-300 bg-amber-50 text-amber-700"
-                : "border-amber-100 bg-white text-muted hover:text-ink"
+              ? "border-amber-300 bg-amber-50 text-amber-700"
+              : "border-amber-100 bg-white text-muted hover:text-ink"
               }`}
           >
             <p className="text-sm font-semibold">{t("Dim")}</p>
@@ -344,8 +345,8 @@ export default function SettingsPage() {
               key={option.value}
               onClick={() => updateTheme({ accent: option.value })}
               className={`flex items-center gap-2 rounded-full border px-3 py-1 text-xs transition ${theme.accent === option.value
-                  ? "border-amber-400 bg-amber-50 text-amber-700"
-                  : "border-amber-100 bg-white text-muted hover:text-ink"
+                ? "border-amber-400 bg-amber-50 text-amber-700"
+                : "border-amber-100 bg-white text-muted hover:text-ink"
                 }`}
             >
               <span className={`h-2 w-2 rounded-full ${option.swatch}`} />

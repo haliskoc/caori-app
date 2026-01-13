@@ -92,9 +92,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     const detectStandalone = () =>
       Boolean(
         media?.matches ||
-          window.matchMedia?.("(display-mode: minimal-ui)")?.matches ||
-          (window.navigator as { standalone?: boolean }).standalone ||
-          document.referrer.startsWith("android-app://")
+        window.matchMedia?.("(display-mode: minimal-ui)")?.matches ||
+        (window.navigator as { standalone?: boolean }).standalone ||
+        document.referrer.startsWith("android-app://")
       );
     const initial = detectStandalone();
     applyMode(initial);
@@ -143,12 +143,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               {t("Kullanıcı kontrolü her zaman açık")}
             </div>
             {!isLoading && !user && (
-              <a
-                href="/auth/login"
+              <Link
+                href="/login"
                 className="rounded-full border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700 shadow-soft"
               >
                 {t("Giriş Yap")}
-              </a>
+              </Link>
             )}
             {user && (
               <div className="flex items-center gap-2">
@@ -188,8 +188,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 key={item.href}
                 href={item.href}
                 className={`flex flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-medium transition ${active
-                    ? "bg-accent text-white shadow-soft"
-                    : "text-muted hover:text-ink"
+                  ? "bg-accent text-white shadow-soft"
+                  : "text-muted hover:text-ink"
                   }`}
               >
                 <span className="text-base">{item.icon}</span>
