@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, BarChart3, Calendar, Check, ChefHat, Sparkles, Activity, ShieldCheck } from "lucide-react";
 import { t } from "@/lib/i18n";
 
 export default function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const featureCards = [
     {
       title: t("Kişiye Özel Diyet Takvimi"),
@@ -72,6 +74,34 @@ export default function LandingPage() {
           </div>
         </div>
       </header>
+
+      {mobileMenuOpen && (
+        <div className="md:hidden">
+          <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 pb-4">
+            <Link
+              href="#features"
+              className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-sm font-bold text-emerald-700"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t("Özellikler")}
+            </Link>
+            <Link
+              href="/pricing"
+              className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-sm font-bold text-emerald-700"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t("Ücretlendirme")}
+            </Link>
+            <Link
+              href="/login"
+              className="rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-200"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t("Giriş Yap")}
+            </Link>
+          </div>
+        </div>
+      )}
 
       <main>
         {/* Hero Section */}

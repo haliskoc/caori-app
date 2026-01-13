@@ -252,38 +252,52 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </main>
       </div>
 
-      <nav className="app-nav fixed bottom-6 left-1/2 z-20 w-[min(94vw,420px)] -translate-x-1/2 rounded-[2rem] border border-emerald-100/60 bg-white/80 px-2 py-2 shadow-2xl backdrop-blur-lg print-hidden">
-        <div className="grid grid-cols-5">
+      <nav className="app-nav fixed bottom-6 left-1/2 z-20 w-[min(94vw,420px)] -translate-x-1/2 rounded-[2.2rem] border border-emerald-100/60 bg-white/80 px-4 pb-3 pt-7 shadow-[0_20px_45px_rgba(16,185,129,0.2)] backdrop-blur-lg print-hidden">
+        <div className="relative flex items-center justify-between">
           {[
-            { href: "/dashboard", label: "Panel", icon: "⌂", type: "link" },
-            { href: "/add-entry", label: "Ekle", icon: "+", type: "link" },
-            { key: "chat", label: "AI", icon: "✺", type: "button" },
-            { href: "/profile", label: "Profil", icon: "◍", type: "link" },
-            { href: "/settings", label: "Ayar", icon: "⚙", type: "link" },
+            { href: "/dashboard", label: "Panel", icon: "⌂" },
+            { href: "/add-entry", label: "Ekle", icon: "+" },
           ].map((item) => {
-            if (item.type === "button") {
-              const active = chatOpen;
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  onClick={() => setChatOpen((prev) => !prev)}
-                  className={`flex flex-col items-center gap-1 rounded-[1.5rem] px-2 py-3 text-[10px] font-bold transition-all ${active
-                    ? "bg-emerald-600 text-white shadow-lg scale-105"
-                    : "text-gray-400 hover:text-emerald-600 hover:bg-emerald-50/50"
-                    }`}
-                >
-                  <span className="text-xl leading-none">{item.icon}</span>
-                  {t(item.label)}
-                </button>
-              );
-            }
             const active = pathname === item.href;
             return (
               <Link
                 key={item.href}
-                href={item.href!}
-                className={`flex flex-col items-center gap-1 rounded-[1.5rem] px-2 py-3 text-[10px] font-bold transition-all ${active
+                href={item.href}
+                className={`flex w-16 flex-col items-center gap-1 rounded-2xl px-2 py-2 text-[10px] font-bold transition-all ${active
+                  ? "bg-emerald-600 text-white shadow-lg scale-105"
+                  : "text-gray-400 hover:text-emerald-600 hover:bg-emerald-50/50"
+                  }`}
+              >
+                <span className="text-xl leading-none">{item.icon}</span>
+                {t(item.label)}
+              </Link>
+            );
+          })}
+
+          <button
+            type="button"
+            onClick={() => setChatOpen((prev) => !prev)}
+            aria-label={t("AI")}
+            className={`absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white shadow-xl transition-all ${chatOpen
+              ? "bg-emerald-600 text-white shadow-emerald-300"
+              : "bg-emerald-700 text-white shadow-emerald-200 hover:bg-emerald-800"
+              }`}
+          >
+            <span className="flex h-16 w-16 items-center justify-center text-2xl">✺</span>
+          </button>
+
+          <div className="w-16" aria-hidden="true" />
+
+          {[
+            { href: "/profile", label: "Profil", icon: "◍" },
+            { href: "/settings", label: "Ayar", icon: "⚙" },
+          ].map((item) => {
+            const active = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex w-16 flex-col items-center gap-1 rounded-2xl px-2 py-2 text-[10px] font-bold transition-all ${active
                   ? "bg-emerald-600 text-white shadow-lg scale-105"
                   : "text-gray-400 hover:text-emerald-600 hover:bg-emerald-50/50"
                   }`}
