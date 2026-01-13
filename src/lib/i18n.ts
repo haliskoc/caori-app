@@ -22,13 +22,21 @@ export function normalizeLocale(value?: string | null): Locale {
   const trimmed = value.trim();
   if (!trimmed) return defaultLocale;
   const lower = trimmed.toLowerCase();
+
   if (lower.startsWith("tr")) return "tr";
   if (lower.startsWith("en")) return "en";
+  if (lower.startsWith("es")) return "es";
+  if (lower.startsWith("fr")) return "fr";
+  if (lower.startsWith("ru")) return "ru";
+  if (lower.startsWith("pt")) return "pt";
+
   if (lower.includes("-")) {
     const base = lower.split("-")[0];
-    return base || defaultLocale;
+    const supported = ["en", "tr", "es", "fr", "ru", "pt"];
+    if (supported.includes(base)) return base;
   }
-  return lower;
+
+  return defaultLocale;
 }
 
 export function getLocale(): Locale {
@@ -53,14 +61,20 @@ export function applyLocaleToDocument(locale?: Locale) {
   if (typeof document === "undefined") return;
   const next = locale ?? getLocale();
   document.documentElement.lang = next;
-  document.documentElement.dir = next === "tr" ? "ltr" : "ltr";
+  document.documentElement.dir = "ltr";
 }
 
 export function getIntlLocale(locale?: Locale) {
   const next = normalizeLocale(locale ?? defaultLocale);
-  if (next === "tr") return "tr-TR";
-  if (next === "en") return "en-US";
-  return next;
+  switch (next) {
+    case "tr": return "tr-TR";
+    case "en": return "en-US";
+    case "es": return "es-ES";
+    case "fr": return "fr-FR";
+    case "ru": return "ru-RU";
+    case "pt": return "pt-PT";
+    default: return next;
+  }
 }
 
 function getValue(dictionary: Record<string, unknown>, key: string) {
@@ -111,7 +125,7 @@ export function t(
   const resolvedLocale = normalizeLocale(
     locale ?? (typeof window === "undefined" ? defaultLocale : getLocale())
   );
-  const dictionary = dictionaries[resolvedLocale] ?? dictionaries[defaultLocale];
+  const dictionary = dictionaries[resolvedLocale] ?? dictionaries[defaultLocale] ?? en;
   const value = getValue(dictionary, key);
   const template = typeof value === "string" ? value : key;
   if (!params) {
