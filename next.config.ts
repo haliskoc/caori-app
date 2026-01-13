@@ -1,10 +1,6 @@
 import type { NextConfig } from "next";
 
-const isMobileBuild = process.env.MOBILE_BUILD === "true";
-
 const nextConfig: NextConfig = {
-  // Only use static export for Capacitor mobile builds
-  ...(isMobileBuild && { output: "export" }),
   images: {
     unoptimized: true,
     remotePatterns: [

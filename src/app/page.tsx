@@ -268,7 +268,7 @@ export default function LandingPage() {
 
         {/* Footer CTA */}
         <section className="py-24 bg-gray-900 overflow-hidden relative">
-          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
           <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-emerald-500/10 blur-[100px]" />
 
           <div className="mx-auto max-w-6xl px-4 md:px-6 relative z-10 text-center">

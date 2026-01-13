@@ -5,19 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
-    "build:mobile": "./scripts/build-mobile.sh",
     "start": "next start",
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push",
-    "cap:android": "npx cap open android",
-    "cap:ios": "npx cap open ios"
+    "db:push": "drizzle-kit push"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.14.0",
-    "@capacitor/android": "^8.0.1",
-    "@capacitor/core": "^8.0.1",
-    "@capacitor/ios": "^8.0.1",
     "@google/generative-ai": "^0.24.1",
     "@neondatabase/serverless": "^1.0.2",
     "drizzle-orm": "^0.45.1",
@@ -32,7 +26,6 @@
     "recharts": "^3.6.0"
   },
   "devDependencies": {
-    "@capacitor/cli": "^8.0.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
