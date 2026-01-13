@@ -45,7 +45,7 @@ export default function PricingPage() {
             icon: <Zap className="h-6 w-6 text-amber-500" />,
             color: "amber",
             buttonText: "Pro'ya Yükselt",
-            buttonHref: "/login?plan=pro",
+            buttonHref: "/premium/activate?plan=pro",
             popular: true,
         },
         {
@@ -66,7 +66,7 @@ export default function PricingPage() {
             icon: <Bot className="h-6 w-6 text-rose-500" />,
             color: "rose",
             buttonText: "AI Gücünü Keşfet",
-            buttonHref: "/login?plan=ai_plus",
+            buttonHref: "/premium/activate?plan=ai_plus",
             popular: false,
         },
     ];
@@ -91,8 +91,8 @@ export default function PricingPage() {
                         <div
                             key={plan.id}
                             className={`relative flex flex-col rounded-3xl border p-8 shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${plan.popular
-                                    ? "border-amber-400 bg-white ring-4 ring-amber-400/20 scale-105 z-10"
-                                    : "border-gray-200 bg-white/60 backdrop-blur-lg hover:bg-white"
+                                ? "border-amber-400 bg-white ring-4 ring-amber-400/20 scale-105 z-10"
+                                : "border-gray-200 bg-white/60 backdrop-blur-lg hover:bg-white"
                                 }`}
                         >
                             {plan.popular && (
@@ -148,10 +148,10 @@ export default function PricingPage() {
                             <Link
                                 href={plan.buttonHref}
                                 className={`block w-full rounded-2xl py-4 text-center text-sm font-bold transition-all ${plan.popular
-                                        ? "bg-amber-600 text-white shadow-lg hover:bg-amber-700 hover:shadow-amber-500/30"
-                                        : plan.id === "ai_plus"
-                                            ? "bg-gray-900 text-white shadow-lg hover:bg-gray-800"
-                                            : "bg-amber-50 text-amber-900 hover:bg-amber-100"
+                                    ? "bg-amber-600 text-white shadow-lg hover:bg-amber-700 hover:shadow-amber-500/30"
+                                    : plan.id === "ai_plus"
+                                        ? "bg-gray-900 text-white shadow-lg hover:bg-gray-800"
+                                        : "bg-amber-50 text-amber-900 hover:bg-amber-100"
                                     }`}
                             >
                                 {plan.buttonText}
