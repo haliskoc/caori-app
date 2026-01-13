@@ -1,7 +1,15 @@
 import { getFoodByBarcodeAll, searchFoodAll } from "@/lib/food-sources";
 import { NextRequest, NextResponse } from "next/server";
+import { auth0 } from "@/lib/auth0";
+import { ensureUser } from "@/lib/db";
 
 export const GET = async (req: NextRequest) => {
+  const session = await auth0.getSession();
+  if (!session?.user?.sub) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  await ensureUser(session.user);
+
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q");
   const barcode = searchParams.get("barcode");

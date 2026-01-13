@@ -21,9 +21,17 @@ export async function POST(req: NextRequest) {
 
     try {
         const { message, history, locale } = await req.json();
+        const safeLocale = locale === "en" ? "en" : "tr";
+        const rawMessage = typeof message === "string" ? message.trim() : "";
+        const MAX_MESSAGE_CHARS = 800;
+        const MAX_HISTORY_MESSAGES = 10;
+        const MAX_HISTORY_CHARS = 600;
 
-        if (!message) {
+        if (!rawMessage) {
             return NextResponse.json({ error: "Message is required" }, { status: 400 });
+        }
+        if (rawMessage.length > MAX_MESSAGE_CHARS) {
+            return NextResponse.json({ error: "Message is too long" }, { status: 400 });
         }
 
         await ensureUser(session.user as any);
@@ -96,18 +104,35 @@ Sen **Calmet Sağlık ve Beslenme Takibi** uygulamasının resmi "Yapayı Zeka S
 - **Kısalık:** Bilgi dolu ama öz olsun. Boş laf kalabalığından kaçın.
 
 # DİL DESTEĞİ
-- Kullanıcının sistem dili: **${locale === 'tr' ? 'Türkçe' : 'English'}**. 
-- Sen de yanıtlarını **DAİMA ${locale === 'tr' ? 'Türkçe' : 'English'}** dilinde ver.
+- Kullanıcının sistem dili: **${safeLocale === 'tr' ? 'Türkçe' : 'English'}**. 
+- Sen de yanıtlarını **DAİMA ${safeLocale === 'tr' ? 'Türkçe' : 'English'}** dilinde ver.
         `.trim();
+
+        const normalizedHistory = Array.isArray(history)
+            ? history
+                .map((msg: any) => {
+                    const content = typeof msg?.content === "string" ? msg.content.trim() : "";
+                    if (!content) {
+                        return null;
+                    }
+                    const role =
+                        msg?.role === "list" || msg?.role === "model" || msg?.role === "assistant"
+                            ? "assistant"
+                            : "user";
+                    return {
+                        role,
+                        content: content.slice(0, MAX_HISTORY_CHARS),
+                    };
+                })
+                .filter(Boolean)
+                .slice(-MAX_HISTORY_MESSAGES)
+            : [];
 
         // Convert history to Groq format (user/assistant)
         const messages = [
             { role: "system", content: systemInstruction },
-            ...(history?.map((msg: any) => ({
-                role: msg.role === "list" || msg.role === "model" ? "assistant" : "user",
-                content: msg.content
-            })) || []),
-            { role: "user", content: message }
+            ...(normalizedHistory as any),
+            { role: "user", content: rawMessage }
         ];
 
         const chatCompletion = await groq.chat.completions.create({

@@ -2,32 +2,32 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, BarChart3, Calendar, Check, ChefHat, Lock } from "lucide-react";
+import { ArrowRight, BarChart3, Calendar, Check, ChefHat, Lock, Sparkles, Activity, ShieldCheck } from "lucide-react";
 import { t } from "@/lib/i18n";
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const featureCards = [
     {
-      title: t("Kisiye Ozel Diyet Takvimi"),
+      title: t("Kişiye Özel Diyet Takvimi"),
       description: t(
-        "Hedeflerinize, aliskanliklariniza ve gunluk programiniza gore otomatik olusan haftalik plan."
+        "Hedeflerinize, alışkanlıklarınıza ve günlük programınıza göre otomatik oluşan haftalık plan."
       ),
       icon: Calendar,
-      style: "bg-amber-50/70 border-amber-100 text-amber-600",
+      style: "bg-emerald-50/70 border-emerald-100 text-emerald-600",
     },
     {
-      title: t("Detayli Grafikler"),
+      title: t("Detaylı Grafikler"),
       description: t(
-        "Gunluk, haftalik ve aylik ilerlemeyi net goruntuleyin. Trendler ve sapmalar tek ekranda."
+        "Günlük, haftalık ve aylık ilerlemeyi net görüntüleyin. Trendler ve sapmalar tek ekranda."
       ),
       icon: BarChart3,
-      style: "bg-sky-50/70 border-sky-100 text-sky-600",
+      style: "bg-emerald-50/70 border-emerald-100 text-emerald-600",
     },
     {
-      title: t("Hazir Ogun Sablonlari"),
+      title: t("Hazır Öğün Şablonları"),
       description: t(
-        "Tek tek kalori girmeden, diyetisyen onayli sablonlardan ogununuzu secin."
+        "Tek tek kalori girmeden, diyetisyen onaylı şablonlardan öğününüzü seçin."
       ),
       icon: ChefHat,
       style: "bg-emerald-50/70 border-emerald-100 text-emerald-600",
@@ -38,574 +38,259 @@ export default function LandingPage() {
     {
       title: t("Hedefleri Belirle"),
       description: t(
-        "Kilo, enerji ve aktivite hedeflerini girin. Sistem size uygun araligi hesaplar."
+        "Kilo, enerji ve aktivite hedeflerini girin. Sistem size uygun aralığı hesaplar."
       ),
     },
     {
-      title: t("Planini Uret"),
-      description: t("AI, 7 gunluk takvimi ve ogun dagilimini otomatik olusturur."),
+      title: t("Planını Üret"),
+      description: t("AI, 7 günlük takvimi ve öğün dağılımını otomatik oluşturur."),
     },
     {
       title: t("Takip ve Revize"),
-      description: t("Ilerleme grafikleri ile rotayi guncelleyin, plan kendini yeniler."),
+      description: t("İlerleme grafikleri ile rotayı güncelleyin, plan kendini yeniler."),
     },
   ];
 
-  const templateMeals = [
-    {
-      name: t("Akdeniz Sabah"),
-      calories: t("420 kcal"),
-      macros: [t("Protein 28g"), t("Karb 45g"), t("Yag 14g")],
-    },
-    {
-      name: t("Dengeli Ofis"),
-      calories: t("560 kcal"),
-      macros: [t("Protein 35g"), t("Karb 60g"), t("Yag 18g")],
-    },
-    {
-      name: t("Fit Aksam"),
-      calories: t("480 kcal"),
-      macros: [t("Protein 40g"), t("Karb 30g"), t("Yag 16g")],
-    },
-  ];
   return (
-    <div className="min-h-screen text-ink font-sans">
-      <header className="sticky top-0 z-50 w-full border-b border-amber-100/70 bg-white/75 backdrop-blur-md">
+    <div className="min-h-screen text-ink font-sans bg-[#fffcf9]">
+      <header className="sticky top-0 z-50 w-full border-b border-emerald-100/50 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl font-bold tracking-tight text-amber-600 font-mono">
-              {t("Cal AI")}
+          <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
+            <div className="h-9 w-9 overflow-hidden rounded-xl bg-white shadow-sm border border-emerald-100 p-1">
+              <img src="/logo.png" alt="Calmet" className="h-full w-full object-contain" />
+            </div>
+            <span className="text-xl font-black tracking-tight text-gray-900">
+              Calmet
             </span>
           </Link>
-          <nav className="hidden items-center gap-6 md:flex">
-            <Link href="#features" className="text-sm font-medium hover:text-amber-600 transition-colors">
-              {t("Ozellikler")}
+          <nav className="hidden items-center gap-8 md:flex">
+            <Link href="#features" className="text-sm font-bold text-gray-500 hover:text-emerald-600 transition-colors">
+              {t("Özellikler")}
             </Link>
-            <Link href="#steps" className="text-sm font-medium hover:text-amber-600 transition-colors">
-              {t("Nasil Calisir")}
+            <Link href="#steps" className="text-sm font-bold text-gray-500 hover:text-emerald-600 transition-colors">
+              {t("Nasıl Çalışır")}
             </Link>
-            <Link href="#schedule" className="text-sm font-medium hover:text-amber-600 transition-colors">
-              {t("Takvim")}
-            </Link>
-            <Link href="#templates" className="text-sm font-medium hover:text-amber-600 transition-colors">
-              {t("Ogun Sablonlari")}
-            </Link>
-            <Link href="/pricing" className="text-sm font-medium hover:text-amber-600 transition-colors">
-              {t("Ucretlendirme")}
+            <Link href="/pricing" className="text-sm font-bold text-gray-500 hover:text-emerald-600 transition-colors">
+              {t("Ücretlendirme")}
             </Link>
           </nav>
-          <div className="flex items-center gap-2">
-            <Link href="/login" className="hidden text-sm font-medium hover:text-amber-600 transition-colors sm:inline">
-              {t("Giris Yap")}
+          <div className="flex items-center gap-4">
+            <Link href="/login" className="hidden text-sm font-bold text-gray-900 hover:text-emerald-600 transition-colors sm:inline">
+              {t("Giriş Yap")}
             </Link>
             <Link href="/login">
-              <span className="rounded-xl bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-700">
-                {t("Kayit Ol")}
+              <span className="rounded-2xl bg-emerald-600 px-6 py-2.5 text-sm font-black text-white shadow-lg shadow-emerald-200 transition-all hover:bg-gray-900 hover:shadow-gray-200 active:scale-95">
+                {t("Ücretsiz Başla")}
               </span>
             </Link>
             <button
               type="button"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs font-semibold text-amber-700 shadow-sm md:hidden"
-              aria-expanded={mobileMenuOpen}
-              aria-controls="mobile-menu"
+              className="rounded-xl border border-gray-100 bg-gray-50 p-2 text-gray-600 md:hidden"
             >
-              {t("Menü")}
+              <Activity className="h-5 w-5" />
             </button>
           </div>
         </div>
-        {mobileMenuOpen && (
-          <div
-            id="mobile-menu"
-            className="border-t border-amber-100/70 bg-white/90 md:hidden"
-          >
-            <nav className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 text-sm">
-              <Link href="#features" onClick={() => setMobileMenuOpen(false)}>
-                {t("Ozellikler")}
-              </Link>
-              <Link href="#steps" onClick={() => setMobileMenuOpen(false)}>
-                {t("Nasil Calisir")}
-              </Link>
-              <Link href="#schedule" onClick={() => setMobileMenuOpen(false)}>
-                {t("Takvim")}
-              </Link>
-              <Link href="#templates" onClick={() => setMobileMenuOpen(false)}>
-                {t("Ogun Sablonlari")}
-              </Link>
-              <Link href="/pricing" onClick={() => setMobileMenuOpen(false)}>
-                {t("Ucretlendirme")}
-              </Link>
-              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                {t("Giris Yap")}
-              </Link>
-            </nav>
-          </div>
-        )}
       </header>
 
       <main>
-        <section className="relative overflow-hidden">
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -left-24 top-10 h-64 w-64 rounded-full bg-amber-200/40 blur-3xl motion-safe:animate-[float_10s_ease-in-out_infinite]" />
-            <div className="absolute right-0 top-20 h-72 w-72 rounded-full bg-orange-200/40 blur-3xl motion-safe:animate-[float_12s_ease-in-out_infinite]" />
-            <div className="absolute bottom-0 left-1/3 h-56 w-56 rounded-full bg-rose-200/30 blur-3xl motion-safe:animate-[float_11s_ease-in-out_infinite]" />
+        {/* Hero Section */}
+        <section className="relative overflow-hidden pt-16 pb-24 lg:pt-32 lg:pb-40">
+          <div className="pointer-events-none absolute inset-0 -z-10">
+            <div className="absolute left-1/4 top-0 h-[500px] w-[500px] rounded-full bg-emerald-100/30 blur-[120px]" />
+            <div className="absolute right-1/4 bottom-0 h-[400px] w-[400px] rounded-full bg-emerald-100/20 blur-[100px]" />
           </div>
-          <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 md:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
-            <div className="relative z-10 space-y-8 motion-safe:animate-[fade-up_0.9s_ease-out]">
-              <div className="inline-flex items-center gap-2 rounded-full border border-amber-200/70 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">
-                {t("Yeni Nesil Takip Deneyimi")}
+
+          <div className="mx-auto max-w-6xl px-4 md:px-6">
+            <div className="text-center space-y-8 max-w-4xl mx-auto">
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-bold text-emerald-600 uppercase tracking-widest border border-emerald-100 shadow-sm animate-pulse">
+                <Sparkles className="h-3 w-3" />
+                {t("AI Destekli Sağlık Takibi")}
               </div>
-              <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-                {t("Kalori Takibinde")}
-                <span className="block text-amber-600">{t("Kisiye Ozel Akis")}</span>
+
+              <h1 className="text-5xl font-black tracking-tighter text-gray-900 sm:text-7xl lg:text-8xl leading-[0.9]">
+                {t("Vücudun için")} <br />
+                <span className="text-emerald-500">{t("En Akıllı Yol.")}</span>
               </h1>
-              <p className="max-w-xl text-lg text-gray-600">
-                {t(
-                  "Cal AI; diyet takvimi, ogun sablonlari ve net grafiklerle saglik hedeflerinizi tek merkezden yonetmenizi saglar. Giris veya kayit sonrasi uygulama tam erisime acilir."
-                )}
+
+              <p className="mx-auto max-w-2xl text-xl text-gray-500 font-medium leading-relaxed">
+                {t("Calmet; yapay zeka destekli diyet takvimi, öğün şablonları ve derinlemesine analizlerle sağlık hedeflerinize en kısa yoldan ulaşmanızı sağlar.")}
               </p>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Link href="/login" className="w-full sm:w-auto">
-                  <span className="flex h-12 items-center justify-center gap-2 rounded-xl bg-gray-900 px-6 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-gray-800">
-                    {t("Hemen Basla")}
-                    <ArrowRight className="h-4 w-4" />
+
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center justify-center pt-4">
+                <Link href="/login" className="group">
+                  <span className="flex h-14 items-center justify-center gap-3 rounded-[2rem] bg-gray-900 px-10 text-base font-black text-white shadow-2xl transition-all hover:-translate-y-1 hover:bg-emerald-600 active:scale-95">
+                    {t("Hemen Başla")}
+                    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </span>
                 </Link>
-                <Link href="/login" className="w-full sm:w-auto">
-                  <span className="flex h-12 items-center justify-center rounded-xl border border-gray-200 bg-white px-6 text-sm font-semibold text-gray-900 transition-all hover:-translate-y-0.5 hover:bg-gray-50">
-                    {t("Giris Yap")}
-                  </span>
-                </Link>
-              </div>
-              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                <div className="rounded-full bg-white/70 px-4 py-2 shadow-sm">
-                  {t("7 gunluk plan onizlemesi")}
-                </div>
-                <div className="rounded-full bg-white/70 px-4 py-2 shadow-sm">
-                  {t("Hazir ogun sablonlari")}
-                </div>
-                <div className="rounded-full bg-white/70 px-4 py-2 shadow-sm">
-                  {t("Grafiklerle ilerleme")}
-                </div>
-              </div>
-            </div>
-
-            <div className="relative z-10 space-y-6">
-              <div className="rounded-3xl border border-amber-100 bg-white/90 p-6 shadow-[0_18px_50px_rgba(39,24,12,0.12)] motion-safe:animate-[fade-up_1s_ease-out]">
-                <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
-                  <span>{t("Bugunun Ozeti")}</span>
-                  <span className="rounded-full bg-amber-50 px-3 py-1 text-xs text-amber-700">
-                    {t("Hedefe 82%")}
-                  </span>
-                </div>
-                <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                  <div className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3">
-                    <p className="text-xs text-gray-500">{t("Kalori")}</p>
-                    <p className="text-lg font-bold text-gray-900">1.540</p>
-                    <p className="text-xs text-amber-600">{t("+120 buffer")}</p>
-                  </div>
-                  <div className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3">
-                    <p className="text-xs text-gray-500">{t("Protein")}</p>
-                    <p className="text-lg font-bold text-gray-900">{t("98g")}</p>
-                    <p className="text-xs text-emerald-600">{t("tamamlandi")}</p>
-                  </div>
-                  <div className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3">
-                    <p className="text-xs text-gray-500">{t("Su")}</p>
-                    <p className="text-lg font-bold text-gray-900">{t("1.8L")}</p>
-                    <p className="text-xs text-sky-600">{t("hedefe yakin")}</p>
-                  </div>
-                </div>
-                <div className="mt-6 rounded-2xl border border-amber-100 bg-amber-50 px-4 py-4">
-                  <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
-                    <span>{t("Ogun Akisi")}</span>
-                    <span className="text-xs text-amber-700">{t("Bugun")}</span>
-                  </div>
-                  <div className="mt-4 grid gap-3 text-sm text-gray-600">
-                    <div className="flex items-center justify-between">
-                      <span>{t("Sabah")}</span>
-                      <span className="font-semibold text-gray-900">{t("420 kcal")}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>{t("Ogle")}</span>
-                      <span className="font-semibold text-gray-900">{t("560 kcal")}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>{t("Aksam")}</span>
-                      <span className="font-semibold text-gray-900">{t("480 kcal")}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-3xl border border-gray-100 bg-white/80 p-5 text-sm text-gray-600 shadow-sm motion-safe:animate-[fade-up_1.1s_ease-out]">
-                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
-                  {t("Program Odakli")}
-                </div>
-                <p className="mt-2 text-base font-semibold text-gray-900">
-                  {t(
-                    "Kullanici girisinden sonra tum moduller aktif olur: takvim, ogun sablonlari ve grafikler tek panelde."
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="features"
-          className="relative py-20 motion-safe:animate-[fade-up_0.9s_ease-out]"
-        >
-          <div className="mx-auto max-w-6xl px-4 md:px-6">
-            <div className="mb-12 max-w-2xl">
-              <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                {t("Tanitici Giris Deneyimi")}
-              </h2>
-              <p className="mt-4 text-gray-600">
-                {t(
-                  "Istatistik ekranina gitmeden once, uygulamanin nasil calistigini ve size nasil yardim edecegini net bir sekilde gosteriyoruz."
-                )}
-              </p>
-            </div>
-            <div className="grid gap-6 md:grid-cols-3">
-              {featureCards.map((feature) => {
-                const Icon = feature.icon;
-                return (
-                  <div
-                    key={feature.title}
-                    className="group rounded-3xl border border-gray-100 bg-white/80 p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
-                  >
-                    <div
-                      className={`mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl border ${feature.style}`}
-                    >
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900">{feature.title}</h3>
-                    <p className="mt-3 text-sm text-gray-600">{feature.description}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        <section id="steps" className="py-20 motion-safe:animate-[fade-up_0.9s_ease-out]">
-          <div className="mx-auto max-w-6xl px-4 md:px-6">
-            <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
-                  {t("Adim Adim")}
-                </div>
-                <h2 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                  {t("Plani Baslat, Adim Adim Ilerle")}
-                </h2>
-                <p className="mt-4 text-gray-600">
-                  {t(
-                    "Kullanicilar giris yaptiginda ilk haftalik plan otomatik kurulur. Plan, her gunun verisine gore kendini gunceller."
-                  )}
-                </p>
-                <div className="mt-8 flex items-center gap-3 text-sm text-gray-600">
-                  <Lock className="h-4 w-4 text-amber-600" />
-                  {t("Veriler sifreli sekilde saklanir ve sadece sizin panelinizde gorunur.")}
-                </div>
-              </div>
-              <div className="space-y-4">
-                {steps.map((step, index) => (
-                  <div
-                    key={step.title}
-                    className="flex items-start gap-4 rounded-2xl border border-gray-100 bg-white/80 p-5 shadow-sm"
-                  >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-600 text-sm font-semibold text-white">
-                      {index + 1}
-                    </div>
-                    <div>
-                      <h3 className="text-base font-semibold text-gray-900">{step.title}</h3>
-                      <p className="mt-1 text-sm text-gray-600">{step.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="schedule" className="py-20 motion-safe:animate-[fade-up_0.9s_ease-out]">
-          <div className="mx-auto grid max-w-6xl gap-10 px-4 md:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                {t("Kisiye Ozel Diyet Takvimi")}
-              </h2>
-              <p className="mt-4 text-gray-600">
-                {t(
-                  "Haftalik takvim, hedeflerinize gore otomatik dolar. Ogun dagilimlari ve kalori dengesini gorebilirsiniz. Isterseniz tek dokunusla alternatif ogunlerle degistirin."
-                )}
-              </p>
-              <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-gray-100 bg-white/80 p-4 shadow-sm">
-                  <p className="text-xs uppercase tracking-[0.2em] text-gray-400">{t("Pazartesi")}</p>
-                  <p className="mt-2 text-sm font-semibold text-gray-900">{t("Akdeniz Sabah")}</p>
-                  <p className="text-xs text-gray-500">{t("420 kcal")}</p>
-                </div>
-                <div className="rounded-2xl border border-gray-100 bg-white/80 p-4 shadow-sm">
-                  <p className="text-xs uppercase tracking-[0.2em] text-gray-400">{t("Sali")}</p>
-                  <p className="mt-2 text-sm font-semibold text-gray-900">{t("Dengeli Ofis")}</p>
-                  <p className="text-xs text-gray-500">{t("560 kcal")}</p>
-                </div>
-                <div className="rounded-2xl border border-gray-100 bg-white/80 p-4 shadow-sm">
-                  <p className="text-xs uppercase tracking-[0.2em] text-gray-400">{t("Carsamba")}</p>
-                  <p className="mt-2 text-sm font-semibold text-gray-900">{t("Fit Aksam")}</p>
-                  <p className="text-xs text-gray-500">{t("480 kcal")}</p>
-                </div>
-                <div className="rounded-2xl border border-gray-100 bg-white/80 p-4 shadow-sm">
-                  <p className="text-xs uppercase tracking-[0.2em] text-gray-400">{t("Persembe")}</p>
-                  <p className="mt-2 text-sm font-semibold text-gray-900">{t("Protein Dengesi")}</p>
-                  <p className="text-xs text-gray-500">{t("510 kcal")}</p>
-                </div>
-              </div>
-            </div>
-            <div className="rounded-3xl border border-amber-100 bg-white/90 p-6 shadow-[0_18px_50px_rgba(39,24,12,0.12)]">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">{t("Haftalik Akis")}</h3>
-                <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
-                  {t("7 Gun")}
-                </span>
-              </div>
-              <div className="mt-6 space-y-3 text-sm">
-                {["Pzt", "Sal", "Car", "Per", "Cum", "Cmt", "Paz"].map((day, index) => (
-                  <div key={day} className="flex items-center gap-3">
-                    <span className="w-10 text-xs font-semibold text-gray-400">{t(day)}</span>
-                    <div className="h-2 flex-1 rounded-full bg-gray-100">
-                      <div
-                        className="h-2 rounded-full bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400"
-                        style={{ width: `${70 + index * 3}%` }}
-                      />
-                    </div>
-                    <span className="text-xs font-semibold text-gray-600">{1500 + index * 60} kcal</span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-6 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-4 text-xs text-gray-600">
-                {t("Takvim, aktivite yogunluguna gore otomatik kalori araligini ayarlar.")}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="templates" className="py-20 motion-safe:animate-[fade-up_0.9s_ease-out]">
-          <div className="mx-auto max-w-6xl px-4 md:px-6">
-            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-              <div>
-                <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                  {t("Hazir Ogun Sablonlari")}
-                </h2>
-                <p className="mt-3 max-w-xl text-gray-600">
-                  {t(
-                    "Ogun secimi tek bir tik ile. Tum makrolar otomatik hesaplanir, tek tek giris yok."
-                  )}
-                </p>
-              </div>
-              <Link href="/login">
-                <span className="inline-flex items-center gap-2 text-sm font-semibold text-amber-700 transition-colors hover:text-amber-800">
-                  {t("Sablonlara Eris")}
-                  <ArrowRight className="h-4 w-4" />
-                </span>
-              </Link>
-            </div>
-            <div className="mt-8 grid gap-6 md:grid-cols-3">
-              {templateMeals.map((meal) => (
-                <div
-                  key={meal.name}
-                  className="rounded-3xl border border-gray-100 bg-white/80 p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
-                >
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900">{meal.name}</h3>
-                    <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
-                      {meal.calories}
-                    </span>
-                  </div>
-                  <ul className="mt-4 space-y-2 text-sm text-gray-600">
-                    {meal.macros.map((macro) => (
-                      <li key={macro} className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-amber-600" />
-                        {macro}
-                      </li>
-                    ))}
-                  </ul>
-                  <button className="mt-6 w-full rounded-xl border border-gray-200 bg-white py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50">
-                    {t("Ogunu Ekle")}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="py-20 motion-safe:animate-[fade-up_0.9s_ease-out]">
-          <div className="mx-auto max-w-6xl px-4 md:px-6">
-            <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-              <div className="rounded-3xl border border-gray-100 bg-white/80 p-6 shadow-sm">
-                <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
-                  <span>{t("Grafik Onizleme")}</span>
-                  <span className="text-xs text-gray-400">{t("Son 4 Hafta")}</span>
-                </div>
-                <div className="mt-6 grid grid-cols-4 items-end gap-2 sm:grid-cols-7 sm:gap-3">
-                  {[40, 55, 62, 50, 75, 80, 68].map((value, index) => (
-                    <div key={index} className="flex flex-col items-center gap-2">
-                      <div
-                        className="w-3 rounded-full bg-gradient-to-t from-amber-400 via-orange-400 to-rose-400 sm:w-4"
-                        style={{ height: `${value}px` }}
-                      />
-                      <span className="text-[10px] text-gray-400">
-                        <span className="sm:hidden">{t("H{value}", { value: index + 1 })}</span>
-                        <span className="hidden sm:inline">{t("Hafta {value}", { value: index + 1 })}</span>
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-6 rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-amber-700">
-                  {t("Ilerlemeniz stabil. Son hafta hedefinize %94 uyum sagladiniz.")}
-                </div>
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                  {t("Grafiklerle Net Gorunum")}
-                </h2>
-                <p className="mt-4 text-gray-600">
-                  {t(
-                    "Tum veriler tek panelde. Kalori dengesini, makro dagilimini ve hedef ilerlemesini aninda takip edin."
-                  )}
-                </p>
-                <div className="mt-6 space-y-3 text-sm text-gray-600">
-                  <div className="flex items-center gap-3">
-                    <BarChart3 className="h-4 w-4 text-amber-600" />
-                    {t("Hafta bazli trend analizi ve sapma uyarilari.")}
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Calendar className="h-4 w-4 text-amber-600" />
-                    {t("Takvim uzerinde gunluk ogun dengesi.")}
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <ChefHat className="h-4 w-4 text-amber-600" />
-                    {t("Ogun sablonlarinin performans karsilastirmasi.")}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="pricing" className="py-20 motion-safe:animate-[fade-up_0.9s_ease-out]">
-          <div className="mx-auto max-w-6xl px-4 md:px-6">
-            <div className="mb-12 max-w-2xl">
-              <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                {t("Ucretlendirme")}
-              </h2>
-              <p className="mt-4 text-gray-600">
-                {t("Baslangic icin ucretsiz plan, daha derin analiz icin premium.")}
-              </p>
-            </div>
-            <div className="grid gap-8 md:grid-cols-2">
-              <div className="rounded-3xl border border-gray-200 bg-white/80 p-7 shadow-sm">
-                <div className="text-sm font-semibold text-gray-500">{t("Baslangic")}</div>
-                <div className="mt-2 text-3xl font-bold text-gray-900">{t("Ucretsiz")}</div>
-                <p className="mt-2 text-sm text-gray-500">{t("Temel takvim ve ogun takip akisi.")}</p>
-                <ul className="mt-6 space-y-3 text-sm text-gray-600">
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-amber-600" />
-                    {t("Haftalik plan onizleme")}
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-amber-600" />
-                    {t("Ogun sablonlari")}
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-amber-600" />
-                    {t("Temel grafikler")}
-                  </li>
-                </ul>
-                <Link href="/login">
-                  <span className="mt-8 inline-flex w-full items-center justify-center rounded-xl border border-gray-200 bg-white py-3 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50">
-                    {t("Ucretsiz Basla")}
+                <Link href="#features">
+                  <span className="flex h-14 items-center justify-center rounded-[2rem] border-2 border-gray-100 bg-white px-10 text-base font-black text-gray-900 transition-all hover:bg-gray-50 active:scale-95">
+                    {t("Keşfet")}
                   </span>
                 </Link>
               </div>
-              <div className="relative rounded-3xl border border-amber-200 bg-amber-50 p-7 shadow-sm">
-                <div className="absolute -top-4 right-6 rounded-full bg-amber-600 px-3 py-1 text-xs font-semibold text-white shadow-sm">
-                  {t("Onerilen")}
-                </div>
-                <div className="text-sm font-semibold text-amber-700">{t("Premium")}</div>
-                <div className="mt-2 text-3xl font-bold text-gray-900">{t("₺49 / ay")}</div>
-                <p className="mt-2 text-sm text-gray-600">{t("Kisiye ozel akislarda tam kontrol.")}</p>
-                <ul className="mt-6 space-y-3 text-sm text-gray-700">
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-amber-600" />
-                    {t("Kisiye ozel diyet takvimi")}
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-amber-600" />
-                    {t("Gelismis grafikler ve analiz")}
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-amber-600" />
-                    {t("Sinirsiz kayit gecmisi")}
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-amber-600" />
-                    {t("Oncelikli destek")}
-                  </li>
-                </ul>
-                <Link href="/login">
-                  <span className="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-amber-600 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-700">
-                    {t("Premiuma Gec")}
-                  </span>
-                </Link>
+
+              <div className="flex flex-wrap items-center justify-center gap-8 pt-12 grayscale opacity-50">
+                <span className="text-sm font-black uppercase tracking-widest text-gray-400">NutriCheck Approved</span>
+                <span className="text-sm font-black uppercase tracking-widest text-gray-400">HealthDash Verified</span>
+                <span className="text-sm font-black uppercase tracking-widest text-gray-400">PureFit 2026</span>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="py-20 motion-safe:animate-[fade-up_0.9s_ease-out]">
+        {/* Dashboard Preview Section */}
+        <section className="py-24 bg-white relative">
           <div className="mx-auto max-w-6xl px-4 md:px-6">
-            <div className="rounded-3xl border border-gray-100 bg-white/80 p-10 shadow-sm">
-              <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-                <div>
-                  <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                    {t("Hemen Giris Yap, Akisi Baslat")}
+            <div className="rounded-[3rem] border border-gray-100 bg-[#fffcf9] p-4 lg:p-8 shadow-2xl relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+              <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
+                <div className="space-y-8">
+                  <h2 className="text-4xl font-black text-gray-900 leading-tight">
+                    {t("Her Şey Tek Bir")} <br />
+                    <span className="text-emerald-500">{t("Akıllı Panelde.")}</span>
                   </h2>
-                  <p className="mt-4 text-gray-600">
-                    {t(
-                      "Giris yaptiginizda size ozel plan otomatik baslar. Isteginize gore ogun sablonlarini ve takvimi duzenleyebilirsiniz."
-                    )}
+                  <p className="text-lg text-gray-500 font-medium">
+                    {t("Kalori alımı, su tüketimi ve aktivite verileriniz anlık olarak senkronize edilir. Yapay zeka, eksiklerinizi tespit eder ve gün içinde sizi uyarır.")}
                   </p>
+
+                  <div className="space-y-4">
+                    {[
+                      { icon: Check, text: t("Otomatik Kalori Hesaplama"), color: "emerald" },
+                      { icon: Activity, text: t("7 Günlük İlerleme Analizi"), color: "emerald" },
+                      { icon: ShieldCheck, text: t("Kişisel Veri Güvenliği"), color: "emerald" }
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex items-center gap-3">
+                        <div className="h-6 w-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                          <item.icon className="h-3.5 w-3.5 stroke-[3px]" />
+                        </div>
+                        <span className="font-bold text-gray-700">{item.text}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
-                  <Link href="/login">
-                    <span className="inline-flex h-12 items-center justify-center rounded-xl border border-gray-200 bg-white px-6 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50">
-                      {t("Giris Yap")}
-                    </span>
-                  </Link>
-                  <Link href="/login">
-                    <span className="inline-flex h-12 items-center justify-center rounded-xl bg-gray-900 px-6 text-sm font-semibold text-white transition-colors hover:bg-gray-800">
-                      {t("Kayit Ol")}
-                    </span>
-                  </Link>
+
+                <div className="relative">
+                  <div className="rounded-[2.5rem] border border-emerald-100 bg-white p-8 shadow-2xl shadow-emerald-100/50">
+                    <div className="flex items-center justify-between mb-8">
+                      <span className="text-sm font-black uppercase tracking-widest text-gray-400">{t("Bugünkü Özet")}</span>
+                      <div className="h-2 w-32 rounded-full bg-gray-100 overflow-hidden">
+                        <div className="h-full w-3/4 bg-emerald-500 rounded-full" />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mb-8">
+                      <div className="p-5 rounded-3xl bg-emerald-50 border border-emerald-100">
+                        <p className="text-xs font-bold text-emerald-600 mb-1">{t("Kalori")}</p>
+                        <p className="text-3xl font-black text-gray-900">1,842</p>
+                      </div>
+                      <div className="p-5 rounded-3xl bg-emerald-50 border border-emerald-100">
+                        <p className="text-xs font-bold text-emerald-600 mb-1">{t("Su")}</p>
+                        <p className="text-3xl font-black text-gray-900">2.4L</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="h-12 w-full rounded-2xl bg-gray-50 border border-gray-100" />
+                      <div className="h-12 w-full rounded-2xl bg-gray-50 border border-gray-100 opacity-60" />
+                      <div className="h-12 w-full rounded-2xl bg-gray-50 border border-gray-100 opacity-30" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Features Grid */}
+        <section id="features" className="py-32">
+          <div className="mx-auto max-w-6xl px-4 md:px-6 text-center mb-20 space-y-4">
+            <h2 className="text-4xl font-black text-gray-900 sm:text-5xl">
+              {t("Neden Calmet?")}
+            </h2>
+            <p className="text-gray-500 font-medium max-w-2xl mx-auto">
+              {t("Basit bir takip uygulamasından çok daha fazlası. Bilimsel veriler ve modern teknolojiyi harmanlıyoruz.")}
+            </p>
+          </div>
+          <div className="mx-auto max-w-6xl px-4 md:px-6 grid gap-8 md:grid-cols-3">
+            {featureCards.map((feature, idx) => {
+              const Icon = feature.icon;
+              return (
+                <div
+                  key={idx}
+                  className="group rounded-[2.5rem] bg-white border border-gray-100 p-10 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:border-emerald-200 transition-all duration-500 flex flex-col items-center text-center"
+                >
+                  <div className="mb-8 p-6 rounded-3xl bg-emerald-50 text-emerald-600 transition-transform group-hover:scale-110 duration-500">
+                    <Icon className="h-8 w-8" />
+                  </div>
+                  <h3 className="text-xl font-black text-gray-900 mb-4">{feature.title}</h3>
+                  <p className="text-gray-500 font-bold leading-relaxed">{feature.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Footer CTA */}
+        <section className="py-24 bg-gray-900 overflow-hidden relative">
+          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+          <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-emerald-500/10 blur-[100px]" />
+
+          <div className="mx-auto max-w-6xl px-4 md:px-6 relative z-10 text-center">
+            <h2 className="text-4xl font-black text-white sm:text-6xl mb-8 leading-tight">
+              {t("Daha İyi Bir Sen İçin")} <br />
+              <span className="text-emerald-400">{t("Bugün İlk Adımı At.")}</span>
+            </h2>
+            <Link href="/login">
+              <span className="inline-flex h-16 items-center justify-center gap-3 rounded-[2rem] bg-white px-12 text-lg font-black text-gray-900 shadow-2xl transition-all hover:bg-emerald-400 hover:scale-105 active:scale-95">
+                {t("Ücretsiz Hesabını Oluştur")}
+                <ArrowRight className="h-5 w-5" />
+              </span>
+            </Link>
+            <p className="mt-8 text-gray-400 font-bold">
+              {t("Kredi kartı gerekmez. Saniyeler içinde başla.")}
+            </p>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-gray-100 bg-white/70 py-12">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-4 md:flex-row md:px-6">
-          <p className="text-sm text-gray-500">{t("© 2026 Cal AI. Tum haklari saklidir.")}</p>
-          <div className="flex gap-6 text-sm text-gray-500">
-            <Link href="#" className="hover:text-gray-900">
-              {t("Gizlilik")}
-            </Link>
-            <Link href="#" className="hover:text-gray-900">
-              {t("Kullanim Sartlari")}
-            </Link>
+      <footer className="py-20 border-t border-gray-100 bg-white">
+        <div className="mx-auto max-w-6xl px-4 md:px-6 grid gap-12 sm:grid-cols-2 lg:grid-cols-4 items-start">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 overflow-hidden rounded-xl bg-white shadow-sm border border-emerald-100 p-1">
+                <img src="/logo.png" alt="Calmet" className="h-full w-full object-contain" />
+              </div>
+              <span className="text-xl font-black tracking-tight text-gray-900">
+                Calmet
+              </span>
+            </div>
+            <p className="text-sm font-bold text-gray-400 leading-relaxed">
+              {t("Modern ve akıllı sağlık takip asistanınız. 2026 Calmet App Inc.")}
+            </p>
           </div>
+
+          {[
+            { title: t("Ürün"), links: [t("Özellikler"), t("Ücretlendirme"), t("Yol Haritası")] },
+            { title: t("Destek"), links: [t("Yardım Merkezi"), t("Sıkça Sorulanlar"), t("İletişim")] },
+            { title: t("Yasal"), links: [t("Gizlilik Politikası"), t("Kullanım Şartları"), t("KVKK")] }
+          ].map((col, idx) => (
+            <div key={idx} className="space-y-6">
+              <h4 className="text-sm font-black uppercase tracking-widest text-gray-900">{col.title}</h4>
+              <ul className="space-y-4">
+                {col.links.map((link, lIdx) => (
+                  <li key={lIdx}>
+                    <Link href="#" className="text-sm font-bold text-gray-500 hover:text-emerald-600 transition-colors">
+                      {link}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </footer>
     </div>

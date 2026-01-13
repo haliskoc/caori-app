@@ -328,8 +328,8 @@ export default function ReportPage() {
             th { background: #f7f4f0; }
             .chart img { max-width: 720px; width: 100%; height: auto; border: 1px solid #eee; }
             .cover-page { text-align: center; padding: 40px; page-break-after: always; }
-            .cover-title { font-size: 36px; font-weight: bold; color: #ff7a00; margin-bottom: 20px; }
-            .cover-score { font-size: 48px; font-weight: bold; color: #ff7a00; margin: 20px 0; }
+            .cover-title { font-size: 36px; font-weight: bold; color: #10b981; margin-bottom: 20px; }
+            .cover-score { font-size: 48px; font-weight: bold; color: #10b981; margin: 20px 0; }
             .stats-grid { display: flex; justify-content: center; gap: 40px; margin: 30px 0; }
             .stat-item { text-align: center; }
             .stat-value { font-size: 24px; font-weight: bold; }
@@ -341,7 +341,7 @@ export default function ReportPage() {
       --muted: #6b7280;
       --line: #e5e7eb;
       --paper: #ffffff;
-      --accent: #ff7a00;
+      --accent: #10b981;
     }
 
     body {
@@ -818,7 +818,7 @@ export default function ReportPage() {
     .cover-logo {
       width: 120px;
       height: 120px;
-      background: #ff7a00;
+      background: #10b981;
       border-radius: 30px;
       display: flex;
       align-items: center;
@@ -835,8 +835,8 @@ export default function ReportPage() {
     }
     
     .report-badge {
-      background: #fff0e0;
-      color: #ff7a00;
+      background: #ecfdf5;
+      color: #10b981;
       padding: 6px 16px;
       border-radius: 100px;
       font-size: 13px;
@@ -870,7 +870,7 @@ export default function ReportPage() {
       width: 240px;
       height: 240px;
       border-radius: 50%;
-      border: 12px solid #ff7a00;
+      border: 12px solid #10b981;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -882,7 +882,7 @@ export default function ReportPage() {
     .score-value {
       font-size: 80px;
       font-weight: 900;
-      color: #ff7a00;
+      color: #10b981;
       line-height: 1;
     }
     
@@ -929,7 +929,7 @@ export default function ReportPage() {
     
     .page-header-logo {
       font-weight: 800;
-      color: #ff7a00;
+      color: #10b981;
       font-size: 18px;
     }
     
@@ -968,7 +968,7 @@ export default function ReportPage() {
       content: "";
       width: 10px;
       height: 10px;
-      background: #ff7a00;
+      background: #10b981;
       border-radius: 999px;
       opacity: 0.75;
     }
@@ -994,7 +994,7 @@ export default function ReportPage() {
       top: -20px;
       right: 10px;
       font-size: 120px;
-      color: #ff7a00;
+      color: #10b981;
       opacity: 0.05;
       font-family: serif;
     }
@@ -1141,7 +1141,7 @@ export default function ReportPage() {
     
     .progress-fill {
       height: 100%;
-      background: #ff7a00;
+      background: #10b981;
     }
     
     .pill {
@@ -1152,7 +1152,7 @@ export default function ReportPage() {
       font-weight: 700;
     }
     
-    .pill-accent { background: #fff0e0; color: #ff7a00; }
+    .pill-accent { background: #ecfdf5; color: #10b981; }
     
     .chart-container {
       background: #ffffff;
@@ -1296,7 +1296,7 @@ export default function ReportPage() {
             (day) => `
           <div class="stat-card" style="text-align: center; background: #fdfaf5">
             <div class="stat-card-label">${formatShortDate(day.date)}</div>
-            <div class="stat-card-value" style="justify-content: center; color: #ff7a00">%${day.score
+            <div class="stat-card-value" style="justify-content: center; color: #10b981">%${day.score
               }</div>
             <div style="font-size: 10px; color: #999; margin-top: 8px;">${formatNumber(
                 day.caloriesIn
@@ -1324,7 +1324,7 @@ export default function ReportPage() {
             (food) => `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f6f6f6;">
               <div style="font-size: 14px; font-weight: 600;">${escapeHtml(food.name)}</div>
-              <div style="font-size: 13px; font-weight: 700; color: #ff7a00;">${formatNumber(
+              <div style="font-size: 13px; font-weight: 700; color: #10b981;">${formatNumber(
               food.calories
             )} kcal</div>
             </div>
@@ -1351,7 +1351,7 @@ export default function ReportPage() {
               <div style="font-size: 14px; font-weight: 600;">${escapeHtml(
               act.activityType
             )}</div>
-              <div style="font-size: 13px; font-weight: 700; color: #ff7a00;">${act.durationMin
+              <div style="font-size: 13px; font-weight: 700; color: #10b981;">${act.durationMin
               } dk</div>
             </div>
           `
@@ -1406,7 +1406,7 @@ export default function ReportPage() {
           (week) => `
             <tr>
               <td><strong>${formatShortDate(week.weekStart)}</strong></td>
-              <td style="color: #ff7a00; font-weight: 700;">%${week.adherenceScore}</td>
+              <td style="color: #10b981; font-weight: 700;">%${week.adherenceScore}</td>
               <td>${formatDelta(week.deltas.caloriesIn, "kcal")}</td>
               <td>${formatDelta(week.deltas.waterMl, "ml")}</td>
               <td>${formatDelta(week.deltas.activityMin, "dk")}</td>
@@ -1539,7 +1539,7 @@ export default function ReportPage() {
           <select
             value={rangeDays}
             onChange={(event) => setRangeDays(Number(event.target.value))}
-            className="rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
+            className="rounded-xl border border-emerald-100 bg-white px-3 py-2 text-xs"
           >
             <option value={7}>{t("{value} gün", { value: 7 })}</option>
             <option value={30}>{t("{value} gün", { value: 30 })}</option>
@@ -1554,13 +1554,13 @@ export default function ReportPage() {
           </button>
           <button
             onClick={handleExcelExport}
-            className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700"
+            className="rounded-xl border border-emerald-100 bg-white px-4 py-2 text-xs font-semibold text-emerald-700"
           >
             {t("Excel Olarak İndir")}
           </button>
           <button
             onClick={handleShare}
-            className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700"
+            className="rounded-xl border border-emerald-100 bg-white px-4 py-2 text-xs font-semibold text-emerald-700"
           >
             {isSharing ? t("Paylaşılıyor...") : t("Paylaş")}
           </button>
@@ -1583,11 +1583,11 @@ export default function ReportPage() {
               <input
                 value={shareLink}
                 readOnly
-                className="w-full flex-1 rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
+                className="w-full flex-1 rounded-xl border border-emerald-100 bg-white px-3 py-2 text-xs"
               />
               <button
                 onClick={() => navigator.clipboard?.writeText(shareLink)}
-                className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700"
+                className="rounded-xl border border-emerald-100 bg-white px-4 py-2 text-xs font-semibold text-emerald-700"
               >
                 {t("Kopyala")}
               </button>
@@ -1599,7 +1599,7 @@ export default function ReportPage() {
       {/* Print Cover Page */}
       <div className="hidden print:block print-cover-page">
         <div className="flex flex-col items-center justify-center text-center py-20 min-h-[290mm]">
-          <div className="mb-4 text-[80px] font-extrabold text-[#ff7a00] leading-none">Calmet</div>
+          <div className="mb-4 text-[80px] font-extrabold text-[#10b981] leading-none">Calmet</div>
           <h2 className="mb-2 text-3xl font-bold text-ink tracking-widest uppercase">{t("Performans Analizi")}</h2>
           <p className="mb-2 text-xl text-muted font-medium">{name}</p>
           <p className="mb-8 text-lg text-muted">{rangeLabel}</p>
@@ -1607,8 +1607,8 @@ export default function ReportPage() {
             {formatDateFull(report.startDate)} - {formatDateFull(report.endDate)}
           </div>
 
-          <div className="relative mb-12 flex h-48 w-48 flex-col items-center justify-center rounded-full border-[6px] border-[#ff7a00] bg-white shadow-xl shadow-amber-900/5">
-            <span className="text-[64px] font-black text-[#ff7a00] leading-none mt-2">%{report.adherenceScore}</span>
+          <div className="relative mb-12 flex h-48 w-48 flex-col items-center justify-center rounded-full border-[6px] border-[#10b981] bg-white shadow-xl shadow-emerald-900/5">
+            <span className="text-[64px] font-black text-[#10b981] leading-none mt-2">%{report.adherenceScore}</span>
             <span className="text-[10px] font-bold text-muted uppercase tracking-wider">{t("Uyum Skoru")}</span>
           </div>
 
@@ -1657,7 +1657,7 @@ export default function ReportPage() {
             onClick={() => setActiveSection(section.key)}
             className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${activeSection === section.key
                 ? "bg-accent text-white"
-                : "border border-amber-100 bg-white text-amber-700"
+                : "border border-emerald-100 bg-white text-emerald-700"
               }`}
           >
             {section.label}
@@ -1667,9 +1667,9 @@ export default function ReportPage() {
 
       <section className={sectionClass("overview")}>
         <div className="grid gap-6 lg:grid-cols-3">
-          <Card className="flex flex-col items-center justify-center bg-gradient-to-br from-amber-50/50 to-white py-10 lg:col-span-1">
-            <div className="relative mb-4 flex h-40 w-40 flex-col items-center justify-center rounded-full border-[6px] border-[#ff7a00] bg-white shadow-xl shadow-amber-900/5">
-              <span className="text-5xl font-black text-[#ff7a00]">%{report.adherenceScore}</span>
+          <Card className="flex flex-col items-center justify-center bg-gradient-to-br from-emerald-50/50 to-white py-10 lg:col-span-1">
+            <div className="relative mb-4 flex h-40 w-40 flex-col items-center justify-center rounded-full border-[6px] border-[#10b981] bg-white shadow-xl shadow-emerald-900/5">
+              <span className="text-5xl font-black text-[#10b981]">%{report.adherenceScore}</span>
               <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("Uyum Skoru")}</span>
             </div>
             <div className="text-center">
@@ -1680,7 +1680,7 @@ export default function ReportPage() {
 
           <Card className="lg:col-span-2 space-y-6">
             <div className="space-y-2 text-center sm:text-left">
-              <p className="text-sm font-bold uppercase tracking-widest text-[#ff7a00]">{t("Analiz Notu")}</p>
+              <p className="text-sm font-bold uppercase tracking-widest text-[#10b981]">{t("Analiz Notu")}</p>
               <p className="text-lg font-medium leading-relaxed text-ink italic">
                 &ldquo;{report.comment}&rdquo;
               </p>
@@ -1694,17 +1694,17 @@ export default function ReportPage() {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3 text-center">
-              <div className="rounded-2xl bg-amber-50/40 p-3 border border-amber-100/50">
+              <div className="rounded-2xl bg-emerald-50/40 p-3 border border-emerald-100/50">
                 <p className="text-[10px] uppercase font-bold text-muted-foreground">{t("Toplam Kalori")}</p>
                 <p className="text-xl font-bold text-ink mt-1">{formatNumber(report.totals.caloriesIn)}</p>
                 <p className="text-[10px] text-muted-foreground">kcal</p>
               </div>
-              <div className="rounded-2xl bg-amber-50/40 p-3 border border-amber-100/50">
+              <div className="rounded-2xl bg-emerald-50/40 p-3 border border-emerald-100/50">
                 <p className="text-[10px] uppercase font-bold text-muted-foreground">{t("Günlük Ort.")}</p>
                 <p className="text-xl font-bold text-ink mt-1">{formatNumber(report.averages.caloriesIn)}</p>
                 <p className="text-[10px] text-muted-foreground">kcal</p>
               </div>
-              <div className="rounded-2xl bg-amber-50/40 p-3 border border-amber-100/50">
+              <div className="rounded-2xl bg-emerald-50/40 p-3 border border-emerald-100/50">
                 <p className="text-[10px] uppercase font-bold text-muted-foreground">{t("Net Kalori")}</p>
                 <p className="text-xl font-bold text-ink mt-1">{formatNumber(report.totals.netCalories)}</p>
                 <p className="text-[10px] text-muted-foreground">kcal</p>
@@ -1714,7 +1714,7 @@ export default function ReportPage() {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-amber-100 bg-white px-4 py-4 shadow-sm">
+          <div className="rounded-2xl border border-emerald-100 bg-white px-4 py-4 shadow-sm">
             <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("Su Tüketimi")}</p>
             <p className="mt-2 text-2xl font-bold text-ink">
               {t("{value} ml", { value: formatNumber(report.totals.waterMl) })}
@@ -1723,7 +1723,7 @@ export default function ReportPage() {
               {t("Günlük ort. {value} ml", { value: formatNumber(report.averages.waterMl) })}
             </p>
           </div>
-          <div className="rounded-2xl border border-amber-100 bg-white px-4 py-4 shadow-sm">
+          <div className="rounded-2xl border border-emerald-100 bg-white px-4 py-4 shadow-sm">
             <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("Aktivite")}</p>
             <p className="mt-2 text-2xl font-bold text-ink">
               {t("{value} dk", { value: formatNumber(report.totals.activityMin) })}
@@ -1732,7 +1732,7 @@ export default function ReportPage() {
               {t("Günlük ort. {value} dk", { value: formatNumber(report.averages.activityMin) })}
             </p>
           </div>
-          <div className="rounded-2xl border border-amber-100 bg-white px-4 py-4 shadow-sm">
+          <div className="rounded-2xl border border-emerald-100 bg-white px-4 py-4 shadow-sm">
             <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("Öğün Ritmi")}</p>
             <p className="mt-2 text-2xl font-bold text-ink">
               {t("{value} öğün/gün", { value: formatNumber(report.averages.mealCount) })}
@@ -1741,7 +1741,7 @@ export default function ReportPage() {
               {t("Toplam {value} öğün", { value: formatNumber(report.totals.mealCount) })}
             </p>
           </div>
-          <div className="rounded-2xl border border-amber-100 bg-white px-4 py-4 shadow-sm">
+          <div className="rounded-2xl border border-emerald-100 bg-white px-4 py-4 shadow-sm">
             <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("Ort. Protein")}</p>
             <p className="mt-2 text-2xl font-bold text-ink">
               {t("{value} g", { value: formatNumber(report.averages.proteinG) })}
@@ -1774,9 +1774,9 @@ export default function ReportPage() {
                     <span className="text-muted">{t("Hedef yok")}</span>
                   )}
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-emerald-100">
                   <div
-                    className="h-full rounded-full bg-amber-600"
+                    className="h-full rounded-full bg-emerald-600"
                     style={{ width: `${Math.min(100, caloriePercent ?? 0)}%` }}
                   />
                 </div>
@@ -1799,9 +1799,9 @@ export default function ReportPage() {
                     <span className="text-muted">{t("Hedef yok")}</span>
                   )}
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-emerald-100">
                   <div
-                    className="h-full rounded-full bg-amber-600"
+                    className="h-full rounded-full bg-emerald-600"
                     style={{ width: `${Math.min(100, waterPercent ?? 0)}%` }}
                   />
                 </div>
@@ -1824,9 +1824,9 @@ export default function ReportPage() {
                     <span className="text-muted">{t("Hedef yok")}</span>
                   )}
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-emerald-100">
                   <div
-                    className="h-full rounded-full bg-amber-600"
+                    className="h-full rounded-full bg-emerald-600"
                     style={{ width: `${Math.min(100, activityPercent ?? 0)}%` }}
                   />
                 </div>
@@ -1849,9 +1849,9 @@ export default function ReportPage() {
                     <span className="text-muted">{t("Hedef yok")}</span>
                   )}
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-emerald-100">
                   <div
-                    className="h-full rounded-full bg-amber-600"
+                    className="h-full rounded-full bg-emerald-600"
                     style={{ width: `${Math.min(100, mealPercent ?? 0)}%` }}
                   />
                 </div>
@@ -1874,9 +1874,9 @@ export default function ReportPage() {
                     <span className="text-muted">{t("Hedef yok")}</span>
                   )}
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-emerald-100">
                   <div
-                    className="h-full rounded-full bg-amber-600"
+                    className="h-full rounded-full bg-emerald-600"
                     style={{ width: `${Math.min(100, proteinPercent ?? 0)}%` }}
                   />
                 </div>
@@ -1899,9 +1899,9 @@ export default function ReportPage() {
                     <span className="text-muted">{t("Hedef yok")}</span>
                   )}
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-emerald-100">
                   <div
-                    className="h-full rounded-full bg-amber-600"
+                    className="h-full rounded-full bg-emerald-600"
                     style={{ width: `${Math.min(100, carbsPercent ?? 0)}%` }}
                   />
                 </div>
@@ -1924,9 +1924,9 @@ export default function ReportPage() {
                     <span className="text-muted">{t("Hedef yok")}</span>
                   )}
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-amber-100">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-emerald-100">
                   <div
-                    className="h-full rounded-full bg-amber-600"
+                    className="h-full rounded-full bg-emerald-600"
                     style={{ width: `${Math.min(100, fatPercent ?? 0)}%` }}
                   />
                 </div>
@@ -1942,7 +1942,7 @@ export default function ReportPage() {
             <p className="text-xs text-muted">{t("Hedef bilgisi henüz eklenmemiş.")}</p>
           )}
           {safeWeightGoalKg !== null && (
-            <div className="rounded-2xl border border-amber-100 bg-amber-50/70 px-4 py-3 text-xs text-muted">
+            <div className="rounded-2xl border border-emerald-100 bg-emerald-50/70 px-4 py-3 text-xs text-muted">
               <span>{t("Hedef kilo: {value} kg", { value: formatNumber(safeWeightGoalKg) })}</span>
               <span className="mx-2">•</span>
               <span>
@@ -1981,7 +1981,7 @@ export default function ReportPage() {
               {report.weekly.map((week) => (
                 <div
                   key={`${week.weekStart}-${week.weekEnd}`}
-                  className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs"
+                  className="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-xs"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
@@ -2007,9 +2007,9 @@ export default function ReportPage() {
                       )}
                     </div>
                   </div>
-                  <div className="mt-2 h-2 rounded-full bg-amber-100">
+                  <div className="mt-2 h-2 rounded-full bg-emerald-100">
                     <div
-                      className="h-2 rounded-full bg-amber-600"
+                      className="h-2 rounded-full bg-emerald-600"
                       style={{ width: `${Math.min(100, week.adherenceScore)}%` }}
                     />
                   </div>
@@ -2031,7 +2031,7 @@ export default function ReportPage() {
               {report.effectiveDays.map((day) => (
                 <div
                   key={day.date}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs"
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-xs"
                 >
                   <div>
                     <p className="font-semibold text-ink">{formatShortDate(day.date)}</p>
@@ -2070,7 +2070,7 @@ export default function ReportPage() {
       <section className={sectionClass("insights")}>
         <Card className="space-y-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-700">🧭</div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">🧭</div>
             <div>
               <p className="text-sm font-bold text-ink">{t("Kişisel Yorumlar")}</p>
               <p className="text-xs text-muted-foreground">{t("Öne çıkan metrik değerlendirmeleri")}</p>
@@ -2108,7 +2108,7 @@ export default function ReportPage() {
         <div className="grid gap-6 lg:grid-cols-2">
           <Card className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-700">🍎</div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">🍎</div>
               <div>
                 <p className="text-sm font-bold text-ink">{t("Öne Çıkan Öğünler")}</p>
                 <p className="text-xs text-muted-foreground">{t("En çok kalori getiren seçimler")}</p>
@@ -2117,14 +2117,14 @@ export default function ReportPage() {
             {report.topFoods.length === 0 ? (
               <p className="text-xs text-muted-foreground py-4 text-center">{t("Henüz öğün kaydı yok.")}</p>
             ) : (
-              <div className="divide-y divide-amber-50">
+              <div className="divide-y divide-emerald-50">
                 {report.topFoods.map((food) => (
                   <div key={food.name} className="flex items-center justify-between py-3">
                     <div className="flex flex-col">
                       <span className="text-sm font-semibold text-ink truncate max-w-[180px]">{food.name}</span>
                       <span className="text-[10px] text-muted-foreground">{food.count} {t("kez tüketildi")}</span>
                     </div>
-                    <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
                       {formatNumber(food.calories)} kcal
                     </span>
                   </div>
@@ -2135,7 +2135,7 @@ export default function ReportPage() {
 
           <Card className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-700">🏃</div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">🏃</div>
               <div>
                 <p className="text-sm font-bold text-ink">{t("Öne Çıkan Aktiviteler")}</p>
                 <p className="text-xs text-muted-foreground">{t("Hareket yoğunluğu özeti")}</p>
@@ -2144,7 +2144,7 @@ export default function ReportPage() {
             {report.topActivities.length === 0 ? (
               <p className="text-xs text-muted-foreground py-4 text-center">{t("Henüz aktivite kaydı yok.")}</p>
             ) : (
-              <div className="divide-y divide-amber-50">
+              <div className="divide-y divide-emerald-50">
                 {report.topActivities.map((activity) => (
                   <div key={activity.activityType} className="flex items-center justify-between py-3">
                     <div className="flex flex-col">
@@ -2153,7 +2153,7 @@ export default function ReportPage() {
                       </span>
                       <span className="text-[10px] text-muted-foreground">{formatNumber(activity.durationMin)} {t("dakika")}</span>
                     </div>
-                    <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
                       {formatNumber(activity.calories)} kcal
                     </span>
                   </div>
@@ -2174,7 +2174,7 @@ export default function ReportPage() {
             {report.daily.map((day) => (
               <div
                 key={day.date}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-100 bg-white px-3 py-2"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-emerald-100 bg-white px-3 py-2"
               >
                 <span className="text-muted">{formatShortDate(day.date)}</span>
                 <span>

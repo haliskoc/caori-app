@@ -115,52 +115,52 @@ export function ChatAssistant() {
     }
 
     return (
-        <div className="fixed bottom-24 right-4 z-50 flex flex-col items-end gap-4 sm:bottom-6 sm:right-6">
+        <div className="fixed bottom-24 left-1/2 z-50 flex flex-col items-center gap-4 -translate-x-1/2 sm:bottom-6 sm:right-6 sm:left-auto sm:translate-x-0 sm:items-end">
             {/* Chat Window */}
             {isOpen && (
-                <div className="w-[360px] overflow-hidden rounded-2xl border border-amber-100 bg-white shadow-2xl animate-[fade-up_0.2s_ease-out]">
+                <div className="w-[min(92vw,380px)] overflow-hidden rounded-[2rem] border border-emerald-100 bg-white shadow-2xl animate-[fade-up_0.2s_ease-out] flex flex-col max-h-[70vh] sm:max-h-none sm:w-[380px]">
                     {/* Header */}
-                    <div className="flex items-center justify-between border-b border-amber-50 bg-gradient-to-r from-amber-50 to-white px-4 py-3">
-                        <div className="flex items-center gap-2.5">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-amber-400 to-orange-500 shadow-sm">
-                                <Bot className="h-5 w-5 text-white" />
+                    <div className="flex items-center justify-between border-b border-emerald-50 bg-gradient-to-r from-emerald-50 to-white px-5 py-4">
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-emerald-500 to-emerald-600 shadow-lg shadow-emerald-200">
+                                <Bot className="h-6 w-6 text-white" />
                             </div>
-                            <div>
-                                <h3 className="text-sm font-bold text-gray-900">{t("Calmet AI")}</h3>
-                                <p className="text-[10px] text-amber-600 font-medium tracking-wide uppercase">
+                            <div className="leading-tight">
+                                <h3 className="text-sm font-black text-gray-900">{t("Calmet AI")}</h3>
+                                <p className="text-[10px] text-emerald-600 font-black tracking-widest uppercase">
                                     {t("Sağlık Koçu")}
                                 </p>
                             </div>
                         </div>
                         <button
                             onClick={() => setIsOpen(false)}
-                            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                            className="rounded-xl p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
                         >
                             <X className="h-5 w-5" />
                         </button>
                     </div>
 
                     {/* Messages Area */}
-                    <div ref={scrollRef} className="h-[400px] overflow-y-auto bg-[#fffbf7] p-4 space-y-4">
+                    <div ref={scrollRef} className="flex-1 overflow-y-auto bg-[#fffcf9] p-5 space-y-6">
                         {messages.map((m) => (
                             <div
                                 key={m.id}
                                 className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}
                             >
                                 <div
-                                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full shadow-sm ${m.role === "user" ? "bg-gray-900 text-white" : "bg-white text-amber-600 border border-amber-100"
+                                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl shadow-sm ${m.role === "user" ? "bg-emerald-700 text-white" : "bg-white text-emerald-600 border border-emerald-100"
                                         }`}
                                 >
                                     {m.role === "user" ? <User className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
                                 </div>
                                 <div
-                                    className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${m.role === "user"
-                                        ? "bg-gray-900 text-white rounded-tr-none"
-                                        : "bg-white text-gray-700 border border-amber-100/50 rounded-tl-none"
+                                    className={`max-w-[85%] rounded-[1.25rem] px-4 py-3 text-sm font-medium leading-relaxed shadow-sm ${m.role === "user"
+                                        ? "bg-emerald-700 text-white rounded-tr-none"
+                                        : "bg-white text-gray-700 border border-emerald-50 rounded-tl-none"
                                         }`}
                                 >
                                     {m.role === "list" ? (
-                                        <article className="prose prose-sm prose-amber max-w-none prose-p:leading-relaxed prose-li:my-1">
+                                        <article className="prose prose-sm prose-emerald max-w-none prose-p:leading-relaxed prose-li:my-1 font-medium">
                                             <ReactMarkdown>{m.content}</ReactMarkdown>
                                         </article>
                                     ) : (
@@ -171,35 +171,35 @@ export function ChatAssistant() {
                         ))}
                         {isLoading && (
                             <div className="flex gap-3">
-                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-amber-600 border border-amber-100 shadow-sm">
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-600 border border-emerald-100 shadow-sm leading-none pt-0.5">
                                     <Sparkles className="h-4 w-4 animate-pulse" />
                                 </div>
-                                <div className="flex items-center gap-1 rounded-2xl bg-white px-4 py-3 border border-amber-100/50 shadow-sm rounded-tl-none">
-                                    <div className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-bounce [animation-delay:-0.3s]" />
-                                    <div className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-bounce [animation-delay:-0.15s]" />
-                                    <div className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-bounce" />
+                                <div className="flex items-center gap-1.5 rounded-[1.25rem] bg-white px-4 py-3 border border-emerald-50 shadow-sm rounded-tl-none">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-bounce [animation-delay:-0.3s]" />
+                                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-bounce [animation-delay:-0.15s]" />
+                                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-bounce" />
                                 </div>
                             </div>
                         )}
 
                         {/* Upgrade Prompt if Limit Reached */}
                         {isLimitReached && (
-                            <div className="mt-4 rounded-xl border border-rose-100 bg-rose-50 p-4 text-center">
-                                <p className="text-xs font-medium text-rose-800 mb-3">
-                                    {t("Sınırsız sohbet ve kişisel koçluk için Premium'a geçin.")}
+                            <div className="mt-4 rounded-3xl border border-emerald-100 bg-emerald-50 p-6 text-center">
+                                <p className="text-sm font-bold text-emerald-800 mb-4 leading-relaxed">
+                                    {t("Günlük ücretsiz limitin doldu. Sınırsız AI koçluğu için Plus'a geç!")}
                                 </p>
                                 <Link
                                     href="/pricing"
-                                    className="block w-full rounded-lg bg-rose-600 py-2 text-xs font-bold text-white shadow-sm hover:bg-rose-700 transition-colors"
+                                    className="block w-full rounded-2xl bg-emerald-600 py-3 text-sm font-black text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition-all hover:scale-105 active:scale-95"
                                 >
-                                    {t("Paketleri İncele")}
+                                    {t("Planları Gör")}
                                 </Link>
                             </div>
                         )}
                     </div>
 
                     {/* Input Area */}
-                    <div className="border-t border-amber-100 bg-white p-3">
+                    <div className="border-t border-emerald-50 bg-white p-4">
                         <form onSubmit={handleSubmit} className="relative flex items-center">
                             <input
                                 type="text"
@@ -207,14 +207,14 @@ export function ChatAssistant() {
                                 onChange={(e) => setInput(e.target.value)}
                                 placeholder={isLimitReached ? t("Limit doldu...") : t("Bir şeyler sor...")}
                                 disabled={isLoading || isLimitReached}
-                                className="w-full rounded-xl border-0 bg-gray-50 b-0 pl-4 pr-12 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:ring-2 focus:ring-amber-500/20 disabled:opacity-50 transition-all outline-none"
+                                className="w-full rounded-2xl border-0 bg-gray-50 pl-5 pr-12 py-4 text-sm font-bold text-gray-900 placeholder:text-gray-400 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 disabled:opacity-50 transition-all outline-none"
                             />
                             <button
                                 type="submit"
                                 disabled={isLoading || !input.trim() || isLimitReached}
-                                className="absolute right-2 p-1.5 rounded-lg text-amber-600 hover:bg-amber-50 disabled:text-gray-300 disabled:hover:bg-transparent transition-colors"
+                                className="absolute right-3 p-2 rounded-xl text-emerald-600 hover:bg-emerald-50 disabled:text-gray-300 disabled:hover:bg-transparent transition-all"
                             >
-                                {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+                                {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5 stroke-[2.5px]" />}
                             </button>
                         </form>
                     </div>
@@ -224,20 +224,20 @@ export function ChatAssistant() {
             {/* Toggle Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`group flex h-14 w-14 items-center justify-center rounded-full shadow-[0_8px_30px_rgba(255,122,0,0.3)] transition-all hover:scale-105 active:scale-95 ${isOpen ? "bg-white text-gray-600" : "bg-gradient-to-tr from-amber-500 to-orange-600 text-white"
+                className={`group flex h-14 w-14 items-center justify-center rounded-[1.5rem] shadow-2xl transition-all duration-300 hover:scale-110 active:scale-90 sm:h-16 sm:w-16 ${isOpen ? "bg-white text-emerald-700 border border-emerald-100" : "bg-emerald-700 text-white hover:bg-emerald-800 shadow-emerald-200 hover:rotate-[360deg]"
                     }`}
             >
                 {isOpen ? (
-                    <X className="h-6 w-6 transition-transform group-hover:rotate-90" />
+                    <X className="h-7 w-7" />
                 ) : (
-                    <Bot className="h-7 w-7" />
+                    <Bot className="h-8 w-8" />
                 )}
 
                 {/* Notification Dot */}
                 {!isOpen && (
-                    <span className="absolute -right-1 -top-1 flex h-4 w-4">
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-75"></span>
-                        <span className="relative inline-flex h-4 w-4 rounded-full bg-rose-500 border-2 border-white"></span>
+                    <span className="absolute -right-1 -top-1 flex h-5 w-5">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex h-5 w-5 rounded-full bg-emerald-500 border-2 border-white"></span>
                     </span>
                 )}
             </button>

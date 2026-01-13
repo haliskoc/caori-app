@@ -44,13 +44,13 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl bg-emerald-50/50 p-3 border border-emerald-50">
-              <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">{t("Kalori Giriş")}</p>
+            <div className="rounded-2xl bg-emerald-500/10 p-3 border border-emerald-100">
+              <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{t("Kalori Giriş")}</p>
               <p className="text-2xl font-black text-gray-900">{dailySummary.caloriesIn}</p>
             </div>
-            <div className="rounded-2xl bg-amber-50/50 p-3 border border-amber-50">
-              <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">{t("Kalori Çıkış")}</p>
-              <p className="text-2xl font-black text-gray-900">{dailySummary.caloriesOut}</p>
+            <div className="rounded-2xl bg-gray-900 p-3 border border-gray-800">
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t("Kalori Çıkış")}</p>
+              <p className="text-2xl font-black text-white">{dailySummary.caloriesOut}</p>
             </div>
             <div className="rounded-2xl bg-gray-50 p-3 border border-gray-100">
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">{t("Net")}</p>
@@ -62,9 +62,9 @@ export default function DashboardPage() {
               <p className="text-[10px] font-bold text-gray-400 uppercase">{t("Protein")}</p>
               <p className="text-xl font-black text-emerald-700">{t("{value} g", { value: Math.round(dailySummary.proteinG) })}</p>
             </div>
-            <div className="rounded-2xl border border-amber-50 bg-white p-3 shadow-sm">
-              <p className="text-[10px] font-bold text-gray-400 uppercase">{t("Karbonhidrat")}</p>
-              <p className="text-xl font-black text-amber-600">{t("{value} g", { value: Math.round(dailySummary.carbsG) })}</p>
+            <div className="rounded-2xl border border-emerald-100 bg-white p-3 shadow-sm">
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t("Karbonhidrat")}</p>
+              <p className="text-xl font-black text-emerald-600">{t("{value} g", { value: Math.round(dailySummary.carbsG) })}</p>
             </div>
             <div className="rounded-2xl border border-rose-50 bg-white p-3 shadow-sm">
               <p className="text-[10px] font-bold text-gray-400 uppercase">{t("Yağ")}</p>
@@ -163,7 +163,7 @@ export default function DashboardPage() {
               <button
                 key={amount}
                 onClick={() => addWater({ amountMl: amount })}
-                className="rounded-full border border-amber-100 bg-white px-3 py-1 text-[11px] font-semibold text-amber-700 hover:border-amber-200"
+                className="rounded-full border border-emerald-100 bg-white px-4 py-1.5 text-[11px] font-black text-emerald-700 shadow-sm hover:bg-emerald-50 transition-all active:scale-95"
               >
                 {t("+{value}", { value: amount === 1000 ? "1L" : `${amount}ml` })}
               </button>
@@ -186,7 +186,7 @@ export default function DashboardPage() {
           <p className="text-xs text-muted">
             {t("Yürümek, koşu veya salon aktivitelerini manuel ekleyin.")}
           </p>
-          <div className="rounded-2xl bg-amber-50 p-4 text-xs text-muted">
+          <div className="rounded-2xl bg-emerald-50 p-4 text-xs font-bold text-emerald-700">
             {t("Kalori çıkışı değeri tahminidir. Kullanıcı düzenlemesi her zaman geçerli.")}
           </div>
         </Card>
@@ -194,9 +194,9 @@ export default function DashboardPage() {
         <Card className="flex flex-col gap-2">
           <p className="text-sm font-semibold">{t("AI Özellikleri")}</p>
           <p className="text-xs text-muted">{t("Görüntü tabanlı loglama şu an kapalıdır.")}</p>
-          <div className="flex items-center justify-between rounded-2xl bg-amber-50 p-4 text-xs text-muted">
+          <div className="flex items-center justify-between rounded-2xl bg-emerald-50 p-4 text-xs font-bold text-emerald-700">
             <span>{t("AI Görsel Tanıma")}</span>
-            <span className="rounded-full bg-white px-3 py-1 text-[11px] text-amber-700">
+            <span className="rounded-full bg-white px-3 py-1 text-[11px] font-black border border-emerald-100">
               {flags.aiVisual ? t("Açık") : t("Kapalı")}
             </span>
           </div>

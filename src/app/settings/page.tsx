@@ -117,30 +117,7 @@ export default function SettingsPage() {
             {dataMode === "remote" ? t("Bulut (Neon) aktif") : t("Yerel cihaz modu")}
           </p>
         </div>
-        <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs text-muted">
-          {dataMode === "remote"
-            ? t("Bulut modu aktif. Verileriniz Neon veritabanında saklanır.")
-            : t("Yerel depolama modu aktif. Verileriniz sadece bu cihazda saklanır.")}
-        </div>
         <div className="flex flex-wrap gap-2">
-          {/*
-          {!isLoading && !user && (
-            <Link
-              href="/login"
-              className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
-            >
-              {t("Giriş Yap")}
-            </Link>
-          )}
-          {user && (
-            <a
-              href="/auth/logout"
-              className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-sm font-semibold text-amber-700"
-            >
-              Çıkış Yap
-            </a>
-          )}
-          */}
           {dataMode === "remote" && (
             <button
               onClick={async () => {
@@ -149,7 +126,7 @@ export default function SettingsPage() {
                 setImportedCount(count);
                 setIsImporting(false);
               }}
-              className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-sm font-semibold text-amber-700"
+              className="rounded-xl border border-emerald-100 bg-white px-4 py-2 text-sm font-bold text-emerald-700 hover:bg-emerald-50 transition-colors"
             >
               {isImporting ? t("Taşınıyor...") : t("Cihazdaki kayıtları taşı")}
             </button>
@@ -172,7 +149,7 @@ export default function SettingsPage() {
               setLocale(event.target.value);
               window.location.reload();
             }}
-            className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs sm:max-w-[200px]"
+            className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-xs font-bold sm:max-w-[200px] outline-none focus:ring-2 focus:ring-emerald-500/20"
           >
             {localeOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -193,16 +170,16 @@ export default function SettingsPage() {
           <p className="text-sm font-semibold">{t("Rapor Dışa Aktarım")}</p>
           <p className="text-xs text-muted">{t("Grafikli PDF + Excel çıktısı")}</p>
         </div>
-        <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs text-muted">
+        <div className="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-xs font-bold text-emerald-700">
           {t("Rapor ekranından PDF veya Excel olarak dışa aktarabilirsin.")}
         </div>
         <div className="flex flex-wrap gap-2">
-          <a
+          <Link
             href="/report"
-            className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
+            className="rounded-xl bg-gray-900 px-6 py-2 text-sm font-black text-white hover:bg-emerald-600 transition-all shadow-lg shadow-gray-200"
           >
             {t("Raporu Aç")}
-          </a>
+          </Link>
         </div>
       </Card>
 
@@ -217,77 +194,77 @@ export default function SettingsPage() {
             <input
               value={waterGoal}
               onChange={(event) => setWaterGoal(event.target.value)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
               type="number"
               min="0"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs text-muted">{t("Günlük Kalori Hedefi")}</label>
+            <label className="text-xs font-bold text-gray-400">{t("Günlük Kalori Hedefi")}</label>
             <input
               value={calorieGoal}
               onChange={(event) => setCalorieGoal(event.target.value)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
               type="number"
               min="0"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs text-muted">{t("Günlük Aktivite Hedefi (dk)")}</label>
+            <label className="text-xs font-bold text-gray-400">{t("Günlük Aktivite Hedefi (dk)")}</label>
             <input
               value={activityGoal}
               onChange={(event) => setActivityGoal(event.target.value)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
               type="number"
               min="0"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs text-muted">{t("Günlük Öğün Hedefi (adet)")}</label>
+            <label className="text-xs font-bold text-gray-400">{t("Günlük Öğün Hedefi (adet)")}</label>
             <input
               value={mealGoal}
               onChange={(event) => setMealGoal(event.target.value)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
               type="number"
               min="0"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs text-muted">{t("Hedef Kilo (kg)")}</label>
+            <label className="text-xs font-bold text-gray-400">{t("Hedef Kilo (kg)")}</label>
             <input
               value={weightGoal}
               onChange={(event) => setWeightGoal(event.target.value)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
               type="number"
               min="0"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs text-muted">{t("Protein Hedefi (g)")}</label>
+            <label className="text-xs font-bold text-gray-400">{t("Protein Hedefi (g)")}</label>
             <input
               value={proteinGoal}
               onChange={(event) => setProteinGoal(event.target.value)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
               type="number"
               min="0"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs text-muted">{t("Karbonhidrat Hedefi (g)")}</label>
+            <label className="text-xs font-bold text-gray-400">{t("Karbonhidrat Hedefi (g)")}</label>
             <input
               value={carbsGoal}
               onChange={(event) => setCarbsGoal(event.target.value)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
               type="number"
               min="0"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs text-muted">{t("Yağ Hedefi (g)")}</label>
+            <label className="text-xs font-bold text-gray-400">{t("Yağ Hedefi (g)")}</label>
             <input
               value={fatGoal}
               onChange={(event) => setFatGoal(event.target.value)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
               type="number"
               min="0"
             />
@@ -306,74 +283,32 @@ export default function SettingsPage() {
               fatGoalG: Number(fatGoal),
             });
           }}
-          className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
+          className="rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-black text-white shadow-lg shadow-emerald-100 hover:bg-gray-900 transition-all active:scale-95"
         >
           {t("Hedefleri Güncelle")}
         </button>
       </Card>
 
-      <Card className="space-y-4">
-        <div>
-          <p className="text-sm font-semibold">{t("Tema ve Görünüm")}</p>
-          <p className="text-xs text-muted">{t("Aydınlık veya dim mod + vurgu renkleri.")}</p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <button
-            onClick={() => updateTheme({ mode: "light" })}
-            className={`rounded-2xl border px-4 py-3 text-left text-xs transition ${theme.mode === "light"
-              ? "border-amber-300 bg-amber-50 text-amber-700"
-              : "border-amber-100 bg-white text-muted hover:text-ink"
-              }`}
-          >
-            <p className="text-sm font-semibold">{t("Aydınlık")}</p>
-            <p className="text-[11px] text-muted">{t("Yüksek kontrast, net arayüz.")}</p>
-          </button>
-          <button
-            onClick={() => updateTheme({ mode: "dim" })}
-            className={`rounded-2xl border px-4 py-3 text-left text-xs transition ${theme.mode === "dim"
-              ? "border-amber-300 bg-amber-50 text-amber-700"
-              : "border-amber-100 bg-white text-muted hover:text-ink"
-              }`}
-          >
-            <p className="text-sm font-semibold">{t("Dim")}</p>
-            <p className="text-[11px] text-muted">{t("Daha yumuşak ve sakin tonlar.")}</p>
-          </button>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {accentOptions.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => updateTheme({ accent: option.value })}
-              className={`flex items-center gap-2 rounded-full border px-3 py-1 text-xs transition ${theme.accent === option.value
-                ? "border-amber-400 bg-amber-50 text-amber-700"
-                : "border-amber-100 bg-white text-muted hover:text-ink"
-                }`}
-            >
-              <span className={`h-2 w-2 rounded-full ${option.swatch}`} />
-              {option.label}
-            </button>
-          ))}
-        </div>
-      </Card>
+
 
       <Card className="space-y-4">
         <div>
           <p className="text-sm font-semibold">{t("Hatırlatıcılar")}</p>
           <p className="text-xs text-muted">{t("Tarayıcı bildirimi ile günlük hatırlatma.")}</p>
         </div>
-        <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs text-muted">
+        <div className="rounded-2xl border border-emerald-100 bg-emerald-50/30 px-4 py-3 text-xs font-bold text-emerald-800">
           {notificationStatus === "unsupported" && t("Tarayıcı bildirimleri desteklenmiyor.")}
           {notificationStatus === "default" && t("Bildirim izni verilmedi.")}
           {notificationStatus === "denied" && t("Bildirim izni reddedildi.")}
           {notificationStatus === "granted" && t("Bildirim izni açık.")}
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <label className="flex items-center gap-2 text-xs text-muted">
+          <label className="flex items-center gap-2 text-xs font-bold text-gray-500">
             <input
               type="checkbox"
               checked={reminder.enabled}
               onChange={(event) => updateReminder({ enabled: event.target.checked })}
-              className="h-4 w-4 accent-orange-500"
+              className="h-4 w-4 rounded-lg accent-emerald-600"
             />
             {t("Günlük hatırlatma")}
           </label>
@@ -381,7 +316,7 @@ export default function SettingsPage() {
             type="time"
             value={reminder.time}
             onChange={(event) => updateReminder({ time: event.target.value })}
-            className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs sm:w-auto"
+            className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-xs font-bold sm:w-auto"
           />
           {notificationStatus !== "granted" && notificationStatus !== "unsupported" && (
             <button
@@ -393,7 +328,7 @@ export default function SettingsPage() {
                 const permission = await Notification.requestPermission();
                 setNotificationStatus(permission);
               }}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs text-muted hover:text-ink sm:w-auto"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-4 py-2 text-xs font-black text-emerald-700 hover:bg-emerald-50 transition-colors sm:w-auto"
             >
               {t("İzin Ver")}
             </button>
@@ -414,12 +349,12 @@ export default function SettingsPage() {
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <button
             onClick={downloadCsv}
-            className="w-full rounded-xl border border-amber-100 bg-white px-4 py-2 text-xs text-muted hover:text-ink sm:w-auto"
+            className="w-full rounded-xl border border-emerald-100 bg-white px-4 py-2.5 text-xs font-black text-emerald-700 hover:bg-emerald-50 transition-colors sm:w-auto"
             disabled={entries.length === 0}
           >
             {t("CSV Dışa Aktar")}
           </button>
-          <label className="w-full cursor-pointer rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 sm:w-auto">
+          <label className="w-full cursor-pointer rounded-xl bg-emerald-600 px-6 py-2.5 text-xs font-black text-white hover:bg-gray-900 shadow-lg shadow-emerald-100 transition-all active:scale-95 sm:w-auto">
             {isCsvImporting ? t("İçe aktarılıyor...") : t("CSV İçe Aktar")}
             <input
               type="file"
@@ -447,7 +382,7 @@ export default function SettingsPage() {
           </div>
           <button
             onClick={clearAuditLog}
-            className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs text-muted hover:text-ink sm:w-auto"
+            className="w-full rounded-xl border border-emerald-100 bg-white px-4 py-2.5 text-xs font-black text-emerald-700 hover:bg-emerald-50 transition-colors sm:w-auto"
             disabled={auditLog.length === 0}
           >
             {t("Temizle")}
@@ -461,10 +396,10 @@ export default function SettingsPage() {
             {auditPreview.map((event) => (
               <div
                 key={event.id}
-                className="flex flex-col gap-1 rounded-2xl border border-amber-100 bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-1 rounded-2xl border border-emerald-50 bg-emerald-50/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
               >
-                <span>{event.detail}</span>
-                <span className="text-[11px] text-muted sm:text-xs">
+                <span className="font-bold text-emerald-900">{event.detail}</span>
+                <span className="text-[11px] font-black text-emerald-600/60 uppercase">
                   {auditFormatter.format(new Date(event.timestamp))}
                 </span>
               </div>
@@ -480,9 +415,9 @@ export default function SettingsPage() {
             <p className="text-sm font-semibold">Google Fit Entegrasyonu</p>
             <p className="text-xs text-muted">Salt okunur. Yazma izni yoktur.</p>
           </div>
-          <div className="flex items-center justify-between rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-muted">
+          <div className="flex items-center justify-between rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-xs text-muted">
             <span>Bağlantı Durumu</span>
-            <span className="rounded-full bg-white px-3 py-1 text-[11px] text-amber-700">
+            <span className="rounded-full bg-white px-3 py-1 text-[11px] text-emerald-700">
               {flags.googleFit ? "Aktif" : "Pasif"}
             </span>
           </div>
@@ -491,7 +426,7 @@ export default function SettingsPage() {
             className={`block w-full text-center rounded-xl px-4 py-2 text-sm font-semibold ${
               flags.googleFit
                 ? "bg-accent text-white hover:bg-accent-strong"
-                : "cursor-not-allowed bg-amber-100 text-amber-400 pointer-events-none"
+                : "cursor-not-allowed bg-emerald-100 text-emerald-400 pointer-events-none"
             }`}
           >
             Google Fit ile Bağlan
@@ -510,28 +445,17 @@ export default function SettingsPage() {
           <p className="text-xs text-muted">{t("AI özellikleri varsayılan olarak kapalı")}</p>
         </div>
         <div className="space-y-3">
-          <label className="flex items-center justify-between rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs">
-            <span className="text-muted">{t("AI Görsel Tanıma")}</span>
+          <label className="flex items-center justify-between rounded-2xl border border-emerald-100 bg-white px-5 py-4 text-xs font-bold transition-all hover:border-emerald-300">
+            <span className="text-gray-600">{t("AI Görsel Tanıma")}</span>
             <input
               type="checkbox"
               checked={flags.aiVisual}
               onChange={(event) => updateFlags({ aiVisual: event.target.checked })}
-              className="h-5 w-5 accent-orange-500"
+              className="h-5 w-5 rounded-lg accent-emerald-600"
             />
           </label>
-          {/*
-          <label className="flex items-center justify-between rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs">
-            <span className="text-muted">Google Fit (read-only)</span>
-            <input
-              type="checkbox"
-              checked={flags.googleFit}
-              onChange={(event) => updateFlags({ googleFit: event.target.checked })}
-              className="h-5 w-5 accent-orange-500"
-            />
-          </label>
-          */}
         </div>
       </Card>
-    </div>
+    </div >
   );
 }

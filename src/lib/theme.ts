@@ -44,6 +44,7 @@ export function applyTheme(theme: ThemeSettings) {
     return;
   }
   const root = document.documentElement;
-  root.dataset.theme = theme.mode;
-  root.dataset.accent = theme.accent;
+  // Tek görünüm için temayı sabitleyelim
+  root.removeAttribute("data-theme");
+  root.removeAttribute("data-accent");
 }

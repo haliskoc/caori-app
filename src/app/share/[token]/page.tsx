@@ -108,7 +108,9 @@ export default function ShareReportPage() {
             <button
               onClick={() => setDietMode((prev) => !prev)}
               className={`rounded-full px-4 py-2 text-xs font-semibold ${
-                dietMode ? "bg-amber-600 text-white" : "border border-amber-100 bg-white text-amber-700"
+                dietMode
+                  ? "bg-emerald-600 text-white"
+                  : "border border-emerald-100 bg-white text-emerald-700"
               }`}
             >
               {dietMode ? t("Diyetisyen modu açık") : t("Diyetisyen modu kapalı")}
@@ -160,7 +162,7 @@ export default function ShareReportPage() {
                   {data.report.topFoods.map((food) => (
                     <div
                       key={food.name}
-                      className="flex items-center justify-between rounded-2xl border border-amber-100 bg-white px-3 py-2"
+                      className="flex items-center justify-between rounded-2xl border border-emerald-100 bg-white px-3 py-2"
                     >
                       <span className="font-semibold text-ink">{food.name}</span>
                       <span>{formatNumber(food.calories)} kcal</span>
@@ -178,7 +180,7 @@ export default function ShareReportPage() {
                   {data.report.topActivities.map((activity) => (
                     <div
                       key={activity.activityType}
-                      className="flex items-center justify-between rounded-2xl border border-amber-100 bg-white px-3 py-2"
+                      className="flex items-center justify-between rounded-2xl border border-emerald-100 bg-white px-3 py-2"
                     >
                       <span className="font-semibold text-ink">
                         {activityLabels[activity.activityType as keyof typeof activityLabels] ??

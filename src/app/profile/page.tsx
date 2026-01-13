@@ -93,8 +93,8 @@ const badgeDefinitions: BadgeDefinition[] = [
     description: "3 gün üst üste kayıt",
     threshold: 3,
     category: "streak",
-    tone: "from-amber-200 via-amber-100 to-white",
-    accent: "text-amber-700",
+    tone: "from-emerald-200 via-emerald-100 to-white",
+    accent: "text-emerald-700",
     label: "3G",
   },
   {
@@ -445,7 +445,7 @@ export default function ProfilePage() {
         <Card className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-lg font-semibold text-amber-700">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-lg font-semibold text-emerald-700">
                 {getInitials(profile.fullName || user?.name || "")}
               </div>
               <div>
@@ -465,7 +465,7 @@ export default function ProfilePage() {
                 <span>{t("Profil tamamlama")}</span>
                 <span>%{profileCompletion}</span>
               </div>
-              <div className="mt-2 h-2 rounded-full bg-amber-100">
+              <div className="mt-2 h-2 rounded-full bg-emerald-100">
                 <div
                   className="h-2 rounded-full bg-accent"
                   style={{ width: `${profileCompletion}%` }}
@@ -475,19 +475,19 @@ export default function ProfilePage() {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Mevcut seri")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
                 {t("{value} gün", { value: stats.currentStreak })}
               </p>
             </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Öğün hedef günleri")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
                 {t("{value} gün", { value: stats.mealGoalDays })}
               </p>
             </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Su hedefi")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
                 {t("{value} L", { value: Math.round(goals.waterGoalMl / 1000) })}
@@ -496,7 +496,7 @@ export default function ProfilePage() {
           </div>
 
           {bmi && (
-            <div className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-amber-900">
+            <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-xs text-emerald-900">
               {t("BMI: {value} • {label} aralık", {
                 value: bmi.toFixed(1),
                 label: getBmiLabel(bmi),
@@ -504,15 +504,15 @@ export default function ProfilePage() {
             </div>
           )}
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Yaş")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">{ageLabel}</p>
             </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Ana hedef")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">{mainGoalLabel}</p>
             </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Spor seviyesi")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">{sportLevelLabel}</p>
             </div>
@@ -527,7 +527,7 @@ export default function ProfilePage() {
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Güncel kilo")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
                 {latestWeight !== null
@@ -535,13 +535,13 @@ export default function ProfilePage() {
                   : "-"}
               </p>
             </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Toplam ölçüm")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
                 {formatNumber(measurements.length)}
               </p>
             </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Son kayıt")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
                 {sortedMeasurements[0]
@@ -554,7 +554,7 @@ export default function ProfilePage() {
             <select
               value={measurementType}
               onChange={(event) => setMeasurementType(event.target.value as MeasurementType)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-xs"
             >
               {Object.entries(measurementLabels).map(([value, label]) => (
                 <option key={value} value={value}>
@@ -565,7 +565,7 @@ export default function ProfilePage() {
             <input
               value={measurementValue}
               onChange={(event) => setMeasurementValue(event.target.value)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-xs"
               placeholder={t("Değer ({unit})", { unit: measurementUnits[measurementType] })}
               type="number"
               min="0"
@@ -573,7 +573,7 @@ export default function ProfilePage() {
             <input
               value={measurementTimestamp}
               onChange={(event) => setMeasurementTimestamp(event.target.value)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-xs"
               type="datetime-local"
             />
             <button
@@ -594,7 +594,7 @@ export default function ProfilePage() {
                 });
                 setMeasurementValue("");
               }}
-              className="rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700"
+              className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700"
             >
               {t("Ekle")}
             </button>
@@ -604,7 +604,7 @@ export default function ProfilePage() {
               {sortedMeasurements.slice(0, 8).map((entry) => (
                 <div
                   key={entry.id}
-                  className="flex flex-col gap-2 rounded-2xl border border-amber-100 bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-2 rounded-2xl border border-emerald-100 bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex flex-col">
                     <span className="text-sm font-semibold text-ink">
@@ -615,12 +615,12 @@ export default function ProfilePage() {
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="rounded-full bg-amber-50 px-3 py-1 text-[11px] text-amber-700">
+                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] text-emerald-700">
                       {entry.value} {entry.unit}
                     </span>
                     <button
                       onClick={() => removeMeasurement(entry.id)}
-                      className="rounded-full border border-amber-100 px-3 py-1 text-[11px] text-muted"
+                      className="rounded-full border border-emerald-100 px-3 py-1 text-[11px] text-muted"
                     >
                       {t("Sil")}
                     </button>
@@ -636,10 +636,10 @@ export default function ProfilePage() {
             <p className="text-sm font-semibold">{t("Pro Bağlantıları")}</p>
             <p className="text-xs text-muted">{t("Premium modüllerini bu panelden yönetin.")}</p>
           </div>
-          <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs">
+          <div className="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-xs">
             <div className="flex items-center justify-between">
               <span className="text-muted">{t("Plan")}</span>
-              <span className="rounded-full bg-amber-100 px-3 py-1 text-[11px] text-amber-700">
+              <span className="rounded-full bg-emerald-100 px-3 py-1 text-[11px] text-emerald-700">
                 {t("Ücretsiz")}
               </span>
             </div>
@@ -650,13 +650,13 @@ export default function ProfilePage() {
           <div className="space-y-2">
             <Link
               href="/#pricing"
-              className="block w-full rounded-xl bg-amber-600 px-4 py-2 text-center text-xs font-semibold text-white hover:bg-amber-700"
+              className="block w-full rounded-xl bg-emerald-600 px-4 py-2 text-center text-xs font-semibold text-white hover:bg-emerald-700"
             >
               {t("Premiuma Geç")}
             </Link>
             <Link
               href="/settings"
-              className="block w-full rounded-xl border border-amber-100 bg-white px-4 py-2 text-center text-xs text-muted hover:text-ink"
+              className="block w-full rounded-xl border border-emerald-100 bg-white px-4 py-2 text-center text-xs text-muted hover:text-ink"
             >
               {t("Pro Ayarları")}
             </Link>
@@ -674,7 +674,7 @@ export default function ProfilePage() {
               return (
                 <div
                   key={provider.id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-100 bg-white px-4 py-3"
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-100 bg-white px-4 py-3"
                 >
                   <div>
                     <p className="text-sm font-semibold text-ink">{t(provider.labelKey)}</p>
@@ -682,7 +682,7 @@ export default function ProfilePage() {
                   </div>
                   <div className="flex items-center gap-2">
                     {provider.tag && (
-                      <span className="rounded-full border border-amber-100 bg-amber-50 px-3 py-1 text-[10px] font-semibold text-amber-700">
+                      <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[10px] font-semibold text-emerald-700">
                         {provider.tag}
                       </span>
                     )}
@@ -691,8 +691,8 @@ export default function ProfilePage() {
                       disabled={!isAvailable}
                       className={`rounded-full px-3 py-1 text-[10px] font-semibold ${
                         isAvailable
-                          ? "bg-amber-600 text-white"
-                          : "border border-amber-100 bg-amber-50 text-amber-500"
+                          ? "bg-emerald-600 text-white"
+                          : "border border-emerald-100 bg-emerald-50 text-emerald-500"
                       }`}
                     >
                       {t(isAvailable ? "Bağlan" : "Yakında")}
@@ -720,7 +720,7 @@ export default function ProfilePage() {
                   setProfile((prev) => ({ ...prev, fullName: event.target.value }));
                   setSaveMessage(null);
                 }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
                 placeholder={t("İsim")}
               />
             </div>
@@ -732,7 +732,7 @@ export default function ProfilePage() {
                   setProfile((prev) => ({ ...prev, age: event.target.value }));
                   setSaveMessage(null);
                 }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
                 placeholder={t("26")}
                 inputMode="numeric"
               />
@@ -745,7 +745,7 @@ export default function ProfilePage() {
                   setProfile((prev) => ({ ...prev, heightCm: event.target.value }));
                   setSaveMessage(null);
                 }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
                 placeholder={t("175")}
                 inputMode="numeric"
               />
@@ -758,7 +758,7 @@ export default function ProfilePage() {
                   setProfile((prev) => ({ ...prev, weightKg: event.target.value }));
                   setSaveMessage(null);
                 }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
                 placeholder={t("70")}
                 inputMode="numeric"
               />
@@ -777,7 +777,7 @@ export default function ProfilePage() {
                   }));
                   setSaveMessage(null);
                 }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
               >
                 <option value="">{t("Seç")}</option>
                 {goalOptions.map((option) => (
@@ -798,7 +798,7 @@ export default function ProfilePage() {
                   }));
                   setSaveMessage(null);
                 }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
               >
                 <option value="">{t("Seç")}</option>
                 {sportLevelOptions.map((option) => (
@@ -819,7 +819,7 @@ export default function ProfilePage() {
                   }));
                   setSaveMessage(null);
                 }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
               >
                 <option value="">{t("Seç")}</option>
                 {workoutDaysOptions.map((option) => (
@@ -840,7 +840,7 @@ export default function ProfilePage() {
                   }));
                   setSaveMessage(null);
                 }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
               >
                 <option value="">{t("Seç")}</option>
                 {workoutPlaceOptions.map((option) => (
@@ -861,7 +861,7 @@ export default function ProfilePage() {
                   }));
                   setSaveMessage(null);
                 }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
               >
                 <option value="">{t("Seç")}</option>
                 {equipmentOptions.map((option) => (
@@ -885,7 +885,7 @@ export default function ProfilePage() {
                   }));
                   setSaveMessage(null);
                 }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
               >
                 <option value="">{t("Seç")}</option>
                 {injuryOptions.map((option) => (
@@ -906,7 +906,7 @@ export default function ProfilePage() {
                   }));
                   setSaveMessage(null);
                 }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
               >
                 <option value="">{t("Seç")}</option>
                 {doctorRestrictionOptions.map((option) => (
@@ -927,7 +927,7 @@ export default function ProfilePage() {
                   setProfile((prev) => ({ ...prev, injuryDetail: event.target.value }));
                   setSaveMessage(null);
                 }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
                 placeholder={t("Kısa açıklama")}
               />
             </div>
@@ -945,7 +945,7 @@ export default function ProfilePage() {
                   }));
                   setSaveMessage(null);
                 }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
               >
                 <option value="">{t("Seç")}</option>
                 {referralOptions.map((option) => (
@@ -965,7 +965,7 @@ export default function ProfilePage() {
                 setProfile((prev) => ({ ...prev, expectation: event.target.value }));
                 setSaveMessage(null);
               }}
-              className="min-h-[90px] w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              className="min-h-[90px] w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
               placeholder={t("Kısa not (opsiyonel)...")}
             />
           </div>
@@ -1014,15 +1014,15 @@ export default function ProfilePage() {
             <p className="text-xs text-muted">{t("Tüm kayıtların özet görünümü.")}</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Toplam kayıt")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">{formatNumber(stats.totalEntries)}</p>
             </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Takip edilen gün")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">{formatNumber(stats.daysCount)}</p>
             </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Günlük ort. kalori")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
                 {t("{value} kcal", {
@@ -1030,7 +1030,7 @@ export default function ProfilePage() {
                 })}
               </p>
             </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Günlük ort. su")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
                 {t("{value} ml", {
@@ -1038,24 +1038,24 @@ export default function ProfilePage() {
                 })}
               </p>
             </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Aktivite kalorisi")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">
                 {t("{value} kcal", { value: formatNumber(stats.totalCaloriesOut) })}
               </p>
             </div>
-            <div className="rounded-2xl border border-amber-100 bg-white px-3 py-3 text-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
               <p className="text-muted">{t("Öğün hedefi oranı")}</p>
               <p className="mt-1 text-lg font-semibold text-ink">%{mealRate}</p>
             </div>
           </div>
-          <div className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-amber-900">
+          <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-xs text-emerald-900">
             {t("En uzun seri: {longest} gün • Mevcut seri: {current} gün", {
               longest: stats.longestStreak,
               current: stats.currentStreak,
             })}
           </div>
-          <div className="rounded-2xl border border-amber-100 bg-white px-4 py-3 text-xs text-muted">
+          <div className="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-xs text-muted">
             {t(
               "Su serisi: {water} gün • Aktivite serisi: {activity} gün • Öğün serisi: {meal} gün",
               {
@@ -1076,7 +1076,7 @@ export default function ProfilePage() {
           </p>
         </div>
         {entries.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 px-4 py-4 text-xs text-muted">
+          <div className="rounded-2xl border border-dashed border-emerald-100 bg-emerald-50/60 px-4 py-4 text-xs text-muted">
             {t("İlk kayıtlarını eklediğinde rozetler görünür.")}
           </div>
         )}
@@ -1128,8 +1128,8 @@ function BadgeCard({ badge, progress }: { badge: BadgeDefinition; progress: numb
     <div
       className={`rounded-2xl border px-4 py-3 transition ${
         achieved
-          ? "border-amber-200 bg-white"
-          : "border-amber-100/70 bg-white/70"
+          ? "border-emerald-200 bg-white"
+          : "border-emerald-100/70 bg-white/70"
       }`}
     >
       <div className="flex items-start gap-3">
@@ -1144,15 +1144,15 @@ function BadgeCard({ badge, progress }: { badge: BadgeDefinition; progress: numb
             <span
               className={`rounded-full px-2 py-0.5 text-[10px] ${
                 achieved
-                  ? "bg-amber-100 text-amber-700"
-                  : "bg-amber-50 text-muted"
+                  ? "bg-emerald-100 text-emerald-700"
+                  : "bg-emerald-50 text-muted"
               }`}
             >
               {achieved ? t("Açıldı") : t("Kilitli")}
             </span>
           </div>
           <p className="text-xs text-muted">{t(badge.description)}</p>
-          <div className="h-1.5 rounded-full bg-amber-100">
+          <div className="h-1.5 rounded-full bg-emerald-100">
             <div className="h-1.5 rounded-full bg-accent" style={{ width: `${percent}%` }} />
           </div>
           <div className="text-[10px] text-muted">

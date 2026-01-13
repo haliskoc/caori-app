@@ -59,37 +59,37 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
         </div>
         <div className="h-44 w-full">
           {isEmpty ? (
-            <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 text-xs text-muted">
+            <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-emerald-100 bg-emerald-50/60 text-xs text-muted">
               {t("Henüz veri yok. İlk kayıtlar grafiği dolduracak.")}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3e3d4" />
-                <XAxis dataKey="name" tick={{ fill: "#6f5f52", fontSize: 11 }} />
-                <YAxis tick={{ fill: "#6f5f52", fontSize: 11 }} width={36} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#dcfce7" />
+                <XAxis dataKey="name" tick={{ fill: "#4b5563", fontSize: 11 }} />
+                <YAxis tick={{ fill: "#4b5563", fontSize: 11 }} width={36} />
                 <Tooltip
-                  cursor={{ stroke: "#ffb56b", strokeWidth: 1 }}
+                  cursor={{ stroke: "#6ee7b7", strokeWidth: 1 }}
                   contentStyle={{
                     background: "rgba(255,255,255,0.95)",
                     borderRadius: "12px",
-                    border: "1px solid #f4d8bd",
+                    border: "1px solid #a7f3d0",
                     fontSize: "12px",
                   }}
                 />
                 <Area
                   type="monotone"
                   dataKey="caloriesIn"
-                  stroke="#f26419"
-                  fill="#f26419"
+                  stroke="#10b981"
+                  fill="#10b981"
                   fillOpacity={0.18}
                   strokeWidth={2}
                 />
                 <Area
                   type="monotone"
                   dataKey="caloriesOut"
-                  stroke="#1b9aaa"
-                  fill="#1b9aaa"
+                  stroke="#14b8a6"
+                  fill="#14b8a6"
                   fillOpacity={0.2}
                   strokeWidth={2}
                 />
@@ -111,25 +111,25 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
         </div>
         <div className="h-44 w-full">
           {isEmpty ? (
-            <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 text-xs text-muted">
+            <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-emerald-100 bg-emerald-50/60 text-xs text-muted">
               {t("Su takibi başladığında burada görünecek.")}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3e3d4" />
-                <XAxis dataKey="name" tick={{ fill: "#6f5f52", fontSize: 11 }} />
-                <YAxis tick={{ fill: "#6f5f52", fontSize: 11 }} width={36} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#dcfce7" />
+                <XAxis dataKey="name" tick={{ fill: "#4b5563", fontSize: 11 }} />
+                <YAxis tick={{ fill: "#4b5563", fontSize: 11 }} width={36} />
                 <Tooltip
-                  cursor={{ fill: "rgba(255,122,0,0.12)" }}
+                  cursor={{ fill: "rgba(16,185,129,0.12)" }}
                   contentStyle={{
                     background: "rgba(255,255,255,0.95)",
                     borderRadius: "12px",
-                    border: "1px solid #f4d8bd",
+                    border: "1px solid #a7f3d0",
                     fontSize: "12px",
                   }}
                 />
-                <Bar dataKey="waterMl" fill="#3d5a80" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="waterMl" fill="#34d399" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -146,29 +146,29 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
         </div>
         <div className="h-44 w-full">
           {isEmpty ? (
-            <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 text-xs text-muted">
+            <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-emerald-100 bg-emerald-50/60 text-xs text-muted">
               {t("Aktivite kayıtları başladığında burada görünecek.")}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3e3d4" />
-                <XAxis dataKey="name" tick={{ fill: "#6f5f52", fontSize: 11 }} />
-                <YAxis tick={{ fill: "#6f5f52", fontSize: 11 }} width={36} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#dcfce7" />
+                <XAxis dataKey="name" tick={{ fill: "#4b5563", fontSize: 11 }} />
+                <YAxis tick={{ fill: "#4b5563", fontSize: 11 }} width={36} />
                 <Tooltip
-                  cursor={{ stroke: "#ffb56b", strokeWidth: 1 }}
+                  cursor={{ stroke: "#6ee7b7", strokeWidth: 1 }}
                   contentStyle={{
                     background: "rgba(255,255,255,0.95)",
                     borderRadius: "12px",
-                    border: "1px solid #f4d8bd",
+                    border: "1px solid #a7f3d0",
                     fontSize: "12px",
                   }}
                 />
                 <Area
                   type="monotone"
                   dataKey="activityMin"
-                  stroke="#2a9d8f"
-                  fill="#2a9d8f"
+                  stroke="#16a34a"
+                  fill="#16a34a"
                   fillOpacity={0.2}
                   strokeWidth={2}
                 />
@@ -188,25 +188,25 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
         </div>
         <div className="h-44 w-full">
           {isEmpty ? (
-            <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 text-xs text-muted">
+            <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-emerald-100 bg-emerald-50/60 text-xs text-muted">
               {t("Öğün kayıtları başladığında burada görünecek.")}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3e3d4" />
-                <XAxis dataKey="name" tick={{ fill: "#6f5f52", fontSize: 11 }} />
-                <YAxis tick={{ fill: "#6f5f52", fontSize: 11 }} width={36} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#dcfce7" />
+                <XAxis dataKey="name" tick={{ fill: "#4b5563", fontSize: 11 }} />
+                <YAxis tick={{ fill: "#4b5563", fontSize: 11 }} width={36} />
                 <Tooltip
-                  cursor={{ fill: "rgba(255,122,0,0.12)" }}
+                  cursor={{ fill: "rgba(16,185,129,0.12)" }}
                   contentStyle={{
                     background: "rgba(255,255,255,0.95)",
                     borderRadius: "12px",
-                    border: "1px solid #f4d8bd",
+                    border: "1px solid #a7f3d0",
                     fontSize: "12px",
                   }}
                 />
-                <Bar dataKey="mealCount" fill="#e9c46a" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="mealCount" fill="#84cc16" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -227,21 +227,21 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
         </div>
         <div className="h-48 w-full">
           {isEmpty ? (
-            <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 text-xs text-muted">
+            <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-emerald-100 bg-emerald-50/60 text-xs text-muted">
               {t("Makro verisi oluştuğunda burada görünecek.")}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3e3d4" />
-                <XAxis dataKey="name" tick={{ fill: "#6f5f52", fontSize: 11 }} />
-                <YAxis tick={{ fill: "#6f5f52", fontSize: 11 }} width={36} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#dcfce7" />
+                <XAxis dataKey="name" tick={{ fill: "#4b5563", fontSize: 11 }} />
+                <YAxis tick={{ fill: "#4b5563", fontSize: 11 }} width={36} />
                 <Tooltip
-                  cursor={{ fill: "rgba(255,122,0,0.12)" }}
+                  cursor={{ fill: "rgba(16,185,129,0.12)" }}
                   contentStyle={{
                     background: "rgba(255,255,255,0.95)",
                     borderRadius: "12px",
-                    border: "1px solid #f4d8bd",
+                    border: "1px solid #a7f3d0",
                     fontSize: "12px",
                   }}
                 />
@@ -256,9 +256,9 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
                         : t("Yağ")
                   }
                 />
-                <Bar dataKey="proteinG" stackId="macro" fill="#ef476f" />
-                <Bar dataKey="carbsG" stackId="macro" fill="#ffd166" />
-                <Bar dataKey="fatG" stackId="macro" fill="#06d6a0" />
+                <Bar dataKey="proteinG" stackId="macro" fill="#10b981" />
+                <Bar dataKey="carbsG" stackId="macro" fill="#34d399" />
+                <Bar dataKey="fatG" stackId="macro" fill="#a3e635" />
               </BarChart>
             </ResponsiveContainer>
           )}

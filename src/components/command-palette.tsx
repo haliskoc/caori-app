@@ -158,7 +158,7 @@ export function CommandPalette() {
         }
       }}
     >
-      <div className="w-full max-w-xl rounded-2xl border border-amber-100 bg-white/95 p-4 shadow-strong backdrop-blur">
+      <div className="w-full max-w-xl rounded-2xl border border-emerald-100 bg-white/95 p-4 shadow-strong backdrop-blur">
         <div className="mb-3 flex items-center justify-between text-xs text-muted">
           <span>{t("Komut Paleti")}</span>
           <span>{t("Esc ile kapat • Ctrl/Cmd + K")}</span>
@@ -170,12 +170,12 @@ export function CommandPalette() {
             setSelectedIndex(0);
           }}
           placeholder={t("Komut ara...")}
-          className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+          className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
           autoFocus
         />
         <div className="mt-3 max-h-72 space-y-1 overflow-y-auto">
           {filtered.length === 0 && (
-            <div className="rounded-xl border border-dashed border-amber-100 bg-amber-50/60 px-3 py-4 text-center text-xs text-muted">
+            <div className="rounded-xl border border-dashed border-emerald-100 bg-emerald-50/60 px-3 py-4 text-center text-xs text-muted">
               {t("Sonuç bulunamadı. Farklı bir kelime deneyin.")}
             </div>
           )}
@@ -188,8 +188,8 @@ export function CommandPalette() {
               }}
               className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm transition ${
                 index === selectedIndex
-                  ? "bg-amber-100/70 text-amber-900"
-                  : "hover:bg-amber-50"
+                  ? "bg-emerald-100/70 text-emerald-900"
+                  : "hover:bg-emerald-50"
               }`}
             >
               <span>{command.label}</span>

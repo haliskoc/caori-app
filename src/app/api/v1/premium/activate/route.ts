@@ -1,21 +1,33 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { auth0 } from "@/lib/auth0";
-import { getDb } from "@/lib/db";
+import { getDb, ensureUser } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
+import { isSameOrigin } from "@/lib/security";
 
 export async function POST(req: NextRequest) {
+    if (!isSameOrigin(req)) {
+        return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+    }
+
     const session = await auth0.getSession(req);
     if (!session?.user) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     try {
-        const { password, plan } = await req.json();
+        const activationKey = process.env.PREMIUM_ACTIVATION_KEY?.trim();
+        if (!activationKey) {
+            return NextResponse.json({ error: "Activation key is not configured." }, { status: 500 });
+        }
+
+        const body = await req.json().catch(() => ({}));
+        const password = typeof body?.password === "string" ? body.password.trim() : "";
+        const plan = typeof body?.plan === "string" ? body.plan : "";
 
         // Gizli anahtar kontrolü
-        if (password !== "sffaresi") {
+        if (!password || password !== activationKey) {
             return NextResponse.json({ error: "Geçersiz aktivasyon kodu." }, { status: 403 });
         }
 
@@ -23,6 +35,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Geçersiz plan seçimi." }, { status: 400 });
         }
 
+        await ensureUser(session.user as any);
         const db = getDb();
 
         // Kullanıcının planını güncelle

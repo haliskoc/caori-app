@@ -22,7 +22,7 @@ export function ProgressRing({ value, goal, size = 120, stroke = 12 }: ProgressR
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#ffe6cc"
+          stroke="#ecfdf5"
           strokeWidth={stroke}
           fill="transparent"
         />
@@ -39,8 +39,8 @@ export function ProgressRing({ value, goal, size = 120, stroke = 12 }: ProgressR
         />
         <defs>
           <linearGradient id="ringGradient" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#ff7a00" />
-            <stop offset="100%" stopColor="#ffb56b" />
+            <stop offset="0%" stopColor="#10b981" />
+            <stop offset="100%" stopColor="#34d399" />
           </linearGradient>
         </defs>
       </svg>

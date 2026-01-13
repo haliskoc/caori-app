@@ -636,7 +636,7 @@ export default function AddEntryPage() {
             className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
               tab === item.key
                 ? "bg-accent text-white"
-                : "border border-amber-100 bg-white text-muted"
+                : "border border-emerald-100 bg-white text-muted"
             }`}
           >
             {item.label}
@@ -652,13 +652,13 @@ export default function AddEntryPage() {
               <div className="flex items-center gap-2 text-xs text-muted">
                 <span>{t("Manuel kalori girişi")}</span>
                 <Tooltip label={t("Ürün araması için en az 3 harf yazın.")}>
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full border border-amber-200 text-[10px] text-amber-700">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full border border-emerald-200 text-[10px] text-emerald-700">
                     ?
                   </span>
                 </Tooltip>
               </div>
             </div>
-            <div className="rounded-2xl border border-amber-100 bg-white p-3 space-y-3">
+            <div className="rounded-2xl border border-emerald-100 bg-white p-3 space-y-3">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-xs font-semibold text-ink">{t("Barkod ile bul")}</p>
@@ -667,7 +667,7 @@ export default function AddEntryPage() {
                 <button
                   type="button"
                   onClick={() => setScannerOpen((prev) => !prev)}
-                  className="rounded-full border border-amber-100 bg-white px-3 py-1 text-[11px] font-semibold text-amber-700 hover:border-amber-200"
+                  className="rounded-full border border-emerald-100 bg-white px-3 py-1 text-[11px] font-semibold text-emerald-700 hover:border-emerald-200"
                   disabled={!supportsBarcodeDetector}
                 >
                   {scannerOpen ? t("Kamerayı kapat") : t("Barkod tara")}
@@ -681,7 +681,7 @@ export default function AddEntryPage() {
               {scanError && <p className="text-[11px] text-red-600">{scanError}</p>}
               {scannerOpen && (
                 <div className="space-y-2">
-                  <div className="overflow-hidden rounded-xl border border-amber-100 bg-black">
+                  <div className="overflow-hidden rounded-xl border border-emerald-100 bg-black">
                     <video
                       ref={videoRef}
                       className="h-40 w-full object-cover sm:h-44"
@@ -698,13 +698,13 @@ export default function AddEntryPage() {
               <input
                 value={barcodeInput}
                 onChange={(event) => setBarcodeInput(event.target.value.replace(/\D/g, ""))}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-200"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-200"
                 placeholder={t("Barkod numarası")}
                 inputMode="numeric"
               />
               <button
                 onClick={() => handleBarcodeLookup(barcodeInput)}
-                className="rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 disabled:opacity-60"
+                className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
                 disabled={isBarcodeSearching || !barcodeInput.trim()}
               >
                 {isBarcodeSearching ? t("Aranıyor...") : t("Ara")}
@@ -720,7 +720,7 @@ export default function AddEntryPage() {
                 setFoodPer100(null);
                 setFoodImageUrl(null);
             }}
-            className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+            className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
             placeholder={t("Ürün Ara veya Manuel Gir...")}
           />
 
@@ -729,7 +729,7 @@ export default function AddEntryPage() {
           )}
 
             {searchResults.length > 0 && (
-              <div className="max-h-40 overflow-y-auto rounded-xl border border-amber-50 bg-amber-50/30 p-1 space-y-1">
+              <div className="max-h-40 overflow-y-auto rounded-xl border border-emerald-50 bg-emerald-50/30 p-1 space-y-1">
                 {searchResults.map((product) => (
                   <button
                     key={product.code}
@@ -754,13 +754,13 @@ export default function AddEntryPage() {
                       if (typeof kcal === "number") setFoodCalories(String(Math.round(kcal)));
                       setSearchResults([]);
                     }}
-                    className="flex w-full items-center gap-3 rounded-lg bg-white p-2 text-left text-xs transition hover:bg-amber-100/50"
+                    className="flex w-full items-center gap-3 rounded-lg bg-white p-2 text-left text-xs transition hover:bg-emerald-100/50"
                   >
                     {product.image_url && (
                       <img src={product.image_url} alt="" className="h-8 w-8 rounded object-cover" />
                     )}
                     <div className="flex-1 overflow-hidden">
-                      <p className="truncate font-semibold text-amber-900">{product.product_name}</p>
+                      <p className="truncate font-semibold text-emerald-900">{product.product_name}</p>
                       <p className="text-[10px] text-muted">
                         {t("{value} kcal / 100g", {
                           value: product.nutriments["energy-kcal_100g"] ?? "?",
@@ -775,7 +775,7 @@ export default function AddEntryPage() {
             !isSearching &&
             searchResults.length === 0 &&
             !selectedFromSearch && (
-            <div className="rounded-xl border border-dashed border-amber-100 bg-amber-50/50 px-3 py-3 text-xs text-muted">
+            <div className="rounded-xl border border-dashed border-emerald-100 bg-emerald-50/50 px-3 py-3 text-xs text-muted">
               {t("Sonuç bulunamadı. Manuel kalori girişi yapabilirsiniz.")}
             </div>
           )}
@@ -783,7 +783,7 @@ export default function AddEntryPage() {
             <input
               value={foodCalories}
               onChange={(event) => setFoodCalories(event.target.value)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
               placeholder={t("Kalori")}
               type="number"
               min="0"
@@ -791,7 +791,7 @@ export default function AddEntryPage() {
               <select
                 value={mealType}
                 onChange={(event) => setMealType(event.target.value as MealType)}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
               >
                 {Object.entries(mealLabels).map(([value, label]) => (
                   <option key={value} value={value}>
@@ -804,12 +804,12 @@ export default function AddEntryPage() {
             <input
               value={foodAmount}
               onChange={(event) => setFoodAmount(event.target.value)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
               placeholder={t("Miktar (g)")}
               type="number"
               min="0"
             />
-            <div className="flex flex-col justify-center rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs text-muted">
+            <div className="flex flex-col justify-center rounded-xl border border-emerald-100 bg-white px-3 py-2 text-xs text-muted">
               <span className="text-[11px] uppercase tracking-[0.2em]">
                 {t("Makrolar (g)")}
               </span>
@@ -861,14 +861,14 @@ export default function AddEntryPage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => handleSaveLibrary(false)}
-                  className="rounded-full border border-amber-100 bg-white px-3 py-1 text-[11px] font-semibold text-amber-700 hover:border-amber-200 disabled:opacity-60"
+                  className="rounded-full border border-emerald-100 bg-white px-3 py-1 text-[11px] font-semibold text-emerald-700 hover:border-emerald-200 disabled:opacity-60"
                   disabled={!foodName.trim()}
                 >
                   {t("Kütüphaneye kaydet")}
                 </button>
                 <button
                   onClick={() => handleSaveLibrary(true)}
-                  className="rounded-full bg-amber-600 px-3 py-1 text-[11px] font-semibold text-white hover:bg-amber-700 disabled:opacity-60"
+                  className="rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
                   disabled={!foodName.trim()}
                 >
                   {t("Favoriye kaydet")}
@@ -879,12 +879,12 @@ export default function AddEntryPage() {
               <input
                 value={libraryQuery}
                 onChange={(event) => setLibraryQuery(event.target.value)}
-                className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-xs"
                 placeholder={t("Kütüphanede ara")}
               />
               <button
                 onClick={() => setLibraryFavoritesOnly((prev) => !prev)}
-                className="rounded-xl border border-amber-100 bg-white px-3 py-2 text-[11px] font-semibold text-amber-700"
+                className="rounded-xl border border-emerald-100 bg-white px-3 py-2 text-[11px] font-semibold text-emerald-700"
               >
                 {libraryFavoritesOnly ? t("Tüm ürünler") : t("Sadece favoriler")}
               </button>
@@ -899,7 +899,7 @@ export default function AddEntryPage() {
                 {filteredLibrary.map((item) => (
                   <div
                     key={item.id}
-                    className="flex flex-wrap items-center gap-3 rounded-xl border border-amber-100 bg-white px-3 py-2 text-xs"
+                    className="flex flex-wrap items-center gap-3 rounded-xl border border-emerald-100 bg-white px-3 py-2 text-xs"
                   >
                     {item.imageUrl && (
                       <img
@@ -920,19 +920,19 @@ export default function AddEntryPage() {
                     <div className="flex flex-wrap items-center gap-2">
                       <button
                         onClick={() => applyLibraryItem(item)}
-                        className="rounded-full border border-amber-100 bg-white px-3 py-1 text-[11px] font-semibold text-amber-700"
+                        className="rounded-full border border-emerald-100 bg-white px-3 py-1 text-[11px] font-semibold text-emerald-700"
                       >
                         {t("Kullan")}
                       </button>
                       <button
                         onClick={() => handleToggleFavorite(item)}
-                        className="rounded-full border border-amber-100 bg-white px-3 py-1 text-[11px] font-semibold text-amber-700"
+                        className="rounded-full border border-emerald-100 bg-white px-3 py-1 text-[11px] font-semibold text-emerald-700"
                       >
                         {item.favorite ? t("Favori") : t("Favori yap")}
                       </button>
                       <button
                         onClick={() => handleRemoveLibraryItem(item)}
-                        className="rounded-full border border-amber-100 bg-white px-3 py-1 text-[11px] font-semibold text-amber-700"
+                        className="rounded-full border border-emerald-100 bg-white px-3 py-1 text-[11px] font-semibold text-emerald-700"
                       >
                         {t("Sil")}
                       </button>
@@ -959,7 +959,7 @@ export default function AddEntryPage() {
                   addWater({ amountMl: amount });
                   setWaterAmount(String(amount));
                 }}
-                className="rounded-full border border-amber-100 bg-white px-4 py-2 text-xs font-semibold text-amber-700"
+                className="rounded-full border border-emerald-100 bg-white px-4 py-2 text-xs font-semibold text-emerald-700"
               >
                 {t("+{value}", { value: amount === 1000 ? "1L" : `${amount}ml` })}
               </button>
@@ -969,7 +969,7 @@ export default function AddEntryPage() {
             <input
               value={waterAmount}
               onChange={(event) => setWaterAmount(event.target.value)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
               placeholder={t("Miktar (ml)")}
               type="number"
               min="0"
@@ -993,7 +993,7 @@ export default function AddEntryPage() {
           <select
             value={activityType}
             onChange={(event) => setActivityType(event.target.value as ActivityType)}
-            className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+            className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
           >
             {activityOptions.map((option) => (
               <option key={option.type} value={option.type}>
@@ -1005,7 +1005,7 @@ export default function AddEntryPage() {
             <input
               value={activityDuration}
               onChange={(event) => setActivityDuration(event.target.value)}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
               placeholder={t("Süre (dk)")}
               type="number"
               min="0"
@@ -1016,7 +1016,7 @@ export default function AddEntryPage() {
                 setActivityCalories(event.target.value);
                 setActivityAuto(false);
               }}
-              className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
               placeholder={t("Tahmini kalori")}
               type="number"
               min="0"
@@ -1044,12 +1044,12 @@ export default function AddEntryPage() {
                   setActivityCalories(String(calculated));
                 }
               }}
-              className="rounded-full border border-amber-100 bg-white px-3 py-1 text-[11px] font-semibold text-amber-700"
+              className="rounded-full border border-emerald-100 bg-white px-3 py-1 text-[11px] font-semibold text-emerald-700"
             >
               {t("Oto hesapla")}
             </button>
             {!activityAuto && (
-              <span className="rounded-full bg-amber-50 px-2 py-1 text-[10px] text-amber-700">
+              <span className="rounded-full bg-emerald-50 px-2 py-1 text-[10px] text-emerald-700">
                 {t("Manuel")}
               </span>
             )}

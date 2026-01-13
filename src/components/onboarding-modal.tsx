@@ -370,7 +370,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
       role="dialog"
       aria-modal="true"
     >
-      <Card className="w-full max-w-2xl max-h-[calc(100vh-2rem)] space-y-5 overflow-y-auto rounded-3xl border border-amber-100 bg-white/95 p-4 shadow-strong sm:p-6">
+      <Card className="w-full max-w-2xl max-h-[calc(100vh-2rem)] space-y-5 overflow-y-auto rounded-3xl border border-emerald-100 bg-white/95 p-4 shadow-strong sm:p-6">
         <div className="space-y-2">
           <p className="text-xs uppercase tracking-[0.2em] text-muted">{t("Onboarding")}</p>
           <div className="flex items-center justify-between text-[11px] text-muted">
@@ -379,7 +379,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
               {questionIndex + 1}/{questions.length}
             </span>
           </div>
-          <div className="h-2 rounded-full bg-amber-100">
+          <div className="h-2 rounded-full bg-emerald-100">
             <div className="h-2 rounded-full bg-accent" style={{ width: `${progress}%` }} />
           </div>
         </div>
@@ -395,7 +395,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
           <input
             value={String(answer)}
             onChange={(event) => updateProfile(question.id, event.target.value)}
-            className="w-full rounded-2xl border border-amber-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+            className="w-full rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
             placeholder={question.placeholder ? t(question.placeholder) : undefined}
             inputMode="numeric"
           />
@@ -405,7 +405,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
           <textarea
             value={String(answer)}
             onChange={(event) => updateProfile(question.id, event.target.value)}
-            className="min-h-[120px] w-full rounded-2xl border border-amber-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+            className="min-h-[120px] w-full rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
             placeholder={question.placeholder ? t(question.placeholder) : undefined}
           />
         )}
@@ -418,8 +418,8 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
                 onClick={() => updateProfile(question.id, option.value)}
                 className={`rounded-2xl border px-4 py-3 text-left text-sm transition ${
                   answer === option.value
-                    ? "border-amber-300 bg-amber-50 text-amber-700"
-                    : "border-amber-100 bg-white text-muted hover:text-ink"
+                    ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                    : "border-emerald-100 bg-white text-muted hover:text-ink"
                 }`}
               >
                 {t(option.label)}
@@ -432,7 +432,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
           <input
             value={profile.injuryDetail}
             onChange={(event) => updateProfile("injuryDetail", event.target.value)}
-            className="w-full rounded-2xl border border-amber-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+            className="w-full rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
             placeholder={t("Sakatlık detayını yaz")}
           />
         )}
@@ -443,7 +443,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
         <div className="flex items-center justify-between">
           <button
             onClick={goBack}
-            className="rounded-xl border border-amber-100 bg-white px-4 py-2 text-sm text-muted hover:text-ink"
+            className="rounded-xl border border-emerald-100 bg-white px-4 py-2 text-sm text-muted hover:text-ink"
             disabled={questionIndex === 0}
           >
             {t("Geri")}
@@ -462,7 +462,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
               key={item.id}
               className={`rounded-full px-3 py-1 ${
                 item.id === question.step
-                  ? "bg-amber-100 text-amber-700"
+                  ? "bg-emerald-100 text-emerald-700"
                   : "bg-white/80 text-muted"
               }`}
             >

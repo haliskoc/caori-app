@@ -221,7 +221,7 @@ export default function HistoryPage() {
               setActiveViewId(null);
             }}
             placeholder={t("Ara: öğün, aktivite...")}
-            className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+            className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
           />
           <select
             value={typeFilter}
@@ -233,7 +233,7 @@ export default function HistoryPage() {
               }
               setActiveViewId(null);
             }}
-            className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+            className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
           >
             <option value="all">{t("Tüm Tipler")}</option>
             <option value="food">{t("Yemek")}</option>
@@ -246,7 +246,7 @@ export default function HistoryPage() {
               setMealFilter(event.target.value as MealFilter);
               setActiveViewId(null);
             }}
-            className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+            className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
             disabled={typeFilter !== "food"}
           >
             <option value="all">{t("Tüm Öğünler")}</option>
@@ -264,7 +264,7 @@ export default function HistoryPage() {
               setRangeFilter(event.target.value as RangeFilter);
               setActiveViewId(null);
             }}
-            className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+            className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
           >
             <option value="all">{t("Tüm Zamanlar")}</option>
             <option value="7">{t("Son {value} Gün", { value: 7 })}</option>
@@ -277,7 +277,7 @@ export default function HistoryPage() {
               setSortOrder(event.target.value as SortOrder);
               setActiveViewId(null);
             }}
-            className="w-full rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+            className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
           >
             <option value="newest">{t("En Yeni")}</option>
             <option value="oldest">{t("En Eski")}</option>
@@ -287,7 +287,7 @@ export default function HistoryPage() {
               value={viewName}
               onChange={(event) => setViewName(event.target.value)}
               placeholder={t("Görünüm adı")}
-              className="w-full flex-1 rounded-xl border border-amber-100 bg-white px-3 py-2 text-sm"
+              className="w-full flex-1 rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm"
             />
             <button
               onClick={() => {
@@ -310,7 +310,7 @@ export default function HistoryPage() {
                 setActiveViewId(nextView.id);
                 setViewName("");
               }}
-              className="w-full rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 sm:w-auto"
+              className="w-full rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 sm:w-auto"
             >
               {t("Görünüm Kaydet")}
             </button>
@@ -324,7 +324,7 @@ export default function HistoryPage() {
                   setSortOrder("newest");
                   setActiveViewId(null);
                 }}
-                className="w-full rounded-xl border border-amber-100 bg-white px-4 py-2 text-xs text-muted hover:text-ink sm:w-auto"
+                className="w-full rounded-xl border border-emerald-100 bg-white px-4 py-2 text-xs text-muted hover:text-ink sm:w-auto"
               >
                 {t("Filtreyi temizle")}
               </button>
@@ -338,8 +338,8 @@ export default function HistoryPage() {
                 key={view.id}
                 className={`flex items-center gap-2 rounded-full border px-3 py-1 ${
                   activeView?.id === view.id
-                    ? "border-amber-400 bg-amber-50 text-amber-700"
-                    : "border-amber-100 bg-white"
+                    ? "border-emerald-400 bg-emerald-50 text-emerald-700"
+                    : "border-emerald-100 bg-white"
                 }`}
               >
                 <button
@@ -386,7 +386,7 @@ export default function HistoryPage() {
           </span>
           <button
             onClick={handleUndo}
-            className="rounded-full border border-amber-100 bg-white px-3 py-1 text-xs font-semibold text-amber-700"
+            className="rounded-full border border-emerald-100 bg-white px-3 py-1 text-xs font-semibold text-emerald-700"
           >
             {t("Geri al")}
           </button>
@@ -409,7 +409,7 @@ export default function HistoryPage() {
         <Card key={day} className="space-y-3">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm font-semibold">{formatShortDate(day)}</p>
-            <span className="rounded-full bg-amber-50 px-3 py-1 text-[11px] text-muted">
+            <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] text-muted">
               {t("{value} kayıt", { value: groups[day].length })}
             </span>
           </div>
@@ -417,7 +417,7 @@ export default function HistoryPage() {
             {groups[day].map((entry) => (
               <div
                 key={entry.id}
-                className="flex flex-col gap-2 rounded-2xl border border-amber-100 bg-white px-3 py-2 text-xs"
+                className="flex flex-col gap-2 rounded-2xl border border-emerald-100 bg-white px-3 py-2 text-xs"
               >
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
@@ -457,20 +457,20 @@ export default function HistoryPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => startEdit(entry)}
-                      className="rounded-full border border-amber-100 px-3 py-1 text-[11px] text-muted hover:text-ink"
+                      className="rounded-full border border-emerald-100 px-3 py-1 text-[11px] text-muted hover:text-ink"
                     >
                       {t("Düzenle")}
                     </button>
                     <button
                       onClick={() => handleDelete(entry)}
-                      className="rounded-full border border-amber-100 px-3 py-1 text-[11px] text-muted hover:text-ink"
+                      className="rounded-full border border-emerald-100 px-3 py-1 text-[11px] text-muted hover:text-ink"
                     >
                       {t("Sil")}
                     </button>
                   </div>
                 </div>
                 {editingId === entry.id && editDraft?.id === entry.id && (
-                  <div className="rounded-xl border border-amber-100 bg-amber-50/40 p-3">
+                  <div className="rounded-xl border border-emerald-100 bg-emerald-50/40 p-3">
                     <div className="grid gap-2 sm:grid-cols-2">
                       <div className="space-y-1">
                         <label className="text-[11px] text-muted">{t("Tarih/Saat")}</label>
@@ -482,7 +482,7 @@ export default function HistoryPage() {
                               prev ? { ...prev, timestamp: fromDateTimeLocal(event.target.value) } : prev
                             )
                           }
-                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          className="w-full rounded-lg border border-emerald-100 bg-white px-2 py-1 text-xs"
                         />
                       </div>
                       {editDraft.type === "food" && (
@@ -497,7 +497,7 @@ export default function HistoryPage() {
                                   : prev
                               )
                             }
-                            className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                            className="w-full rounded-lg border border-emerald-100 bg-white px-2 py-1 text-xs"
                           >
                             {Object.entries(mealLabels).map(([value, label]) => (
                               <option key={value} value={value}>
@@ -519,7 +519,7 @@ export default function HistoryPage() {
                                   : prev
                               )
                             }
-                            className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                            className="w-full rounded-lg border border-emerald-100 bg-white px-2 py-1 text-xs"
                           >
                             {Object.entries(activityLabels).map(([value, label]) => (
                               <option key={value} value={value}>
@@ -539,7 +539,7 @@ export default function HistoryPage() {
                               prev && prev.type === "food" ? { ...prev, name: event.target.value } : prev
                             )
                           }
-                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          className="w-full rounded-lg border border-emerald-100 bg-white px-2 py-1 text-xs"
                           placeholder={t("Yemek adı")}
                         />
                         <input
@@ -551,7 +551,7 @@ export default function HistoryPage() {
                                 : prev
                             )
                           }
-                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          className="w-full rounded-lg border border-emerald-100 bg-white px-2 py-1 text-xs"
                           placeholder={t("Kalori")}
                           type="number"
                           min="0"
@@ -568,7 +568,7 @@ export default function HistoryPage() {
                                 : prev
                             )
                           }
-                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          className="w-full rounded-lg border border-emerald-100 bg-white px-2 py-1 text-xs"
                           placeholder={t("Protein (g)")}
                           type="number"
                           min="0"
@@ -585,7 +585,7 @@ export default function HistoryPage() {
                                 : prev
                             )
                           }
-                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          className="w-full rounded-lg border border-emerald-100 bg-white px-2 py-1 text-xs"
                           placeholder={t("Karbonhidrat (g)")}
                           type="number"
                           min="0"
@@ -602,7 +602,7 @@ export default function HistoryPage() {
                                 : prev
                             )
                           }
-                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          className="w-full rounded-lg border border-emerald-100 bg-white px-2 py-1 text-xs"
                           placeholder={t("Yağ (g)")}
                           type="number"
                           min="0"
@@ -619,7 +619,7 @@ export default function HistoryPage() {
                                 : prev
                             )
                           }
-                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          className="w-full rounded-lg border border-emerald-100 bg-white px-2 py-1 text-xs"
                           placeholder={t("Miktar (g)")}
                           type="number"
                           min="0"
@@ -637,7 +637,7 @@ export default function HistoryPage() {
                                 : prev
                             )
                           }
-                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          className="w-full rounded-lg border border-emerald-100 bg-white px-2 py-1 text-xs"
                           placeholder={t("Miktar (ml)")}
                           type="number"
                           min="0"
@@ -655,7 +655,7 @@ export default function HistoryPage() {
                                 : prev
                             )
                           }
-                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          className="w-full rounded-lg border border-emerald-100 bg-white px-2 py-1 text-xs"
                           placeholder={t("Süre (dk)")}
                           type="number"
                           min="0"
@@ -672,7 +672,7 @@ export default function HistoryPage() {
                                 : prev
                             )
                           }
-                          className="w-full rounded-lg border border-amber-100 bg-white px-2 py-1 text-xs"
+                          className="w-full rounded-lg border border-emerald-100 bg-white px-2 py-1 text-xs"
                           placeholder={t("Tahmini kalori")}
                           type="number"
                           min="0"
@@ -682,13 +682,13 @@ export default function HistoryPage() {
                     <div className="mt-3 flex flex-wrap items-center gap-2">
                       <button
                         onClick={saveEdit}
-                        className="rounded-full bg-amber-600 px-3 py-1 text-[11px] font-semibold text-white"
+                        className="rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-semibold text-white"
                       >
                         {t("Kaydet")}
                       </button>
                       <button
                         onClick={cancelEdit}
-                        className="rounded-full border border-amber-100 px-3 py-1 text-[11px] text-muted"
+                        className="rounded-full border border-emerald-100 px-3 py-1 text-[11px] text-muted"
                       >
                         {t("Vazgeç")}
                       </button>

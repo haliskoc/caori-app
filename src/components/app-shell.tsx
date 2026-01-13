@@ -122,7 +122,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="app-root min-h-screen bg-[#fffbf7] text-ink">
+    <div className="app-root min-h-screen bg-[#f7fffb] text-ink">
       {isAppMode && showSplash && (
         <div className="app-splash">
           <div className="app-splash-card">
@@ -135,7 +135,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <ReminderScheduler />
 
       {/* Modern Top Header */}
-      <header className="sticky top-0 z-40 border-b border-amber-50 bg-white/80 backdrop-blur-md px-4 py-3 sm:px-8 print-hidden">
+      <header className="sticky top-0 z-40 border-b border-emerald-100/70 bg-white/80 backdrop-blur-md px-4 py-3 sm:px-8 print-hidden">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
           {/* Logo Section */}
           <Link href="/dashboard" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
@@ -156,7 +156,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-2 sm:gap-6">
             <Link
               href="/pricing"
-              className="rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-xs font-bold text-amber-700 hover:bg-amber-100 transition-all flex items-center gap-2 shadow-sm"
+              className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition-all flex items-center gap-2 shadow-sm"
             >
               <Sparkles className="h-3.5 w-3.5" />
               <span className="hidden xs:inline">{t("Paketler")}</span>
@@ -200,8 +200,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </header>
 
       <div className="app-shell mx-auto flex w-full max-w-6xl flex-col px-4 pb-24 pt-6 sm:px-8">
-        <div className="mb-8 rounded-2xl border border-amber-100 bg-white/90 p-4 text-xs text-muted shadow-soft print-hidden flex items-center gap-3">
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-100 text-amber-600">!</div>
+        <div className="mb-8 rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4 text-xs text-emerald-900/70 shadow-soft print-hidden flex items-center gap-3">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">!</div>
           {t(
             "Bu platform yalnızca takip ve farkındalık amaçlıdır. Tıbbi, diyetetik veya sağlık tavsiyesi sunmaz."
           )}
@@ -214,7 +214,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </main>
       </div>
 
-      <nav className="app-nav fixed bottom-6 left-1/2 z-20 w-[min(94vw,400px)] -translate-x-1/2 rounded-[2rem] border border-amber-100/50 bg-white/80 px-2 py-2 shadow-2xl backdrop-blur-lg print-hidden">
+      <nav className="app-nav fixed bottom-6 left-1/2 z-20 w-[min(94vw,400px)] -translate-x-1/2 rounded-[2rem] border border-emerald-100/60 bg-white/80 px-2 py-2 shadow-2xl backdrop-blur-lg print-hidden">
         <div className="grid grid-cols-4">
           {[
             { href: "/dashboard", label: "Panel", icon: "⌂" },

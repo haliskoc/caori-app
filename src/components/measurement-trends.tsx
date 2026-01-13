@@ -64,7 +64,7 @@ export function MeasurementTrends({ measurements, rangeDays }: MeasurementTrends
           <p className="text-sm font-semibold">{t("Kilo & Ölçüm Trendleri")}</p>
           <p className="text-xs text-muted">{t("Ölçüm eklediğinizde çizgi oluşur.")}</p>
         </div>
-        <div className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 text-xs text-muted">
+        <div className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-emerald-100 bg-emerald-50/60 text-xs text-muted">
           {t("Henüz ölçüm yok. Profil sayfasından ekleyin.")}
         </div>
       </Card>
@@ -85,8 +85,8 @@ export function MeasurementTrends({ measurements, rangeDays }: MeasurementTrends
               onClick={() => setSelectedType(type)}
               className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
                 activeType === type
-                  ? "bg-amber-600 text-white"
-                  : "border border-amber-100 bg-white text-amber-700"
+                  ? "bg-emerald-600 text-white"
+                  : "border border-emerald-100 bg-white text-emerald-700"
               }`}
             >
               {measurementLabels[type]}
@@ -96,21 +96,21 @@ export function MeasurementTrends({ measurements, rangeDays }: MeasurementTrends
       </div>
       <div className="h-44 w-full">
         {data.length === 0 ? (
-          <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-amber-100 bg-amber-50/60 text-xs text-muted">
+          <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-emerald-100 bg-emerald-50/60 text-xs text-muted">
             {t("Seçilen ölçüm için veri yok.")}
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f3e3d4" />
-              <XAxis dataKey="name" tick={{ fill: "#6f5f52", fontSize: 11 }} />
-              <YAxis tick={{ fill: "#6f5f52", fontSize: 11 }} width={36} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#dcfce7" />
+              <XAxis dataKey="name" tick={{ fill: "#4b5563", fontSize: 11 }} />
+              <YAxis tick={{ fill: "#4b5563", fontSize: 11 }} width={36} />
               <Tooltip
-                cursor={{ stroke: "#ffb56b", strokeWidth: 1 }}
+                cursor={{ stroke: "#6ee7b7", strokeWidth: 1 }}
                 contentStyle={{
                   background: "rgba(255,255,255,0.95)",
                   borderRadius: "12px",
-                  border: "1px solid #f4d8bd",
+                  border: "1px solid #a7f3d0",
                   fontSize: "12px",
                 }}
                 formatter={(value) => {
@@ -124,9 +124,9 @@ export function MeasurementTrends({ measurements, rangeDays }: MeasurementTrends
               <Line
                 type="monotone"
                 dataKey="value"
-                stroke="#ff7a00"
+                stroke="#10b981"
                 strokeWidth={2}
-                dot={{ r: 3, fill: "#ff7a00" }}
+                dot={{ r: 3, fill: "#10b981" }}
                 activeDot={{ r: 5 }}
               />
             </LineChart>
