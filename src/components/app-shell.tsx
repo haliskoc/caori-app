@@ -27,7 +27,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isAppMode, setIsAppMode] = useState(false);
   const [showSplash, setShowSplash] = useState(false);
-  const hideShell = pathname === "/" || pathname.startsWith("/share");
+  const hideShell = pathname === "/" || pathname.startsWith("/share") || pathname.startsWith("/login");
 
   useEffect(() => {
     if (hideShell) {
