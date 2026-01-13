@@ -22,7 +22,8 @@ export async function POST(req: NextRequest) {
 
     try {
         const { message, history, locale } = await req.json();
-        const safeLocale = locale === "en" ? "en" : "tr";
+        const supportedLocales = ["tr", "en", "es", "fr", "ru", "pt"];
+        const safeLocale = supportedLocales.includes(locale) ? locale : "tr";
         const rawMessage = typeof message === "string" ? message.trim() : "";
         const MAX_MESSAGE_CHARS = 800;
         const MAX_HISTORY_MESSAGES = 10;
@@ -84,6 +85,16 @@ export async function POST(req: NextRequest) {
             });
         }
 
+        const languageNames: Record<string, string> = {
+            tr: "Türkçe",
+            en: "English",
+            es: "Español",
+            fr: "Français",
+            ru: "Русский",
+            pt: "Português",
+        };
+        const activeLanguage = languageNames[safeLocale] || "Türkçe";
+
         const systemInstruction = `
 # ROL VE KİMLİK
 Sen **Calmet Sağlık ve Beslenme Takibi** uygulamasının resmi "Yapayı Zeka Sağlık Koçu"sun. Kullanıcılara sağlıklı bir yaşam tarzı benimsemeleri, beslenme alışkanlıklarını iyileştirmeleri ve fitness hedeflerine ulaşmaları konusunda rehberlik edersen.
@@ -105,8 +116,8 @@ Sen **Calmet Sağlık ve Beslenme Takibi** uygulamasının resmi "Yapayı Zeka S
 - **Kısalık:** Bilgi dolu ama öz olsun. Boş laf kalabalığından kaçın.
 
 # DİL DESTEĞİ
-- Kullanıcının sistem dili: **${safeLocale === 'tr' ? 'Türkçe' : 'English'}**. 
-- Sen de yanıtlarını **DAİMA ${safeLocale === 'tr' ? 'Türkçe' : 'English'}** dilinde ver.
+- Kullanıcının sistem dili: **${activeLanguage}**. 
+- Sen de yanıtlarını **DAİMA ${activeLanguage}** dilinde ver.
         `.trim();
 
         type HistoryMessage = { role?: string; content?: string };
@@ -142,7 +153,7 @@ Sen **Calmet Sağlık ve Beslenme Takibi** uygulamasının resmi "Yapayı Zeka S
 
         const chatCompletion = await groq.chat.completions.create({
             messages,
-            model: AI_MODELS.LLAMA3_8B, // llama-3.1-8b-instant
+            model: AI_MODELS.LLAMA3_8B,
             temperature: 0.7,
             max_tokens: 1024,
         });

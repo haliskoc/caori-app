@@ -791,5 +791,10 @@
   "Hedeflerinize, alışkanlıklarınıza ve günlük programınıza göre otomatik oluşan haftalık plan.": "Hedeflerinize, alışkanlıklarınıza ve günlük programınıza göre otomatik oluşan haftalık plan.",
   "Günlük, haftalık ve aylık ilerlemeyi net görüntüleyin. Trendler ve sapmalar tek ekranda.": "Günlük, haftalık ve aylık ilerlemeyi net görüntüleyin. Trendler ve sapmalar tek ekranda.",
   "Tek tek kalori girmeden, diyetisyen onaylı şablonlardan öğününüzü seçin.": "Tek tek kalori girmeden, diyetisyen onaylı şablonlardan öğününüzü seçin.",
-  "Pro'ya Yükselt": "Pro'ya Yükselt"
+  "Pro'ya Yükselt": "Pro'ya Yükselt",
+  "Günlük 25 mesaj limitine ulaştınız. Yarın tekrar bekleriz!": "Günlük 25 mesaj limitine ulaştınız. Yarın tekrar bekleriz!",
+  "AI Koçu sadece AI PLUS paketine özeldir.": "AI Koçu sadece AI PLUS paketine özeldir.",
+  "Cevap üretilemedi.": "Cevap üretilemedi.",
+  "Bir hata oluştu. Lütfen tekrar deneyin.": "Bir hata oluştu. Lütfen tekrar deneyin.",
+  "AI servisi şu an yapılandırılmadı (GROQ_API_KEY eksik). Lütfen yönetici ile iletişime geçin.": "AI servisi şu an yapılandırılmadı (GROQ_API_KEY eksik). Lütfen yönetici ile iletişime geçin."
 }

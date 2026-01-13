@@ -51,7 +51,7 @@
   "100": "100",
   "Yönlendiriliyor...": "Yönlendiriliyor...",
   "Sorumluluk Reddi": "Clause de non-responsabilité",
-  "AI Koçu şu an sadece AI Plus paketinde aktif.": "AI Koçu şu an sadece AI Plus paketinde aktif.",
+  "AI Koçu şu an sadece AI Plus paketinde aktif.": "Le coach IA n'est actif que dans le forfait AI Plus.",
   "Düzenle": "Modifier",
   "Hareket süren hedefinin altında. Günlük 10-15 dakika ekleme etkili olur.": "Your activity time is below target. Adding 10–15 minutes daily helps.",
   "Daha İyi Bir Sen İçin": "Pour un meilleur vous",
@@ -420,7 +420,7 @@
   "Karbonhidrat Hedefi": "Carbohydrate Goal",
   "Görünüm adı": "View name",
   "Kamera izni alınamadı.": "Camera permission could not be granted.",
-  "Günlük limitin doldu. Yarın tekrar deneyebilirsin.": "Günlük limitin doldu. Yarın tekrar deneyebilirsin.",
+  "Günlük limitin doldu. Yarın tekrar deneyebilirsin.": "Limite quotidienne atteinte. Réessayez demain.",
   "AI": "AI",
   "Kayıt Sayısı": "Entry Count",
   "Paylaşım oluşturulamadı.": "Share could not be created.",
@@ -540,7 +540,7 @@
   "Günlük Kalori Hedefi": "Objectif calorique quotidien",
   "kez tüketildi": "times consumed",
   "AI Görsel Tanıma": "AI Visual Recognition",
-  "Günlük 25 mesaj limitine ulaştın. Yarın tekrar deneyebilirsin.": "Günlük 25 mesaj limitine ulaştın. Yarın tekrar deneyebilirsin.",
+  "Günlük 25 mesaj limitine ulaştın. Yarın tekrar deneyebilirsin.": "Vous avez atteint votre limite quotidienne. Vous pourrez réessayer demain.",
   "Cum": "Ven",
   "Sınırsız Öğün & Aktivite": "Sınırsız Öğün & Aktivite",
   "main_goal": "main_goal",
@@ -791,5 +791,10 @@
   "Hedeflerinize, alışkanlıklarınıza ve günlük programınıza göre otomatik oluşan haftalık plan.": "Un plan hebdomadaire généré automatiquement en fonction de vos objectifs, de vos habitudes et de votre emploi du temps quotidien.",
   "Günlük, haftalık ve aylık ilerlemeyi net görüntüleyin. Trendler ve sapmalar tek ekranda.": "Visualisez clairement les progrès quotidiens, hebdomadaires et mensuels. Tendances et écarts sur un seul écran.",
   "Tek tek kalori girmeden, diyetisyen onaylı şablonlardan öğününüzü seçin.": "Choisissez votre repas parmi des modèles approuvés par des diététiciens sans saisir les calories une par une.",
-  "Pro'ya Yükselt": "Passer à Pro"
+  "Pro'ya Yükselt": "Passer à Pro",
+  "Günlük 25 mesaj limitine ulaştınız. Yarın tekrar bekleriz!": "Vous avez atteint votre limite quotidienne de 25 messages. À demain !",
+  "AI Koçu sadece AI PLUS paketine özeldir.": "Le coach IA est réservé au forfait AI PLUS.",
+  "Cevap üretilemedi.": "La réponse n'a pas pu être générée.",
+  "Bir hata oluştu. Lütfen tekrar deneyin.": "Une erreur est survenue. Veuillez réessayer.",
+  "AI servisi şu an yapılandırılmadı (GROQ_API_KEY eksik). Lütfen yönetici ile iletişime geçin.": "Le service IA n'est pas configuré actuellement (GROQ_API_KEY manquant). Veuillez contacter l'administrateur."
 }

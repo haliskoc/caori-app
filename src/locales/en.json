@@ -51,7 +51,7 @@
   "100": "100",
   "Yönlendiriliyor...": "Yönlendiriliyor...",
   "Sorumluluk Reddi": "Disclaimer",
-  "AI Koçu şu an sadece AI Plus paketinde aktif.": "AI Koçu şu an sadece AI Plus paketinde aktif.",
+  "AI Koçu şu an sadece AI Plus paketinde aktif.": "AI Coach is currently only active in the AI Plus plan.",
   "Düzenle": "Edit",
   "Hareket süren hedefinin altında. Günlük 10-15 dakika ekleme etkili olur.": "Your activity time is below target. Adding 10–15 minutes daily helps.",
   "Daha İyi Bir Sen İçin": "For a Better You",
@@ -420,7 +420,7 @@
   "Karbonhidrat Hedefi": "Carbohydrate Goal",
   "Görünüm adı": "View name",
   "Kamera izni alınamadı.": "Camera permission could not be granted.",
-  "Günlük limitin doldu. Yarın tekrar deneyebilirsin.": "Günlük limitin doldu. Yarın tekrar deneyebilirsin.",
+  "Günlük limitin doldu. Yarın tekrar deneyebilirsin.": "Daily limit reached. Try again tomorrow.",
   "AI": "AI",
   "Kayıt Sayısı": "Entry Count",
   "Paylaşım oluşturulamadı.": "Share could not be created.",
@@ -540,7 +540,7 @@
   "Günlük Kalori Hedefi": "Daily Calorie Goal",
   "kez tüketildi": "times consumed",
   "AI Görsel Tanıma": "AI Visual Recognition",
-  "Günlük 25 mesaj limitine ulaştın. Yarın tekrar deneyebilirsin.": "Günlük 25 mesaj limitine ulaştın. Yarın tekrar deneyebilirsin.",
+  "Günlük 25 mesaj limitine ulaştın. Yarın tekrar deneyebilirsin.": "You have reached your daily limit. You can try again tomorrow.",
   "Cum": "Fri",
   "Sınırsız Öğün & Aktivite": "Sınırsız Öğün & Aktivite",
   "main_goal": "main_goal",
@@ -791,5 +791,10 @@
   "Hedeflerinize, alışkanlıklarınıza ve günlük programınıza göre otomatik oluşan haftalık plan.": "A weekly plan automatically generated based on your goals, habits, and daily schedule.",
   "Günlük, haftalık ve aylık ilerlemeyi net görüntüleyin. Trendler ve sapmalar tek ekranda.": "Clearly view daily, weekly, and monthly progress. Trends and deviations on a single screen.",
   "Tek tek kalori girmeden, diyetisyen onaylı şablonlardan öğününüzü seçin.": "Choose your meal from dietitian-approved templates without entering calories one by one.",
-  "Pro'ya Yükselt": "Upgrade to Pro"
+  "Pro'ya Yükselt": "Upgrade to Pro",
+  "Günlük 25 mesaj limitine ulaştınız. Yarın tekrar bekleriz!": "You have reached your daily limit of 25 messages. See you tomorrow!",
+  "AI Koçu sadece AI PLUS paketine özeldir.": "AI Coach is exclusive to the AI PLUS plan.",
+  "Cevap üretilemedi.": "Response could not be generated.",
+  "Bir hata oluştu. Lütfen tekrar deneyin.": "An error occurred. Please try again.",
+  "AI servisi şu an yapılandırılmadı (GROQ_API_KEY eksik). Lütfen yönetici ile iletişime geçin.": "AI service is currently not configured (GROQ_API_KEY missing). Please contact the administrator."
 }
