@@ -273,8 +273,8 @@ export default function ReportPage() {
         (week) => `
           <tr>
             <td>${escapeHtml(formatShortDate(week.weekStart))} - ${escapeHtml(
-              formatShortDate(week.weekEnd)
-            )}</td>
+          formatShortDate(week.weekEnd)
+        )}</td>
             <td>%${week.adherenceScore}</td>
             <td>${formatDelta(week.deltas.caloriesIn, t("kcal"))}</td>
             <td>${formatDelta(week.deltas.waterMl, t("ml"))}</td>
@@ -583,7 +583,7 @@ export default function ReportPage() {
  </head>
         <body>
           <div class="cover-page">
-            <div class="cover-title">Cal AI</div>
+            <div class="cover-title">Calmet</div>
             <h1>${t("Performans Özeti")}</h1>
             <p>${escapeHtml(name)} • ${escapeHtml(rangeLabel)}</p>
             <p>${escapeHtml(formatDateFull(report.startDate))} - ${escapeHtml(formatDateFull(report.endDate))}</p>
@@ -605,24 +605,24 @@ export default function ReportPage() {
             </div>
             <p style="margin-top: 40px; font-size: 10px; color: #999;">
               ${t("Rapor Tarihi: {date}", {
-                date: new Date().toLocaleDateString(intlLocale, {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }),
-              })}
+      date: new Date().toLocaleDateString(intlLocale, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    })}
             </p>
           </div>
 
           <h2>${t("Motivasyon Notu")}</h2>
           <p>${escapeHtml(report.comment)}</p>
           <p>${t("Aktif gün: {active}/{range} • Toplam kayıt: {count}", {
-            active: report.activeDays,
-            range: report.rangeDays,
-            count: report.entryCount,
-          })}</p>
+      active: report.activeDays,
+      range: report.rangeDays,
+      count: report.entryCount,
+    })}</p>
 
           <h2>${t("Özet")}</h2>
           <table>
@@ -746,28 +746,27 @@ export default function ReportPage() {
         <div class="section-icon" aria-hidden="true"></div>
         <h2 class="section-title">${t("Kişisel Yorumlar")}</h2>
       </div>
-      ${
-        insights.length === 0
-          ? `<div class="insight-empty">${t(
-              "Henüz kişisel analiz yok. Daha fazla kayıt ekleyin."
-            )}</div>`
-          : `<div class="insight-grid">
+      ${insights.length === 0
+        ? `<div class="insight-empty">${t(
+          "Henüz kişisel analiz yok. Daha fazla kayıt ekleyin."
+        )}</div>`
+        : `<div class="insight-grid">
           ${insights
-            .map((insight) => {
-              const tone =
-                insight.tone === "warning"
-                  ? "warning"
-                  : insight.tone === "positive"
-                    ? "positive"
-                    : "neutral";
-              return `
+          .map((insight) => {
+            const tone =
+              insight.tone === "warning"
+                ? "warning"
+                : insight.tone === "positive"
+                  ? "positive"
+                  : "neutral";
+            return `
             <div class="insight-item ${tone}">
               <div class="insight-title">${escapeHtml(insight.title)}</div>
               <div class="insight-message">${escapeHtml(insight.message)}</div>
             </div>
           `;
-            })
-            .join("")}
+          })
+          .join("")}
         </div>`
       }
     </div>
@@ -1233,7 +1232,7 @@ export default function ReportPage() {
 
   <div class="page-content" style="padding: 20mm;">
     <div class="page-header">
-      <div class="page-header-logo">Cal AI</div>
+      <div class="page-header-logo">Calmet</div>
       <div class="page-header-info">${escapeHtml(name)} • ${new Date().toLocaleDateString(intlLocale)}</div>
     </div>
 
@@ -1284,8 +1283,7 @@ export default function ReportPage() {
       </div>
     </div>
 
-    ${
-      report.effectiveDays.length > 0
+    ${report.effectiveDays.length > 0
         ? `
     <div class="section">
       <div class="section-header">
@@ -1298,12 +1296,11 @@ export default function ReportPage() {
             (day) => `
           <div class="stat-card" style="text-align: center; background: #fdfaf5">
             <div class="stat-card-label">${formatShortDate(day.date)}</div>
-            <div class="stat-card-value" style="justify-content: center; color: #ff7a00">%${
-              day.score
-            }</div>
+            <div class="stat-card-value" style="justify-content: center; color: #ff7a00">%${day.score
+              }</div>
             <div style="font-size: 10px; color: #999; margin-top: 8px;">${formatNumber(
-              day.caloriesIn
-            )} kcal • ${day.activityMin} dk</div>
+                day.caloriesIn
+              )} kcal • ${day.activityMin} dk</div>
           </div>
         `
           )
@@ -1312,7 +1309,7 @@ export default function ReportPage() {
     </div>
     `
         : ""
-    }
+      }
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
       <div class="section">
@@ -1321,24 +1318,23 @@ export default function ReportPage() {
           <h2 class="section-title">${t("Beslenme Tercihleri")}</h2>
         </div>
         <div class="stat-card" style="padding: 10px 20px;">
-          ${
-            report.topFoods.length > 0
-              ? report.topFoods
-                  .map(
-                    (food) => `
+          ${report.topFoods.length > 0
+        ? report.topFoods
+          .map(
+            (food) => `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f6f6f6;">
               <div style="font-size: 14px; font-weight: 600;">${escapeHtml(food.name)}</div>
               <div style="font-size: 13px; font-weight: 700; color: #ff7a00;">${formatNumber(
-                food.calories
-              )} kcal</div>
+              food.calories
+            )} kcal</div>
             </div>
           `
-                  )
-                  .join("")
-              : `<p style="padding: 20px 0; color: #999; font-size: 13px;">${t(
-                  "Henüz veri yok"
-                )}</p>`
-          }
+          )
+          .join("")
+        : `<p style="padding: 20px 0; color: #999; font-size: 13px;">${t(
+          "Henüz veri yok"
+        )}</p>`
+      }
         </div>
       </div>
       <div class="section">
@@ -1347,26 +1343,24 @@ export default function ReportPage() {
           <h2 class="section-title">${t("Aktivite Özeti")}</h2>
         </div>
         <div class="stat-card" style="padding: 10px 20px;">
-          ${
-            report.topActivities.length > 0
-              ? report.topActivities
-                  .map(
-                    (act) => `
+          ${report.topActivities.length > 0
+        ? report.topActivities
+          .map(
+            (act) => `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f6f6f6;">
               <div style="font-size: 14px; font-weight: 600;">${escapeHtml(
-                act.activityType
-              )}</div>
-              <div style="font-size: 13px; font-weight: 700; color: #ff7a00;">${
-                act.durationMin
+              act.activityType
+            )}</div>
+              <div style="font-size: 13px; font-weight: 700; color: #ff7a00;">${act.durationMin
               } dk</div>
             </div>
           `
-                  )
-                  .join("")
-              : `<p style="padding: 20px 0; color: #999; font-size: 13px;">${t(
-                  "Henüz veri yok"
-                )}</p>`
-          }
+          )
+          .join("")
+        : `<p style="padding: 20px 0; color: #999; font-size: 13px;">${t(
+          "Henüz veri yok"
+        )}</p>`
+      }
         </div>
       </div>
     </div>
@@ -1408,8 +1402,8 @@ export default function ReportPage() {
         </thead>
         <tbody>
           ${report.weekly
-            .map(
-              (week) => `
+        .map(
+          (week) => `
             <tr>
               <td><strong>${formatShortDate(week.weekStart)}</strong></td>
               <td style="color: #ff7a00; font-weight: 700;">%${week.adherenceScore}</td>
@@ -1418,8 +1412,8 @@ export default function ReportPage() {
               <td>${formatDelta(week.deltas.activityMin, "dk")}</td>
             </tr>
           `
-            )
-            .join("")}
+        )
+        .join("")}
         </tbody>
       </table>
     </div>
@@ -1444,8 +1438,8 @@ export default function ReportPage() {
         </thead>
         <tbody>
           ${report.daily
-            .map(
-              (day) => `
+        .map(
+          (day) => `
             <tr>
               <td>${formatShortDate(day.date)}</td>
               <td>${formatNumber(day.caloriesIn)}</td>
@@ -1457,15 +1451,15 @@ export default function ReportPage() {
               <td>${formatNumber(day.fatG)}g</td>
             </tr>
           `
-            )
-            .join("")}
+        )
+        .join("")}
         </tbody>
       </table>
     </div>
 
     <div class="footer">
       <div>CAL AI • ANALYTICS ENGINE v2.0</div>
-      <div>${new Date().getFullYear()} © Cal AI. Tüm hakları saklıdır.</div>
+      <div>${new Date().getFullYear()} © Calmet. Tüm hakları saklıdır.</div>
     </div>
   </div>
 </body>
@@ -1605,14 +1599,14 @@ export default function ReportPage() {
       {/* Print Cover Page */}
       <div className="hidden print:block print-cover-page">
         <div className="flex flex-col items-center justify-center text-center py-20 min-h-[290mm]">
-          <div className="mb-4 text-[80px] font-extrabold text-[#ff7a00] leading-none">Cal AI</div>
+          <div className="mb-4 text-[80px] font-extrabold text-[#ff7a00] leading-none">Calmet</div>
           <h2 className="mb-2 text-3xl font-bold text-ink tracking-widest uppercase">{t("Performans Analizi")}</h2>
           <p className="mb-2 text-xl text-muted font-medium">{name}</p>
           <p className="mb-8 text-lg text-muted">{rangeLabel}</p>
           <div className="mb-12 text-sm text-muted">
             {formatDateFull(report.startDate)} - {formatDateFull(report.endDate)}
           </div>
-          
+
           <div className="relative mb-12 flex h-48 w-48 flex-col items-center justify-center rounded-full border-[6px] border-[#ff7a00] bg-white shadow-xl shadow-amber-900/5">
             <span className="text-[64px] font-black text-[#ff7a00] leading-none mt-2">%{report.adherenceScore}</span>
             <span className="text-[10px] font-bold text-muted uppercase tracking-wider">{t("Uyum Skoru")}</span>
@@ -1641,7 +1635,7 @@ export default function ReportPage() {
               <p className="text-xs text-muted">dk</p>
             </div>
           </div>
-          
+
           <div className="mt-24 text-[10px] text-muted-foreground uppercase tracking-tighter">
             {t("Rapor Tarihi: {date}", {
               date: new Date().toLocaleDateString(intlLocale, {
@@ -1661,11 +1655,10 @@ export default function ReportPage() {
           <button
             key={section.key}
             onClick={() => setActiveSection(section.key)}
-            className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
-              activeSection === section.key
+            className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${activeSection === section.key
                 ? "bg-accent text-white"
                 : "border border-amber-100 bg-white text-amber-700"
-            }`}
+              }`}
           >
             {section.label}
           </button>
@@ -1699,7 +1692,7 @@ export default function ReportPage() {
                 })}
               </p>
             </div>
-            
+
             <div className="grid gap-3 sm:grid-cols-3 text-center">
               <div className="rounded-2xl bg-amber-50/40 p-3 border border-amber-100/50">
                 <p className="text-[10px] uppercase font-bold text-muted-foreground">{t("Toplam Kalori")}</p>
