@@ -62,12 +62,9 @@ export default function LandingPage() {
       />
       <header className="sticky top-0 z-50 w-full border-b border-emerald-100/50 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
-          <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
-            <div className="h-9 w-9 overflow-hidden rounded-xl bg-white shadow-sm border border-emerald-100 p-1">
-              <Image src="/logo.png" alt="Calmet" width={36} height={36} className="h-full w-full object-contain" />
-            </div>
-            <span className="text-xl font-black tracking-tight text-gray-900">
-              Calmet
+          <Link href="/" className="flex items-center transition-transform hover:scale-[1.02]">
+            <span className="text-2xl font-black tracking-tighter text-gray-900">
+              Cal<span className="text-emerald-500">met</span>
             </span>
           </Link>
           <nav className="hidden items-center gap-8 md:flex">
@@ -295,12 +292,9 @@ export default function LandingPage() {
       <footer className="py-20 border-t border-gray-100 bg-white">
         <div className="mx-auto max-w-6xl px-4 md:px-6 grid gap-12 sm:grid-cols-2 lg:grid-cols-4 items-start">
           <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 overflow-hidden rounded-xl bg-white shadow-sm border border-emerald-100 p-1">
-                <Image src="/logo.png" alt="Calmet" width={64} height={64} className="h-full w-full object-contain" />
-              </div>
-              <span className="text-xl font-black tracking-tight text-gray-900">
-                Calmet
+            <div className="flex items-center">
+              <span className="text-2xl font-black tracking-tighter text-gray-900">
+                Cal<span className="text-emerald-500">met</span>
               </span>
             </div>
             <p className="text-sm font-bold text-gray-400 leading-relaxed">

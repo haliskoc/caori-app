@@ -182,20 +182,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-emerald-100/70 bg-white/80 backdrop-blur-md px-4 py-3 sm:px-8 print-hidden">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
           {/* Logo Section */}
-          <Link href="/dashboard" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
-            <div className="relative h-10 w-10 overflow-hidden rounded-xl shadow-md sm:h-12 sm:w-12 bg-white">
-              <Image
-                src="/logo.png"
-                alt="Calmet Logo"
-                width={48}
-                height={48}
-                className="h-full w-full object-contain p-1"
-              />
-            </div>
-            <div className="hidden flex-col sm:flex">
-              <span className="text-[10px] font-bold tracking-[0.2em] text-emerald-600 uppercase">Calmet</span>
-              <h1 className="text-lg font-black text-gray-900 leading-tight">Takip</h1>
-            </div>
+          <Link href="/dashboard" className="flex items-center gap-2 transition-transform hover:scale-[1.02]">
+            <span className="text-2xl font-black tracking-tighter text-gray-900">
+              Cal<span className="text-emerald-500">met</span>
+            </span>
           </Link>
 
           {/* Actions Section */}
