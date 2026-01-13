@@ -67,6 +67,10 @@ export async function POST(request: Request) {
   if (Number.isNaN(timestamp.getTime())) {
     return NextResponse.json({ error: "Invalid timestamp" }, { status: 400 });
   }
+  const activityNote =
+    typeof body?.note === "string" && body.note.trim()
+      ? body.note.trim().slice(0, 200)
+      : null;
 
   await ensureUser(session.user);
   const db = getDb();
@@ -78,7 +82,9 @@ export async function POST(request: Request) {
     name:
       type === "food"
         ? String(body?.name ?? t("Belirtilmedi")).trim().slice(0, 120)
-        : null,
+        : type === "activity"
+          ? activityNote
+          : null,
     calories:
       type === "food"
         ? toSafeNumber(body?.calories, 0, { min: 0, max: 50000, integer: true })

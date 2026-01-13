@@ -36,6 +36,7 @@ export function estimateActivityCalories(input: {
   type: ActivityType;
   durationMin: number;
   weightKg?: number | null;
+  intensity?: "low" | "medium" | "high";
 }) {
   const duration = Number(input.durationMin);
   const weight = Number(input.weightKg);
@@ -43,7 +44,9 @@ export function estimateActivityCalories(input: {
     return 0;
   }
   const safeWeight = Number.isFinite(weight) && weight > 0 ? weight : DEFAULT_WEIGHT_KG;
-  const met = getActivityMet(input.type);
+  const intensityMultiplier =
+    input.intensity === "low" ? 0.85 : input.intensity === "high" ? 1.15 : 1;
+  const met = getActivityMet(input.type) * intensityMultiplier;
   const hours = duration / 60;
   return Math.round(met * safeWeight * hours);
 }

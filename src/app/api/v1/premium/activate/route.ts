@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Geçersiz plan seçimi." }, { status: 400 });
         }
 
-        await ensureUser(session.user as any);
+        await ensureUser(session.user);
         const db = getDb();
 
         // Kullanıcının planını güncelle
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
             .where(eq(users.id, session.user.sub));
 
         return NextResponse.json({ success: true, message: `Tebrikler! ${plan.toUpperCase()} paketiniz aktif edildi.` });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Activation Error:", error);
         return NextResponse.json({ error: "Sistem hatası oluştu." }, { status: 500 });
     }

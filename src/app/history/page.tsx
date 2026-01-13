@@ -451,6 +451,9 @@ export default function HistoryPage() {
                             calorie: entry.estimatedCalories,
                           })}
                         </p>
+                        {"note" in entry && entry.note && (
+                          <p className="text-[11px] text-muted">{entry.note}</p>
+                        )}
                       </div>
                     )}
                   </div>
@@ -676,6 +679,18 @@ export default function HistoryPage() {
                           placeholder={t("Tahmini kalori")}
                           type="number"
                           min="0"
+                        />
+                        <input
+                          value={editDraft.note ?? ""}
+                          onChange={(event) =>
+                            setEditDraft((prev) =>
+                              prev && prev.type === "activity"
+                                ? { ...prev, note: event.target.value || undefined }
+                                : prev
+                            )
+                          }
+                          className="w-full rounded-lg border border-emerald-100 bg-white px-2 py-1 text-xs sm:col-span-2"
+                          placeholder={t("Not (opsiyonel)")}
                         />
                       </div>
                     )}

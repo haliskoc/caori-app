@@ -37,13 +37,6 @@ export function CommandPalette() {
         action: () => router.push("/add-entry"),
       },
       {
-        id: "nav-history",
-        label: t("Geçmişe git"),
-        hint: "/history",
-        keywords: t("gecmis kayıtlar"),
-        action: () => router.push("/history"),
-      },
-      {
         id: "nav-profile",
         label: t("Profil sayfası"),
         hint: "/profile",

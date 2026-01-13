@@ -38,6 +38,7 @@ export type ActivityEntry = {
   activityType: ActivityType;
   durationMin: number;
   estimatedCalories: number;
+  note?: string;
   timestamp: string;
 };
 

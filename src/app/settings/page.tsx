@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/card";
 import { useTracker } from "@/components/tracker-provider";
 import { entriesFromCsv, entriesToCsv, parseCsv } from "@/lib/csv";
-import { getIntlLocale, setLocale, t } from "@/lib/i18n";
+import { setLocale, t } from "@/lib/i18n";
 import { useLocaleValue } from "@/components/locale-provider";
 import { localeOptions } from "@/locales/manifest";
 
@@ -23,8 +23,6 @@ export default function SettingsPage() {
     updateTheme,
     reminder,
     updateReminder,
-    auditLog,
-    clearAuditLog,
   } = useTracker();
   const [waterGoal, setWaterGoal] = useState(String(goals.waterGoalMl));
   const [calorieGoal, setCalorieGoal] = useState(String(goals.calorieGoal));
@@ -99,14 +97,6 @@ export default function SettingsPage() {
     { value: "teal", label: t("Teal"), swatch: "bg-teal-500" },
     { value: "rose", label: t("Rose"), swatch: "bg-rose-500" },
   ] as const;
-
-  const auditPreview = auditLog.slice(0, 10);
-  const auditFormatter = new Intl.DateTimeFormat(getIntlLocale(locale), {
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 
   return (
     <div className="space-y-6">
@@ -372,40 +362,6 @@ export default function SettingsPage() {
           </label>
         </div>
         {csvMessage && <p className="text-xs text-muted">{csvMessage}</p>}
-      </Card>
-
-      <Card className="space-y-4">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold">{t("Değişiklik Geçmişi")}</p>
-            <p className="text-xs text-muted">{t("Son işlemler cihazda saklanır.")}</p>
-          </div>
-          <button
-            onClick={clearAuditLog}
-            className="w-full rounded-xl border border-emerald-100 bg-white px-4 py-2.5 text-xs font-black text-emerald-700 hover:bg-emerald-50 transition-colors sm:w-auto"
-            disabled={auditLog.length === 0}
-          >
-            {t("Temizle")}
-          </button>
-        </div>
-        {auditPreview.length === 0 && (
-          <p className="text-xs text-muted">{t("Henüz kayıtlı bir işlem yok.")}</p>
-        )}
-        {auditPreview.length > 0 && (
-          <div className="space-y-2 text-xs text-muted">
-            {auditPreview.map((event) => (
-              <div
-                key={event.id}
-                className="flex flex-col gap-1 rounded-2xl border border-emerald-50 bg-emerald-50/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <span className="font-bold text-emerald-900">{event.detail}</span>
-                <span className="text-[11px] font-black text-emerald-600/60 uppercase">
-                  {auditFormatter.format(new Date(event.timestamp))}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
       </Card>
 
       {/* Google Fit Integration Temporarily Disabled

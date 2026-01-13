@@ -1,10 +1,48 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Check, X, Zap, Crown, Bot, ArrowRight, Star, Sparkles, ShieldCheck, Rocket } from "lucide-react";
 import { t } from "@/lib/i18n";
 
 export default function PricingPage() {
+    const router = useRouter();
+    const [checkedPlan, setCheckedPlan] = useState(false);
+    const [isBlocked, setIsBlocked] = useState(false);
+
+    useEffect(() => {
+        let active = true;
+        const checkPlan = async () => {
+            try {
+                const res = await fetch("/api/v1/user", { credentials: "include" });
+                if (!res.ok) {
+                    if (active) {
+                        setCheckedPlan(true);
+                    }
+                    return;
+                }
+                const data = (await res.json()) as { isPremium?: boolean };
+                if (active && data?.isPremium) {
+                    setIsBlocked(true);
+                    setCheckedPlan(true);
+                    router.replace("/dashboard");
+                    return;
+                }
+                if (active) {
+                    setCheckedPlan(true);
+                }
+            } catch {
+                if (active) {
+                    setCheckedPlan(true);
+                }
+            }
+        };
+        void checkPlan();
+        return () => {
+            active = false;
+        };
+    }, [router]);
     const plans = [
         {
             id: "free",
@@ -67,6 +105,14 @@ export default function PricingPage() {
             popular: false,
         },
     ];
+
+    if (!checkedPlan || isBlocked) {
+        return (
+            <div className="min-h-screen bg-[#fffcf9] pb-32 pt-20 flex items-center justify-center text-sm text-emerald-700">
+                {t("Yönlendiriliyor...")}
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#fffcf9] pb-32 pt-20 relative overflow-hidden">

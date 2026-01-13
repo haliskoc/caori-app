@@ -6,7 +6,9 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Legend,
+  Cell,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -48,6 +50,20 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
         day.carbsG === 0 &&
         day.fatG === 0
     );
+  const macroTotals = summary.reduce(
+    (acc, day) => ({
+      proteinG: acc.proteinG + day.proteinG,
+      carbsG: acc.carbsG + day.carbsG,
+      fatG: acc.fatG + day.fatG,
+    }),
+    { proteinG: 0, carbsG: 0, fatG: 0 }
+  );
+  const macroTotalValue = macroTotals.proteinG + macroTotals.carbsG + macroTotals.fatG;
+  const macroData = [
+    { name: t("Protein"), value: macroTotals.proteinG, color: "#10b981" },
+    { name: t("Karbonhidrat"), value: macroTotals.carbsG, color: "#34d399" },
+    { name: t("Yağ"), value: macroTotals.fatG, color: "#a3e635" },
+  ].filter((item) => item.value > 0);
 
   return (
     <div className="grid gap-4 lg:grid-cols-2 print-charts">
@@ -225,44 +241,52 @@ export function ReportCharts({ summary, hasEntries = true }: ReportChartsProps) 
           <p className="text-sm font-semibold">{t("Makro Dağılımı")}</p>
           <p className="text-xs text-muted">{t("Protein / Karbonhidrat / Yağ")}</p>
         </div>
-        <div className="h-48 w-full">
-          {isEmpty ? (
+        <div className="h-52 w-full">
+          {isEmpty || macroTotalValue === 0 ? (
             <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-emerald-100 bg-emerald-50/60 text-xs text-muted">
               {t("Makro verisi oluştuğunda burada görünecek.")}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#dcfce7" />
-                <XAxis dataKey="name" tick={{ fill: "#4b5563", fontSize: 11 }} />
-                <YAxis tick={{ fill: "#4b5563", fontSize: 11 }} width={36} />
+              <PieChart>
                 <Tooltip
-                  cursor={{ fill: "rgba(16,185,129,0.12)" }}
                   contentStyle={{
                     background: "rgba(255,255,255,0.95)",
                     borderRadius: "12px",
                     border: "1px solid #a7f3d0",
                     fontSize: "12px",
                   }}
+                  formatter={(value) => [`${value} g`, t("Makro")]}
                 />
-                <Legend
-                  wrapperStyle={{ fontSize: "11px" }}
-                  iconType="circle"
-                  formatter={(value) =>
-                    value === "proteinG"
-                      ? t("Protein")
-                      : value === "carbsG"
-                        ? t("Karbonhidrat")
-                        : t("Yağ")
-                  }
-                />
-                <Bar dataKey="proteinG" stackId="macro" fill="#10b981" />
-                <Bar dataKey="carbsG" stackId="macro" fill="#34d399" />
-                <Bar dataKey="fatG" stackId="macro" fill="#a3e635" />
-              </BarChart>
+                <Pie
+                  data={macroData}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={55}
+                  outerRadius={90}
+                  paddingAngle={4}
+                  stroke="transparent"
+                >
+                  {macroData.map((entry) => (
+                    <Cell key={entry.name} fill={entry.color} />
+                  ))}
+                </Pie>
+              </PieChart>
             </ResponsiveContainer>
           )}
         </div>
+        {!isEmpty && macroTotalValue > 0 && (
+          <div className="mt-2 flex flex-wrap justify-center gap-3 text-[11px] text-muted">
+            {macroData.map((item) => (
+              <div key={item.name} className="flex items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full" style={{ background: item.color }} />
+                <span className="font-semibold text-ink">
+                  {item.name}: {Math.round(item.value)}g
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
         <p className="mt-3 text-[11px] text-muted">
           {t("Makro dengesini haftalık ritimle izleyin.")}
         </p>

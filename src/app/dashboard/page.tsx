@@ -29,6 +29,17 @@ export default function DashboardPage() {
     { key: "fat", label: t("Yağ Hedefi"), goal: goals.fatGoalG, value: dailySummary.fatG },
   ];
   const hasMacroGoals = macroGoals.some((goal) => goal.goal > 0);
+  const handleQuickAdd = () => {
+    if (!quickCalories) {
+      return;
+    }
+    addFood({
+      name: t("Hızlı Ekleme"),
+      calories: Number(quickCalories),
+      mealType: quickMeal,
+    });
+    setQuickCalories("");
+  };
 
   return (
     <div className="space-y-6">
@@ -113,6 +124,12 @@ export default function DashboardPage() {
               <input
                 value={quickCalories}
                 onChange={(event) => setQuickCalories(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    handleQuickAdd();
+                  }
+                }}
                 className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all"
                 placeholder={t("Örn: 420")}
                 type="number"
@@ -130,15 +147,7 @@ export default function DashboardPage() {
                 ))}
               </select>
               <button
-                onClick={() => {
-                  if (!quickCalories) return;
-                  addFood({
-                    name: t("Hızlı Ekleme"),
-                    calories: Number(quickCalories),
-                    mealType: quickMeal,
-                  });
-                  setQuickCalories("");
-                }}
+                onClick={handleQuickAdd}
                 className="rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700 active:scale-95 transition-all"
               >
                 {t("Kaydet")}

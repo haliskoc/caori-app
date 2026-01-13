@@ -57,6 +57,7 @@ type TrackerContextValue = {
     activityType: ActivityType;
     durationMin: number;
     estimatedCalories: number;
+    note?: string;
   }) => Promise<void>;
   addEntries: (
     items: Entry[],
@@ -123,6 +124,7 @@ const ACTIVITY_TYPES: ActivityType[] = [
   "pilates",
   "stairs",
 ];
+const AUDIT_ENABLED = false;
 
 function normalizeEntry(entry: Entry): Entry {
   const timestampDate = new Date(entry.timestamp);
@@ -160,6 +162,12 @@ function normalizeEntry(entry: Entry): Entry {
       : "walking",
     durationMin: Number(entry.durationMin) || 0,
     estimatedCalories: Number(entry.estimatedCalories) || 0,
+    note:
+      typeof (entry as { note?: string; name?: string }).note === "string"
+        ? (entry as { note?: string }).note?.trim() || undefined
+        : typeof (entry as { name?: string }).name === "string"
+          ? (entry as { name?: string }).name?.trim() || undefined
+          : undefined,
     timestamp,
   };
 }
@@ -232,7 +240,9 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   const [flags, setFlags] = useState<FeatureFlags>(() => loadFlags());
   const [theme, setTheme] = useState<ThemeSettings>(() => loadTheme());
   const [reminder, setReminder] = useState<ReminderSettings>(() => loadReminder());
-  const [auditLog, setAuditLog] = useState<AuditEvent[]>(() => loadAuditLog());
+  const [auditLog, setAuditLog] = useState<AuditEvent[]>(() =>
+    AUDIT_ENABLED ? loadAuditLog() : []
+  );
   const [measurements, setMeasurements] = useState<MeasurementEntry[]>(() =>
     loadMeasurements()
   );
@@ -269,7 +279,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   }, [dataMode, reminder]);
 
   useEffect(() => {
-    if (dataMode === "local") {
+    if (dataMode === "local" && AUDIT_ENABLED) {
       saveAuditLog(auditLog);
     }
   }, [auditLog, dataMode]);
@@ -282,12 +292,15 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
 
   const loadRemoteData = useCallback(async () => {
     try {
-      const [entriesRes, goalsRes, settingsRes, auditRes, measurementsRes] = await Promise.all([
+      const auditPromise = AUDIT_ENABLED
+        ? fetch("/api/v1/audit", { credentials: "include", cache: "no-store" })
+        : Promise.resolve(null);
+      const [entriesRes, goalsRes, settingsRes, measurementsRes, auditRes] = await Promise.all([
         fetch("/api/v1/entries", { credentials: "include", cache: "no-store" }),
         fetch("/api/v1/goals", { credentials: "include", cache: "no-store" }),
         fetch("/api/v1/settings", { credentials: "include", cache: "no-store" }),
-        fetch("/api/v1/audit", { credentials: "include", cache: "no-store" }),
         fetch("/api/v1/measurements", { credentials: "include", cache: "no-store" }),
+        auditPromise,
       ]);
       if (entriesRes.ok) {
         const data = (await entriesRes.json()) as Entry[];
@@ -331,7 +344,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           setFlags((prev) => ({ ...prev, ...data.flags }));
         }
       }
-      if (auditRes.ok) {
+      if (AUDIT_ENABLED && auditRes && "ok" in auditRes && auditRes.ok) {
         const data = (await auditRes.json()) as AuditEvent[];
         setAuditLog(Array.isArray(data) ? data : []);
       }
@@ -455,6 +468,9 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       detail: string,
       meta?: Record<string, string | number | boolean>
     ) => {
+      if (!AUDIT_ENABLED) {
+        return;
+      }
       const event = buildAuditEvent({ action, detail, meta });
       setAuditLog((prev) => appendAuditEvent(event, prev));
       if (dataMode === "remote") {
@@ -622,6 +638,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     activityType: ActivityType;
     durationMin: number;
     estimatedCalories: number;
+    note?: string;
   }) {
     const entry: Entry = {
       id: createId(),
@@ -629,6 +646,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
       activityType: input.activityType,
       durationMin: Number(input.durationMin) || 0,
       estimatedCalories: Number(input.estimatedCalories) || 0,
+      note: input.note?.trim() || undefined,
       timestamp: new Date().toISOString(),
     };
     if (dataMode === "remote") {
@@ -641,6 +659,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           activityType: entry.activityType,
           durationMin: entry.durationMin,
           estimatedCalories: entry.estimatedCalories,
+          note: entry.note,
           timestamp: entry.timestamp,
         }),
       });
@@ -862,6 +881,9 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
   }
 
   function clearAuditLog() {
+    if (!AUDIT_ENABLED) {
+      return;
+    }
     setAuditLog([]);
     if (dataMode === "remote") {
       void fetch("/api/v1/audit", {
@@ -960,6 +982,17 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
     window.addEventListener("online", handleOnline);
     return () => window.removeEventListener("online", handleOnline);
   }, [dataMode, importLocalEntries, importLocalMeasurements]);
+
+  useEffect(() => {
+    if (dataMode !== "remote" || isLoading) {
+      return;
+    }
+    void loadRemoteData();
+    const interval = window.setInterval(() => {
+      void loadRemoteData();
+    }, 30000);
+    return () => window.clearInterval(interval);
+  }, [dataMode, isLoading, loadRemoteData]);
 
   const value: TrackerContextValue = {
     entries,

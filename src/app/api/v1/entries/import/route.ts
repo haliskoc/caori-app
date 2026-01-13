@@ -56,6 +56,10 @@ export async function POST(request: Request) {
         return null;
       }
       const timestamp = item?.timestamp ? new Date(item.timestamp) : new Date();
+      const activityNote =
+        typeof item?.note === "string" && item.note.trim()
+          ? item.note.trim().slice(0, 200)
+          : null;
       return {
         id: item?.id ? String(item.id) : createId(),
         userId: session.user.sub,
@@ -63,7 +67,9 @@ export async function POST(request: Request) {
         name:
           type === "food"
             ? String(item?.name ?? t("Belirtilmedi")).trim().slice(0, 120)
-            : null,
+            : type === "activity"
+              ? activityNote
+              : null,
         calories:
           type === "food"
             ? toSafeNumber(item?.calories, 0, { min: 0, max: 50000, integer: true })

@@ -43,6 +43,10 @@ export async function PUT(
 
   const { id } = await params;
   const body = await request.json();
+  const activityNote =
+    typeof body?.note === "string" && body.note.trim()
+      ? body.note.trim().slice(0, 200)
+      : null;
   const type = String(body?.type ?? "");
   if (type !== "food" && type !== "water" && type !== "activity") {
     return NextResponse.json({ error: "Invalid type" }, { status: 400 });
@@ -104,7 +108,7 @@ export async function PUT(
       max: 50000,
       integer: true,
     });
-    update.name = null;
+    update.name = activityNote;
     update.calories = null;
     update.mealType = null;
     update.amountG = null;

@@ -5,7 +5,6 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Crown, ShieldCheck, ArrowLeft, Loader2, Lock } from "lucide-react";
 import Link from "next/link";
-import { t } from "@/lib/i18n";
 
 function ActivationForm() {
     const router = useRouter();
@@ -40,7 +39,8 @@ function ActivationForm() {
             } else {
                 setError(data.error || "Aktivasyon başarısız.");
             }
-        } catch (err) {
+        } catch (error) {
+            console.error(error);
             setError("Bir hata oluştu. İnternet bağlantınızı kontrol edin.");
         } finally {
             setIsLoading(false);
@@ -55,7 +55,7 @@ function ActivationForm() {
                 </div>
                 <h1 className="text-3xl font-bold text-gray-900">Aktivasyon Başarılı!</h1>
                 <p className="text-gray-600">
-                    {targetPlan.toUpperCase()} paketiniz tanımlandı. Dashboard'a yönlendiriliyorsunuz...
+                    {targetPlan.toUpperCase()} paketiniz tanımlandı. {"Dashboard'a"} yönlendiriliyorsunuz...
                 </p>
                 <div className="flex justify-center">
                     <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />

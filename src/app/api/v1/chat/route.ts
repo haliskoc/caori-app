@@ -6,6 +6,7 @@ import { users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { groq, AI_MODELS } from "@/lib/ai";
 import { ensureUser } from "@/lib/db";
+import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
 
 export async function POST(req: NextRequest) {
     let session;
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Message is too long" }, { status: 400 });
         }
 
-        await ensureUser(session.user as any);
+        await ensureUser(session.user);
         const db = getDb();
         const [userRecord] = await db
             .select()
@@ -57,18 +58,18 @@ export async function POST(req: NextRequest) {
             usageCount = 0;
         }
 
-        // Yeni Plan Limitleri (Free & Pro: 0, AI Plus: 100)
+        // Yeni Plan Limitleri (Free & Pro: 0, AI Plus: 25)
         const LIMITS = {
             free: 0,
             pro: 0,
-            ai_plus: 100,
+            ai_plus: 25,
         };
 
         if (usageCount >= LIMITS[plan]) {
             return NextResponse.json(
                 {
                     error: plan === "ai_plus"
-                        ? "Günlük 100 mesaj limitine ulaştınız. Yarın tekrar bekleriz!"
+                        ? "Günlük 25 mesaj limitine ulaştınız. Yarın tekrar bekleriz!"
                         : "AI Koçu sadece AI PLUS paketine özeldir.",
                     limitReached: true,
                     plan,
@@ -108,9 +109,11 @@ Sen **Calmet Sağlık ve Beslenme Takibi** uygulamasının resmi "Yapayı Zeka S
 - Sen de yanıtlarını **DAİMA ${safeLocale === 'tr' ? 'Türkçe' : 'English'}** dilinde ver.
         `.trim();
 
-        const normalizedHistory = Array.isArray(history)
+        type HistoryMessage = { role?: string; content?: string };
+        const normalizedHistory: ChatCompletionMessageParam[] = Array.isArray(history)
             ? history
-                .map((msg: any) => {
+                .map((item) => {
+                    const msg = item as HistoryMessage;
                     const content = typeof msg?.content === "string" ? msg.content.trim() : "";
                     if (!content) {
                         return null;
@@ -122,21 +125,23 @@ Sen **Calmet Sağlık ve Beslenme Takibi** uygulamasının resmi "Yapayı Zeka S
                     return {
                         role,
                         content: content.slice(0, MAX_HISTORY_CHARS),
-                    };
+                    } as ChatCompletionMessageParam;
                 })
-                .filter(Boolean)
+                .filter(
+                    (item): item is ChatCompletionMessageParam => Boolean(item)
+                )
                 .slice(-MAX_HISTORY_MESSAGES)
             : [];
 
         // Convert history to Groq format (user/assistant)
-        const messages = [
+        const messages: ChatCompletionMessageParam[] = [
             { role: "system", content: systemInstruction },
-            ...(normalizedHistory as any),
-            { role: "user", content: rawMessage }
+            ...normalizedHistory,
+            { role: "user", content: rawMessage },
         ];
 
         const chatCompletion = await groq.chat.completions.create({
-            messages: messages as any,
+            messages,
             model: AI_MODELS.LLAMA3_8B, // llama-3.1-8b-instant
             temperature: 0.7,
             max_tokens: 1024,
@@ -154,12 +159,12 @@ Sen **Calmet Sağlık ve Beslenme Takibi** uygulamasının resmi "Yapayı Zeka S
             .where(eq(users.id, session.user.sub));
 
         return NextResponse.json({ reply: text });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Chat API Critical Error:", error);
-        if (error.stack) console.error(error.stack);
-        return NextResponse.json(
-            { error: error.message || "Bir hata oluştu. Lütfen tekrar deneyin." },
-            { status: 500 }
-        );
+        if (error instanceof Error && error.stack) {
+            console.error(error.stack);
+        }
+        const message = error instanceof Error ? error.message : "Bir hata oluştu. Lütfen tekrar deneyin.";
+        return NextResponse.json({ error: message }, { status: 500 });
     }
 }

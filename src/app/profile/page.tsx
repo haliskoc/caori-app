@@ -238,6 +238,10 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<ProfileInfo>(() => loadProfile());
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [showAllBadges, setShowAllBadges] = useState(false);
+  const [userPlan, setUserPlan] = useState<"free" | "pro" | "ai_plus">("free");
   const isRemote = Boolean(user?.sub);
   const [measurementType, setMeasurementType] = useState<MeasurementType>("weight");
   const [measurementValue, setMeasurementValue] = useState("");
@@ -246,6 +250,12 @@ export default function ProfilePage() {
     const offset = now.getTimezoneOffset();
     return new Date(now.getTime() - offset * 60000).toISOString().slice(0, 16);
   });
+
+  useEffect(() => {
+    if (isEditing) {
+      setShowDetails(true);
+    }
+  }, [isEditing]);
 
   useEffect(() => {
     if (!isRemote) {
@@ -270,6 +280,32 @@ export default function ProfilePage() {
       active = false;
     };
   }, [isRemote]);
+
+  useEffect(() => {
+    if (!user?.sub) {
+      setUserPlan("free");
+      return;
+    }
+    let active = true;
+    const loadPlan = async () => {
+      try {
+        const res = await fetch("/api/v1/user", { credentials: "include" });
+        if (!res.ok) {
+          return;
+        }
+        const data = (await res.json()) as { plan?: "free" | "pro" | "ai_plus" };
+        if (active && data?.plan) {
+          setUserPlan(data.plan);
+        }
+      } catch {
+        // ignore errors
+      }
+    };
+    void loadPlan();
+    return () => {
+      active = false;
+    };
+  }, [user]);
 
   const stats = useMemo(() => {
     const dayMap = new Map<string, DayBucket>();
@@ -426,6 +462,9 @@ export default function ProfilePage() {
     stats.daysCount > 0 ? Math.round((stats.mealGoalDays / stats.daysCount) * 100) : 0;
   const mainGoalLabel = t(getOptionLabel(goalOptions, profile.mainGoal));
   const sportLevelLabel = t(getOptionLabel(sportLevelOptions, profile.sportLevel));
+  const planLabel =
+    userPlan === "ai_plus" ? t("AI Plus") : userPlan === "pro" ? t("Pro") : t("Ücretsiz");
+  const detailsVisible = showDetails || isEditing;
 
   const badgeProgress = {
     streak: stats.currentStreak,
@@ -438,6 +477,10 @@ export default function ProfilePage() {
   const mealBadges = badgeDefinitions.filter((badge) => badge.category === "meal");
   const waterBadges = badgeDefinitions.filter((badge) => badge.category === "water");
   const activityBadges = badgeDefinitions.filter((badge) => badge.category === "activity");
+  const visibleStreakBadges = showAllBadges ? streakBadges : streakBadges.slice(0, 2);
+  const visibleMealBadges = showAllBadges ? mealBadges : mealBadges.slice(0, 2);
+  const visibleWaterBadges = showAllBadges ? waterBadges : waterBadges.slice(0, 2);
+  const visibleActivityBadges = showAllBadges ? activityBadges : activityBadges.slice(0, 2);
 
   return (
     <div className="space-y-6">
@@ -453,11 +496,18 @@ export default function ProfilePage() {
                 <p className="text-xs text-muted">
                   {profile.fullName || user?.name || t("İsmini ekle")}
                 </p>
-                <p className="text-[11px] text-muted">
-                  {user?.email
-                    ? t("E-posta: {value}", { value: user.email })
-                    : t("Yerel profil")}
-                </p>
+                <div className="mt-1 inline-flex items-center gap-2">
+                  <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                    {planLabel}
+                  </span>
+                  {isEditing && (
+                    <span className="text-[11px] text-muted">
+                      {user?.email
+                        ? t("E-posta: {value}", { value: user.email })
+                        : t("Yerel profil")}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
             <div className="w-full sm:min-w-[200px] sm:w-auto">
@@ -472,6 +522,21 @@ export default function ProfilePage() {
                 />
               </div>
             </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <button
+              onClick={() => setIsEditing((prev) => !prev)}
+              className="rounded-full border border-emerald-100 bg-white px-3 py-1 text-[11px] font-semibold text-emerald-700 hover:bg-emerald-50"
+            >
+              {isEditing ? t("Düzenlemeyi Kapat") : t("Düzenle")}
+            </button>
+            <button
+              onClick={() => setShowDetails((prev) => !prev)}
+              className="rounded-full border border-emerald-100 bg-white px-3 py-1 text-[11px] font-semibold text-emerald-700 hover:bg-emerald-50"
+            >
+              {showDetails ? t("Detayları Gizle") : t("Detayları Gör")}
+            </button>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
@@ -495,26 +560,28 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {bmi && (
-            <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-xs text-emerald-900">
-              {t("BMI: {value} • {label} aralık", {
-                value: bmi.toFixed(1),
-                label: getBmiLabel(bmi),
-              })}
-            </div>
-          )}
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">{t("Yaş")}</p>
-              <p className="mt-1 text-lg font-semibold text-ink">{ageLabel}</p>
-            </div>
-            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">{t("Ana hedef")}</p>
-              <p className="mt-1 text-lg font-semibold text-ink">{mainGoalLabel}</p>
-            </div>
-            <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
-              <p className="text-muted">{t("Spor seviyesi")}</p>
-              <p className="mt-1 text-lg font-semibold text-ink">{sportLevelLabel}</p>
+          <div className={`${detailsVisible ? "block" : "hidden"} space-y-3`}>
+            {bmi && (
+              <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-xs text-emerald-900">
+                {t("BMI: {value} • {label} aralık", {
+                  value: bmi.toFixed(1),
+                  label: getBmiLabel(bmi),
+                })}
+              </div>
+            )}
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
+                <p className="text-muted">{t("Yaş")}</p>
+                <p className="mt-1 text-lg font-semibold text-ink">{ageLabel}</p>
+              </div>
+              <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
+                <p className="text-muted">{t("Ana hedef")}</p>
+                <p className="mt-1 text-lg font-semibold text-ink">{mainGoalLabel}</p>
+              </div>
+              <div className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs">
+                <p className="text-muted">{t("Spor seviyesi")}</p>
+                <p className="mt-1 text-lg font-semibold text-ink">{sportLevelLabel}</p>
+              </div>
             </div>
           </div>
         </Card>
@@ -599,11 +666,11 @@ export default function ProfilePage() {
               {t("Ekle")}
             </button>
           </div>
-          {sortedMeasurements.length > 0 && (
-            <div className="space-y-2 text-xs text-muted">
-              {sortedMeasurements.slice(0, 8).map((entry) => (
-                <div
-                  key={entry.id}
+        {sortedMeasurements.length > 0 && (
+          <div className="space-y-2 text-xs text-muted">
+            {sortedMeasurements.slice(0, 8).map((entry) => (
+              <div
+                key={entry.id}
                   className="flex flex-col gap-2 rounded-2xl border border-emerald-100 bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex flex-col">
@@ -626,86 +693,119 @@ export default function ProfilePage() {
                     </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+            ))}
+          </div>
+        )}
+      </Card>
+
+        <Card className="space-y-3">
+          <div>
+            <p className="text-sm font-semibold">{t("Kayıt Geçmişi")}</p>
+            <p className="text-xs text-muted">{t("Tüm kayıtlarını burada yönetebilirsin.")}</p>
+          </div>
+          <Link
+            href="/history"
+            className="inline-flex w-full items-center justify-center rounded-xl border border-emerald-100 bg-white px-4 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50"
+          >
+            {t("Geçmişi Aç")}
+          </Link>
         </Card>
 
-        <Card className="space-y-4">
+        <Card className="space-y-3">
           <div>
-            <p className="text-sm font-semibold">{t("Pro Bağlantıları")}</p>
-            <p className="text-xs text-muted">{t("Premium modüllerini bu panelden yönetin.")}</p>
+            <p className="text-sm font-semibold">{t("Akıllı Modüller")}</p>
+            <p className="text-xs text-muted">{t("Planlama ve koçluk araçları")}</p>
           </div>
-          <div className="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-muted">{t("Plan")}</span>
-              <span className="rounded-full bg-emerald-100 px-3 py-1 text-[11px] text-emerald-700">
-                {t("Ücretsiz")}
-              </span>
-            </div>
-            <p className="mt-2 text-[11px] text-muted">
-              {t("Pro plan ile gelişmiş analiz, sınırsız kayıt ve özel raporlar açılır.")}
-            </p>
-          </div>
-          <div className="space-y-2">
-            <Link
-              href="/#pricing"
-              className="block w-full rounded-xl bg-emerald-600 px-4 py-2 text-center text-xs font-semibold text-white hover:bg-emerald-700"
-            >
-              {t("Premiuma Geç")}
-            </Link>
-            <Link
-              href="/settings"
-              className="block w-full rounded-xl border border-emerald-100 bg-white px-4 py-2 text-center text-xs text-muted hover:text-ink"
-            >
-              {t("Pro Ayarları")}
-            </Link>
-          </div>
+          <Link
+            href="/lab"
+            className="inline-flex w-full items-center justify-center rounded-xl border border-emerald-100 bg-white px-4 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50"
+          >
+            {t("Modülleri Aç")}
+          </Link>
         </Card>
 
-        <Card className="space-y-4">
-          <div>
-            <p className="text-sm font-semibold">{t("Entegrasyonlar")}</p>
-            <p className="text-xs text-muted">{t("Sağlık platformlarını bağla")}</p>
-          </div>
-          <div className="grid gap-3">
-            {integrationProviders.map((provider) => {
-              const isAvailable = provider.availability === "available";
-              return (
-                <div
-                  key={provider.id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-100 bg-white px-4 py-3"
-                >
-                  <div>
-                    <p className="text-sm font-semibold text-ink">{t(provider.labelKey)}</p>
-                    <p className="text-[11px] text-muted">{t(provider.descriptionKey)}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {provider.tag && (
-                      <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[10px] font-semibold text-emerald-700">
-                        {provider.tag}
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      disabled={!isAvailable}
-                      className={`rounded-full px-3 py-1 text-[10px] font-semibold ${
-                        isAvailable
-                          ? "bg-emerald-600 text-white"
-                          : "border border-emerald-100 bg-emerald-50 text-emerald-500"
-                      }`}
-                    >
-                      {t(isAvailable ? "Bağlan" : "Yakında")}
-                    </button>
-                  </div>
+        {isEditing && (
+          <>
+            <Card className="space-y-4">
+              <div>
+                <p className="text-sm font-semibold">{t("Pro Bağlantıları")}</p>
+                <p className="text-xs text-muted">{t("Premium modüllerini bu panelden yönetin.")}</p>
+              </div>
+              <div className="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted">{t("Plan")}</span>
+                  <span className="rounded-full bg-emerald-100 px-3 py-1 text-[11px] text-emerald-700">
+                    {planLabel}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
-        </Card>
+                <p className="mt-2 text-[11px] text-muted">
+                  {t("Pro plan ile gelişmiş analiz, sınırsız kayıt ve özel raporlar açılır.")}
+                </p>
+              </div>
+              {userPlan === "free" && (
+                <div className="space-y-2">
+                  <Link
+                    href="/#pricing"
+                    className="block w-full rounded-xl bg-emerald-600 px-4 py-2 text-center text-xs font-semibold text-white hover:bg-emerald-700"
+                  >
+                    {t("Premiuma Geç")}
+                  </Link>
+                </div>
+              )}
+              <Link
+                href="/settings"
+                className="block w-full rounded-xl border border-emerald-100 bg-white px-4 py-2 text-center text-xs text-muted hover:text-ink"
+              >
+                {t("Plan Ayarları")}
+              </Link>
+            </Card>
+
+            <Card className="space-y-4">
+              <div>
+                <p className="text-sm font-semibold">{t("Entegrasyonlar")}</p>
+                <p className="text-xs text-muted">{t("Sağlık platformlarını bağla")}</p>
+              </div>
+              <div className="grid gap-3">
+                {integrationProviders.map((provider) => {
+                  const isAvailable = provider.availability === "available";
+                  return (
+                    <div
+                      key={provider.id}
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-100 bg-white px-4 py-3"
+                    >
+                      <div>
+                        <p className="text-sm font-semibold text-ink">{t(provider.labelKey)}</p>
+                        <p className="text-[11px] text-muted">{t(provider.descriptionKey)}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {provider.tag && (
+                          <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[10px] font-semibold text-emerald-700">
+                            {provider.tag}
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          disabled={!isAvailable}
+                          className={`rounded-full px-3 py-1 text-[10px] font-semibold ${
+                            isAvailable
+                              ? "bg-emerald-600 text-white"
+                              : "border border-emerald-100 bg-emerald-50 text-emerald-500"
+                          }`}
+                        >
+                          {t(isAvailable ? "Bağlan" : "Yakında")}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+          </>
+        )}
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+      {isEditing && (
+        <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
         <Card className="space-y-4">
           <div>
             <p className="text-sm font-semibold">{t("Kişisel Bilgiler")}</p>
@@ -1067,6 +1167,7 @@ export default function ProfilePage() {
           </div>
         </Card>
       </section>
+      )}
 
       <Card className="space-y-4">
         <div>
@@ -1083,7 +1184,7 @@ export default function ProfilePage() {
         <div className="grid gap-4 lg:grid-cols-2">
           <div className="space-y-3">
             <p className="text-xs font-semibold text-muted">{t("Seri Rozetleri")}</p>
-            {streakBadges.map((badge) => (
+            {visibleStreakBadges.map((badge) => (
               <BadgeCard
                 key={badge.id}
                 badge={badge}
@@ -1093,19 +1194,19 @@ export default function ProfilePage() {
           </div>
           <div className="space-y-3">
             <p className="text-xs font-semibold text-muted">{t("Öğün Rozetleri")}</p>
-            {mealBadges.map((badge) => (
+            {visibleMealBadges.map((badge) => (
               <BadgeCard key={badge.id} badge={badge} progress={badgeProgress.meal} />
             ))}
           </div>
           <div className="space-y-3">
             <p className="text-xs font-semibold text-muted">{t("Su Rozetleri")}</p>
-            {waterBadges.map((badge) => (
+            {visibleWaterBadges.map((badge) => (
               <BadgeCard key={badge.id} badge={badge} progress={badgeProgress.water} />
             ))}
           </div>
           <div className="space-y-3">
             <p className="text-xs font-semibold text-muted">{t("Aktivite Rozetleri")}</p>
-            {activityBadges.map((badge) => (
+            {visibleActivityBadges.map((badge) => (
               <BadgeCard
                 key={badge.id}
                 badge={badge}
@@ -1114,6 +1215,14 @@ export default function ProfilePage() {
             ))}
           </div>
         </div>
+        {badgeDefinitions.length > 0 && (
+          <button
+            onClick={() => setShowAllBadges((prev) => !prev)}
+            className="w-full rounded-xl border border-emerald-100 bg-white px-4 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50"
+          >
+            {showAllBadges ? t("Daha Az Göster") : t("Daha Fazla Göster")}
+          </button>
+        )}
       </Card>
     </div>
   );
@@ -1126,7 +1235,7 @@ function BadgeCard({ badge, progress }: { badge: BadgeDefinition; progress: numb
 
   return (
     <div
-      className={`rounded-2xl border px-4 py-3 transition ${
+      className={`rounded-2xl border px-3 py-2 transition ${
         achieved
           ? "border-emerald-200 bg-white"
           : "border-emerald-100/70 bg-white/70"
@@ -1134,13 +1243,13 @@ function BadgeCard({ badge, progress }: { badge: BadgeDefinition; progress: numb
     >
       <div className="flex items-start gap-3">
         <div
-          className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${badge.tone} text-xs font-semibold ${badge.accent}`}
+          className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${badge.tone} text-[11px] font-semibold ${badge.accent}`}
         >
           {t(badge.label)}
         </div>
         <div className="flex-1 space-y-2">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-ink">{t(badge.title)}</p>
+            <p className="text-xs font-semibold text-ink">{t(badge.title)}</p>
             <span
               className={`rounded-full px-2 py-0.5 text-[10px] ${
                 achieved
@@ -1151,7 +1260,7 @@ function BadgeCard({ badge, progress }: { badge: BadgeDefinition; progress: numb
               {achieved ? t("Açıldı") : t("Kilitli")}
             </span>
           </div>
-          <p className="text-xs text-muted">{t(badge.description)}</p>
+          <p className="text-[11px] text-muted">{t(badge.description)}</p>
           <div className="h-1.5 rounded-full bg-emerald-100">
             <div className="h-1.5 rounded-full bg-accent" style={{ width: `${percent}%` }} />
           </div>

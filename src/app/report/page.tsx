@@ -23,6 +23,8 @@ export default function ReportPage() {
   const [shareLink, setShareLink] = useState<string | null>(null);
   const [shareStatus, setShareStatus] = useState<string | null>(null);
   const [isSharing, setIsSharing] = useState(false);
+  const [shareExpiryDays, setShareExpiryDays] = useState(30);
+  const [shareAnonymize, setShareAnonymize] = useState(false);
   const [activeSection, setActiveSection] = useState<
     "overview" | "weekly" | "trends" | "insights" | "details"
   >("overview");
@@ -76,6 +78,7 @@ export default function ReportPage() {
 
   const report = remoteReport ?? localReport;
   const insights = report.insights ?? [];
+  const reportDaily = report.daily;
   const name = user?.name ?? user?.email ?? t("Kullanıcı");
   const rangeLabel = t("Son {value} gün", { value: report.rangeDays });
   const calorieGoal = report.goals?.calorieGoal;
@@ -110,6 +113,32 @@ export default function ReportPage() {
     safeProteinGoalG !== null ||
     safeCarbsGoalG !== null ||
     safeFatGoalG !== null;
+  const trendSummary = useMemo(() => {
+    const recent = reportDaily.slice(-7);
+    const previous = reportDaily.slice(-14, -7);
+    if (recent.length === 0 || previous.length === 0) {
+      return [];
+    }
+    const avg = (list: typeof reportDaily, key: keyof (typeof reportDaily)[number]) =>
+      list.reduce((sum, day) => sum + (day[key] as number), 0) / list.length;
+    const build = (label: string, key: keyof (typeof reportDaily)[number], unit: string) => {
+      const current = avg(recent, key);
+      const prev = avg(previous, key);
+      const delta = current - prev;
+      return {
+        label,
+        delta,
+        unit,
+        direction: delta > 0 ? "up" : delta < 0 ? "down" : "flat",
+      };
+    };
+    return [
+      build(t("Kalori"), "caloriesIn", "kcal"),
+      build(t("Su"), "waterMl", "ml"),
+      build(t("Aktivite"), "activityMin", t("dk")),
+      build(t("Öğün"), "mealCount", t("öğün")),
+    ];
+  }, [reportDaily]);
   const caloriePercent =
     safeCalorieGoal !== null
       ? Math.round((report.averages.caloriesIn / safeCalorieGoal) * 100)
@@ -162,6 +191,68 @@ export default function ReportPage() {
   const intlLocale = useMemo(() => getIntlLocale(), []);
   const numberFormat = useMemo(() => new Intl.NumberFormat(intlLocale), [intlLocale]);
   const formatNumber = (value: number) => numberFormat.format(Math.round(value));
+  const latestWeek =
+    report.weekly.length > 0 ? report.weekly[report.weekly.length - 1] : null;
+  const previousWeek =
+    report.weekly.length > 1 ? report.weekly[report.weekly.length - 2] : null;
+  const weeklyScoreDelta =
+    latestWeek && previousWeek ? latestWeek.adherenceScore - previousWeek.adherenceScore : null;
+  const deviationAlerts = useMemo(() => {
+    if (!latestWeek) {
+      return [];
+    }
+    const days = latestWeek.days || 7;
+    const alerts: Array<{
+      label: string;
+      delta: number;
+      unit: string;
+      percent: number;
+    }> = [];
+    const pushAlert = (
+      label: string,
+      delta: number,
+      target: number | null,
+      unit: string,
+      threshold: number
+    ) => {
+      if (!target || target <= 0) {
+        return;
+      }
+      const percent = (delta / target) * 100;
+      if (Math.abs(percent) >= threshold) {
+        alerts.push({ label, delta, unit, percent });
+      }
+    };
+    pushAlert(
+      t("Kalori"),
+      latestWeek.deltas.caloriesIn,
+      safeCalorieGoal !== null ? safeCalorieGoal * days : null,
+      "kcal",
+      15
+    );
+    pushAlert(
+      t("Su"),
+      latestWeek.deltas.waterMl,
+      safeWaterGoalMl !== null ? safeWaterGoalMl * days : null,
+      "ml",
+      20
+    );
+    pushAlert(
+      t("Aktivite"),
+      latestWeek.deltas.activityMin,
+      safeActivityGoalMin !== null ? safeActivityGoalMin * days : null,
+      t("dk"),
+      20
+    );
+    pushAlert(
+      t("Öğün"),
+      latestWeek.deltas.mealCount,
+      safeMealGoalCount !== null ? safeMealGoalCount * days : null,
+      t("öğün"),
+      20
+    );
+    return alerts;
+  }, [latestWeek, safeActivityGoalMin, safeCalorieGoal, safeMealGoalCount, safeWaterGoalMl]);
   const sections = [
     { key: "overview", label: t("Özet") },
     { key: "weekly", label: t("Sapma") },
@@ -1498,14 +1589,14 @@ export default function ReportPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ rangeDays }),
+        body: JSON.stringify({ rangeDays, expiresInDays: shareExpiryDays }),
       });
       if (!res.ok) {
         setShareStatus(t("Paylaşım oluşturulamadı."));
         return;
       }
       const payload = (await res.json()) as { token: string };
-      const link = `${window.location.origin}/share/${payload.token}`;
+      const link = `${window.location.origin}/share/${payload.token}${shareAnonymize ? "?anon=1" : ""}`;
       setShareLink(link);
       setShareStatus(t("Paylaşım bağlantısı hazır."));
     } catch {
@@ -1566,6 +1657,31 @@ export default function ReportPage() {
           </button>
         </div>
       </header>
+
+      <div className="print-hidden flex flex-wrap items-center gap-3 rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-xs text-muted">
+        <div className="flex items-center gap-2">
+          <span>{t("Paylaşım süresi")}</span>
+          <select
+            value={shareExpiryDays}
+            onChange={(event) => setShareExpiryDays(Number(event.target.value))}
+            className="rounded-xl border border-emerald-100 bg-white px-2 py-1 text-[11px]"
+          >
+            <option value={7}>{t("{value} gün", { value: 7 })}</option>
+            <option value={30}>{t("{value} gün", { value: 30 })}</option>
+            <option value={60}>{t("{value} gün", { value: 60 })}</option>
+            <option value={90}>{t("{value} gün", { value: 90 })}</option>
+          </select>
+        </div>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={shareAnonymize}
+            onChange={(event) => setShareAnonymize(event.target.checked)}
+            className="h-4 w-4 rounded accent-emerald-600"
+          />
+          <span>{t("Anonim paylaşım")}</span>
+        </label>
+      </div>
 
       {(shareLink || shareStatus) && (
         <Card className="print-hidden space-y-2">
@@ -2068,6 +2184,99 @@ export default function ReportPage() {
       </section>
 
       <section className={sectionClass("insights")}>
+        <Card className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">📈</div>
+            <div>
+              <p className="text-sm font-bold text-ink">{t("Trend ve Sapma Analizi")}</p>
+              <p className="text-xs text-muted-foreground">{t("Son 7 gün vs önceki 7 gün")}</p>
+            </div>
+          </div>
+          {trendSummary.length === 0 ? (
+            <p className="text-xs text-muted-foreground">{t("Trend analizi için yeterli veri yok.")}</p>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {trendSummary.map((item) => {
+                const delta = Math.round(item.delta);
+                const tone = delta >= 0 ? "text-emerald-700" : "text-rose-600";
+                return (
+                  <div
+                    key={item.label}
+                    className="rounded-2xl border border-emerald-100 bg-white px-3 py-3 text-xs"
+                  >
+                    <p className="text-muted">{item.label}</p>
+                    <p className={`mt-1 text-lg font-semibold ${tone}`}>
+                      {delta >= 0 ? "+" : ""}
+                      {delta} {item.unit}
+                    </p>
+                    <p className="text-[10px] text-muted">
+                      {item.direction === "up"
+                        ? t("Yükseliş")
+                        : item.direction === "down"
+                          ? t("Düşüş")
+                          : t("Sabit")}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </Card>
+
+        <Card className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">🎯</div>
+            <div>
+              <p className="text-sm font-bold text-ink">{t("Hedef Uyum Skoru")}</p>
+              <p className="text-xs text-muted-foreground">{t("Hedeflere yakınlık ve haftalık sapma")}</p>
+            </div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-xs">
+              <p className="text-muted">{t("Genel uyum")}</p>
+              <p className="mt-1 text-lg font-semibold text-emerald-700">
+                {t("%{value}", { value: report.adherenceScore })}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-xs">
+              <p className="text-muted">{t("Son hafta")}</p>
+              <p className="mt-1 text-lg font-semibold text-emerald-700">
+                {latestWeek ? t("%{value}", { value: latestWeek.adherenceScore }) : "-"}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-xs">
+              <p className="text-muted">{t("Haftalık değişim")}</p>
+              <p className="mt-1 text-lg font-semibold text-emerald-700">
+                {weeklyScoreDelta !== null
+                  ? `${weeklyScoreDelta > 0 ? "+" : ""}${weeklyScoreDelta}`
+                  : "-"}
+              </p>
+            </div>
+          </div>
+          <div className="h-2 w-full overflow-hidden rounded-full bg-emerald-100">
+            <div
+              className="h-full rounded-full bg-emerald-500 transition-all"
+              style={{ width: `${Math.min(100, Math.max(0, report.adherenceScore))}%` }}
+            />
+          </div>
+          {deviationAlerts.length > 0 ? (
+            <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-3 text-[11px] text-emerald-900">
+              <p className="font-semibold">{t("Sapma uyarıları")}</p>
+              <ul className="mt-2 space-y-1">
+                {deviationAlerts.map((alert) => (
+                  <li key={alert.label}>
+                    {alert.label}: {alert.delta > 0 ? "+" : ""}
+                    {formatNumber(alert.delta)} {alert.unit} • {alert.percent > 0 ? "+" : ""}
+                    {alert.percent.toFixed(1)}%
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p className="text-[11px] text-emerald-700">{t("Belirgin sapma uyarısı yok.")}</p>
+          )}
+        </Card>
+
         <Card className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">🧭</div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Card } from "@/components/card";
 import { ReportCharts } from "@/components/report-charts";
 import { MeasurementTrends } from "@/components/measurement-trends";
@@ -27,10 +27,12 @@ type SharePayload = {
 
 export default function ShareReportPage() {
   const params = useParams<{ token: string }>();
+  const searchParams = useSearchParams();
   const token = params?.token;
   const [data, setData] = useState<SharePayload | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [dietMode, setDietMode] = useState(true);
+  const isAnon = searchParams?.get("anon") === "1";
 
   useEffect(() => {
     if (!token) {
@@ -59,7 +61,7 @@ export default function ShareReportPage() {
     };
   }, [token]);
 
-  const title = data?.profile.fullName?.trim() || t("Paylaşılan Rapor");
+  const title = isAnon ? t("Paylaşılan Rapor") : data?.profile.fullName?.trim() || t("Paylaşılan Rapor");
   const rangeLabel = data ? t("Son {value} gün", { value: data.report.rangeDays }) : "";
   const lastUpdated = data?.share.createdAt
     ? formatShortDate(data.share.createdAt.slice(0, 10))

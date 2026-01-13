@@ -14,20 +14,14 @@ import { ReminderScheduler } from "@/components/reminder-scheduler";
 import { isProfileComplete, loadProfile } from "@/lib/profile";
 import { t } from "@/lib/i18n";
 
-const navItems = [
-  { href: "/dashboard", label: "Panel", icon: "⌂" },
-  { href: "/add-entry", label: "Ekle", icon: "+" },
-  { href: "/history", label: "Geçmiş", icon: "◎" },
-  { href: "/profile", label: "Profil", icon: "◍" },
-  { href: "/settings", label: "Ayarlar", icon: "⚙" },
-];
-
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, isLoading } = useUser();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isAppMode, setIsAppMode] = useState(false);
   const [showSplash, setShowSplash] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
   const hideShell = pathname === "/" || pathname.startsWith("/share") || pathname.startsWith("/login");
 
   useEffect(() => {
@@ -66,6 +60,38 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       active = false;
     };
   }, [hideShell, isLoading, pathname, user]);
+
+  useEffect(() => {
+    setChatOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!user?.sub || hideShell) {
+      setIsPremium(false);
+      return;
+    }
+    let active = true;
+    const loadPlan = async () => {
+      try {
+        const res = await fetch("/api/v1/user", { credentials: "include" });
+        if (!res.ok) {
+          return;
+        }
+        const data = (await res.json()) as { isPremium?: boolean };
+        if (active) {
+          setIsPremium(Boolean(data?.isPremium));
+        }
+      } catch {
+        if (active) {
+          setIsPremium(false);
+        }
+      }
+    };
+    void loadPlan();
+    return () => {
+      active = false;
+    };
+  }, [hideShell, user]);
 
   useEffect(() => {
     if (hideShell) {
@@ -154,13 +180,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
           {/* Actions Section */}
           <div className="flex items-center gap-2 sm:gap-6">
-            <Link
-              href="/pricing"
-              className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition-all flex items-center gap-2 shadow-sm"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span className="hidden xs:inline">{t("Paketler")}</span>
-            </Link>
+            {!isPremium && (
+              <Link
+                href="/pricing"
+                className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition-all flex items-center gap-2 shadow-sm"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span className="hidden xs:inline">{t("Paketler")}</span>
+              </Link>
+            )}
 
             <div className="h-6 w-[1px] bg-gray-200 hidden sm:block" />
 
@@ -214,14 +242,32 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </main>
       </div>
 
-      <nav className="app-nav fixed bottom-6 left-1/2 z-20 w-[min(94vw,400px)] -translate-x-1/2 rounded-[2rem] border border-emerald-100/60 bg-white/80 px-2 py-2 shadow-2xl backdrop-blur-lg print-hidden">
-        <div className="grid grid-cols-4">
+      <nav className="app-nav fixed bottom-6 left-1/2 z-20 w-[min(94vw,420px)] -translate-x-1/2 rounded-[2rem] border border-emerald-100/60 bg-white/80 px-2 py-2 shadow-2xl backdrop-blur-lg print-hidden">
+        <div className="grid grid-cols-5">
           {[
-            { href: "/dashboard", label: "Panel", icon: "⌂" },
-            { href: "/add-entry", label: "Ekle", icon: "+" },
-            { href: "/history", label: "Geçmiş", icon: "◎" },
-            { href: "/settings", label: "Ayar", icon: "⚙" },
+            { href: "/dashboard", label: "Panel", icon: "⌂", type: "link" },
+            { href: "/add-entry", label: "Ekle", icon: "+", type: "link" },
+            { key: "chat", label: "AI", icon: "✺", type: "button" },
+            { href: "/profile", label: "Profil", icon: "◍", type: "link" },
+            { href: "/settings", label: "Ayar", icon: "⚙", type: "link" },
           ].map((item) => {
+            if (item.type === "button") {
+              const active = chatOpen;
+              return (
+                <button
+                  key={item.key}
+                  type="button"
+                  onClick={() => setChatOpen((prev) => !prev)}
+                  className={`flex flex-col items-center gap-1 rounded-[1.5rem] px-2 py-3 text-[10px] font-bold transition-all ${active
+                    ? "bg-emerald-600 text-white shadow-lg scale-105"
+                    : "text-gray-400 hover:text-emerald-600 hover:bg-emerald-50/50"
+                    }`}
+                >
+                  <span className="text-xl leading-none">{item.icon}</span>
+                  {t(item.label)}
+                </button>
+              );
+            }
             const active = pathname === item.href;
             return (
               <Link
@@ -241,7 +287,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </nav>
       <CommandPalette />
       <OnboardingModal isOpen={showOnboarding} onComplete={() => setShowOnboarding(false)} />
-      {user && <ChatAssistant />}
+      {user && (
+        <ChatAssistant
+          isOpen={chatOpen}
+          onToggle={setChatOpen}
+          launcherClassName="hidden sm:flex"
+        />
+      )}
     </div>
   );
 }

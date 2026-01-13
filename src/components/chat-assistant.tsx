@@ -12,17 +12,32 @@ type Message = {
     content: string;
 };
 
-export function ChatAssistant() {
-    const [isOpen, setIsOpen] = useState(false);
+type ChatAssistantProps = {
+    isOpen?: boolean;
+    onToggle?: (open: boolean) => void;
+    launcherClassName?: string;
+};
+
+export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: ChatAssistantProps) {
+    const [internalOpen, setInternalOpen] = useState(false);
+    const open = isOpen ?? internalOpen;
+    const setOpen = (next: boolean) => {
+        if (onToggle) {
+            onToggle(next);
+            return;
+        }
+        setInternalOpen(next);
+    };
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isLimitReached, setIsLimitReached] = useState(false);
-    const scrollRef = useRef<HTMLDivElement>(null);
+    const [limitPlan, setLimitPlan] = useState<string | null>(null);
+    const scrollAnchorRef = useRef<HTMLDivElement>(null);
 
     // Her açıldığında sohbeti sıfırla
     useEffect(() => {
-        if (isOpen) {
+        if (open) {
             setMessages([
                 {
                     id: "welcome",
@@ -31,14 +46,13 @@ export function ChatAssistant() {
                 },
             ]);
             setIsLimitReached(false);
+            setLimitPlan(null);
         }
-    }, [isOpen]);
+    }, [open]);
 
     useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        }
-    }, [messages, isOpen, isLoading]);
+        scrollAnchorRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }, [messages, open, isLoading]);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -78,14 +92,17 @@ export function ChatAssistant() {
 
             if (data.limitReached) {
                 setIsLimitReached(true);
+                setLimitPlan(typeof data.plan === "string" ? data.plan : null);
+                const limitMessage =
+                    data.plan === "ai_plus"
+                        ? t("Günlük 25 mesaj limitine ulaştın. Yarın tekrar deneyebilirsin.")
+                        : t("AI Koçu şu an sadece AI Plus paketinde aktif.");
                 setMessages((prev) => [
                     ...prev,
                     {
                         id: Date.now().toString(),
                         role: "list",
-                        content: t(
-                            "Üzgünüm, bugünkü ücretsiz soru hakkın doldu. Daha fazla yardım almak için limitlerini kaldır."
-                        ),
+                        content: limitMessage,
                     },
                 ]);
             } else if (data.reply) {
@@ -100,13 +117,17 @@ export function ChatAssistant() {
             } else {
                 throw new Error(data.error || "Unknown error");
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : t("Bir bağlantı hatası oluştu. Lütfen tekrar dene.");
             setMessages((prev) => [
                 ...prev,
                 {
                     id: Date.now().toString(),
                     role: "list",
-                    content: t(error.message || "Bir bağlantı hatası oluştu. Lütfen tekrar dene."),
+                    content: t(message),
                 },
             ]);
         } finally {
@@ -117,7 +138,7 @@ export function ChatAssistant() {
     return (
         <div className="fixed bottom-24 left-1/2 z-50 flex flex-col items-center gap-4 -translate-x-1/2 sm:bottom-6 sm:right-6 sm:left-auto sm:translate-x-0 sm:items-end">
             {/* Chat Window */}
-            {isOpen && (
+            {open && (
                 <div className="w-[min(92vw,380px)] overflow-hidden rounded-[2rem] border border-emerald-100 bg-white shadow-2xl animate-[fade-up_0.2s_ease-out] flex flex-col max-h-[70vh] sm:max-h-none sm:w-[380px]">
                     {/* Header */}
                     <div className="flex items-center justify-between border-b border-emerald-50 bg-gradient-to-r from-emerald-50 to-white px-5 py-4">
@@ -133,7 +154,7 @@ export function ChatAssistant() {
                             </div>
                         </div>
                         <button
-                            onClick={() => setIsOpen(false)}
+                            onClick={() => setOpen(false)}
                             className="rounded-xl p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
                         >
                             <X className="h-5 w-5" />
@@ -141,7 +162,7 @@ export function ChatAssistant() {
                     </div>
 
                     {/* Messages Area */}
-                    <div ref={scrollRef} className="flex-1 overflow-y-auto bg-[#fffcf9] p-5 space-y-6">
+                    <div className="flex-1 overflow-y-auto overscroll-contain bg-[#fffcf9] p-5 space-y-6">
                         {messages.map((m) => (
                             <div
                                 key={m.id}
@@ -186,16 +207,25 @@ export function ChatAssistant() {
                         {isLimitReached && (
                             <div className="mt-4 rounded-3xl border border-emerald-100 bg-emerald-50 p-6 text-center">
                                 <p className="text-sm font-bold text-emerald-800 mb-4 leading-relaxed">
-                                    {t("Günlük ücretsiz limitin doldu. Sınırsız AI koçluğu için Plus'a geç!")}
+                                    {limitPlan === "ai_plus"
+                                        ? t("Günlük limitin doldu. Yarın tekrar deneyebilirsin.")
+                                        : t("AI Koçu şu an sadece AI Plus paketinde aktif.")}
                                 </p>
-                                <Link
-                                    href="/pricing"
-                                    className="block w-full rounded-2xl bg-emerald-600 py-3 text-sm font-black text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition-all hover:scale-105 active:scale-95"
-                                >
-                                    {t("Planları Gör")}
-                                </Link>
+                                {limitPlan !== "ai_plus" ? (
+                                    <Link
+                                        href="/pricing"
+                                        className="block w-full rounded-2xl bg-emerald-600 py-3 text-sm font-black text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition-all hover:scale-105 active:scale-95"
+                                    >
+                                        {t("Planları Gör")}
+                                    </Link>
+                                ) : (
+                                    <p className="text-xs font-semibold text-emerald-700">
+                                        {t("Limit yarın sıfırlanır.")}
+                                    </p>
+                                )}
                             </div>
                         )}
+                        <div ref={scrollAnchorRef} />
                     </div>
 
                     {/* Input Area */}
@@ -223,18 +253,18 @@ export function ChatAssistant() {
 
             {/* Toggle Button */}
             <button
-                onClick={() => setIsOpen(!isOpen)}
-                className={`group flex h-14 w-14 items-center justify-center rounded-[1.5rem] shadow-2xl transition-all duration-300 hover:scale-110 active:scale-90 sm:h-16 sm:w-16 ${isOpen ? "bg-white text-emerald-700 border border-emerald-100" : "bg-emerald-700 text-white hover:bg-emerald-800 shadow-emerald-200 hover:rotate-[360deg]"
+                onClick={() => setOpen(!open)}
+                className={`group flex h-14 w-14 items-center justify-center rounded-[1.5rem] shadow-2xl transition-all duration-300 hover:scale-110 active:scale-90 sm:h-16 sm:w-16 ${launcherClassName} ${open ? "bg-white text-emerald-700 border border-emerald-100" : "bg-emerald-700 text-white hover:bg-emerald-800 shadow-emerald-200 hover:rotate-[360deg]"
                     }`}
             >
-                {isOpen ? (
+                {open ? (
                     <X className="h-7 w-7" />
                 ) : (
                     <Bot className="h-8 w-8" />
                 )}
 
                 {/* Notification Dot */}
-                {!isOpen && (
+                {!open && (
                     <span className="absolute -right-1 -top-1 flex h-5 w-5">
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
                         <span className="relative inline-flex h-5 w-5 rounded-full bg-emerald-500 border-2 border-white"></span>

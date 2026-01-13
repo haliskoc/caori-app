@@ -602,6 +602,8 @@ export default function AddEntryPage() {
   const [activityDuration, setActivityDuration] = useState("30");
   const [activityCalories, setActivityCalories] = useState("150");
   const [activityAuto, setActivityAuto] = useState(true);
+  const [activityIntensity, setActivityIntensity] = useState<"low" | "medium" | "high">("medium");
+  const [activityNote, setActivityNote] = useState("");
 
   useEffect(() => {
     if (!activityAuto) {
@@ -612,13 +614,14 @@ export default function AddEntryPage() {
       type: activityType,
       durationMin,
       weightKg: weightForCalc,
+      intensity: activityIntensity,
     });
     if (!Number.isFinite(calculated) || calculated <= 0) {
       setActivityCalories("");
       return;
     }
     setActivityCalories(String(calculated));
-  }, [activityAuto, activityDuration, activityType, weightForCalc]);
+  }, [activityAuto, activityDuration, activityIntensity, activityType, weightForCalc]);
 
   return (
     <div className="space-y-6">
@@ -990,17 +993,30 @@ export default function AddEntryPage() {
             <p className="text-sm font-semibold">{t("Aktivite Girişi")}</p>
             <p className="text-xs text-muted">{t("Kalori değeri tahminidir")}</p>
           </div>
-          <select
-            value={activityType}
-            onChange={(event) => setActivityType(event.target.value as ActivityType)}
-            className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
-          >
-            {activityOptions.map((option) => (
-              <option key={option.type} value={option.type}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <select
+              value={activityType}
+              onChange={(event) => setActivityType(event.target.value as ActivityType)}
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
+            >
+              {activityOptions.map((option) => (
+                <option key={option.type} value={option.type}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <select
+              value={activityIntensity}
+              onChange={(event) =>
+                setActivityIntensity(event.target.value as "low" | "medium" | "high")
+              }
+              className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
+            >
+              <option value="low">{t("Düşük Yoğunluk")}</option>
+              <option value="medium">{t("Orta Yoğunluk")}</option>
+              <option value="high">{t("Yüksek Yoğunluk")}</option>
+            </select>
+          </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <input
               value={activityDuration}
@@ -1022,6 +1038,13 @@ export default function AddEntryPage() {
               min="0"
             />
           </div>
+          <input
+            value={activityNote}
+            onChange={(event) => setActivityNote(event.target.value)}
+            className="w-full rounded-xl border border-emerald-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
+            placeholder={t("Not (opsiyonel)")}
+            maxLength={120}
+          />
           <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted">
             <span>
               {t("MET hesabı: {weight}", {
@@ -1039,6 +1062,7 @@ export default function AddEntryPage() {
                   type: activityType,
                   durationMin: Number(activityDuration),
                   weightKg: weightForCalc,
+                  intensity: activityIntensity,
                 });
                 if (calculated > 0) {
                   setActivityCalories(String(calculated));
@@ -1061,7 +1085,9 @@ export default function AddEntryPage() {
                 activityType,
                 durationMin: Number(activityDuration),
                 estimatedCalories: Number(activityCalories),
+                note: activityNote.trim() || undefined,
               });
+              setActivityNote("");
             }}
             className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
           >
