@@ -74,9 +74,6 @@ export async function POST(req: NextRequest) {
             });
         }
 
-        // Initialize Chat
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
         const systemInstruction = `
 Rol: Sen Calmet uygulamasının "Health Coach" adındaki yapay zeka asistanısın. 
 Görevin: Kullanıcıların beslenme, diyet, spor ve sağlıklı yaşam sorularını yanıtlamak.
@@ -86,29 +83,21 @@ Kısıtlamalar:
 - Yasal olmayan tavsiyeler verme.
 - Cevaplarını kısa ve okunabilir tut (madde işaretleri kullan).
 - Türkçe cevap ver.
-    `.trim();
+        `.trim();
+
+        // Initialize Chat with correct system instruction placement
+        const model = genAI.getGenerativeModel({
+            model: "gemini-1.5-flash",
+            systemInstruction: systemInstruction
+        });
 
         const chatHistory = history?.map((msg: any) => ({
             role: msg.role === "user" ? "user" : "model",
             parts: [{ text: msg.content }],
         })) || [];
 
-        // Add system instruction as the first message part of the context implicitly or via prompt engineering
-        // Gemini API supports system instructions in newer models but keeping it simple here:
-        // We send a chat session.
-
         const chat = model.startChat({
-            history: [
-                {
-                    role: "user",
-                    parts: [{ text: systemInstruction }]
-                },
-                {
-                    role: "model",
-                    parts: [{ text: "Anlaşıldı. Calmet Sağlık Koçu olarak nasıl yardımcı olabilirim?" }]
-                },
-                ...chatHistory
-            ],
+            history: chatHistory,
             generationConfig: {
                 maxOutputTokens: 800,
             },
