@@ -8,11 +8,17 @@ import { isSameOrigin } from "@/lib/security";
 
 export async function POST(req: NextRequest) {
     if (!isSameOrigin(req)) {
+        console.error("Activation Error: Invalid origin", {
+            origin: req.headers.get("origin"),
+            host: req.headers.get("host"),
+            forwardedHost: req.headers.get("x-forwarded-host")
+        });
         return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
     }
 
     const session = await auth0.getSession(req);
     if (!session?.user) {
+        console.error("Activation Error: Unauthorized - No session found");
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -27,7 +33,14 @@ export async function POST(req: NextRequest) {
         const plan = typeof body?.plan === "string" ? body.plan : "";
 
         // Gizli anahtar kontrolü
-        if (!password || password !== activationKey) {
+        const isMatch = password === activationKey;
+
+        if (!isMatch) {
+            console.error("Activation Error: Key mismatch", {
+                enteredLength: password.length,
+                expectedLength: activationKey.length,
+                enteredMasked: password.substring(0, 2) + "..." + password.substring(password.length - 2)
+            });
             return NextResponse.json({ error: "Geçersiz aktivasyon kodu." }, { status: 403 });
         }
 
