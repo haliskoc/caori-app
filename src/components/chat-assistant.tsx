@@ -14,7 +14,7 @@ type Message = {
 };
 
 type PendingConfirmation = {
-    action: "log_food" | "log_water";
+    action: "log_food" | "log_water" | "log_activity";
     data: unknown;
 };
 
@@ -142,7 +142,7 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
 
                 // Try multiple patterns to catch JSON (with/without code blocks)
                 const codeBlockMatch = data.reply.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-                const rawJsonMatch = data.reply.match(/(\{[\s\S]*?"action"\s*:\s*"log_(?:food|water)"[\s\S]*?\})/m);
+                const rawJsonMatch = data.reply.match(/(\{[\s\S]*?"action"\s*:\s*"log_(?:food|water|activity)"[\s\S]*?\})/m);
 
                 const jsonMatch = codeBlockMatch || rawJsonMatch;
 
@@ -156,10 +156,10 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                         // Remove ALL JSON content from displayed message
                         cleanReply = data.reply
                             .replace(/```(?:json)?\s*[\s\S]*?\s*```/g, "")
-                            .replace(/\{[\s\S]*?"action"\s*:\s*"log_(?:food|water)"[\s\S]*?\}/gm, "")
+                            .replace(/\{[\s\S]*?"action"\s*:\s*"log_(?:food|water|activity)"[\s\S]*?\}/gm, "")
                             .trim();
 
-                        if ((command.action === "log_food" || command.action === "log_water") && command.data) {
+                        if ((command.action === "log_food" || command.action === "log_water" || command.action === "log_activity") && command.data) {
                             setPendingConfirmation({
                                 action: command.action,
                                 data: command.data
@@ -324,17 +324,18 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                                 <div className="flex-1 rounded-[1.25rem] bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 p-4 shadow-md rounded-tl-none">
                                     <h4 className="text-sm font-bold text-emerald-900 mb-3">{t("Bunu günlüğüne ekleyeyim mi?")}</h4>
 
-                                    {/* Food/Water Details Card */}
+                                    {/* Details Card */}
                                     <div className="bg-white rounded-xl p-4 border border-emerald-100 mb-4 shadow-sm">
                                         <p className="text-base font-bold text-gray-900 mb-2">
                                             {pendingConfirmation.action === "log_food"
                                                 ? (pendingConfirmation.data as any).name || t("Besin")
-                                                : t("Su İçimi")}
+                                                : pendingConfirmation.action === "log_water"
+                                                    ? t("Su İçimi")
+                                                    : t("Aktivite")}
                                         </p>
 
                                         {pendingConfirmation.action === "log_food" ? (
                                             <div className="space-y-2">
-                                                {/* Main calories */}
                                                 <div className="flex items-baseline gap-2 pb-2 border-b border-gray-100">
                                                     <span className="text-2xl font-black text-emerald-600">
                                                         {(pendingConfirmation.data as any).calories || 0}
@@ -346,35 +347,47 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                                                         </span>
                                                     )}
                                                 </div>
-
-                                                {/* Macros Grid */}
                                                 <div className="grid grid-cols-3 gap-2 pt-1">
                                                     <div className="text-center p-2 bg-blue-50 rounded-lg">
                                                         <p className="text-xs font-bold text-blue-600 uppercase tracking-wide">{t("Protein")}</p>
-                                                        <p className="text-sm font-black text-blue-700">
-                                                            {(pendingConfirmation.data as any).proteinG || 0}g
-                                                        </p>
+                                                        <p className="text-sm font-black text-blue-700">{(pendingConfirmation.data as any).proteinG || 0}g</p>
                                                     </div>
                                                     <div className="text-center p-2 bg-amber-50 rounded-lg">
                                                         <p className="text-xs font-bold text-amber-600 uppercase tracking-wide">{t("Karb")}</p>
-                                                        <p className="text-sm font-black text-amber-700">
-                                                            {(pendingConfirmation.data as any).carbsG || 0}g
-                                                        </p>
+                                                        <p className="text-sm font-black text-amber-700">{(pendingConfirmation.data as any).carbsG || 0}g</p>
                                                     </div>
                                                     <div className="text-center p-2 bg-rose-50 rounded-lg">
                                                         <p className="text-xs font-bold text-rose-600 uppercase tracking-wide">{t("Yağ")}</p>
-                                                        <p className="text-sm font-black text-rose-700">
-                                                            {(pendingConfirmation.data as any).fatG || 0}g
-                                                        </p>
+                                                        <p className="text-sm font-black text-rose-700">{(pendingConfirmation.data as any).fatG || 0}g</p>
                                                     </div>
                                                 </div>
                                             </div>
-                                        ) : (
+                                        ) : pendingConfirmation.action === "log_water" ? (
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-2xl font-black text-blue-600">
                                                     {(pendingConfirmation.data as any).amountMl || 0}
                                                 </span>
                                                 <span className="text-sm font-bold text-gray-400">ml</span>
+                                            </div>
+                                        ) : (
+                                            /* Activity Card */
+                                            <div className="space-y-2">
+                                                <div className="flex items-baseline gap-2 pb-2 border-b border-gray-100">
+                                                    <span className="text-2xl font-black text-orange-600">
+                                                        -{(pendingConfirmation.data as any).estimatedCalories || 0}
+                                                    </span>
+                                                    <span className="text-sm font-bold text-gray-400">kcal {t("yakıldı")}</span>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-2 pt-1">
+                                                    <div className="text-center p-2 bg-orange-50 rounded-lg">
+                                                        <p className="text-xs font-bold text-orange-600 uppercase tracking-wide">{t("Süre")}</p>
+                                                        <p className="text-sm font-black text-orange-700">{(pendingConfirmation.data as any).durationMin || 0} dk</p>
+                                                    </div>
+                                                    <div className="text-center p-2 bg-purple-50 rounded-lg">
+                                                        <p className="text-xs font-bold text-purple-600 uppercase tracking-wide">{t("Tür")}</p>
+                                                        <p className="text-sm font-black text-purple-700 capitalize">{(pendingConfirmation.data as any).activityType || "aktivite"}</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -393,16 +406,21 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                                         </button>
                                         <button
                                             onClick={async () => {
+                                                const actionData = pendingConfirmation.data as any;
                                                 if (pendingConfirmation.action === "log_food") {
-                                                    await tracker.addFood(pendingConfirmation.data as any);
-                                                } else {
-                                                    await tracker.addWater(pendingConfirmation.data as any);
+                                                    await tracker.addFood(actionData);
+                                                } else if (pendingConfirmation.action === "log_water") {
+                                                    await tracker.addWater(actionData);
+                                                } else if (pendingConfirmation.action === "log_activity") {
+                                                    await tracker.addActivity(actionData);
                                                 }
                                                 setPendingConfirmation(null);
-                                                const foodName = pendingConfirmation.action === "log_food"
-                                                    ? (pendingConfirmation.data as any).name
-                                                    : t("Su");
-                                                setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `✅ **${foodName}** ${t("günlüğe eklendi!")}` }]);
+                                                const itemName = pendingConfirmation.action === "log_food"
+                                                    ? actionData.name
+                                                    : pendingConfirmation.action === "log_water"
+                                                        ? t("Su")
+                                                        : t("Aktivite");
+                                                setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `✅ **${itemName}** ${t("günlüğe eklendi!")}` }]);
                                             }}
                                             className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition-all active:scale-95 hover:scale-[1.02]"
                                         >
