@@ -179,7 +179,7 @@ Veya su için:
 
         const chatCompletion = await groq.chat.completions.create({
             messages,
-            model: AI_MODELS.LLAMA3_8B,
+            model: AI_MODELS.LLAMA3_70B,
             temperature: 0.7,
             max_tokens: 1024,
         });
