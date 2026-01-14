@@ -38,19 +38,31 @@ type OnboardingModalProps = {
 };
 
 const steps = [
-  { id: 1, label: "Seni tanıyalım" },
-  { id: 2, label: "Hedefini seç" },
-  { id: 3, label: "Spor geçmişin" },
-  { id: 4, label: "Koşulların" },
-  { id: 5, label: "Sağlık & güvenlik" },
-  { id: 6, label: "Bizi nereden duydun" },
-  { id: 7, label: "Beklentin" },
+  { id: 1, label: "Merhaba!" },
+  { id: 2, label: "Seni tanıyalım" },
+  { id: 3, label: "Hedefini seç" },
+  { id: 4, label: "Spor geçmişin" },
+  { id: 5, label: "Koşulların" },
+  { id: 6, label: "Sağlık & güvenlik" },
+  { id: 7, label: "Bizi nereden duydun" },
+  { id: 8, label: "Beklentin" },
 ];
 
 const questions: Question[] = [
   {
-    id: "age",
+    id: "fullName",
     step: 1,
+    title: "Merhaba! 👋",
+    subtitle: "Seni tanımaktan mutluluk duyarız",
+    prompt: "Adın ve soyadın nedir?",
+    type: "text",
+    placeholder: "Örn: Ahmet Yılmaz",
+    required: true,
+    hint: "Sana isminle hitap etmek isteriz.",
+  },
+  {
+    id: "age",
+    step: 2,
     title: "Seni tanıyalım",
     subtitle: "Temel ölçüleri öğrenelim",
     prompt: "Yaşın kaç?",
@@ -60,7 +72,7 @@ const questions: Question[] = [
   },
   {
     id: "heightCm",
-    step: 1,
+    step: 2,
     title: "Seni tanıyalım",
     subtitle: "Temel ölçüleri öğrenelim",
     prompt: "Boyun kaç cm?",
@@ -70,7 +82,7 @@ const questions: Question[] = [
   },
   {
     id: "weightKg",
-    step: 1,
+    step: 2,
     title: "Seni tanıyalım",
     subtitle: "Temel ölçüleri öğrenelim",
     prompt: "Kilon kaç kg?",
@@ -80,7 +92,7 @@ const questions: Question[] = [
   },
   {
     id: "mainGoal",
-    step: 2,
+    step: 3,
     title: "Hedefini seç",
     subtitle: "Ana odağını belirle",
     prompt: "Ana hedefin ne?",
@@ -96,7 +108,7 @@ const questions: Question[] = [
   },
   {
     id: "sportLevel",
-    step: 3,
+    step: 4,
     title: "Spor geçmişin",
     subtitle: "Deneyimini öğrenelim",
     prompt: "Spor seviyeni nasıl tanımlarsın?",
@@ -111,7 +123,7 @@ const questions: Question[] = [
   },
   {
     id: "workoutDays",
-    step: 3,
+    step: 4,
     title: "Spor geçmişin",
     subtitle: "Rutini netleştirelim",
     prompt: "Haftada kaç gün spor yapabilirsin?",
@@ -125,7 +137,7 @@ const questions: Question[] = [
   },
   {
     id: "workoutPlace",
-    step: 4,
+    step: 5,
     title: "Koşulların",
     subtitle: "Antrenman ortamı",
     prompt: "Nerede spor yapacaksın?",
@@ -139,7 +151,7 @@ const questions: Question[] = [
   },
   {
     id: "equipmentLevel",
-    step: 4,
+    step: 5,
     title: "Koşulların",
     subtitle: "Ekipman durumu",
     prompt: "Ekipman durumun nedir?",
@@ -153,7 +165,7 @@ const questions: Question[] = [
   },
   {
     id: "injury",
-    step: 5,
+    step: 6,
     title: "Sağlık & güvenlik",
     subtitle: "Sakatlık bilgisi",
     prompt: "Bilinen bir sakatlığın var mı?",
@@ -169,7 +181,7 @@ const questions: Question[] = [
   },
   {
     id: "doctorRestriction",
-    step: 5,
+    step: 6,
     title: "Sağlık & güvenlik",
     subtitle: "Güvenlik bilgisi",
     prompt: "Doktorun sporla ilgili bir kısıt koydu mu?",
@@ -182,7 +194,7 @@ const questions: Question[] = [
   },
   {
     id: "referralSource",
-    step: 6,
+    step: 7,
     title: "Bizi nereden duydun?",
     subtitle: "Tek soru, altın değerinde",
     prompt: "Uygulamamızı nereden duydun?",
@@ -199,7 +211,7 @@ const questions: Question[] = [
   },
   {
     id: "expectation",
-    step: 7,
+    step: 8,
     title: "Beklentin",
     subtitle: "Seni tanımamıza yardımcı olur",
     prompt: "Bu uygulamadan en büyük beklentin ne?",
@@ -416,11 +428,10 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
               <button
                 key={option.value}
                 onClick={() => updateProfile(question.id, option.value)}
-                className={`rounded-2xl border px-4 py-3 text-left text-sm transition ${
-                  answer === option.value
+                className={`rounded-2xl border px-4 py-3 text-left text-sm transition ${answer === option.value
                     ? "border-emerald-300 bg-emerald-50 text-emerald-700"
                     : "border-emerald-100 bg-white text-muted hover:text-ink"
-                }`}
+                  }`}
               >
                 {t(option.label)}
               </button>
@@ -460,11 +471,10 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
           {steps.map((item) => (
             <span
               key={item.id}
-              className={`rounded-full px-3 py-1 ${
-                item.id === question.step
+              className={`rounded-full px-3 py-1 ${item.id === question.step
                   ? "bg-emerald-100 text-emerald-700"
                   : "bg-white/80 text-muted"
-              }`}
+                }`}
             >
               {item.id}. {t(item.label)}
             </span>
