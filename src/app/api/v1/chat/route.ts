@@ -80,16 +80,35 @@ export async function POST(req: NextRequest) {
         }
 
         // ========== FETCH USER DATA FOR PERSONALIZATION ==========
-        const [userProfile] = await db.select().from(profiles).where(eq(profiles.userId, session.user.sub));
-        const [userGoals] = await db.select().from(goals).where(eq(goals.userId, session.user.sub));
+        let userProfile = null;
+        let userGoals = null;
+        let todayEntries: any[] = [];
+
+        try {
+            const profileResult = await db.select().from(profiles).where(eq(profiles.userId, session.user.sub));
+            userProfile = profileResult[0] || null;
+        } catch (e) {
+            console.log("No profile found for user, using defaults");
+        }
+
+        try {
+            const goalsResult = await db.select().from(goals).where(eq(goals.userId, session.user.sub));
+            userGoals = goalsResult[0] || null;
+        } catch (e) {
+            console.log("No goals found for user, using defaults");
+        }
 
         // Get today's entries for daily summary
         const todayStart = new Date();
         todayStart.setHours(0, 0, 0, 0);
-        const todayEntries = await db
-            .select()
-            .from(entries)
-            .where(and(eq(entries.userId, session.user.sub), gte(entries.timestamp, todayStart)));
+        try {
+            todayEntries = await db
+                .select()
+                .from(entries)
+                .where(and(eq(entries.userId, session.user.sub), gte(entries.timestamp, todayStart)));
+        } catch (e) {
+            console.log("No entries found for today");
+        }
 
         // Calculate daily summary
         const dailySummary = {
