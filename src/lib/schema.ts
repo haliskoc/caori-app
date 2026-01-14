@@ -20,6 +20,7 @@ export const users = pgTable("users", {
   plan: text("plan").default("free").notNull(),
   subscriptionStatus: text("subscription_status").default("active"), // active, past_due, canceled
   usageCount: integer("usage_count").default(0),
+  webSearchCount: integer("web_search_count").default(0), // Daily web search limit tracking
   lastReset: timestamp("last_reset", { withTimezone: true }),
 });
 

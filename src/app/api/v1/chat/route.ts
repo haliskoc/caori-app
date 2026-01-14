@@ -6,6 +6,7 @@ import { users, profiles, goals, entries } from "@/lib/schema";
 import { eq, and, gte } from "drizzle-orm";
 import { groq, AI_MODELS } from "@/lib/ai";
 import { ensureUser } from "@/lib/db";
+import { braveSearch, formatSearchResultsForAI, isBraveSearchConfigured } from "@/lib/brave-search";
 import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
 
 export async function POST(req: NextRequest) {
@@ -21,13 +22,14 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const { message, history, locale } = await req.json();
+        const { message, history, locale, executeSearch, searchQuery } = await req.json();
         const supportedLocales = ["tr", "en", "es", "fr", "ru", "pt"];
         const safeLocale = supportedLocales.includes(locale) ? locale : "tr";
         const rawMessage = typeof message === "string" ? message.trim() : "";
         const MAX_MESSAGE_CHARS = 800;
         const MAX_HISTORY_MESSAGES = 10;
         const MAX_HISTORY_CHARS = 600;
+        const WEB_SEARCH_DAILY_LIMIT = 2; // Max 2 web searches per day for AI Plus
 
         if (!rawMessage) {
             return NextResponse.json({ error: "Message is required" }, { status: 400 });
@@ -52,10 +54,13 @@ export async function POST(req: NextRequest) {
         today.setHours(0, 0, 0, 0);
 
         let usageCount = userRecord.usageCount || 0;
+        let webSearchCount = userRecord.webSearchCount || 0;
         const lastReset = userRecord.lastReset ? new Date(userRecord.lastReset) : new Date(0);
 
+        // Reset daily counters if new day
         if (lastReset < today) {
             usageCount = 0;
+            webSearchCount = 0;
         }
 
         const LIMITS = { free: 0, pro: 0, ai_plus: 25 };
@@ -308,14 +313,71 @@ ${basePrompt}
             { role: "user", content: rawMessage },
         ];
 
+        let text = "";
+        const canDoWebSearch = isBraveSearchConfigured() && plan === "ai_plus" && webSearchCount < WEB_SEARCH_DAILY_LIMIT;
+
+        // ========== HANDLE CONFIRMED WEB SEARCH ==========
+        if (executeSearch && searchQuery && canDoWebSearch) {
+            // User confirmed web search - execute it
+            const searchResults = await braveSearch(searchQuery, 5);
+            const formattedResults = formatSearchResultsForAI(searchResults);
+
+            const searchMessages: ChatCompletionMessageParam[] = [
+                { role: "system", content: systemInstruction },
+                ...normalizedHistory,
+                { role: "user", content: `Kullanıcı şunu araştırmamı istedi: "${searchQuery}"\n\nArama Sonuçları:\n${formattedResults}\n\nBu sonuçları kullanarak kapsamlı ve faydalı bir yanıt ver. Kaynaklara atıfta bulun.` },
+            ];
+
+            const searchCompletion = await groq.chat.completions.create({
+                messages: searchMessages,
+                model: AI_MODELS.LLAMA3_70B,
+                temperature: 0.7,
+                max_tokens: 1024,
+            });
+
+            text = searchCompletion.choices[0]?.message?.content || "Arama sonuçları işlenemedi.";
+
+            // Increment web search count
+            webSearchCount += 1;
+            await db
+                .update(users)
+                .set({
+                    usageCount: usageCount + 1,
+                    webSearchCount: webSearchCount,
+                    lastReset: new Date()
+                })
+                .where(eq(users.id, session.user.sub));
+
+            return NextResponse.json({ reply: text });
+        }
+
+        // ========== NORMAL AI RESPONSE (with search permission request) ==========
+        // Add instruction for AI to request search permission instead of auto-searching
+        const searchInstruction = canDoWebSearch ? `
+
+# WEB ARAMASINA İZİN İSTE
+Eğer kullanıcının sorusu güncel bilgi gerektiriyorsa (trendler, haberler, son araştırmalar vb.), önce izin iste. Bunun için yanıtın sonuna şu JSON'u ekle:
+\`\`\`json
+{ "action": "request_web_search", "data": { "query": "arama sorgusu", "reason": "Neden arama gerektiğini kısa açıkla" } }
+\`\`\`
+Arama yapmadan önce MUTLAKA bu formatla izin iste. Otomatik arama YAPMA.
+Kalan web arama hakkı: ${WEB_SEARCH_DAILY_LIMIT - webSearchCount}/gün
+` : "";
+
+        const messagesWithSearchInstruction: ChatCompletionMessageParam[] = [
+            { role: "system", content: systemInstruction + searchInstruction },
+            ...normalizedHistory,
+            { role: "user", content: rawMessage },
+        ];
+
         const chatCompletion = await groq.chat.completions.create({
-            messages,
+            messages: messagesWithSearchInstruction,
             model: AI_MODELS.LLAMA3_70B,
             temperature: 0.7,
             max_tokens: 1024,
         });
 
-        const text = chatCompletion.choices[0]?.message?.content || "Cevap üretilemedi.";
+        text = chatCompletion.choices[0]?.message?.content || "Cevap üretilemedi.";
 
         await db
             .update(users)
