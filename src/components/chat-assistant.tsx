@@ -6,6 +6,7 @@ import Link from "next/link";
 import { t, getLocale } from "@/lib/i18n";
 import ReactMarkdown from "react-markdown";
 import { useTracker } from "@/components/tracker-provider";
+import { MealType, ActivityType } from "@/lib/types";
 
 type Message = {
     id: string;
@@ -471,30 +472,29 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                                         </button>
                                         <button
                                             onClick={async () => {
-                                                const actionData = pendingConfirmation.data;
-
                                                 if (pendingConfirmation.action === "request_web_search") {
                                                     // Execute web search
+                                                    const data = pendingConfirmation.data;
                                                     setPendingConfirmation(null);
                                                     setIsLoading(true);
-                                                    setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `🔍 **"${actionData.query}"** ${t("için arama yapılıyor...")}` }]);
+                                                    setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `🔍 **"${data.query}"** ${t("için arama yapılıyor...")}` }]);
 
                                                     try {
                                                         const res = await fetch("/api/v1/chat", {
                                                             method: "POST",
                                                             headers: { "Content-Type": "application/json" },
                                                             body: JSON.stringify({
-                                                                message: `Web araması sonuçlarını özetle: ${actionData.query}`,
+                                                                message: `Web araması sonuçlarını özetle: ${data.query}`,
                                                                 history: messages.filter(m => m.id !== "welcome").map(m => ({ role: m.role, content: m.content })),
                                                                 locale: getLocale(),
                                                                 executeSearch: true,
-                                                                searchQuery: actionData.query
+                                                                searchQuery: data.query
                                                             }),
                                                         });
 
-                                                        const data = await res.json();
-                                                        if (data.reply) {
-                                                            setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: data.reply }]);
+                                                        const responseData = await res.json();
+                                                        if (responseData.reply) {
+                                                            setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: responseData.reply }]);
                                                         }
                                                     } catch {
                                                         setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: t("Arama sırasında bir hata oluştu.") }]);
@@ -502,18 +502,24 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                                                         setIsLoading(false);
                                                     }
                                                 } else if (pendingConfirmation.action === "log_food") {
-                                                    // @ts-expect-error - Tracker's addFood expects specific type which might differ slightly but is compatible
-                                                    await tracker.addFood(actionData);
+                                                    const data = pendingConfirmation.data;
+                                                    await tracker.addFood({
+                                                        ...data,
+                                                        mealType: (data.mealType as MealType) || "snack"
+                                                    });
                                                     setPendingConfirmation(null);
-                                                    setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `✅ **${actionData.name}** ${t("günlüğe eklendi!")}` }]);
+                                                    setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `✅ **${data.name}** ${t("günlüğe eklendi!")}` }]);
                                                 } else if (pendingConfirmation.action === "log_water") {
-                                                    // @ts-expect-error - Tracker's addWater expects specific type
-                                                    await tracker.addWater(actionData);
+                                                    const data = pendingConfirmation.data;
+                                                    await tracker.addWater(data);
                                                     setPendingConfirmation(null);
                                                     setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `✅ **${t("Su")}** ${t("günlüğe eklendi!")}` }]);
                                                 } else if (pendingConfirmation.action === "log_activity") {
-                                                    // @ts-expect-error - Tracker's addActivity expects specific type
-                                                    await tracker.addActivity(actionData);
+                                                    const data = pendingConfirmation.data;
+                                                    await tracker.addActivity({
+                                                        ...data,
+                                                        activityType: (data.activityType as ActivityType) || "walking"
+                                                    });
                                                     setPendingConfirmation(null);
                                                     setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `✅ **${t("Aktivite")}** ${t("günlüğe eklendi!")}` }]);
                                                 }

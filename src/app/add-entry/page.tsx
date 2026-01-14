@@ -963,7 +963,7 @@ export default function AddEntryPage() {
         const activityType = resolveActivityType(segment);
         if (activityType) {
           const duration =
-            parseDurationFromSegment(segment, tokens) ?? Number(activityDuration) || 30;
+            (parseDurationFromSegment(segment, tokens) ?? Number(activityDuration)) || 30;
           const estimatedCalories = estimateActivityCalories({
             type: activityType,
             durationMin: duration,
