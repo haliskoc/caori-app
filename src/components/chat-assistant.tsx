@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Bot, Send, X, Sparkles, User, Loader2, Copy, Check, Search } from "lucide-react";
+import { Bot, Send, X, Sparkles, User, Loader2, Copy, Check, Search, TrendingUp, Utensils, Bell, Info } from "lucide-react";
 import Link from "next/link";
 import { t, getLocale } from "@/lib/i18n";
 import ReactMarkdown from "react-markdown";
@@ -39,11 +39,42 @@ type WebSearchData = {
     reason?: string;
 };
 
+type AnalyzeDayData = {
+    analysisType: string;
+};
+
+type SuggestMealData = {
+    mealType: string;
+    targetCalories?: number;
+    suggestions: string[];
+};
+
+type SetReminderData = {
+    type: "water" | "meal" | "exercise";
+    intervalMin: number;
+    message: string;
+};
+
+type NutritionInfoData = {
+    food: string;
+    per100g: {
+        calories: number;
+        protein: number;
+        carbs: number;
+        fat: number;
+    };
+    typicalServing?: string;
+};
+
 type PendingConfirmation =
     | { action: "log_food"; data: FoodData }
     | { action: "log_water"; data: WaterData }
     | { action: "log_activity"; data: ActivityData }
-    | { action: "request_web_search"; data: WebSearchData };
+    | { action: "request_web_search"; data: WebSearchData }
+    | { action: "analyze_day"; data: AnalyzeDayData }
+    | { action: "suggest_meal"; data: SuggestMealData }
+    | { action: "set_reminder"; data: SetReminderData }
+    | { action: "nutrition_info"; data: NutritionInfoData };
 
 type ChatAssistantProps = {
     isOpen?: boolean;
@@ -69,6 +100,8 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
     const [limitPlan, setLimitPlan] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [pendingConfirmation, setPendingConfirmation] = useState<PendingConfirmation | null>(null);
+    const [editingAmount, setEditingAmount] = useState(false);
+    const [customAmount, setCustomAmount] = useState<string>("");
     const scrollAnchorRef = useRef<HTMLDivElement>(null);
 
     // Her açıldığında sohbeti sıfırla
@@ -167,9 +200,12 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
             } else if (data.reply) {
                 let cleanReply = data.reply;
 
+                // All supported actions for regex matching
+                const allActions = "log_food|log_water|log_activity|request_web_search|analyze_day|suggest_meal|set_reminder|nutrition_info";
+                
                 // Try multiple patterns to catch JSON (with/without code blocks)
                 const codeBlockMatch = data.reply.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-                const rawJsonMatch = data.reply.match(/(\{[\s\S]*?"action"\s*:\s*"(?:log_(?:food|water|activity)|request_web_search)"[\s\S]*?\})/m);
+                const rawJsonMatch = data.reply.match(new RegExp(`(\\{[\\s\\S]*?"action"\\s*:\\s*"(?:${allActions})"[\\s\\S]*?\\})`, "m"));
 
                 const jsonMatch = codeBlockMatch || rawJsonMatch;
 
@@ -183,12 +219,12 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                         // Remove ALL JSON content from displayed message
                         cleanReply = data.reply
                             .replace(/```(?:json)?\s*[\s\S]*?\s*```/g, "")
-                            .replace(/\{[\s\S]*?"action"\s*:\s*"(?:log_(?:food|water|activity)|request_web_search)"[\s\S]*?\}/gm, "")
+                            .replace(new RegExp(`\\{[\\s\\S]*?"action"\\s*:\\s*"(?:${allActions})"[\\s\\S]*?\\}`, "gm"), "")
                             .trim();
 
-                        if ((command.action === "log_food" || command.action === "log_water" || command.action === "log_activity" || command.action === "request_web_search") && command.data) {
-                            // Type assertion for command data because it comes from API as any/unknown
-                            // We validated action, so we can cast it to PendingConfirmation
+                        // Handle all action types
+                        const validActions = ["log_food", "log_water", "log_activity", "request_web_search", "analyze_day", "suggest_meal", "set_reminder", "nutrition_info"];
+                        if (validActions.includes(command.action) && command.data) {
                             setPendingConfirmation({
                                 action: command.action,
                                 data: command.data
@@ -347,111 +383,282 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                         {/* Pending Confirmation Card */}
                         {pendingConfirmation && (
                             <div className="flex gap-3 animate-[fade-up_0.2s_ease-out]">
-                                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border shadow-sm ${pendingConfirmation.action === "request_web_search"
-                                        ? "bg-blue-100 text-blue-600 border-blue-200"
-                                        : "bg-emerald-100 text-emerald-600 border-emerald-200"
-                                    }`}>
-                                    {pendingConfirmation.action === "request_web_search"
-                                        ? <Search className="h-4 w-4" />
-                                        : <Sparkles className="h-4 w-4" />
-                                    }
+                                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border shadow-sm ${
+                                    pendingConfirmation.action === "request_web_search" ? "bg-blue-100 text-blue-600 border-blue-200" :
+                                    pendingConfirmation.action === "analyze_day" ? "bg-purple-100 text-purple-600 border-purple-200" :
+                                    pendingConfirmation.action === "suggest_meal" ? "bg-orange-100 text-orange-600 border-orange-200" :
+                                    pendingConfirmation.action === "set_reminder" ? "bg-pink-100 text-pink-600 border-pink-200" :
+                                    pendingConfirmation.action === "nutrition_info" ? "bg-cyan-100 text-cyan-600 border-cyan-200" :
+                                    "bg-emerald-100 text-emerald-600 border-emerald-200"
+                                }`}>
+                                    {pendingConfirmation.action === "request_web_search" ? <Search className="h-4 w-4" /> :
+                                     pendingConfirmation.action === "analyze_day" ? <TrendingUp className="h-4 w-4" /> :
+                                     pendingConfirmation.action === "suggest_meal" ? <Utensils className="h-4 w-4" /> :
+                                     pendingConfirmation.action === "set_reminder" ? <Bell className="h-4 w-4" /> :
+                                     pendingConfirmation.action === "nutrition_info" ? <Info className="h-4 w-4" /> :
+                                     <Sparkles className="h-4 w-4" />}
                                 </div>
-                                <div className={`flex-1 rounded-[1.25rem] border p-4 shadow-md rounded-tl-none ${pendingConfirmation.action === "request_web_search"
-                                        ? "bg-gradient-to-br from-blue-50 to-white border-blue-100"
-                                        : "bg-gradient-to-br from-emerald-50 to-white border-emerald-100"
+                                <div className={`flex-1 rounded-[1.25rem] border p-4 shadow-md rounded-tl-none ${
+                                    pendingConfirmation.action === "request_web_search" ? "bg-gradient-to-br from-blue-50 to-white border-blue-100" :
+                                    pendingConfirmation.action === "analyze_day" ? "bg-gradient-to-br from-purple-50 to-white border-purple-100" :
+                                    pendingConfirmation.action === "suggest_meal" ? "bg-gradient-to-br from-orange-50 to-white border-orange-100" :
+                                    pendingConfirmation.action === "set_reminder" ? "bg-gradient-to-br from-pink-50 to-white border-pink-100" :
+                                    pendingConfirmation.action === "nutrition_info" ? "bg-gradient-to-br from-cyan-50 to-white border-cyan-100" :
+                                    "bg-gradient-to-br from-emerald-50 to-white border-emerald-100"
+                                }`}>
+                                    <h4 className={`text-sm font-bold mb-3 ${
+                                        pendingConfirmation.action === "request_web_search" ? "text-blue-900" :
+                                        pendingConfirmation.action === "analyze_day" ? "text-purple-900" :
+                                        pendingConfirmation.action === "suggest_meal" ? "text-orange-900" :
+                                        pendingConfirmation.action === "set_reminder" ? "text-pink-900" :
+                                        pendingConfirmation.action === "nutrition_info" ? "text-cyan-900" :
+                                        "text-emerald-900"
                                     }`}>
-                                    <h4 className={`text-sm font-bold mb-3 ${pendingConfirmation.action === "request_web_search"
-                                            ? "text-blue-900"
-                                            : "text-emerald-900"
-                                        }`}>
-                                        {pendingConfirmation.action === "request_web_search"
-                                            ? t("Web araması yapayım mı?")
-                                            : t("Bunu günlüğüne ekleyeyim mi?")}
+                                        {pendingConfirmation.action === "request_web_search" ? t("Web araması yapayım mı?") :
+                                         pendingConfirmation.action === "analyze_day" ? t("Günlük Analiz") :
+                                         pendingConfirmation.action === "suggest_meal" ? t("Yemek Önerileri") :
+                                         pendingConfirmation.action === "set_reminder" ? t("Hatırlatıcı Kur") :
+                                         pendingConfirmation.action === "nutrition_info" ? t("Besin Bilgisi") :
+                                         t("Bunu günlüğüne ekleyeyim mi?")}
                                     </h4>
 
                                     {/* Details Card */}
-                                    <div className={`bg-white rounded-xl p-4 border mb-4 shadow-sm ${pendingConfirmation.action === "request_web_search" ? "border-blue-100" : "border-emerald-100"
-                                        }`}>
-                                        {pendingConfirmation.action === "request_web_search" ? (
-                                            /* Web Search Card */
+                                    <div className={`bg-white rounded-xl p-4 border mb-4 shadow-sm ${
+                                        pendingConfirmation.action === "request_web_search" ? "border-blue-100" :
+                                        pendingConfirmation.action === "analyze_day" ? "border-purple-100" :
+                                        pendingConfirmation.action === "suggest_meal" ? "border-orange-100" :
+                                        pendingConfirmation.action === "set_reminder" ? "border-pink-100" :
+                                        pendingConfirmation.action === "nutrition_info" ? "border-cyan-100" :
+                                        "border-emerald-100"
+                                    }`}>
+                                        {/* Web Search Card */}
+                                        {pendingConfirmation.action === "request_web_search" && (
                                             <div className="space-y-3">
                                                 <div className="flex items-center gap-2">
                                                     <Search className="h-5 w-5 text-blue-500" />
-                                                    <p className="text-base font-bold text-gray-900">
-                                                        {pendingConfirmation.data.query}
-                                                    </p>
+                                                    <p className="text-base font-bold text-gray-900">{pendingConfirmation.data.query}</p>
                                                 </div>
-                                                <p className="text-sm text-gray-600">
-                                                    {pendingConfirmation.data.reason}
-                                                </p>
+                                                <p className="text-sm text-gray-600">{pendingConfirmation.data.reason}</p>
                                             </div>
-                                        ) : (
-                                            <>
-                                                <p className="text-base font-bold text-gray-900 mb-2">
-                                                    {pendingConfirmation.action === "log_food"
-                                                        ? pendingConfirmation.data.name || t("Besin")
-                                                        : pendingConfirmation.action === "log_water"
-                                                            ? t("Su İçimi")
-                                                            : t("Aktivite")}
-                                                </p>
+                                        )}
+                                        
+                                        {/* Nutrition Info Card */}
+                                        {pendingConfirmation.action === "nutrition_info" && (
+                                            <div className="space-y-3">
+                                                <p className="text-base font-bold text-gray-900">{pendingConfirmation.data.food}</p>
+                                                <p className="text-xs text-gray-500">{t("100g başına değerler:")}</p>
+                                                <div className="grid grid-cols-4 gap-2">
+                                                    <div className="text-center p-2 bg-emerald-50 rounded-lg">
+                                                        <p className="text-xs font-bold text-emerald-600">kcal</p>
+                                                        <p className="text-sm font-black text-emerald-700">{pendingConfirmation.data.per100g.calories}</p>
+                                                    </div>
+                                                    <div className="text-center p-2 bg-blue-50 rounded-lg">
+                                                        <p className="text-xs font-bold text-blue-600">P</p>
+                                                        <p className="text-sm font-black text-blue-700">{pendingConfirmation.data.per100g.protein}g</p>
+                                                    </div>
+                                                    <div className="text-center p-2 bg-amber-50 rounded-lg">
+                                                        <p className="text-xs font-bold text-amber-600">K</p>
+                                                        <p className="text-sm font-black text-amber-700">{pendingConfirmation.data.per100g.carbs}g</p>
+                                                    </div>
+                                                    <div className="text-center p-2 bg-rose-50 rounded-lg">
+                                                        <p className="text-xs font-bold text-rose-600">Y</p>
+                                                        <p className="text-sm font-black text-rose-700">{pendingConfirmation.data.per100g.fat}g</p>
+                                                    </div>
+                                                </div>
+                                                {pendingConfirmation.data.typicalServing && (
+                                                    <p className="text-xs text-gray-500">{t("Tipik porsiyon:")} {pendingConfirmation.data.typicalServing}</p>
+                                                )}
+                                            </div>
+                                        )}
 
-                                                {pendingConfirmation.action === "log_food" ? (
-                                                    <div className="space-y-2">
-                                                        <div className="flex items-baseline gap-2 pb-2 border-b border-gray-100">
-                                                            <span className="text-2xl font-black text-emerald-600">
-                                                                {pendingConfirmation.data.calories || 0}
-                                                            </span>
-                                                            <span className="text-sm font-bold text-gray-400">kcal</span>
-                                                            {pendingConfirmation.data.amountG !== undefined && pendingConfirmation.data.amountG > 0 && (
-                                                                <span className="ml-auto text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">
-                                                                    {pendingConfirmation.data.amountG}g
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        <div className="grid grid-cols-3 gap-2 pt-1">
-                                                            <div className="text-center p-2 bg-blue-50 rounded-lg">
-                                                                <p className="text-xs font-bold text-blue-600 uppercase tracking-wide">{t("Protein")}</p>
-                                                                <p className="text-sm font-black text-blue-700">{pendingConfirmation.data.proteinG || 0}g</p>
-                                                            </div>
-                                                            <div className="text-center p-2 bg-amber-50 rounded-lg">
-                                                                <p className="text-xs font-bold text-amber-600 uppercase tracking-wide">{t("Karb")}</p>
-                                                                <p className="text-sm font-black text-amber-700">{pendingConfirmation.data.carbsG || 0}g</p>
-                                                            </div>
-                                                            <div className="text-center p-2 bg-rose-50 rounded-lg">
-                                                                <p className="text-xs font-bold text-rose-600 uppercase tracking-wide">{t("Yağ")}</p>
-                                                                <p className="text-sm font-black text-rose-700">{pendingConfirmation.data.fatG || 0}g</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ) : pendingConfirmation.action === "log_water" ? (
-                                                    <div className="flex items-baseline gap-2">
-                                                        <span className="text-2xl font-black text-blue-600">
-                                                            {pendingConfirmation.data.amountMl || 0}
+                                        {/* Suggest Meal Card */}
+                                        {pendingConfirmation.action === "suggest_meal" && (
+                                            <div className="space-y-3">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-sm font-bold text-gray-700 capitalize">{pendingConfirmation.data.mealType}</span>
+                                                    {pendingConfirmation.data.targetCalories && (
+                                                        <span className="text-xs font-semibold text-orange-600 bg-orange-100 px-2 py-1 rounded-lg">
+                                                            ~{pendingConfirmation.data.targetCalories} kcal
                                                         </span>
-                                                        <span className="text-sm font-bold text-gray-400">ml</span>
+                                                    )}
+                                                </div>
+                                                <div className="space-y-2">
+                                                    {pendingConfirmation.data.suggestions.map((suggestion, idx) => (
+                                                        <div key={idx} className="flex items-center gap-2 p-2 bg-orange-50 rounded-lg">
+                                                            <span className="text-orange-500">🍽️</span>
+                                                            <span className="text-sm font-medium text-gray-700">{suggestion}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Set Reminder Card */}
+                                        {pendingConfirmation.action === "set_reminder" && (
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-2">
+                                                    <Bell className="h-5 w-5 text-pink-500" />
+                                                    <p className="text-base font-bold text-gray-900">{pendingConfirmation.data.message}</p>
+                                                </div>
+                                                <div className="flex items-center gap-4">
+                                                    <span className="text-sm text-gray-600">
+                                                        {t("Her")} {pendingConfirmation.data.intervalMin} {t("dakikada bir")}
+                                                    </span>
+                                                    <span className="text-xs font-semibold text-pink-600 bg-pink-100 px-2 py-1 rounded-lg capitalize">
+                                                        {pendingConfirmation.data.type}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Analyze Day Card */}
+                                        {pendingConfirmation.action === "analyze_day" && (
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-2">
+                                                    <TrendingUp className="h-5 w-5 text-purple-500" />
+                                                    <p className="text-base font-bold text-gray-900">{t("Günlük Beslenme Analizi")}</p>
+                                                </div>
+                                                <p className="text-sm text-gray-600">{t("Bugünkü kalori alımın, makro dağılımın ve hedeflerine ne kadar yakın olduğun analiz edilecek.")}</p>
+                                            </div>
+                                        )}
+
+                                        {/* Food Log Card */}
+                                        {pendingConfirmation.action === "log_food" && (
+                                            <div className="space-y-3">
+                                                <p className="text-base font-bold text-gray-900">{pendingConfirmation.data.name || t("Besin")}</p>
+                                                <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+                                                    <div className="flex items-baseline gap-2">
+                                                        <span className="text-2xl font-black text-emerald-600">{pendingConfirmation.data.calories || 0}</span>
+                                                        <span className="text-sm font-bold text-gray-400">kcal</span>
                                                     </div>
-                                                ) : (
-                                                    /* Activity Card */
-                                                    <div className="space-y-2">
-                                                        <div className="flex items-baseline gap-2 pb-2 border-b border-gray-100">
-                                                            <span className="text-2xl font-black text-orange-600">
-                                                                -{pendingConfirmation.data.estimatedCalories || 0}
-                                                            </span>
-                                                            <span className="text-sm font-bold text-gray-400">kcal {t("yakıldı")}</span>
+                                                    {editingAmount ? (
+                                                        <div className="flex items-center gap-2">
+                                                            <input
+                                                                type="number"
+                                                                value={customAmount}
+                                                                onChange={(e) => setCustomAmount(e.target.value)}
+                                                                placeholder={String(pendingConfirmation.data.amountG || 100)}
+                                                                className="w-20 px-2 py-1 text-sm font-bold text-center border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                                                                autoFocus
+                                                            />
+                                                            <span className="text-xs font-bold text-gray-500">g</span>
+                                                            <button
+                                                                onClick={() => {
+                                                                    const oldAmount = pendingConfirmation.data.amountG || 100;
+                                                                    const newAmount = parseInt(customAmount) || oldAmount;
+                                                                    const ratio = newAmount / oldAmount;
+                                                                    
+                                                                    setPendingConfirmation({
+                                                                        action: "log_food",
+                                                                        data: {
+                                                                            ...pendingConfirmation.data,
+                                                                            amountG: newAmount,
+                                                                            calories: Math.round((pendingConfirmation.data.calories || 0) * ratio),
+                                                                            proteinG: Math.round((pendingConfirmation.data.proteinG || 0) * ratio * 10) / 10,
+                                                                            carbsG: Math.round((pendingConfirmation.data.carbsG || 0) * ratio * 10) / 10,
+                                                                            fatG: Math.round((pendingConfirmation.data.fatG || 0) * ratio * 10) / 10,
+                                                                        }
+                                                                    });
+                                                                    setEditingAmount(false);
+                                                                    setCustomAmount("");
+                                                                }}
+                                                                className="p-1 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600"
+                                                            >
+                                                                <Check className="h-4 w-4" />
+                                                            </button>
                                                         </div>
-                                                        <div className="grid grid-cols-2 gap-2 pt-1">
-                                                            <div className="text-center p-2 bg-orange-50 rounded-lg">
-                                                                <p className="text-xs font-bold text-orange-600 uppercase tracking-wide">{t("Süre")}</p>
-                                                                <p className="text-sm font-black text-orange-700">{pendingConfirmation.data.durationMin || 0} dk</p>
-                                                            </div>
-                                                            <div className="text-center p-2 bg-purple-50 rounded-lg">
-                                                                <p className="text-xs font-bold text-purple-600 uppercase tracking-wide">{t("Tür")}</p>
-                                                                <p className="text-sm font-black text-purple-700 capitalize">{pendingConfirmation.data.activityType || "aktivite"}</p>
-                                                            </div>
-                                                        </div>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => {
+                                                                setEditingAmount(true);
+                                                                setCustomAmount(String(pendingConfirmation.data.amountG || 100));
+                                                            }}
+                                                            className="flex items-center gap-1 text-xs font-semibold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors"
+                                                        >
+                                                            <span>{pendingConfirmation.data.amountG || 100}g</span>
+                                                            <span className="text-emerald-400">✏️</span>
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                
+                                                {/* Hızlı Miktar Butonları */}
+                                                {!editingAmount && (
+                                                    <div className="flex gap-2 flex-wrap">
+                                                        {[50, 100, 150, 200, 300].map((amount) => {
+                                                            const oldAmount = pendingConfirmation.data.amountG || 100;
+                                                            const isSelected = oldAmount === amount;
+                                                            return (
+                                                                <button
+                                                                    key={amount}
+                                                                    onClick={() => {
+                                                                        const ratio = amount / oldAmount;
+                                                                        setPendingConfirmation({
+                                                                            action: "log_food",
+                                                                            data: {
+                                                                                ...pendingConfirmation.data,
+                                                                                amountG: amount,
+                                                                                calories: Math.round((pendingConfirmation.data.calories || 0) * ratio),
+                                                                                proteinG: Math.round((pendingConfirmation.data.proteinG || 0) * ratio * 10) / 10,
+                                                                                carbsG: Math.round((pendingConfirmation.data.carbsG || 0) * ratio * 10) / 10,
+                                                                                fatG: Math.round((pendingConfirmation.data.fatG || 0) * ratio * 10) / 10,
+                                                                            }
+                                                                        });
+                                                                    }}
+                                                                    className={`px-2 py-1 text-xs font-bold rounded-lg transition-colors ${
+                                                                        isSelected ? "bg-emerald-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                                                    }`}
+                                                                >
+                                                                    {amount}g
+                                                                </button>
+                                                            );
+                                                        })}
                                                     </div>
                                                 )}
-                                            </>
+                                                
+                                                {/* Makrolar */}
+                                                <div className="grid grid-cols-3 gap-2 pt-1">
+                                                    <div className="text-center p-2 bg-blue-50 rounded-lg">
+                                                        <p className="text-xs font-bold text-blue-600 uppercase tracking-wide">{t("Protein")}</p>
+                                                        <p className="text-sm font-black text-blue-700">{pendingConfirmation.data.proteinG || 0}g</p>
+                                                    </div>
+                                                    <div className="text-center p-2 bg-amber-50 rounded-lg">
+                                                        <p className="text-xs font-bold text-amber-600 uppercase tracking-wide">{t("Karb")}</p>
+                                                        <p className="text-sm font-black text-amber-700">{pendingConfirmation.data.carbsG || 0}g</p>
+                                                    </div>
+                                                    <div className="text-center p-2 bg-rose-50 rounded-lg">
+                                                        <p className="text-xs font-bold text-rose-600 uppercase tracking-wide">{t("Yağ")}</p>
+                                                        <p className="text-sm font-black text-rose-700">{pendingConfirmation.data.fatG || 0}g</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Water Log Card */}
+                                        {pendingConfirmation.action === "log_water" && (
+                                            <div className="flex items-baseline gap-2">
+                                                <span className="text-2xl font-black text-blue-600">{pendingConfirmation.data.amountMl || 0}</span>
+                                                <span className="text-sm font-bold text-gray-400">ml</span>
+                                            </div>
+                                        )}
+
+                                        {/* Activity Log Card */}
+                                        {pendingConfirmation.action === "log_activity" && (
+                                            <div className="space-y-2">
+                                                <div className="flex items-baseline gap-2 pb-2 border-b border-gray-100">
+                                                    <span className="text-2xl font-black text-orange-600">-{pendingConfirmation.data.estimatedCalories || 0}</span>
+                                                    <span className="text-sm font-bold text-gray-400">kcal {t("yakıldı")}</span>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-2 pt-1">
+                                                    <div className="text-center p-2 bg-orange-50 rounded-lg">
+                                                        <p className="text-xs font-bold text-orange-600 uppercase tracking-wide">{t("Süre")}</p>
+                                                        <p className="text-sm font-black text-orange-700">{pendingConfirmation.data.durationMin || 0} dk</p>
+                                                    </div>
+                                                    <div className="text-center p-2 bg-purple-50 rounded-lg">
+                                                        <p className="text-xs font-bold text-purple-600 uppercase tracking-wide">{t("Tür")}</p>
+                                                        <p className="text-sm font-black text-purple-700 capitalize">{pendingConfirmation.data.activityType || "aktivite"}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         )}
                                     </div>
 
@@ -460,87 +667,98 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                                         <button
                                             onClick={() => {
                                                 setPendingConfirmation(null);
-                                                const cancelMessage = pendingConfirmation.action === "request_web_search"
-                                                    ? t("Tamam, arama yapmadım.")
-                                                    : t("Tamam, eklemedim.");
-                                                setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: cancelMessage }]);
+                                                setEditingAmount(false);
+                                                setCustomAmount("");
                                             }}
                                             className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-200 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
                                         >
                                             <X className="h-4 w-4" />
-                                            {t("İptal")}
+                                            {pendingConfirmation.action === "nutrition_info" || pendingConfirmation.action === "suggest_meal" || pendingConfirmation.action === "analyze_day" 
+                                                ? t("Kapat") 
+                                                : t("İptal")}
                                         </button>
-                                        <button
-                                            onClick={async () => {
-                                                if (pendingConfirmation.action === "request_web_search") {
-                                                    // Execute web search
-                                                    const data = pendingConfirmation.data;
-                                                    setPendingConfirmation(null);
-                                                    setIsLoading(true);
-                                                    setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `🔍 **"${data.query}"** ${t("için arama yapılıyor...")}` }]);
+                                        
+                                        {/* Only show confirm button for actionable items */}
+                                        {(pendingConfirmation.action === "log_food" || 
+                                          pendingConfirmation.action === "log_water" || 
+                                          pendingConfirmation.action === "log_activity" ||
+                                          pendingConfirmation.action === "request_web_search" ||
+                                          pendingConfirmation.action === "set_reminder") && (
+                                            <button
+                                                onClick={async () => {
+                                                    if (pendingConfirmation.action === "request_web_search") {
+                                                        const data = pendingConfirmation.data;
+                                                        setPendingConfirmation(null);
+                                                        setIsLoading(true);
+                                                        setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `🔍 **"${data.query}"** ${t("için arama yapılıyor...")}` }]);
 
-                                                    try {
-                                                        const res = await fetch("/api/v1/chat", {
-                                                            method: "POST",
-                                                            headers: { "Content-Type": "application/json" },
-                                                            body: JSON.stringify({
-                                                                message: `Web araması sonuçlarını özetle: ${data.query}`,
-                                                                history: messages.filter(m => m.id !== "welcome").map(m => ({ role: m.role, content: m.content })),
-                                                                locale: getLocale(),
-                                                                executeSearch: true,
-                                                                searchQuery: data.query
-                                                            }),
-                                                        });
+                                                        try {
+                                                            const res = await fetch("/api/v1/chat", {
+                                                                method: "POST",
+                                                                headers: { "Content-Type": "application/json" },
+                                                                body: JSON.stringify({
+                                                                    message: `Web araması sonuçlarını özetle: ${data.query}`,
+                                                                    history: messages.filter(m => m.id !== "welcome").map(m => ({ role: m.role, content: m.content })),
+                                                                    locale: getLocale(),
+                                                                    executeSearch: true,
+                                                                    searchQuery: data.query
+                                                                }),
+                                                            });
 
-                                                        const responseData = await res.json();
-                                                        if (responseData.reply) {
-                                                            setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: responseData.reply }]);
+                                                            const responseData = await res.json();
+                                                            if (responseData.reply) {
+                                                                setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: responseData.reply }]);
+                                                            }
+                                                        } catch {
+                                                            setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: t("Arama sırasında bir hata oluştu.") }]);
+                                                        } finally {
+                                                            setIsLoading(false);
                                                         }
-                                                    } catch {
-                                                        setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: t("Arama sırasında bir hata oluştu.") }]);
-                                                    } finally {
-                                                        setIsLoading(false);
+                                                    } else if (pendingConfirmation.action === "log_food") {
+                                                        const data = pendingConfirmation.data;
+                                                        await tracker.addFood({
+                                                            ...data,
+                                                            mealType: (data.mealType as MealType) || "snack"
+                                                        });
+                                                        setPendingConfirmation(null);
+                                                        setEditingAmount(false);
+                                                        setCustomAmount("");
+                                                        setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `✅ **${data.name}** (${data.amountG || 100}g) ${t("günlüğe eklendi!")}` }]);
+                                                    } else if (pendingConfirmation.action === "log_water") {
+                                                        const data = pendingConfirmation.data;
+                                                        await tracker.addWater(data);
+                                                        setPendingConfirmation(null);
+                                                        setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `✅ **${data.amountMl}ml ${t("Su")}** ${t("günlüğe eklendi!")}` }]);
+                                                    } else if (pendingConfirmation.action === "log_activity") {
+                                                        const data = pendingConfirmation.data;
+                                                        await tracker.addActivity({
+                                                            ...data,
+                                                            activityType: (data.activityType as ActivityType) || "walking"
+                                                        });
+                                                        setPendingConfirmation(null);
+                                                        setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `✅ **${data.durationMin} dk ${data.activityType}** ${t("günlüğe eklendi!")}` }]);
+                                                    } else if (pendingConfirmation.action === "set_reminder") {
+                                                        const data = pendingConfirmation.data;
+                                                        // TODO: Implement actual reminder functionality
+                                                        setPendingConfirmation(null);
+                                                        setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `⏰ **${data.message}** - ${t("Her")} ${data.intervalMin} ${t("dakikada hatırlatıcı kuruldu!")}` }]);
                                                     }
-                                                } else if (pendingConfirmation.action === "log_food") {
-                                                    const data = pendingConfirmation.data;
-                                                    await tracker.addFood({
-                                                        ...data,
-                                                        mealType: (data.mealType as MealType) || "snack"
-                                                    });
-                                                    setPendingConfirmation(null);
-                                                    setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `✅ **${data.name}** ${t("günlüğe eklendi!")}` }]);
-                                                } else if (pendingConfirmation.action === "log_water") {
-                                                    const data = pendingConfirmation.data;
-                                                    await tracker.addWater(data);
-                                                    setPendingConfirmation(null);
-                                                    setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `✅ **${t("Su")}** ${t("günlüğe eklendi!")}` }]);
-                                                } else if (pendingConfirmation.action === "log_activity") {
-                                                    const data = pendingConfirmation.data;
-                                                    await tracker.addActivity({
-                                                        ...data,
-                                                        activityType: (data.activityType as ActivityType) || "walking"
-                                                    });
-                                                    setPendingConfirmation(null);
-                                                    setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `✅ **${t("Aktivite")}** ${t("günlüğe eklendi!")}` }]);
-                                                }
-                                            }}
-                                            className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold text-white shadow-lg transition-all active:scale-95 hover:scale-[1.02] ${pendingConfirmation.action === "request_web_search"
-                                                    ? "bg-blue-600 shadow-blue-200 hover:bg-blue-700"
-                                                    : "bg-emerald-600 shadow-emerald-200 hover:bg-emerald-700"
+                                                }}
+                                                className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold text-white shadow-lg transition-all active:scale-95 hover:scale-[1.02] ${
+                                                    pendingConfirmation.action === "request_web_search" ? "bg-blue-600 shadow-blue-200 hover:bg-blue-700" :
+                                                    pendingConfirmation.action === "set_reminder" ? "bg-pink-600 shadow-pink-200 hover:bg-pink-700" :
+                                                    "bg-emerald-600 shadow-emerald-200 hover:bg-emerald-700"
                                                 }`}
-                                        >
-                                            {pendingConfirmation.action === "request_web_search" ? (
-                                                <>
-                                                    <Search className="h-4 w-4" />
-                                                    {t("Ara")}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Check className="h-4 w-4 stroke-[3]" />
-                                                    {t("Ekle")}
-                                                </>
-                                            )}
-                                        </button>
+                                            >
+                                                {pendingConfirmation.action === "request_web_search" ? (
+                                                    <><Search className="h-4 w-4" />{t("Ara")}</>
+                                                ) : pendingConfirmation.action === "set_reminder" ? (
+                                                    <><Bell className="h-4 w-4" />{t("Kur")}</>
+                                                ) : (
+                                                    <><Check className="h-4 w-4 stroke-[3]" />{t("Ekle")}</>
+                                                )}
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             </div>
