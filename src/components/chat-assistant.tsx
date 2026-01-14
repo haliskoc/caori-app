@@ -139,34 +139,53 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                 ]);
             } else if (data.reply) {
                 let cleanReply = data.reply;
-                const jsonMatch = data.reply.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+
+                // Try multiple patterns to catch JSON (with/without code blocks)
+                const codeBlockMatch = data.reply.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+                const rawJsonMatch = data.reply.match(/(\{[\s\S]*?"action"\s*:\s*"log_(?:food|water)"[\s\S]*?\})/m);
+
+                const jsonMatch = codeBlockMatch || rawJsonMatch;
 
                 if (jsonMatch) {
                     try {
                         const jsonStr = jsonMatch[1];
-                        const command = JSON.parse(jsonStr);
-                        // Remove JSON from displayed message
-                        cleanReply = data.reply.replace(jsonMatch[0], "").trim();
+                        // Clean comments from JSON (AI sometimes adds them)
+                        const cleanedJsonStr = jsonStr.replace(/\/\/.*$/gm, "").trim();
+                        const command = JSON.parse(cleanedJsonStr);
 
-                        cleanReply = data.reply.replace(jsonMatch[0], "").trim();
+                        // Remove ALL JSON content from displayed message
+                        cleanReply = data.reply
+                            .replace(/```(?:json)?\s*[\s\S]*?\s*```/g, "")
+                            .replace(/\{[\s\S]*?"action"\s*:\s*"log_(?:food|water)"[\s\S]*?\}/gm, "")
+                            .trim();
 
-                        setPendingConfirmation({
-                            action: command.action,
-                            data: command.data
-                        });
+                        if ((command.action === "log_food" || command.action === "log_water") && command.data) {
+                            setPendingConfirmation({
+                                action: command.action,
+                                data: command.data
+                            });
+                        }
                     } catch (e) {
                         console.error("Failed to parse AI command", e);
+                        // Still try to clean any JSON-looking content
+                        cleanReply = data.reply
+                            .replace(/```(?:json)?\s*[\s\S]*?\s*```/g, "")
+                            .replace(/\{[\s\S]*?"action"[\s\S]*?\}/gm, "")
+                            .trim();
                     }
                 }
 
-                setMessages((prev) => [
-                    ...prev,
-                    {
-                        id: Date.now().toString(),
-                        role: "list",
-                        content: cleanReply,
-                    },
-                ]);
+                // Only add message if there's actual content left
+                if (cleanReply) {
+                    setMessages((prev) => [
+                        ...prev,
+                        {
+                            id: Date.now().toString(),
+                            role: "list",
+                            content: cleanReply,
+                        },
+                    ]);
+                }
             } else {
                 throw new Error(data.error || "Unknown error");
             }
@@ -298,36 +317,79 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                         )}
                         {/* Pending Confirmation Card */}
                         {pendingConfirmation && (
-                            <div className="flex justify-end animate-[fade-up_0.2s_ease-out]">
-                                <div className="max-w-[85%] rounded-[1.25rem] bg-emerald-50 border border-emerald-100 p-4 shadow-sm rounded-tr-none">
-                                    <h4 className="text-sm font-bold text-emerald-900 mb-2">{t("Bunu ekleyeyim mi?")}</h4>
-                                    <div className="bg-white rounded-xl p-3 border border-emerald-100 mb-3 shadow-sm">
-                                        <p className="text-sm font-semibold text-gray-900">
+                            <div className="flex gap-3 animate-[fade-up_0.2s_ease-out]">
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 border border-emerald-200 shadow-sm">
+                                    <Sparkles className="h-4 w-4" />
+                                </div>
+                                <div className="flex-1 rounded-[1.25rem] bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 p-4 shadow-md rounded-tl-none">
+                                    <h4 className="text-sm font-bold text-emerald-900 mb-3">{t("Bunu günlüğüne ekleyeyim mi?")}</h4>
+
+                                    {/* Food/Water Details Card */}
+                                    <div className="bg-white rounded-xl p-4 border border-emerald-100 mb-4 shadow-sm">
+                                        <p className="text-base font-bold text-gray-900 mb-2">
                                             {pendingConfirmation.action === "log_food"
-                                                ? (pendingConfirmation.data as any).name
+                                                ? (pendingConfirmation.data as any).name || t("Besin")
                                                 : t("Su İçimi")}
                                         </p>
-                                        <div className="flex items-baseline gap-1 mt-1">
-                                            <span className="text-lg font-black text-emerald-600">
-                                                {pendingConfirmation.action === "log_food"
-                                                    ? (pendingConfirmation.data as any).calories
-                                                    : (pendingConfirmation.data as any).amountMl}
-                                            </span>
-                                            <span className="text-xs font-bold text-gray-400">
-                                                {pendingConfirmation.action === "log_food" ? "kcal" : "ml"}
-                                            </span>
-                                        </div>
+
+                                        {pendingConfirmation.action === "log_food" ? (
+                                            <div className="space-y-2">
+                                                {/* Main calories */}
+                                                <div className="flex items-baseline gap-2 pb-2 border-b border-gray-100">
+                                                    <span className="text-2xl font-black text-emerald-600">
+                                                        {(pendingConfirmation.data as any).calories || 0}
+                                                    </span>
+                                                    <span className="text-sm font-bold text-gray-400">kcal</span>
+                                                    {(pendingConfirmation.data as any).amountG > 0 && (
+                                                        <span className="ml-auto text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">
+                                                            {(pendingConfirmation.data as any).amountG}g
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                {/* Macros Grid */}
+                                                <div className="grid grid-cols-3 gap-2 pt-1">
+                                                    <div className="text-center p-2 bg-blue-50 rounded-lg">
+                                                        <p className="text-xs font-bold text-blue-600 uppercase tracking-wide">{t("Protein")}</p>
+                                                        <p className="text-sm font-black text-blue-700">
+                                                            {(pendingConfirmation.data as any).proteinG || 0}g
+                                                        </p>
+                                                    </div>
+                                                    <div className="text-center p-2 bg-amber-50 rounded-lg">
+                                                        <p className="text-xs font-bold text-amber-600 uppercase tracking-wide">{t("Karb")}</p>
+                                                        <p className="text-sm font-black text-amber-700">
+                                                            {(pendingConfirmation.data as any).carbsG || 0}g
+                                                        </p>
+                                                    </div>
+                                                    <div className="text-center p-2 bg-rose-50 rounded-lg">
+                                                        <p className="text-xs font-bold text-rose-600 uppercase tracking-wide">{t("Yağ")}</p>
+                                                        <p className="text-sm font-black text-rose-700">
+                                                            {(pendingConfirmation.data as any).fatG || 0}g
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-baseline gap-2">
+                                                <span className="text-2xl font-black text-blue-600">
+                                                    {(pendingConfirmation.data as any).amountMl || 0}
+                                                </span>
+                                                <span className="text-sm font-bold text-gray-400">ml</span>
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="flex gap-2">
+
+                                    {/* Action Buttons */}
+                                    <div className="flex gap-3">
                                         <button
                                             onClick={() => {
                                                 setPendingConfirmation(null);
-                                                setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: t("İşlem iptal edildi.") }]);
+                                                setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: t("Tamam, eklemedim.") }]);
                                             }}
-                                            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-200 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors"
+                                            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-200 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
                                         >
                                             <X className="h-4 w-4" />
-                                            {t("Hayır")}
+                                            {t("İptal")}
                                         </button>
                                         <button
                                             onClick={async () => {
@@ -337,12 +399,15 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                                                     await tracker.addWater(pendingConfirmation.data as any);
                                                 }
                                                 setPendingConfirmation(null);
-                                                setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: t("Başarıyla eklendi! ✅") }]);
+                                                const foodName = pendingConfirmation.action === "log_food"
+                                                    ? (pendingConfirmation.data as any).name
+                                                    : t("Su");
+                                                setMessages(prev => [...prev, { id: Date.now().toString(), role: "list", content: `✅ **${foodName}** ${t("günlüğe eklendi!")}` }]);
                                             }}
-                                            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition-colors"
+                                            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition-all active:scale-95 hover:scale-[1.02]"
                                         >
-                                            <Check className="h-4 w-4" />
-                                            {t("Evet")}
+                                            <Check className="h-4 w-4 stroke-[3]" />
+                                            {t("Ekle")}
                                         </button>
                                     </div>
                                 </div>
