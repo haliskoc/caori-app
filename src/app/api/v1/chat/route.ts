@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { auth0 } from "@/lib/auth0";
 import { getDb } from "@/lib/db";
@@ -87,19 +86,20 @@ export async function POST(req: NextRequest) {
         // ========== FETCH USER DATA FOR PERSONALIZATION ==========
         let userProfile = null;
         let userGoals = null;
-        let todayEntries: any[] = [];
+        // Fix: Use correct type instead of any[]
+        let todayEntries: (typeof entries.$inferSelect)[] = [];
 
         try {
             const profileResult = await db.select().from(profiles).where(eq(profiles.userId, session.user.sub));
             userProfile = profileResult[0] || null;
-        } catch (e) {
+        } catch {
             console.log("No profile found for user, using defaults");
         }
 
         try {
             const goalsResult = await db.select().from(goals).where(eq(goals.userId, session.user.sub));
             userGoals = goalsResult[0] || null;
-        } catch (e) {
+        } catch {
             console.log("No goals found for user, using defaults");
         }
 
@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
                 .select()
                 .from(entries)
                 .where(and(eq(entries.userId, session.user.sub), gte(entries.timestamp, todayStart)));
-        } catch (e) {
+        } catch {
             console.log("No entries found for today");
         }
 
@@ -172,6 +172,7 @@ export async function POST(req: NextRequest) {
 - **İsim:** ${userName}
 - **Yaş:** ${userAge || "Belirtilmemiş"} | **Boy:** ${userHeight ? userHeight + " cm" : "Belirtilmemiş"} | **Kilo:** ${userWeight ? userWeight + " kg" : "Belirtilmemiş"}
 - **Ana Hedef:** ${mainGoal}
+- **Aktivite Hedefi:** ${activityGoal} dk
 
 # BUGÜNKÜ DURUM (GERÇEK VERİLER)
 - **Alınan Kalori:** ${dailySummary.caloriesIn} kcal / Hedef: ${calorieGoal} kcal → **Kalan: ${remainingCalories} kcal**
@@ -186,6 +187,7 @@ ${proteinGoal > 0 ? `- **Kalan Makro Hedefleri:** Protein: ${remainingProtein}g 
 - **Name:** ${userName}
 - **Age:** ${userAge || "Not specified"} | **Height:** ${userHeight ? userHeight + " cm" : "Not specified"} | **Weight:** ${userWeight ? userWeight + " kg" : "Not specified"}
 - **Main Goal:** ${mainGoal}
+- **Activity Goal:** ${activityGoal} min
 
 # TODAY'S STATUS (REAL DATA)
 - **Calories In:** ${dailySummary.caloriesIn} kcal / Goal: ${calorieGoal} kcal → **Remaining: ${remainingCalories} kcal**
@@ -307,11 +309,7 @@ ${basePrompt}
                 .slice(-MAX_HISTORY_MESSAGES)
             : [];
 
-        const messages: ChatCompletionMessageParam[] = [
-            { role: "system", content: systemInstruction },
-            ...normalizedHistory,
-            { role: "user", content: rawMessage },
-        ];
+        // Removed unused 'messages' variable that was here
 
         let text = "";
         const canDoWebSearch = isBraveSearchConfigured() && plan === "ai_plus" && webSearchCount < WEB_SEARCH_DAILY_LIMIT;

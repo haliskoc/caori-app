@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Mic, MicOff } from "lucide-react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { Card } from "@/components/card";
 import { Tooltip } from "@/components/tooltip";
@@ -17,7 +18,7 @@ import {
   saveFoodLibrary,
 } from "@/lib/food-library";
 import { createId } from "@/lib/utils";
-import { t } from "@/lib/i18n";
+import { getIntlLocale, t } from "@/lib/i18n";
 import { loadProfile } from "@/lib/profile";
 
 type TabKey = "food" | "water" | "activity";
@@ -27,6 +28,290 @@ type BarcodeDetectorConstructor = new (options?: { formats?: string[] }) => {
     image: HTMLVideoElement | HTMLCanvasElement | HTMLImageElement | ImageBitmap
   ) => Promise<Array<{ rawValue: string }>>;
 };
+
+type SpeechRecognitionResultLike = { isFinal: boolean; 0: { transcript: string } };
+type SpeechRecognitionEventLike = { results: SpeechRecognitionResultLike[] };
+type SpeechRecognitionLike = {
+  lang: string;
+  interimResults: boolean;
+  continuous: boolean;
+  start: () => void;
+  stop: () => void;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onend: (() => void) | null;
+  onerror: (() => void) | null;
+};
+type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
+type VoiceParsedEntry =
+  | { kind: "food"; data: { name: string; calories: number; mealType: MealType; amountG?: number; proteinG?: number; carbsG?: number; fatG?: number }; missingCalories: boolean }
+  | { kind: "water"; data: { amountMl: number } }
+  | { kind: "activity"; data: { activityType: ActivityType; durationMin: number; estimatedCalories: number } };
+
+const NUMBER_WORDS: Record<string, number> = {
+  bir: 1,
+  iki: 2,
+  uc: 3,
+  dort: 4,
+  bes: 5,
+  alti: 6,
+  yedi: 7,
+  sekiz: 8,
+  dokuz: 9,
+  on: 10,
+  yarim: 0.5,
+  one: 1,
+  two: 2,
+  three: 3,
+  four: 4,
+  five: 5,
+  six: 6,
+  seven: 7,
+  eight: 8,
+  nine: 9,
+  ten: 10,
+};
+
+const FOOD_VERBS = [
+  "yedim",
+  "yedi",
+  "yedik",
+  "yiyorum",
+  "yemek",
+  "yemis",
+  "tukettim",
+  "tukettik",
+  "atistirdim",
+  "atistirdik",
+  "ictim",
+  "iciyorum",
+  "icmek",
+  "ate",
+  "eat",
+  "eating",
+  "drank",
+  "drink",
+  "drinking",
+];
+
+const WATER_KEYWORDS = ["su", "water"];
+
+const MEAL_KEYWORDS: Array<{ type: MealType; keywords: string[] }> = [
+  { type: "breakfast", keywords: ["kahvalti", "sabah", "breakfast"] },
+  { type: "lunch", keywords: ["ogle", "oglen", "lunch"] },
+  { type: "dinner", keywords: ["aksam", "dinner"] },
+  { type: "snack", keywords: ["atistir", "ara", "snack", "gece"] },
+];
+
+const ACTIVITY_KEYWORDS: Array<{ type: ActivityType; keywords: string[] }> = [
+  { type: "walking", keywords: ["yurudum", "yuruyus", "yurume", "walk", "walking"] },
+  { type: "running", keywords: ["kostum", "kosu", "run", "running"] },
+  { type: "gym", keywords: ["spor", "antrenman", "gym", "workout"] },
+  { type: "cycling", keywords: ["bisiklet", "cycle", "cycling"] },
+  { type: "swimming", keywords: ["yuzdum", "yuzme", "swim", "swimming"] },
+  { type: "yoga", keywords: ["yoga"] },
+  { type: "hiit", keywords: ["hiit"] },
+  { type: "pilates", keywords: ["pilates"] },
+  { type: "stairs", keywords: ["merdiven", "stairs"] },
+];
+
+const FOOD_STOPWORDS = new Set([
+  ...Object.keys(NUMBER_WORDS),
+  ...FOOD_VERBS,
+  "su",
+  "water",
+  "bardak",
+  "kupa",
+  "fincan",
+  "sise",
+  "ml",
+  "mililitre",
+  "litre",
+  "lt",
+  "l",
+  "gram",
+  "gr",
+  "g",
+  "adet",
+  "dilim",
+  "porsiyon",
+  "tabak",
+  "kase",
+  "kahvalti",
+  "sabah",
+  "ogle",
+  "oglen",
+  "aksam",
+  "gece",
+  "ara",
+  "snack",
+]);
+
+const TURKISH_CHAR_MAP: Record<string, string> = {
+  ç: "c",
+  Ç: "c",
+  ğ: "g",
+  Ğ: "g",
+  ı: "i",
+  İ: "i",
+  ö: "o",
+  Ö: "o",
+  ş: "s",
+  Ş: "s",
+  ü: "u",
+  Ü: "u",
+};
+
+function stripDiacritics(value: string) {
+  return value.replace(/[çğıöşüÇĞİÖŞÜ]/g, (char) => TURKISH_CHAR_MAP[char] ?? char);
+}
+
+function normalizeTextForMatch(value: string) {
+  return stripDiacritics(value.toLowerCase());
+}
+
+function tokenizeSegment(value: string) {
+  return value
+    .replace(/[.,!?;:]/g, " ")
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter(Boolean);
+}
+
+function parseNumberFromTokens(tokens: string[]) {
+  for (const token of tokens) {
+    if (!token) continue;
+    if (/^\d/.test(token)) {
+      const parsed = Number.parseFloat(token.replace(",", "."));
+      if (Number.isFinite(parsed)) {
+        return parsed;
+      }
+    }
+    const wordValue = NUMBER_WORDS[token];
+    if (typeof wordValue === "number") {
+      return wordValue;
+    }
+  }
+  return null;
+}
+
+function splitVoiceSegments(text: string) {
+  return text
+    .split(/(?:,|;|\s+ve\s+|\s+ile\s+|\s+and\s+)/i)
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+}
+
+function resolveMealTypeFromSegment(segment: string) {
+  const normalized = normalizeTextForMatch(segment);
+  for (const group of MEAL_KEYWORDS) {
+    if (group.keywords.some((keyword) => normalized.includes(keyword))) {
+      return group.type;
+    }
+  }
+  return null;
+}
+
+function resolveActivityType(segment: string) {
+  const normalized = normalizeTextForMatch(segment);
+  for (const group of ACTIVITY_KEYWORDS) {
+    if (group.keywords.some((keyword) => normalized.includes(keyword))) {
+      return group.type;
+    }
+  }
+  return null;
+}
+
+function parseDurationFromSegment(segment: string, tokens: string[]) {
+  const normalized = normalizeTextForMatch(segment);
+  if (normalized.includes("yarim saat") || normalized.includes("half hour")) {
+    return 30;
+  }
+  const hourMatch = normalized.match(/(\d+(?:[.,]\d+)?)\s*(saat|hour|hours|hrs)/);
+  if (hourMatch) {
+    const parsed = Number.parseFloat(hourMatch[1].replace(",", "."));
+    return Number.isFinite(parsed) ? Math.round(parsed * 60) : null;
+  }
+  const minuteMatch = normalized.match(/(\d+(?:[.,]\d+)?)\s*(dk|dakika|min|minute|minutes)/);
+  if (minuteMatch) {
+    const parsed = Number.parseFloat(minuteMatch[1].replace(",", "."));
+    return Number.isFinite(parsed) ? Math.round(parsed) : null;
+  }
+  if (normalized.includes("saat") || normalized.includes("hour")) {
+    const parsed = parseNumberFromTokens(tokens);
+    return parsed ? Math.round(parsed * 60) : null;
+  }
+  if (normalized.includes("dk") || normalized.includes("dakika") || normalized.includes("min")) {
+    const parsed = parseNumberFromTokens(tokens);
+    return parsed ? Math.round(parsed) : null;
+  }
+  return null;
+}
+
+function parseWaterAmount(segment: string, tokens: string[]) {
+  const normalized = normalizeTextForMatch(segment);
+  const literMatch = normalized.match(/(\d+(?:[.,]\d+)?)\s*(litre|lt|l)\b/);
+  if (literMatch) {
+    const parsed = Number.parseFloat(literMatch[1].replace(",", "."));
+    return Number.isFinite(parsed) ? Math.round(parsed * 1000) : null;
+  }
+  const mlMatch = normalized.match(/(\d+(?:[.,]\d+)?)\s*(ml|mililitre)\b/);
+  if (mlMatch) {
+    const parsed = Number.parseFloat(mlMatch[1].replace(",", "."));
+    return Number.isFinite(parsed) ? Math.round(parsed) : null;
+  }
+  if (normalized.includes("bardak") || normalized.includes("cup") || normalized.includes("glass")) {
+    const parsed = parseNumberFromTokens(tokens) ?? 1;
+    return Math.round(parsed * 200);
+  }
+  const parsed = parseNumberFromTokens(tokens);
+  if (parsed) {
+    return Math.round(parsed * 250);
+  }
+  return 250;
+}
+
+function parseFoodAmountG(segment: string) {
+  const normalized = normalizeTextForMatch(segment);
+  const gramMatch = normalized.match(/(\d+(?:[.,]\d+)?)\s*(gram|gr|g)\b/);
+  if (gramMatch) {
+    const parsed = Number.parseFloat(gramMatch[1].replace(",", "."));
+    return Number.isFinite(parsed) ? Math.round(parsed) : undefined;
+  }
+  return undefined;
+}
+
+function extractFoodName(segment: string) {
+  const tokens = tokenizeSegment(segment);
+  const cleaned = tokens.filter((token) => {
+    const normalized = normalizeTextForMatch(token);
+    if (!normalized) {
+      return false;
+    }
+    if (/^\d/.test(normalized)) {
+      return false;
+    }
+    if (FOOD_STOPWORDS.has(normalized)) {
+      return false;
+    }
+    if (MEAL_KEYWORDS.some((group) => group.keywords.some((keyword) => normalized.startsWith(keyword)))) {
+      return false;
+    }
+    return true;
+  });
+  return cleaned.join(" ").trim();
+}
+
+function getSpeechRecognition() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  return (
+    ((window as unknown as { SpeechRecognition?: SpeechRecognitionConstructor }).SpeechRecognition ??
+      (window as unknown as { webkitSpeechRecognition?: SpeechRecognitionConstructor })
+        .webkitSpeechRecognition) ||
+    null
+  );
+}
 
 export default function AddEntryPage() {
   const { addFood, addWater, addActivity, dataMode, measurements } = useTracker();
@@ -79,6 +364,13 @@ export default function AddEntryPage() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const skipSearchRef = useRef(false);
+  const [voiceSupported, setVoiceSupported] = useState(true);
+  const [voiceListening, setVoiceListening] = useState(false);
+  const [voiceTranscript, setVoiceTranscript] = useState("");
+  const voiceTranscriptRef = useRef("");
+  const [voiceMessage, setVoiceMessage] = useState<string | null>(null);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
 
   useEffect(() => {
     if (!foodPer100) {
@@ -149,6 +441,19 @@ export default function AddEntryPage() {
       return;
     }
     setSupportsBarcodeDetector("BarcodeDetector" in window);
+  }, []);
+
+  useEffect(() => {
+    setVoiceSupported(Boolean(getSpeechRecognition()));
+    return () => {
+      const recognition = recognitionRef.current;
+      if (recognition) {
+        recognition.onend = null;
+        recognition.onerror = null;
+        recognition.onresult = null;
+        recognition.stop();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -606,6 +911,232 @@ export default function AddEntryPage() {
   const [activityIntensity, setActivityIntensity] = useState<"low" | "medium" | "high">("medium");
   const [activityNote, setActivityNote] = useState("");
 
+  const findLibraryMatch = useCallback(
+    (name: string) => {
+      const normalizedName = normalizeTextForMatch(name);
+      if (!normalizedName) {
+        return null;
+      }
+      let best: FoodLibraryItem | null = null;
+      for (const item of foodLibrary) {
+        const normalizedItem = normalizeTextForMatch(item.name);
+        if (!normalizedItem) {
+          continue;
+        }
+        if (normalizedItem === normalizedName) {
+          return item;
+        }
+        if (normalizedItem.includes(normalizedName) || normalizedName.includes(normalizedItem)) {
+          if (!best || normalizedItem.length > normalizeTextForMatch(best.name).length) {
+            best = item;
+          }
+        }
+      }
+      return best;
+    },
+    [foodLibrary]
+  );
+
+  const parseVoiceTranscript = useCallback(
+    (transcript: string) => {
+      const normalizedTranscript = normalizeTextForMatch(transcript);
+      const segments = splitVoiceSegments(transcript);
+      const hasFoodVerb = FOOD_VERBS.some((verb) => normalizedTranscript.includes(verb));
+      const entries: VoiceParsedEntry[] = [];
+
+      for (const segment of segments) {
+        const normalized = normalizeTextForMatch(segment);
+        if (!normalized) {
+          continue;
+        }
+        const tokens = tokenizeSegment(segment).map((token) => normalizeTextForMatch(token));
+        const hasWaterKeyword = WATER_KEYWORDS.some((keyword) => tokens.includes(keyword));
+
+        if (hasWaterKeyword) {
+          const amountMl = parseWaterAmount(segment, tokens);
+          if (amountMl) {
+            entries.push({ kind: "water", data: { amountMl } });
+          }
+          continue;
+        }
+
+        const activityType = resolveActivityType(segment);
+        if (activityType) {
+          const duration =
+            parseDurationFromSegment(segment, tokens) ?? Number(activityDuration) || 30;
+          const estimatedCalories = estimateActivityCalories({
+            type: activityType,
+            durationMin: duration,
+            weightKg: weightForCalc,
+            intensity: activityIntensity,
+          });
+          entries.push({
+            kind: "activity",
+            data: {
+              activityType,
+              durationMin: duration,
+              estimatedCalories: Number.isFinite(estimatedCalories)
+                ? Math.round(estimatedCalories)
+                : 0,
+            },
+          });
+          continue;
+        }
+
+        const segmentHasFoodVerb = FOOD_VERBS.some((verb) => normalized.includes(verb));
+        const segmentMealType = resolveMealTypeFromSegment(segment);
+        if (!hasFoodVerb && !segmentHasFoodVerb && !segmentMealType) {
+          continue;
+        }
+
+        const name = extractFoodName(segment);
+        if (!name) {
+          continue;
+        }
+        const libraryMatch = findLibraryMatch(name);
+        const amountG = parseFoodAmountG(segment);
+        const resolvedAmountG = libraryMatch ? amountG ?? 100 : amountG;
+        const factor = resolvedAmountG ? resolvedAmountG / 100 : 1;
+        const calories = libraryMatch
+          ? Math.round((libraryMatch.caloriesPer100 || 0) * factor)
+          : 0;
+        const proteinG =
+          libraryMatch && typeof libraryMatch.proteinPer100 === "number"
+            ? Math.round(libraryMatch.proteinPer100 * factor)
+            : undefined;
+        const carbsG =
+          libraryMatch && typeof libraryMatch.carbsPer100 === "number"
+            ? Math.round(libraryMatch.carbsPer100 * factor)
+            : undefined;
+        const fatG =
+          libraryMatch && typeof libraryMatch.fatPer100 === "number"
+            ? Math.round(libraryMatch.fatPer100 * factor)
+            : undefined;
+
+        entries.push({
+          kind: "food",
+          data: {
+            name,
+            calories,
+            mealType: segmentMealType ?? mealType,
+            amountG: resolvedAmountG,
+            proteinG,
+            carbsG,
+            fatG,
+          },
+          missingCalories: calories === 0,
+        });
+      }
+
+      return entries;
+    },
+    [
+      activityDuration,
+      activityIntensity,
+      findLibraryMatch,
+      mealType,
+      weightForCalc,
+    ]
+  );
+
+  const handleVoiceTranscript = useCallback(
+    async (transcript: string) => {
+      const entries = parseVoiceTranscript(transcript);
+      if (entries.length === 0) {
+        setVoiceMessage(null);
+        setVoiceError(t("Sesli giriş anlaşılamadı."));
+        return;
+      }
+      let addedCount = 0;
+      let missingCaloriesCount = 0;
+      for (const entry of entries) {
+        if (entry.kind === "food") {
+          await addFood(entry.data);
+          if (entry.missingCalories) {
+            missingCaloriesCount += 1;
+          }
+          addedCount += 1;
+        } else if (entry.kind === "water") {
+          await addWater(entry.data);
+          addedCount += 1;
+        } else if (entry.kind === "activity") {
+          await addActivity(entry.data);
+          addedCount += 1;
+        }
+      }
+      let message = t("Sesli giriş: {count} kayıt eklendi.", { count: addedCount });
+      if (missingCaloriesCount > 0) {
+        message = `${message} ${t("{count} öğünde kalori bulunamadı.", {
+          count: missingCaloriesCount,
+        })}`;
+      }
+      setVoiceError(null);
+      setVoiceMessage(message);
+    },
+    [addActivity, addFood, addWater, parseVoiceTranscript]
+  );
+
+  const startVoiceEntry = useCallback(() => {
+    if (voiceListening) {
+      return;
+    }
+    const Recognition = getSpeechRecognition();
+    if (!Recognition) {
+      setVoiceSupported(false);
+      setVoiceMessage(null);
+      setVoiceError(t("Sesli giriş desteklenmiyor."));
+      return;
+    }
+    let hadError = false;
+    const recognition = new Recognition();
+    recognition.lang = getIntlLocale();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map((result) => result[0]?.transcript ?? "")
+        .join(" ")
+        .trim();
+      voiceTranscriptRef.current = transcript;
+      setVoiceTranscript(transcript);
+    };
+    recognition.onerror = () => {
+      hadError = true;
+      setVoiceListening(false);
+      setVoiceMessage(null);
+      setVoiceError(t("Ses tanıma hatası oluştu."));
+    };
+    recognition.onend = () => {
+      setVoiceListening(false);
+      if (hadError) {
+        return;
+      }
+      const transcript = voiceTranscriptRef.current.trim();
+      if (!transcript) {
+        setVoiceMessage(null);
+        setVoiceError(t("Sesli giriş anlaşılamadı."));
+        return;
+      }
+      void handleVoiceTranscript(transcript);
+    };
+    recognitionRef.current = recognition;
+    voiceTranscriptRef.current = "";
+    setVoiceTranscript("");
+    setVoiceMessage(null);
+    setVoiceError(null);
+    setVoiceListening(true);
+    try {
+      recognition.start();
+    } catch {
+      setVoiceListening(false);
+      setVoiceError(t("Mikrofon izni alınamadı."));
+    }
+  }, [handleVoiceTranscript, voiceListening]);
+
+  const stopVoiceEntry = useCallback(() => {
+    recognitionRef.current?.stop();
+  }, []);
+
   useEffect(() => {
     if (!activityAuto) {
       return;
@@ -626,6 +1157,48 @@ export default function AddEntryPage() {
 
   return (
     <div className="space-y-6">
+      <Card className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold">{t("Sesli giriş")}</p>
+            <p className="text-xs text-muted">{t("Bir elma yedim ve 2 bardak su içtim.")}</p>
+          </div>
+          <button
+            type="button"
+            onClick={voiceListening ? stopVoiceEntry : startVoiceEntry}
+            className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition ${
+              voiceListening
+                ? "bg-emerald-600 text-white"
+                : "border border-emerald-100 bg-white text-emerald-700 hover:border-emerald-200"
+            }`}
+            disabled={!voiceSupported}
+          >
+            {voiceListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+            {voiceListening ? t("Durdur") : t("Konuş")}
+          </button>
+        </div>
+        <div
+          className={`rounded-xl border px-3 py-2 text-xs ${
+            voiceListening
+              ? "border-emerald-200 bg-emerald-50/60"
+              : "border-emerald-100 bg-white"
+          }`}
+        >
+          {voiceTranscript ? (
+            <p className="text-ink">{voiceTranscript}</p>
+          ) : (
+            <p className="text-muted">
+              {voiceListening ? t("Dinleniyor...") : t("Söylediğin cümle burada görünecek.")}
+            </p>
+          )}
+        </div>
+        {!voiceSupported && (
+          <p className="text-[11px] text-muted">{t("Sesli giriş desteklenmiyor.")}</p>
+        )}
+        {voiceError && <p className="text-[11px] text-red-600">{voiceError}</p>}
+        {voiceMessage && <p className="text-[11px] text-muted">{voiceMessage}</p>}
+      </Card>
+
       <div className="flex flex-wrap gap-2">
         {(
           [

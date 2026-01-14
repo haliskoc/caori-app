@@ -796,5 +796,17 @@
   "AI Koçu sadece AI PLUS paketine özeldir.": "AI Koçu sadece AI PLUS paketine özeldir.",
   "Cevap üretilemedi.": "Cevap üretilemedi.",
   "Bir hata oluştu. Lütfen tekrar deneyin.": "Bir hata oluştu. Lütfen tekrar deneyin.",
-  "AI servisi şu an yapılandırılmadı (GROQ_API_KEY eksik). Lütfen yönetici ile iletişime geçin.": "AI servisi şu an yapılandırılmadı (GROQ_API_KEY eksik). Lütfen yönetici ile iletişime geçin."
+  "AI servisi şu an yapılandırılmadı (GROQ_API_KEY eksik). Lütfen yönetici ile iletişime geçin.": "AI servisi şu an yapılandırılmadı (GROQ_API_KEY eksik). Lütfen yönetici ile iletişime geçin.",
+  "Sesli giriş": "Sesli giriş",
+  "Bir elma yedim ve 2 bardak su içtim.": "Bir elma yedim ve 2 bardak su içtim.",
+  "Konuş": "Konuş",
+  "Durdur": "Durdur",
+  "Dinleniyor...": "Dinleniyor...",
+  "Söylediğin cümle burada görünecek.": "Söylediğin cümle burada görünecek.",
+  "Sesli giriş desteklenmiyor.": "Sesli giriş desteklenmiyor.",
+  "Sesli giriş anlaşılamadı.": "Sesli giriş anlaşılamadı.",
+  "Sesli giriş: {count} kayıt eklendi.": "Sesli giriş: {count} kayıt eklendi.",
+  "{count} öğünde kalori bulunamadı.": "{count} öğünde kalori bulunamadı.",
+  "Mikrofon izni alınamadı.": "Mikrofon izni alınamadı.",
+  "Ses tanıma hatası oluştu.": "Ses tanıma hatası oluştu."
 }

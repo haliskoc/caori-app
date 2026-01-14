@@ -18,6 +18,13 @@ export type BraveSearchResponse = {
     query: string;
 };
 
+interface BraveWebResultItem {
+    title?: string;
+    url?: string;
+    description?: string;
+    [key: string]: unknown;
+}
+
 /**
  * Search the web using Brave Search API
  */
@@ -51,8 +58,8 @@ export async function braveSearch(query: string, count: number = 5): Promise<Bra
         const data = await response.json();
 
         // Extract web results
-        const webResults = data.web?.results || [];
-        const results: BraveSearchResult[] = webResults.slice(0, count).map((result: any) => ({
+        const webResults = (data.web?.results || []) as BraveWebResultItem[];
+        const results: BraveSearchResult[] = webResults.slice(0, count).map((result) => ({
             title: result.title || "",
             url: result.url || "",
             description: result.description || "",

@@ -796,5 +796,17 @@
   "AI Koçu sadece AI PLUS paketine özeldir.": "AI Coach is exclusive to the AI PLUS plan.",
   "Cevap üretilemedi.": "Response could not be generated.",
   "Bir hata oluştu. Lütfen tekrar deneyin.": "An error occurred. Please try again.",
-  "AI servisi şu an yapılandırılmadı (GROQ_API_KEY eksik). Lütfen yönetici ile iletişime geçin.": "AI service is currently not configured (GROQ_API_KEY missing). Please contact the administrator."
+  "AI servisi şu an yapılandırılmadı (GROQ_API_KEY eksik). Lütfen yönetici ile iletişime geçin.": "AI service is currently not configured (GROQ_API_KEY missing). Please contact the administrator.",
+  "Sesli giriş": "Voice entry",
+  "Bir elma yedim ve 2 bardak su içtim.": "I ate an apple and drank 2 glasses of water.",
+  "Konuş": "Speak",
+  "Durdur": "Stop",
+  "Dinleniyor...": "Listening...",
+  "Söylediğin cümle burada görünecek.": "Your sentence will appear here.",
+  "Sesli giriş desteklenmiyor.": "Voice entry is not supported.",
+  "Sesli giriş anlaşılamadı.": "Voice entry could not be understood.",
+  "Sesli giriş: {count} kayıt eklendi.": "Voice entry: {count} log(s) added.",
+  "{count} öğünde kalori bulunamadı.": "Calories were missing for {count} meal(s).",
+  "Mikrofon izni alınamadı.": "Microphone permission was denied.",
+  "Ses tanıma hatası oluştu.": "Speech recognition failed."
 }

@@ -4,7 +4,6 @@ export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = "https://calmet.ai";
-    const languages = ["tr", "en", "es", "fr", "ru", "pt"];
     const pages = ["", "pricing", "help", "faq", "contact", "legal/privacy", "legal/terms", "legal/kvkk"];
 
     const routes: MetadataRoute.Sitemap = [];
