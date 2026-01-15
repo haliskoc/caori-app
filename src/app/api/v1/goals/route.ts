@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { auth0 } from "@/lib/auth0";
+import { auth0 } from "@/lib/auth/auth0";
 import { eq } from "drizzle-orm";
-import { goals } from "@/lib/schema";
-import { getDb, ensureUser } from "@/lib/db";
-import { isSameOrigin, toSafeNumber } from "@/lib/security";
+import { goals } from "@/lib/database/schema";
+import { getDb, ensureUser } from "@/lib/database/db";
+import { isSameOrigin, toSafeNumber } from "@/lib/auth/security";
 
 export const dynamic = "force-dynamic";
 

@@ -1,0 +1,486 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { Card } from "@/components/ui/card";
+import {
+  isProfileComplete,
+  loadProfile,
+  saveProfile,
+  type ProfileInfo,
+} from "@/lib/features/profile";
+import { t } from "@/lib/core/i18n";
+
+type QuestionType = "number" | "text" | "single";
+
+type Option = {
+  value: string;
+  label: string;
+};
+
+type Question = {
+  id: keyof ProfileInfo;
+  step: number;
+  title: string;
+  subtitle: string;
+  prompt: string;
+  type: QuestionType;
+  options?: Option[];
+  placeholder?: string;
+  required: boolean;
+  hint?: string;
+};
+
+type OnboardingModalProps = {
+  isOpen: boolean;
+  onComplete?: () => void;
+};
+
+const steps = [
+  { id: 1, label: "Merhaba!" },
+  { id: 2, label: "Seni tanıyalım" },
+  { id: 3, label: "Hedefini seç" },
+  { id: 4, label: "Spor geçmişin" },
+  { id: 5, label: "Koşulların" },
+  { id: 6, label: "Sağlık & güvenlik" },
+  { id: 7, label: "Bizi nereden duydun" },
+  { id: 8, label: "Beklentin" },
+];
+
+const questions: Question[] = [
+  {
+    id: "fullName",
+    step: 1,
+    title: "Merhaba! 👋",
+    subtitle: "Seni tanımaktan mutluluk duyarız",
+    prompt: "Adın ve soyadın nedir?",
+    type: "text",
+    placeholder: "Örn: Ahmet Yılmaz",
+    required: true,
+    hint: "Sana isminle hitap etmek isteriz.",
+  },
+  {
+    id: "age",
+    step: 2,
+    title: "Seni tanıyalım",
+    subtitle: "Temel ölçüleri öğrenelim",
+    prompt: "Yaşın kaç?",
+    type: "number",
+    placeholder: "Örn: 26",
+    required: true,
+  },
+  {
+    id: "heightCm",
+    step: 2,
+    title: "Seni tanıyalım",
+    subtitle: "Temel ölçüleri öğrenelim",
+    prompt: "Boyun kaç cm?",
+    type: "number",
+    placeholder: "Örn: 175",
+    required: true,
+  },
+  {
+    id: "weightKg",
+    step: 2,
+    title: "Seni tanıyalım",
+    subtitle: "Temel ölçüleri öğrenelim",
+    prompt: "Kilon kaç kg?",
+    type: "number",
+    placeholder: "Örn: 70",
+    required: true,
+  },
+  {
+    id: "mainGoal",
+    step: 3,
+    title: "Hedefini seç",
+    subtitle: "Ana odağını belirle",
+    prompt: "Ana hedefin ne?",
+    type: "single",
+    required: true,
+    options: [
+      { value: "fat_burn", label: "Yağ yakmak" },
+      { value: "muscle_gain", label: "Kas kazanmak" },
+      { value: "fit_form", label: "Fit & form kalmak" },
+      { value: "conditioning", label: "Kondisyon artırmak" },
+      { value: "healthy", label: "Sağlıklı yaşamak" },
+    ],
+  },
+  {
+    id: "sportLevel",
+    step: 4,
+    title: "Spor geçmişin",
+    subtitle: "Deneyimini öğrenelim",
+    prompt: "Spor seviyeni nasıl tanımlarsın?",
+    type: "single",
+    required: true,
+    options: [
+      { value: "beginner", label: "Yeni başlıyorum" },
+      { value: "sometimes", label: "Ara sıra yapıyorum" },
+      { value: "regular", label: "Düzenli yapıyorum" },
+      { value: "advanced", label: "İleri seviye" },
+    ],
+  },
+  {
+    id: "workoutDays",
+    step: 4,
+    title: "Spor geçmişin",
+    subtitle: "Rutini netleştirelim",
+    prompt: "Haftada kaç gün spor yapabilirsin?",
+    type: "single",
+    required: true,
+    options: [
+      { value: "1-2", label: "1–2 gün" },
+      { value: "3-4", label: "3–4 gün" },
+      { value: "5+", label: "5+ gün" },
+    ],
+  },
+  {
+    id: "workoutPlace",
+    step: 5,
+    title: "Koşulların",
+    subtitle: "Antrenman ortamı",
+    prompt: "Nerede spor yapacaksın?",
+    type: "single",
+    required: true,
+    options: [
+      { value: "home", label: "Ev" },
+      { value: "gym", label: "Spor salonu" },
+      { value: "outdoor", label: "Açık alan" },
+    ],
+  },
+  {
+    id: "equipmentLevel",
+    step: 5,
+    title: "Koşulların",
+    subtitle: "Ekipman durumu",
+    prompt: "Ekipman durumun nedir?",
+    type: "single",
+    required: true,
+    options: [
+      { value: "none", label: "Ekipman yok" },
+      { value: "basic", label: "Temel ekipman (dumbbell vb.)" },
+      { value: "full", label: "Tam ekipman" },
+    ],
+  },
+  {
+    id: "injury",
+    step: 6,
+    title: "Sağlık & güvenlik",
+    subtitle: "Sakatlık bilgisi",
+    prompt: "Bilinen bir sakatlığın var mı?",
+    type: "single",
+    required: true,
+    options: [
+      { value: "none", label: "Yok" },
+      { value: "knee", label: "Diz" },
+      { value: "back", label: "Bel" },
+      { value: "shoulder", label: "Omuz" },
+      { value: "other", label: "Diğer (yaz)" },
+    ],
+  },
+  {
+    id: "doctorRestriction",
+    step: 6,
+    title: "Sağlık & güvenlik",
+    subtitle: "Güvenlik bilgisi",
+    prompt: "Doktorun sporla ilgili bir kısıt koydu mu?",
+    type: "single",
+    required: true,
+    options: [
+      { value: "no", label: "Hayır" },
+      { value: "yes", label: "Evet" },
+    ],
+  },
+  {
+    id: "referralSource",
+    step: 7,
+    title: "Bizi nereden duydun?",
+    subtitle: "Tek soru, altın değerinde",
+    prompt: "Uygulamamızı nereden duydun?",
+    type: "single",
+    required: true,
+    options: [
+      { value: "instagram", label: "Instagram" },
+      { value: "tiktok", label: "TikTok" },
+      { value: "youtube", label: "YouTube" },
+      { value: "friend", label: "Arkadaş tavsiyesi" },
+      { value: "search", label: "Google / App Store" },
+      { value: "other", label: "Diğer" },
+    ],
+  },
+  {
+    id: "expectation",
+    step: 8,
+    title: "Beklentin",
+    subtitle: "Seni tanımamıza yardımcı olur",
+    prompt: "Bu uygulamadan en büyük beklentin ne?",
+    type: "text",
+    placeholder: "Kısa not...",
+    required: true,
+  },
+];
+
+function getInitialIndex(profile: ProfileInfo) {
+  const index = questions.findIndex((question) => {
+    const value = profile[question.id];
+    if (typeof value !== "string" || value.trim().length === 0) {
+      return true;
+    }
+    if (question.id === "injury" && profile.injury === "other") {
+      return profile.injuryDetail.trim().length === 0;
+    }
+    return false;
+  });
+  return index === -1 ? 0 : index;
+}
+
+function getProgressValue(currentIndex: number) {
+  return Math.round(((currentIndex + 1) / questions.length) * 100);
+}
+
+export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
+  const router = useRouter();
+  const { user } = useUser();
+  const [profile, setProfile] = useState<ProfileInfo>(() => loadProfile());
+  const [questionIndex, setQuestionIndex] = useState(() => getInitialIndex(profile));
+  const [error, setError] = useState<string | null>(null);
+  const [saveNotice, setSaveNotice] = useState<string | null>(null);
+  const isRemote = Boolean(user?.sub);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+    let active = true;
+    const load = async () => {
+      if (isRemote) {
+        try {
+          const res = await fetch("/api/v1/profile", { credentials: "include" });
+          if (res.ok) {
+            const data = (await res.json()) as ProfileInfo;
+            if (active) {
+              setProfile(data);
+              setQuestionIndex(getInitialIndex(data));
+              setError(null);
+            }
+            return;
+          }
+        } catch {
+          // fall back to local
+        }
+      }
+      const freshProfile = loadProfile();
+      if (active) {
+        setProfile(freshProfile);
+        setQuestionIndex(getInitialIndex(freshProfile));
+        setError(null);
+      }
+    };
+    void load();
+    return () => {
+      active = false;
+    };
+  }, [isOpen, isRemote]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
+
+  if (!isOpen) {
+    return null;
+  }
+
+  const question = questions[questionIndex];
+  const progress = getProgressValue(questionIndex);
+  const step = steps.find((item) => item.id === question.step);
+  const answer = profile[question.id] ?? "";
+
+  const isAnswerMissing =
+    question.required &&
+    (typeof answer !== "string" || answer.trim().length === 0);
+
+  const needsOtherDetail = question.id === "injury" && profile.injury === "other";
+  const hasOtherDetail = profile.injuryDetail.trim().length > 0;
+
+  function updateProfile(key: keyof ProfileInfo, value: string) {
+    setProfile((prev) => ({ ...prev, [key]: value }));
+    setError(null);
+    setSaveNotice(null);
+  }
+
+  async function persistProfile(nextProfile: ProfileInfo) {
+    if (!isRemote) {
+      saveProfile(nextProfile);
+      return true;
+    }
+    try {
+      const res = await fetch("/api/v1/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(nextProfile),
+      });
+      if (res.ok) {
+        setSaveNotice(null);
+        return true;
+      }
+    } catch {
+      // fall through to local save
+    }
+    saveProfile(nextProfile);
+    setSaveNotice(t("Buluta kaydedilemedi, cihazına kaydedildi."));
+    return true;
+  }
+
+  async function goNext() {
+    if (isAnswerMissing) {
+      setError(t("Lütfen bu soruyu yanıtla."));
+      return;
+    }
+    if (needsOtherDetail && !hasOtherDetail) {
+      setError(t("Lütfen sakatlık detayını yaz."));
+      return;
+    }
+    const nextProfile = { ...profile };
+    const saved = await persistProfile(nextProfile);
+    if (!saved) {
+      setError(t("Profil kaydedilemedi. Tekrar dene."));
+      return;
+    }
+    const nextIndex = questionIndex + 1;
+    if (nextIndex >= questions.length) {
+      if (!isProfileComplete(nextProfile)) {
+        setError(t("Lütfen tüm soruları yanıtla."));
+        return;
+      }
+      router.replace("/dashboard");
+      onComplete?.();
+      return;
+    }
+    setQuestionIndex(nextIndex);
+  }
+
+  function goBack() {
+    if (questionIndex === 0) {
+      return;
+    }
+    setQuestionIndex((prev) => Math.max(prev - 1, 0));
+    setError(null);
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-8"
+      role="dialog"
+      aria-modal="true"
+    >
+      <Card className="w-full max-w-2xl max-h-[calc(100vh-2rem)] space-y-5 overflow-y-auto rounded-3xl border border-emerald-100 bg-white/95 p-4 shadow-strong sm:p-6">
+        <div className="space-y-2">
+          <p className="text-xs uppercase tracking-[0.2em] text-muted">{t("Onboarding")}</p>
+          <div className="flex items-center justify-between text-[11px] text-muted">
+            <span>{t(step?.label ?? "Seni tanıyalım")}</span>
+            <span>
+              {questionIndex + 1}/{questions.length}
+            </span>
+          </div>
+          <div className="h-2 rounded-full bg-emerald-100">
+            <div className="h-2 rounded-full bg-accent" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-xs uppercase tracking-[0.2em] text-muted">{t(question.title)}</p>
+          <h2 className="text-xl font-semibold text-ink">{t(question.prompt)}</h2>
+          {question.subtitle && <p className="text-sm text-muted">{t(question.subtitle)}</p>}
+          {question.hint && <p className="text-xs text-muted">{t(question.hint)}</p>}
+        </div>
+
+        {question.type === "number" && (
+          <input
+            value={String(answer)}
+            onChange={(event) => updateProfile(question.id, event.target.value)}
+            className="w-full rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
+            placeholder={question.placeholder ? t(question.placeholder) : undefined}
+            inputMode="numeric"
+          />
+        )}
+
+        {question.type === "text" && (
+          <textarea
+            value={String(answer)}
+            onChange={(event) => updateProfile(question.id, event.target.value)}
+            className="min-h-[120px] w-full rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
+            placeholder={question.placeholder ? t(question.placeholder) : undefined}
+          />
+        )}
+
+        {question.type === "single" && (
+          <div className="grid gap-2 sm:grid-cols-2">
+            {question.options?.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => updateProfile(question.id, option.value)}
+                className={`rounded-2xl border px-4 py-3 text-left text-sm transition ${answer === option.value
+                    ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                    : "border-emerald-100 bg-white text-muted hover:text-ink"
+                  }`}
+              >
+                {t(option.label)}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {question.id === "injury" && profile.injury === "other" && (
+          <input
+            value={profile.injuryDetail}
+            onChange={(event) => updateProfile("injuryDetail", event.target.value)}
+            className="w-full rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
+            placeholder={t("Sakatlık detayını yaz")}
+          />
+        )}
+
+        {error && <p className="text-xs text-red-600">{error}</p>}
+        {!error && saveNotice && <p className="text-xs text-muted">{saveNotice}</p>}
+
+        <div className="flex items-center justify-between">
+          <button
+            onClick={goBack}
+            className="rounded-xl border border-emerald-100 bg-white px-4 py-2 text-sm text-muted hover:text-ink"
+            disabled={questionIndex === 0}
+          >
+            {t("Geri")}
+          </button>
+          <button
+            onClick={goNext}
+            className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
+          >
+            {questionIndex === questions.length - 1 ? t("Bitir") : t("İleri")}
+          </button>
+        </div>
+
+        <div className="flex flex-wrap gap-2 text-[11px] text-muted">
+          {steps.map((item) => (
+            <span
+              key={item.id}
+              className={`rounded-full px-3 py-1 ${item.id === question.step
+                  ? "bg-emerald-100 text-emerald-700"
+                  : "bg-white/80 text-muted"
+                }`}
+            >
+              {item.id}. {t(item.label)}
+            </span>
+          ))}
+        </div>
+      </Card>
+    </div>
+  );
+}

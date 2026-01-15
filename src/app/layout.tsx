@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Outfit, Space_Mono } from "next/font/google";
 import "./globals.css";
-import { AppProviders } from "@/components/app-providers";
-import { defaultLocale, t } from "@/lib/i18n";
+import { AppProviders } from "@/components/providers/app-providers";
+import { defaultLocale, t } from "@/lib/core/i18n";
 
 const outfit = Outfit({
   variable: "--font-outfit",

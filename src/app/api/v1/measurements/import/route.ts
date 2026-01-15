@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { auth0 } from "@/lib/auth0";
-import { measurements } from "@/lib/schema";
-import { getDb, ensureUser } from "@/lib/db";
-import { createId } from "@/lib/utils";
-import { isSameOrigin, toSafeNumber } from "@/lib/security";
+import { auth0 } from "@/lib/auth/auth0";
+import { measurements } from "@/lib/database/schema";
+import { getDb, ensureUser } from "@/lib/database/db";
+import { createId } from "@/lib/core/utils";
+import { isSameOrigin, toSafeNumber } from "@/lib/auth/security";
 
 export const dynamic = "force-dynamic";
 

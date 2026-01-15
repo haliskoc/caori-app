@@ -1,5 +1,5 @@
-import { getAuthUrl } from "@/lib/google-fit";
-import { auth0 } from "@/lib/auth0";
+import { getAuthUrl } from "@/lib/integrations/google-fit";
+import { auth0 } from "@/lib/auth/auth0";
 import { NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 

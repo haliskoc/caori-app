@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Card } from "@/components/card";
-import { Tooltip } from "@/components/tooltip";
-import { ProgressRing } from "@/components/progress-ring";
-import { WeeklyCharts } from "@/components/weekly-charts";
-import { useTracker } from "@/components/tracker-provider";
-import { MealType } from "@/lib/types";
-import { t } from "@/lib/i18n";
+import { Card } from "@/components/ui/card";
+import { Tooltip } from "@/components/ui/tooltip";
+import { ProgressRing } from "@/components/ui/progress-ring";
+import { WeeklyCharts } from "@/components/features/charts/weekly-charts";
+import { useTracker } from "@/components/providers/tracker-provider";
+import { MealType } from "@/lib/core/types";
+import { t } from "@/lib/core/i18n";
 
 export default function DashboardPage() {
   const { entries, dailySummary, weeklySummary, goals, addFood, addWater, flags } = useTracker();

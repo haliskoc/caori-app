@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { auth0 } from "@/lib/auth0";
+import { auth0 } from "@/lib/auth/auth0";
 import { and, eq } from "drizzle-orm";
-import { entries } from "@/lib/schema";
-import { getDb } from "@/lib/db";
-import { isSameOrigin, toSafeNumber } from "@/lib/security";
-import { t } from "@/lib/i18n";
+import { entries } from "@/lib/database/schema";
+import { getDb } from "@/lib/database/db";
+import { isSameOrigin, toSafeNumber } from "@/lib/auth/security";
+import { t } from "@/lib/core/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +48,7 @@ export async function PUT(
       ? body.note.trim().slice(0, 200)
       : null;
   const type = String(body?.type ?? "");
-  if (type !== "food" && type !== "water" && type !== "activity") {
+  if (type !== "food" && type !== "water" && type !== "drink" && type !== "activity") {
     return NextResponse.json({ error: "Invalid type" }, { status: 400 });
   }
 
@@ -75,6 +75,26 @@ export async function PUT(
     update.carbsG = toOptionalNumber(body?.carbsG, { min: 0, max: 5000 });
     update.fatG = toOptionalNumber(body?.fatG, { min: 0, max: 5000 });
     update.amountMl = null;
+    update.activityType = null;
+    update.durationMin = null;
+    update.estimatedCalories = null;
+  } else if (type === "drink") {
+    update.name = String(body?.name ?? t("Belirtilmedi")).trim().slice(0, 120);
+    update.calories = toSafeNumber(body?.calories, 0, {
+      min: 0,
+      max: 50000,
+      integer: true,
+    });
+    update.amountMl = toSafeNumber(body?.amountMl, 0, {
+      min: 0,
+      max: 20000,
+      integer: true,
+    });
+    update.proteinG = toOptionalNumber(body?.proteinG, { min: 0, max: 5000 });
+    update.carbsG = toOptionalNumber(body?.carbsG, { min: 0, max: 5000 });
+    update.fatG = toOptionalNumber(body?.fatG, { min: 0, max: 5000 });
+    update.mealType = null;
+    update.amountG = null;
     update.activityType = null;
     update.durationMin = null;
     update.estimatedCalories = null;

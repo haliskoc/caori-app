@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { and, eq, gte, lte, desc } from "drizzle-orm";
-import { entries, goals, measurements, profiles, reportShares } from "@/lib/schema";
-import { getDb } from "@/lib/db";
-import { buildReportData } from "@/lib/report";
-import type { ActivityType, Entry, MealType, MeasurementEntry } from "@/lib/types";
-import { t } from "@/lib/i18n";
+import { entries, goals, measurements, profiles, reportShares } from "@/lib/database/schema";
+import { getDb } from "@/lib/database/db";
+import { buildReportData } from "@/lib/features/report";
+import type { ActivityType, Entry, MealType, MeasurementEntry } from "@/lib/core/types";
+import { t } from "@/lib/core/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -58,6 +58,19 @@ function normalizeEntry(row: EntryRow): Entry | null {
         ? (row.mealType as MealType)
         : "snack",
       amountG: row.amountG ?? undefined,
+      proteinG: row.proteinG ?? undefined,
+      carbsG: row.carbsG ?? undefined,
+      fatG: row.fatG ?? undefined,
+      timestamp: safeTimestamp,
+    };
+  }
+  if (row.type === "drink") {
+    return {
+      id: row.id,
+      type: "drink",
+      name: row.name ?? t("Belirtilmedi"),
+      amountMl: row.amountMl ?? 0,
+      calories: row.calories ?? 0,
       proteinG: row.proteinG ?? undefined,
       carbsG: row.carbsG ?? undefined,
       fatG: row.fatG ?? undefined,

@@ -1,7 +1,7 @@
-import { getFoodByBarcodeAll, searchFoodAll } from "@/lib/food-sources";
+import { getFoodByBarcodeAll, searchFoodAll } from "@/lib/food/food-sources";
 import { NextRequest, NextResponse } from "next/server";
-import { auth0 } from "@/lib/auth0";
-import { ensureUser } from "@/lib/db";
+import { auth0 } from "@/lib/auth/auth0";
+import { ensureUser } from "@/lib/database/db";
 
 export const GET = async (req: NextRequest) => {
   const session = await auth0.getSession();

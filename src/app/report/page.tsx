@@ -2,17 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { Card } from "@/components/card";
-import { ReportCharts } from "@/components/report-charts";
-import { MeasurementTrends } from "@/components/measurement-trends";
-import { WeeklyCharts } from "@/components/weekly-charts";
-import { useTracker } from "@/components/tracker-provider";
-import { buildReportData, type ReportData } from "@/lib/report";
-import { formatShortDate } from "@/lib/utils";
-import { ActivityType } from "@/lib/types";
-import { defaultProfile, loadProfile, type ProfileInfo } from "@/lib/profile";
-import { getIntlLocale, t } from "@/lib/i18n";
-import { activityLabels } from "@/lib/activity";
+import { Card } from "@/components/ui/card";
+import { ReportCharts } from "@/components/features/charts/report-charts";
+import { MeasurementTrends } from "@/components/features/charts/measurement-trends";
+import { WeeklyCharts } from "@/components/features/charts/weekly-charts";
+import { useTracker } from "@/components/providers/tracker-provider";
+import { buildReportData, type ReportData } from "@/lib/features/report";
+import { formatShortDate } from "@/lib/core/utils";
+import { ActivityType } from "@/lib/core/types";
+import { defaultProfile, loadProfile, type ProfileInfo } from "@/lib/features/profile";
+import { getIntlLocale, t } from "@/lib/core/i18n";
+import { activityLabels } from "@/lib/features/activity";
 
 export default function ReportPage() {
   const { user } = useUser();

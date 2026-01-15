@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { auth0 } from "@/lib/auth0";
-import { getDb, ensureUser } from "@/lib/db";
-import { userSettings } from "@/lib/schema";
+import { auth0 } from "@/lib/auth/auth0";
+import { getDb, ensureUser } from "@/lib/database/db";
+import { userSettings } from "@/lib/database/schema";
 import { eq } from "drizzle-orm";
-import { defaultTheme, type ThemeSettings } from "@/lib/theme";
-import { defaultReminder, type ReminderSettings } from "@/lib/reminders";
-import { defaultFlags, type FeatureFlags } from "@/lib/flags";
-import { isSameOrigin } from "@/lib/security";
+import { defaultTheme, type ThemeSettings } from "@/lib/core/theme";
+import { defaultReminder, type ReminderSettings } from "@/lib/features/reminders";
+import { defaultFlags, type FeatureFlags } from "@/lib/core/flags";
+import { isSameOrigin } from "@/lib/auth/security";
 
 export const dynamic = "force-dynamic";
 

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth0 } from "@/lib/auth0";
-import { getDb, ensureUser } from "@/lib/db";
-import { entries, goals } from "@/lib/schema";
+import { auth0 } from "@/lib/auth/auth0";
+import { getDb, ensureUser } from "@/lib/database/db";
+import { entries, goals } from "@/lib/database/schema";
 import { and, eq, gte, lte } from "drizzle-orm";
-import { toSafeNumber } from "@/lib/security";
-import { buildReportData } from "@/lib/report";
-import type { ActivityType, Entry, MealType } from "@/lib/types";
-import { t } from "@/lib/i18n";
+import { toSafeNumber } from "@/lib/auth/security";
+import { buildReportData } from "@/lib/features/report";
+import type { ActivityType, Entry, MealType } from "@/lib/core/types";
+import { t } from "@/lib/core/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -65,6 +65,19 @@ function normalizeEntry(row: EntryRow): Entry | null {
         ? (row.mealType as MealType)
         : "snack",
       amountG: row.amountG ?? undefined,
+      proteinG: row.proteinG ?? undefined,
+      carbsG: row.carbsG ?? undefined,
+      fatG: row.fatG ?? undefined,
+      timestamp,
+    };
+  }
+  if (row.type === "drink") {
+    return {
+      id: row.id,
+      type: "drink",
+      name: row.name ?? t("Belirtilmedi"),
+      amountMl: row.amountMl ?? 0,
+      calories: row.calories ?? 0,
       proteinG: row.proteinG ?? undefined,
       carbsG: row.carbsG ?? undefined,
       fatG: row.fatG ?? undefined,

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { auth0 } from "@/lib/auth0";
-import { getDb, ensureUser } from "@/lib/db";
-import { reportShares } from "@/lib/schema";
-import { isSameOrigin, toSafeNumber } from "@/lib/security";
+import { auth0 } from "@/lib/auth/auth0";
+import { getDb, ensureUser } from "@/lib/database/db";
+import { reportShares } from "@/lib/database/schema";
+import { isSameOrigin, toSafeNumber } from "@/lib/auth/security";
 import { nanoid } from "nanoid";
 
 export const dynamic = "force-dynamic";

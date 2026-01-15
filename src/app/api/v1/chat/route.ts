@@ -1,12 +1,206 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth0 } from "@/lib/auth0";
-import { getDb } from "@/lib/db";
-import { users, profiles, goals, entries } from "@/lib/schema";
+import { auth0 } from "@/lib/auth/auth0";
+import { getDb } from "@/lib/database/db";
+import { users, profiles, goals, entries } from "@/lib/database/schema";
 import { eq, and, gte } from "drizzle-orm";
-import { groq, AI_MODELS } from "@/lib/ai";
-import { ensureUser } from "@/lib/db";
-import { braveSearch, formatSearchResultsForAI, isBraveSearchConfigured } from "@/lib/brave-search";
+import { groq, AI_MODELS } from "@/lib/ai/ai";
+import { ensureUser } from "@/lib/database/db";
+import { braveSearch, formatSearchResultsForAI, isBraveSearchConfigured } from "@/lib/integrations/brave-search";
 import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
+
+type ChatCommandAction =
+    | "none"
+    | "log_food"
+    | "log_water"
+    | "log_drink"
+    | "log_activity"
+    | "analyze_day"
+    | "suggest_meal"
+    | "nutrition_info"
+    | "request_web_search"
+    | "set_reminder";
+
+type ChatCommand = {
+    action: ChatCommandAction;
+    data?: unknown;
+    isEstimate?: boolean;
+    missing?: string[];
+};
+
+type ChatApiResponse = {
+    reply: string;
+    command?: ChatCommand;
+};
+
+const allowedChatActions = new Set<ChatCommandAction>([
+    "none",
+    "log_food",
+    "log_water",
+    "log_drink",
+    "log_activity",
+    "analyze_day",
+    "suggest_meal",
+    "nutrition_info",
+    "request_web_search",
+    "set_reminder",
+]);
+
+function extractFirstJsonObject(text: string) {
+    const start = text.indexOf("{");
+    if (start === -1) {
+        return null;
+    }
+    let depth = 0;
+    let inString = false;
+    let escaped = false;
+    for (let i = start; i < text.length; i += 1) {
+        const char = text[i];
+        if (inString) {
+            if (escaped) {
+                escaped = false;
+            } else if (char === "\\") {
+                escaped = true;
+            } else if (char === '"') {
+                inString = false;
+            }
+            continue;
+        }
+        if (char === '"') {
+            inString = true;
+            continue;
+        }
+        if (char === "{") {
+            depth += 1;
+        } else if (char === "}") {
+            depth -= 1;
+            if (depth === 0) {
+                return text.slice(start, i + 1);
+            }
+        }
+    }
+    return null;
+}
+
+function toLooseNumber(value: unknown) {
+    if (typeof value === "number" && Number.isFinite(value)) {
+        return value;
+    }
+    if (typeof value === "string") {
+        const match = value.match(/-?\d+(?:\.\d+)?/);
+        if (match) {
+            const parsed = Number(match[0]);
+            if (Number.isFinite(parsed)) {
+                return parsed;
+            }
+        }
+    }
+    return null;
+}
+
+function normalizeCommand(raw: unknown): ChatCommand | undefined {
+    if (!raw || typeof raw !== "object") {
+        return undefined;
+    }
+    const action = (raw as { action?: unknown }).action;
+    if (typeof action !== "string") {
+        return undefined;
+    }
+    if (!allowedChatActions.has(action as ChatCommandAction)) {
+        return undefined;
+    }
+    const base: ChatCommand = {
+        action: action as ChatCommandAction,
+    };
+
+    const data = (raw as { data?: unknown }).data;
+    if (data !== undefined) {
+        base.data = data;
+    }
+    const isEstimate = (raw as { isEstimate?: unknown }).isEstimate;
+    if (typeof isEstimate === "boolean") {
+        base.isEstimate = isEstimate;
+    }
+    const missing = (raw as { missing?: unknown }).missing;
+    if (Array.isArray(missing) && missing.every((item) => typeof item === "string")) {
+        base.missing = missing;
+    }
+
+    if (base.action === "log_drink" && base.data && typeof base.data === "object") {
+        const d = base.data as Record<string, unknown>;
+        const name = typeof d.name === "string" ? d.name.trim() : "";
+        const amountMl = toLooseNumber(d.amountMl);
+        const calories = toLooseNumber(d.calories);
+        base.data = {
+            name: name || "Belirtilmedi",
+            amountMl: Math.max(0, Math.round(amountMl ?? 0)),
+            calories: Math.max(0, Math.round(calories ?? 0)),
+            proteinG: toLooseNumber(d.proteinG) ?? undefined,
+            carbsG: toLooseNumber(d.carbsG) ?? undefined,
+            fatG: toLooseNumber(d.fatG) ?? undefined,
+        };
+    }
+
+    if (base.action === "log_water" && base.data && typeof base.data === "object") {
+        const d = base.data as Record<string, unknown>;
+        const amountMl = toLooseNumber(d.amountMl);
+        base.data = { amountMl: Math.max(0, Math.round(amountMl ?? 0)) };
+    }
+
+    if (base.action === "log_food" && base.data && typeof base.data === "object") {
+        const d = base.data as Record<string, unknown>;
+        const calories = toLooseNumber(d.calories);
+        const amountG = toLooseNumber(d.amountG);
+        base.data = {
+            ...d,
+            name: typeof d.name === "string" ? d.name.trim() : "Belirtilmedi",
+            calories: Math.max(0, Math.round(calories ?? 0)),
+            amountG: amountG === null ? undefined : Math.max(0, Math.round(amountG)),
+        };
+    }
+
+    if (base.action === "log_activity" && base.data && typeof base.data === "object") {
+        const d = base.data as Record<string, unknown>;
+        const durationMin = toLooseNumber(d.durationMin);
+        const estimatedCalories = toLooseNumber(d.estimatedCalories);
+        base.data = {
+            ...d,
+            durationMin: Math.max(0, Math.round(durationMin ?? 0)),
+            estimatedCalories: Math.max(0, Math.round(estimatedCalories ?? 0)),
+        };
+    }
+
+    return base;
+}
+
+function parseAiEnvelope(text: string): ChatApiResponse {
+    const trimmed = text.trim();
+
+    let parsed: unknown = null;
+    try {
+        parsed = JSON.parse(trimmed);
+    } catch {
+        const candidate = extractFirstJsonObject(trimmed);
+        if (candidate) {
+            try {
+                parsed = JSON.parse(candidate);
+            } catch {
+                parsed = null;
+            }
+        }
+    }
+
+    if (!parsed || typeof parsed !== "object") {
+        return { reply: trimmed };
+    }
+
+    const reply = (parsed as { reply?: unknown }).reply;
+    const replyText = typeof reply === "string" && reply.trim() ? reply.trim() : trimmed;
+    const command = normalizeCommand((parsed as { command?: unknown }).command);
+    if (command && command.action !== "none") {
+        return { reply: replyText, command };
+    }
+    return { reply: replyText };
+}
 
 export async function POST(req: NextRequest) {
     let session;
@@ -127,7 +321,7 @@ export async function POST(req: NextRequest) {
         };
 
         for (const entry of todayEntries) {
-            if (entry.type === "food") {
+            if (entry.type === "food" || entry.type === "drink") {
                 dailySummary.caloriesIn += entry.calories || 0;
                 dailySummary.proteinG += entry.proteinG || 0;
                 dailySummary.carbsG += entry.carbsG || 0;
@@ -249,7 +443,7 @@ Türk mutfağı, dünya mutfağı ve tatlılar konusunda kalori/makro uzmanısı
 # ⚠️ KRİTİK: AKSIYON TESPİT KURALLARI
 
 ## ✅ YEMEK KAYDI (log_food) - Kullanıcı YEDİĞİNİ söylerse:
-Tetikleyiciler: "yedim", "içtim", "yemek yedim", "kahvaltı yaptım", "öğle yemeği", "ekle", "kaydet"
+Tetikleyiciler: "yedim", "yemek yedim", "kahvaltı yaptım", "öğle yemeği", "ekle", "kaydet"
 \`\`\`json
 { "action": "log_food", "data": { "name": "Yemek Adı", "calories": 330, "mealType": "lunch", "amountG": 300, "proteinG": 21, "carbsG": 54, "fatG": 3 } }
 \`\`\`
@@ -258,6 +452,13 @@ Tetikleyiciler: "yedim", "içtim", "yemek yedim", "kahvaltı yaptım", "öğle y
 Tetikleyiciler: "su içtim", "bardak su", "şişe su"
 \`\`\`json
 { "action": "log_water", "data": { "amountMl": 200 } }
+\`\`\`
+
+## ✅ İÇECEK KAYDI (log_drink):
+Tetikleyiciler: kola, ayran, süt, kahve, çay, meyve suyu, enerji içeceği, vb.
+- Kullanıcı miktar yazmadıysa: varsayılan makul bir ml seç ve command.isEstimate=true yap.
+\`\`\`json
+{ "action": "log_drink", "data": { "name": "Kola", "amountMl": 330, "calories": 140, "carbsG": 35 } }
 \`\`\`
 
 ## ✅ AKTİVİTE KAYDI (log_activity):
@@ -411,10 +612,23 @@ ${userContextEN}
             const basePrompt = prompts[lang] || prompts['en'];
             return `
 ${basePrompt}
-# PERSONALITY: Motivational, professional, concise. Use the user's name.
-# LANGUAGE: ALWAYS respond in ${activeLanguage}.
-# ACCURACY: Estimate values realistically. NEVER use 0 for calories/macros.
-            `.trim();
+ # PERSONALITY: Motivational, professional, concise. Use the user's name.
+ # LANGUAGE: ALWAYS respond in ${activeLanguage}.
+ # ACCURACY: Estimate values realistically. If user didn't specify, use NORMAL defaults.
+
+ # DRINK RULES (IMPORTANT)
+ - "su içtim" (or equivalent) => log_water
+ - Other beverages (kola, ayran, süt, kahve, çay, meyve suyu, enerji içeceği...) => log_drink
+ - If user didn't specify amount for drink, choose a realistic default and set command.isEstimate=true
+
+ # OUTPUT (STRICT JSON ONLY)
+ Return ONLY one valid JSON object and nothing else (no markdown, no code fences, no extra text):
+ {
+   "reply": "...",
+   "command": { "action": "none" | "log_food" | "log_water" | "log_drink" | "log_activity" | "analyze_day" | "suggest_meal" | "nutrition_info" | "request_web_search" | "set_reminder", "data": { ... }, "isEstimate": true }
+ }
+ If there is no action, set command.action="none".
+             `.trim();
         };
 
         const systemInstruction = getSystemInstruction(safeLocale);
@@ -470,7 +684,7 @@ ${basePrompt}
                 })
                 .where(eq(users.id, session.user.sub));
 
-            return NextResponse.json({ reply: text });
+        return NextResponse.json(parseAiEnvelope(text));
         }
 
         // ========== NORMAL AI RESPONSE (with search permission request) ==========
@@ -478,11 +692,11 @@ ${basePrompt}
         const searchInstruction = canDoWebSearch ? `
 
 # WEB ARAMASINA İZİN İSTE
-Eğer kullanıcının sorusu güncel bilgi gerektiriyorsa (trendler, haberler, son araştırmalar vb.), önce izin iste. Bunun için yanıtın sonuna şu JSON'u ekle:
-\`\`\`json
-{ "action": "request_web_search", "data": { "query": "arama sorgusu", "reason": "Neden arama gerektiğini kısa açıkla" } }
-\`\`\`
-Arama yapmadan önce MUTLAKA bu formatla izin iste. Otomatik arama YAPMA.
+Eğer kullanıcının sorusu güncel bilgi gerektiriyorsa (trendler, haberler, son araştırmalar vb.), web araması yapmadan önce izin iste.
+Bunu JSON çıktındaki command ile yap:
+- command.action = "request_web_search"
+- command.data = { "query": "arama sorgusu", "reason": "Neden arama gerektiğini kısa açıkla" }
+Otomatik arama YAPMA.
 Kalan web arama hakkı: ${WEB_SEARCH_DAILY_LIMIT - webSearchCount}/gün
 ` : "";
 
@@ -506,7 +720,7 @@ Kalan web arama hakkı: ${WEB_SEARCH_DAILY_LIMIT - webSearchCount}/gün
             .set({ usageCount: usageCount + 1, lastReset: new Date() })
             .where(eq(users.id, session.user.sub));
 
-        return NextResponse.json({ reply: text });
+            return NextResponse.json(parseAiEnvelope(text));
     } catch (error: unknown) {
         console.error("Chat API Critical Error:", error);
         const message = error instanceof Error ? error.message : "Bir hata oluştu.";

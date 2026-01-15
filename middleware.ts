@@ -1,4 +1,4 @@
-import { proxy } from "./src/proxy";
+import { proxy } from "./src/lib/proxy";
 
 export function middleware(request: Request) {
   return proxy(request);

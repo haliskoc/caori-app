@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { Card } from "@/components/card";
-import { useTracker } from "@/components/tracker-provider";
-import { DAY_MS, formatShortDate, getDayKey } from "@/lib/utils";
-import { loadProfile, saveProfile, type ProfileInfo } from "@/lib/profile";
-import { MeasurementType, MealType } from "@/lib/types";
-import { getIntlLocale, t } from "@/lib/i18n";
-import { measurementLabels, measurementUnits } from "@/lib/measurements";
-import { integrationProviders } from "@/lib/integrations";
+import { Card } from "@/components/ui/card";
+import { useTracker } from "@/components/providers/tracker-provider";
+import { DAY_MS, formatShortDate, getDayKey } from "@/lib/core/utils";
+import { loadProfile, saveProfile, type ProfileInfo } from "@/lib/features/profile";
+import { MeasurementType, MealType } from "@/lib/core/types";
+import { getIntlLocale, t } from "@/lib/core/i18n";
+import { measurementLabels, measurementUnits } from "@/lib/features/measurements";
+import { integrationProviders } from "@/lib/integrations/integrations";
 
 type DayBucket = {
   caloriesIn: number;

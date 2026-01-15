@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Card } from "@/components/card";
-import { useTracker } from "@/components/tracker-provider";
-import { entriesFromCsv, entriesToCsv, parseCsv } from "@/lib/csv";
-import { setLocale, t } from "@/lib/i18n";
-import { useLocaleValue } from "@/components/locale-provider";
+import { Card } from "@/components/ui/card";
+import { useTracker } from "@/components/providers/tracker-provider";
+import { entriesFromCsv, entriesToCsv, parseCsv } from "@/lib/features/csv";
+import { setLocale, t } from "@/lib/core/i18n";
+import { useLocaleValue } from "@/components/providers/locale-provider";
 import { localeOptions } from "@/locales/manifest";
 
 export default function SettingsPage() {

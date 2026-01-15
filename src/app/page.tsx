@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, BarChart3, Calendar, Check, ChefHat, Sparkles, Activity, ShieldCheck } from "lucide-react";
-import { t } from "@/lib/i18n";
+import { t } from "@/lib/core/i18n";
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
-import { auth0 } from "@/lib/auth0";
+import { auth0 } from "@/lib/auth/auth0";
 import { desc, eq } from "drizzle-orm";
-import { entries } from "@/lib/schema";
-import { getDb, ensureUser } from "@/lib/db";
-import { createId } from "@/lib/utils";
-import { isSameOrigin, toSafeNumber } from "@/lib/security";
-import { t } from "@/lib/i18n";
+import { entries } from "@/lib/database/schema";
+import { getDb, ensureUser } from "@/lib/database/db";
+import { createId } from "@/lib/core/utils";
+import { isSameOrigin, toSafeNumber } from "@/lib/auth/security";
+import { t } from "@/lib/core/i18n";
 
 export const dynamic = "force-dynamic";
 
-const allowedTypes = new Set(["food", "water", "activity"]);
+const allowedTypes = new Set(["food", "water", "drink", "activity"]);
 const allowedMeals = new Set(["breakfast", "lunch", "dinner", "snack"]);
 const allowedActivities = new Set([
   "walking",
@@ -80,13 +80,13 @@ export async function POST(request: Request) {
     userId: session.user.sub,
     type,
     name:
-      type === "food"
+      type === "food" || type === "drink"
         ? String(body?.name ?? t("Belirtilmedi")).trim().slice(0, 120)
         : type === "activity"
           ? activityNote
           : null,
     calories:
-      type === "food"
+      type === "food" || type === "drink"
         ? toSafeNumber(body?.calories, 0, { min: 0, max: 50000, integer: true })
         : null,
     mealType:
@@ -96,11 +96,20 @@ export async function POST(request: Request) {
           ? "snack"
           : null,
     amountG: type === "food" ? toOptionalNumber(body?.amountG, { min: 0, max: 5000 }) : null,
-    proteinG: type === "food" ? toOptionalNumber(body?.proteinG, { min: 0, max: 5000 }) : null,
-    carbsG: type === "food" ? toOptionalNumber(body?.carbsG, { min: 0, max: 5000 }) : null,
-    fatG: type === "food" ? toOptionalNumber(body?.fatG, { min: 0, max: 5000 }) : null,
+    proteinG:
+      type === "food" || type === "drink"
+        ? toOptionalNumber(body?.proteinG, { min: 0, max: 5000 })
+        : null,
+    carbsG:
+      type === "food" || type === "drink"
+        ? toOptionalNumber(body?.carbsG, { min: 0, max: 5000 })
+        : null,
+    fatG:
+      type === "food" || type === "drink"
+        ? toOptionalNumber(body?.fatG, { min: 0, max: 5000 })
+        : null,
     amountMl:
-      type === "water"
+      type === "water" || type === "drink"
         ? toSafeNumber(body?.amountMl, 0, { min: 0, max: 20000, integer: true })
         : null,
     activityType:

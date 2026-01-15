@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Card } from "@/components/card";
-import { useTracker } from "@/components/tracker-provider";
-import { ActivityType, Entry, MealType } from "@/lib/types";
-import { createId, formatShortDate, getDayKey } from "@/lib/utils";
-import { t } from "@/lib/i18n";
-import { activityLabels } from "@/lib/activity";
+import { Card } from "@/components/ui/card";
+import { useTracker } from "@/components/providers/tracker-provider";
+import { ActivityType, Entry, MealType } from "@/lib/core/types";
+import { createId, formatShortDate, getDayKey } from "@/lib/core/utils";
+import { t } from "@/lib/core/i18n";
+import { activityLabels } from "@/lib/features/activity";
 
-type FilterType = "all" | "food" | "water" | "activity";
+type FilterType = "all" | "food" | "drink" | "water" | "activity";
 type MealFilter = "all" | MealType;
 type RangeFilter = "all" | "7" | "30" | "90";
 type SortOrder = "newest" | "oldest";
@@ -164,9 +164,13 @@ export default function HistoryPage() {
         const label =
           entry.type === "food"
             ? entry.name
-            : entry.type === "water"
-              ? t("Su")
-            : activityLabels[entry.activityType] ?? t("Aktivite");
+            : entry.type === "drink"
+              ? entry.name
+              : entry.type === "water"
+                ? t("Su")
+                : entry.type === "activity"
+                  ? activityLabels[entry.activityType] ?? t("Aktivite")
+                  : t("Aktivite");
         return label.toLowerCase().includes(normalized);
       });
     }
@@ -237,6 +241,7 @@ export default function HistoryPage() {
           >
             <option value="all">{t("Tüm Tipler")}</option>
             <option value="food">{t("Yemek")}</option>
+            <option value="drink">{t("İçecek")}</option>
             <option value="water">{t("Su")}</option>
             <option value="activity">{t("Aktivite")}</option>
           </select>
@@ -376,12 +381,19 @@ export default function HistoryPage() {
         <Card className="flex flex-col items-start justify-between gap-2 text-xs sm:flex-row sm:items-center">
           <span className="text-muted">
             {t("Kayıt silindi: {label}", {
-              label:
-                lastDeleted.type === "food"
-                  ? lastDeleted.name
-                  : lastDeleted.type === "water"
-                    ? t("Su")
-                    : activityLabels[lastDeleted.activityType] ?? t("Aktivite"),
+              label: (() => {
+                switch (lastDeleted.type) {
+                  case "food":
+                  case "drink":
+                    return lastDeleted.name;
+                  case "water":
+                    return t("Su");
+                  case "activity":
+                    return activityLabels[lastDeleted.activityType] ?? t("Aktivite");
+                  default:
+                    return t("Aktivite");
+                }
+              })(),
             })}
           </span>
           <button
@@ -427,6 +439,17 @@ export default function HistoryPage() {
                         <p className="text-xs text-muted">
                           {t("{meal} • {calorie} kcal", {
                             meal: mealLabels[entry.mealType],
+                            calorie: entry.calories,
+                          })}
+                        </p>
+                      </div>
+                    )}
+                    {entry.type === "drink" && (
+                      <div>
+                        <p className="text-sm font-semibold text-ink">{entry.name}</p>
+                        <p className="text-xs text-muted">
+                          {t("{amount} ml • {calorie} kcal", {
+                            amount: entry.amountMl,
                             calorie: entry.calories,
                           })}
                         </p>

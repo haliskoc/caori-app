@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { defaultFlags } from "@/lib/flags";
+import { defaultFlags } from "@/lib/core/flags";
 
 export const dynamic = "force-dynamic";
 

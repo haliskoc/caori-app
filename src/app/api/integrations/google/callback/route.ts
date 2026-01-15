@@ -1,7 +1,7 @@
-import { getTokens, saveTokens } from "@/lib/google-fit";
-import { auth0 } from "@/lib/auth0";
+import { getTokens, saveTokens } from "@/lib/integrations/google-fit";
+import { auth0 } from "@/lib/auth/auth0";
 import { NextRequest, NextResponse } from "next/server";
-import { ensureUser } from "@/lib/db";
+import { ensureUser } from "@/lib/database/db";
 import { cookies } from "next/headers";
 
 export const GET = async (req: NextRequest) => {

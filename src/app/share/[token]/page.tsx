@@ -2,14 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { Card } from "@/components/card";
-import { ReportCharts } from "@/components/report-charts";
-import { MeasurementTrends } from "@/components/measurement-trends";
-import type { ReportData } from "@/lib/report";
-import type { MeasurementEntry } from "@/lib/types";
-import { formatShortDate } from "@/lib/utils";
-import { activityLabels } from "@/lib/activity";
-import { t } from "@/lib/i18n";
+import { Card } from "@/components/ui/card";
+import { ReportCharts } from "@/components/features/charts/report-charts";
+import { MeasurementTrends } from "@/components/features/charts/measurement-trends";
+import type { ReportData } from "@/lib/features/report";
+import type { MeasurementEntry } from "@/lib/core/types";
+import { formatShortDate } from "@/lib/core/utils";
+import { activityLabels } from "@/lib/features/activity";
+import { t } from "@/lib/core/i18n";
 
 type SharePayload = {
   share: {

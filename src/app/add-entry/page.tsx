@@ -4,22 +4,22 @@ import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Mic, MicOff } from "lucide-react";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { Card } from "@/components/card";
-import { Tooltip } from "@/components/tooltip";
-import { useTracker } from "@/components/tracker-provider";
-import { ActivityType, MealType } from "@/lib/types";
-import { activityOptions, estimateActivityCalories } from "@/lib/activity";
-import { OFFProduct } from "@/lib/off";
+import { Card } from "@/components/ui/card";
+import { Tooltip } from "@/components/ui/tooltip";
+import { useTracker } from "@/components/providers/tracker-provider";
+import { ActivityType, MealType } from "@/lib/core/types";
+import { activityOptions, estimateActivityCalories } from "@/lib/features/activity";
+import { OFFProduct } from "@/lib/food/off";
 import {
   FoodLibraryItem,
   FoodLibrarySource,
   loadFoodLibrary,
   normalizeFoodLibraryItem,
   saveFoodLibrary,
-} from "@/lib/food-library";
-import { createId } from "@/lib/utils";
-import { getIntlLocale, t } from "@/lib/i18n";
-import { loadProfile } from "@/lib/profile";
+} from "@/lib/food/food-library";
+import { createId } from "@/lib/core/utils";
+import { getIntlLocale, t } from "@/lib/core/i18n";
+import { loadProfile } from "@/lib/features/profile";
 
 type TabKey = "food" | "water" | "activity";
 

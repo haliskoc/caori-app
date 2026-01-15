@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { Card } from "@/components/card";
-import { useTracker } from "@/components/tracker-provider";
-import { integrationProviders } from "@/lib/integrations";
-import { loadProfile, type ProfileInfo } from "@/lib/profile";
-import { buildReportData } from "@/lib/report";
-import { createId, getDayKey } from "@/lib/utils";
-import { t } from "@/lib/i18n";
+import { Card } from "@/components/ui/card";
+import { useTracker } from "@/components/providers/tracker-provider";
+import { integrationProviders } from "@/lib/integrations/integrations";
+import { loadProfile, type ProfileInfo } from "@/lib/features/profile";
+import { buildReportData } from "@/lib/features/report";
+import { createId, getDayKey } from "@/lib/core/utils";
+import { t } from "@/lib/core/i18n";
 
 type CheckIn = {
   id: string;
