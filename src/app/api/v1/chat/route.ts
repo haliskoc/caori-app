@@ -280,7 +280,6 @@ export async function POST(req: NextRequest) {
         // ========== FETCH USER DATA FOR PERSONALIZATION ==========
         let userProfile = null;
         let userGoals = null;
-        // Fix: Use correct type instead of any[]
         let todayEntries: (typeof entries.$inferSelect)[] = [];
 
         try {
