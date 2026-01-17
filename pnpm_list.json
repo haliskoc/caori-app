@@ -1,0 +1,4294 @@
+[
+  {
+    "name": "calai",
+    "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai",
+    "private": true,
+    "devDependencies": {
+      "prettier": {
+        "from": "prettier",
+        "version": "3.8.0",
+        "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.8.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/prettier@3.8.0/node_modules/prettier"
+      },
+      "turbo": {
+        "from": "turbo",
+        "version": "2.7.5",
+        "resolved": "https://registry.npmjs.org/turbo/-/turbo-2.7.5.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/turbo@2.7.5/node_modules/turbo"
+      },
+      "typescript": {
+        "from": "typescript",
+        "version": "5.6.3",
+        "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.6.3.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/typescript@5.6.3/node_modules/typescript"
+      }
+    },
+    "unsavedDependencies": {
+      "acorn": {
+        "from": "acorn",
+        "version": "8.15.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/acorn"
+      },
+      "abort-controller": {
+        "from": "abort-controller",
+        "version": "3.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/abort-controller"
+      },
+      "acorn-jsx": {
+        "from": "acorn-jsx",
+        "version": "5.3.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/acorn-jsx"
+      },
+      "agent-base": {
+        "from": "agent-base",
+        "version": "7.1.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/agent-base"
+      },
+      "ansi-escapes": {
+        "from": "ansi-escapes",
+        "version": "4.3.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/ansi-escapes"
+      },
+      "ajv": {
+        "from": "ajv",
+        "version": "6.12.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/ajv"
+      },
+      "agentkeepalive": {
+        "from": "agentkeepalive",
+        "version": "4.6.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/agentkeepalive"
+      },
+      "anymatch": {
+        "from": "anymatch",
+        "version": "3.1.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/anymatch"
+      },
+      "ansi-styles": {
+        "from": "ansi-styles",
+        "version": "4.3.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/ansi-styles"
+      },
+      "argparse": {
+        "from": "argparse",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/argparse"
+      },
+      "aria-query": {
+        "from": "aria-query",
+        "version": "5.3.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/aria-query"
+      },
+      "ansi-regex": {
+        "from": "ansi-regex",
+        "version": "6.2.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/ansi-regex"
+      },
+      "array.prototype.findlast": {
+        "from": "array.prototype.findlast",
+        "version": "1.2.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/array.prototype.findlast"
+      },
+      "array.prototype.findlastindex": {
+        "from": "array.prototype.findlastindex",
+        "version": "1.2.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/array.prototype.findlastindex"
+      },
+      "array-includes": {
+        "from": "array-includes",
+        "version": "3.1.9",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/array-includes"
+      },
+      "array-buffer-byte-length": {
+        "from": "array-buffer-byte-length",
+        "version": "1.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/array-buffer-byte-length"
+      },
+      "array.prototype.flat": {
+        "from": "array.prototype.flat",
+        "version": "1.3.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/array.prototype.flat"
+      },
+      "arraybuffer.prototype.slice": {
+        "from": "arraybuffer.prototype.slice",
+        "version": "1.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/arraybuffer.prototype.slice"
+      },
+      "array.prototype.tosorted": {
+        "from": "array.prototype.tosorted",
+        "version": "1.1.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/array.prototype.tosorted"
+      },
+      "array.prototype.flatmap": {
+        "from": "array.prototype.flatmap",
+        "version": "1.3.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/array.prototype.flatmap"
+      },
+      "async-function": {
+        "from": "async-function",
+        "version": "1.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/async-function"
+      },
+      "asynckit": {
+        "from": "asynckit",
+        "version": "0.4.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/asynckit"
+      },
+      "ast-types-flow": {
+        "from": "ast-types-flow",
+        "version": "0.0.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/ast-types-flow"
+      },
+      "available-typed-arrays": {
+        "from": "available-typed-arrays",
+        "version": "1.0.7",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/available-typed-arrays"
+      },
+      "axobject-query": {
+        "from": "axobject-query",
+        "version": "4.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/axobject-query"
+      },
+      "babel-jest": {
+        "from": "babel-jest",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/babel-jest"
+      },
+      "babel-plugin-jest-hoist": {
+        "from": "babel-plugin-jest-hoist",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/babel-plugin-jest-hoist"
+      },
+      "axe-core": {
+        "from": "axe-core",
+        "version": "4.11.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/axe-core"
+      },
+      "babel-plugin-istanbul": {
+        "from": "babel-plugin-istanbul",
+        "version": "7.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/babel-plugin-istanbul"
+      },
+      "babel-preset-jest": {
+        "from": "babel-preset-jest",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/babel-preset-jest"
+      },
+      "bail": {
+        "from": "bail",
+        "version": "2.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/bail"
+      },
+      "base64-js": {
+        "from": "base64-js",
+        "version": "1.5.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/base64-js"
+      },
+      "babel-preset-current-node-syntax": {
+        "from": "babel-preset-current-node-syntax",
+        "version": "1.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/babel-preset-current-node-syntax"
+      },
+      "balanced-match": {
+        "from": "balanced-match",
+        "version": "1.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/balanced-match"
+      },
+      "bignumber.js": {
+        "from": "bignumber.js",
+        "version": "9.3.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/bignumber.js"
+      },
+      "browserslist": {
+        "from": "browserslist",
+        "version": "4.28.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/browserslist"
+      },
+      "baseline-browser-mapping": {
+        "from": "baseline-browser-mapping",
+        "version": "2.9.11",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/baseline-browser-mapping"
+      },
+      "brace-expansion": {
+        "from": "brace-expansion",
+        "version": "1.1.12",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/brace-expansion"
+      },
+      "bs-logger": {
+        "from": "bs-logger",
+        "version": "0.2.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/bs-logger"
+      },
+      "braces": {
+        "from": "braces",
+        "version": "3.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/braces"
+      },
+      "buffer-equal-constant-time": {
+        "from": "buffer-equal-constant-time",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/buffer-equal-constant-time"
+      },
+      "buffer-from": {
+        "from": "buffer-from",
+        "version": "1.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/buffer-from"
+      },
+      "bser": {
+        "from": "bser",
+        "version": "2.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/bser"
+      },
+      "call-bind": {
+        "from": "call-bind",
+        "version": "1.0.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/call-bind"
+      },
+      "call-bind-apply-helpers": {
+        "from": "call-bind-apply-helpers",
+        "version": "1.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/call-bind-apply-helpers"
+      },
+      "call-bound": {
+        "from": "call-bound",
+        "version": "1.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/call-bound"
+      },
+      "callsites": {
+        "from": "callsites",
+        "version": "3.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/callsites"
+      },
+      "char-regex": {
+        "from": "char-regex",
+        "version": "1.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/char-regex"
+      },
+      "camelcase": {
+        "from": "camelcase",
+        "version": "5.3.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/camelcase"
+      },
+      "character-entities": {
+        "from": "character-entities",
+        "version": "2.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/character-entities"
+      },
+      "chalk": {
+        "from": "chalk",
+        "version": "4.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/chalk"
+      },
+      "character-entities-html4": {
+        "from": "character-entities-html4",
+        "version": "2.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/character-entities-html4"
+      },
+      "caniuse-lite": {
+        "from": "caniuse-lite",
+        "version": "1.0.30001762",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/caniuse-lite"
+      },
+      "ccount": {
+        "from": "ccount",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/ccount"
+      },
+      "character-entities-legacy": {
+        "from": "character-entities-legacy",
+        "version": "3.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/character-entities-legacy"
+      },
+      "character-reference-invalid": {
+        "from": "character-reference-invalid",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/character-reference-invalid"
+      },
+      "ci-info": {
+        "from": "ci-info",
+        "version": "4.3.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/ci-info"
+      },
+      "cliui": {
+        "from": "cliui",
+        "version": "8.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/cliui"
+      },
+      "client-only": {
+        "from": "client-only",
+        "version": "0.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/client-only"
+      },
+      "cjs-module-lexer": {
+        "from": "cjs-module-lexer",
+        "version": "2.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/cjs-module-lexer"
+      },
+      "collect-v8-coverage": {
+        "from": "collect-v8-coverage",
+        "version": "1.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/collect-v8-coverage"
+      },
+      "clsx": {
+        "from": "clsx",
+        "version": "2.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/clsx"
+      },
+      "co": {
+        "from": "co",
+        "version": "4.6.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/co"
+      },
+      "color-convert": {
+        "from": "color-convert",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/color-convert"
+      },
+      "color-name": {
+        "from": "color-name",
+        "version": "1.1.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/color-name"
+      },
+      "concat-map": {
+        "from": "concat-map",
+        "version": "0.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/concat-map"
+      },
+      "combined-stream": {
+        "from": "combined-stream",
+        "version": "1.0.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/combined-stream"
+      },
+      "comma-separated-tokens": {
+        "from": "comma-separated-tokens",
+        "version": "2.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/comma-separated-tokens"
+      },
+      "convert-source-map": {
+        "from": "convert-source-map",
+        "version": "2.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/convert-source-map"
+      },
+      "csstype": {
+        "from": "csstype",
+        "version": "3.2.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/csstype"
+      },
+      "cross-spawn": {
+        "from": "cross-spawn",
+        "version": "7.0.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/cross-spawn"
+      },
+      "css.escape": {
+        "from": "css.escape",
+        "version": "1.5.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/css.escape"
+      },
+      "cssstyle": {
+        "from": "cssstyle",
+        "version": "4.6.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/cssstyle"
+      },
+      "d3-ease": {
+        "from": "d3-ease",
+        "version": "3.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/d3-ease"
+      },
+      "d3-color": {
+        "from": "d3-color",
+        "version": "3.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/d3-color"
+      },
+      "d3-array": {
+        "from": "d3-array",
+        "version": "3.2.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/d3-array"
+      },
+      "d3-format": {
+        "from": "d3-format",
+        "version": "3.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/d3-format"
+      },
+      "d3-scale": {
+        "from": "d3-scale",
+        "version": "4.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/d3-scale"
+      },
+      "d3-path": {
+        "from": "d3-path",
+        "version": "3.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/d3-path"
+      },
+      "d3-shape": {
+        "from": "d3-shape",
+        "version": "3.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/d3-shape"
+      },
+      "d3-interpolate": {
+        "from": "d3-interpolate",
+        "version": "3.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/d3-interpolate"
+      },
+      "d3-time": {
+        "from": "d3-time",
+        "version": "3.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/d3-time"
+      },
+      "d3-time-format": {
+        "from": "d3-time-format",
+        "version": "4.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/d3-time-format"
+      },
+      "d3-timer": {
+        "from": "d3-timer",
+        "version": "3.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/d3-timer"
+      },
+      "damerau-levenshtein": {
+        "from": "damerau-levenshtein",
+        "version": "1.0.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/damerau-levenshtein"
+      },
+      "data-urls": {
+        "from": "data-urls",
+        "version": "5.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/data-urls"
+      },
+      "data-view-byte-length": {
+        "from": "data-view-byte-length",
+        "version": "1.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/data-view-byte-length"
+      },
+      "data-uri-to-buffer": {
+        "from": "data-uri-to-buffer",
+        "version": "4.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/data-uri-to-buffer"
+      },
+      "data-view-buffer": {
+        "from": "data-view-buffer",
+        "version": "1.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/data-view-buffer"
+      },
+      "debug": {
+        "from": "debug",
+        "version": "4.4.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/debug"
+      },
+      "data-view-byte-offset": {
+        "from": "data-view-byte-offset",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/data-view-byte-offset"
+      },
+      "decimal.js": {
+        "from": "decimal.js",
+        "version": "10.6.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/decimal.js"
+      },
+      "decode-named-character-reference": {
+        "from": "decode-named-character-reference",
+        "version": "1.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/decode-named-character-reference"
+      },
+      "dedent": {
+        "from": "dedent",
+        "version": "1.7.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/dedent"
+      },
+      "decimal.js-light": {
+        "from": "decimal.js-light",
+        "version": "2.5.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/decimal.js-light"
+      },
+      "deep-is": {
+        "from": "deep-is",
+        "version": "0.1.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/deep-is"
+      },
+      "define-data-property": {
+        "from": "define-data-property",
+        "version": "1.1.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/define-data-property"
+      },
+      "deepmerge": {
+        "from": "deepmerge",
+        "version": "4.3.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/deepmerge"
+      },
+      "define-properties": {
+        "from": "define-properties",
+        "version": "1.2.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/define-properties"
+      },
+      "detect-libc": {
+        "from": "detect-libc",
+        "version": "2.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/detect-libc"
+      },
+      "detect-newline": {
+        "from": "detect-newline",
+        "version": "3.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/detect-newline"
+      },
+      "delayed-stream": {
+        "from": "delayed-stream",
+        "version": "1.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/delayed-stream"
+      },
+      "doctrine": {
+        "from": "doctrine",
+        "version": "2.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/doctrine"
+      },
+      "dequal": {
+        "from": "dequal",
+        "version": "2.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/dequal"
+      },
+      "devlop": {
+        "from": "devlop",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/devlop"
+      },
+      "dom-accessibility-api": {
+        "from": "dom-accessibility-api",
+        "version": "0.5.16",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/dom-accessibility-api"
+      },
+      "dotenv": {
+        "from": "dotenv",
+        "version": "17.2.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/dotenv"
+      },
+      "drizzle-kit": {
+        "from": "drizzle-kit",
+        "version": "0.31.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/drizzle-kit"
+      },
+      "electron-to-chromium": {
+        "from": "electron-to-chromium",
+        "version": "1.5.267",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/electron-to-chromium"
+      },
+      "ecdsa-sig-formatter": {
+        "from": "ecdsa-sig-formatter",
+        "version": "1.0.11",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/ecdsa-sig-formatter"
+      },
+      "emoji-regex": {
+        "from": "emoji-regex",
+        "version": "9.2.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/emoji-regex"
+      },
+      "entities": {
+        "from": "entities",
+        "version": "6.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/entities"
+      },
+      "emittery": {
+        "from": "emittery",
+        "version": "0.13.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/emittery"
+      },
+      "enhanced-resolve": {
+        "from": "enhanced-resolve",
+        "version": "5.18.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/enhanced-resolve"
+      },
+      "error-ex": {
+        "from": "error-ex",
+        "version": "1.3.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/error-ex"
+      },
+      "drizzle-orm": {
+        "from": "drizzle-orm",
+        "version": "0.45.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/drizzle-orm"
+      },
+      "es-abstract": {
+        "from": "es-abstract",
+        "version": "1.24.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/es-abstract"
+      },
+      "es-define-property": {
+        "from": "es-define-property",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/es-define-property"
+      },
+      "es-errors": {
+        "from": "es-errors",
+        "version": "1.3.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/es-errors"
+      },
+      "es-object-atoms": {
+        "from": "es-object-atoms",
+        "version": "1.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/es-object-atoms"
+      },
+      "es-iterator-helpers": {
+        "from": "es-iterator-helpers",
+        "version": "1.2.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/es-iterator-helpers"
+      },
+      "es-to-primitive": {
+        "from": "es-to-primitive",
+        "version": "1.3.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/es-to-primitive"
+      },
+      "es-shim-unscopables": {
+        "from": "es-shim-unscopables",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/es-shim-unscopables"
+      },
+      "es-set-tostringtag": {
+        "from": "es-set-tostringtag",
+        "version": "2.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/es-set-tostringtag"
+      },
+      "esbuild": {
+        "from": "esbuild",
+        "version": "0.25.12",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/esbuild"
+      },
+      "es-toolkit": {
+        "from": "es-toolkit",
+        "version": "1.43.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/es-toolkit"
+      },
+      "eslint": {
+        "from": "eslint",
+        "version": "9.39.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/eslint"
+      },
+      "escalade": {
+        "from": "escalade",
+        "version": "3.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/escalade"
+      },
+      "esbuild-register": {
+        "from": "esbuild-register",
+        "version": "3.6.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/esbuild-register"
+      },
+      "escape-string-regexp": {
+        "from": "escape-string-regexp",
+        "version": "4.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/escape-string-regexp"
+      },
+      "eslint-config-next": {
+        "from": "eslint-config-next",
+        "version": "16.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/eslint-config-next"
+      },
+      "eslint-import-resolver-typescript": {
+        "from": "eslint-import-resolver-typescript",
+        "version": "3.10.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/eslint-import-resolver-typescript"
+      },
+      "eslint-import-resolver-node": {
+        "from": "eslint-import-resolver-node",
+        "version": "0.3.9",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/eslint-import-resolver-node"
+      },
+      "eslint-plugin-import": {
+        "from": "eslint-plugin-import",
+        "version": "2.32.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/eslint-plugin-import"
+      },
+      "eslint-module-utils": {
+        "from": "eslint-module-utils",
+        "version": "2.12.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/eslint-module-utils"
+      },
+      "eslint-plugin-jsx-a11y": {
+        "from": "eslint-plugin-jsx-a11y",
+        "version": "6.10.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/eslint-plugin-jsx-a11y"
+      },
+      "eslint-plugin-react": {
+        "from": "eslint-plugin-react",
+        "version": "7.37.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/eslint-plugin-react"
+      },
+      "eastasianwidth": {
+        "from": "eastasianwidth",
+        "version": "0.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/eastasianwidth"
+      },
+      "eslint-plugin-react-hooks": {
+        "from": "eslint-plugin-react-hooks",
+        "version": "7.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/eslint-plugin-react-hooks"
+      },
+      "eslint-scope": {
+        "from": "eslint-scope",
+        "version": "8.4.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/eslint-scope"
+      },
+      "eslint-visitor-keys": {
+        "from": "eslint-visitor-keys",
+        "version": "4.2.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/eslint-visitor-keys"
+      },
+      "esprima": {
+        "from": "esprima",
+        "version": "4.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/esprima"
+      },
+      "esrecurse": {
+        "from": "esrecurse",
+        "version": "4.3.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/esrecurse"
+      },
+      "espree": {
+        "from": "espree",
+        "version": "10.4.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/espree"
+      },
+      "esquery": {
+        "from": "esquery",
+        "version": "1.7.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/esquery"
+      },
+      "estree-util-is-identifier-name": {
+        "from": "estree-util-is-identifier-name",
+        "version": "3.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/estree-util-is-identifier-name"
+      },
+      "esutils": {
+        "from": "esutils",
+        "version": "2.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/esutils"
+      },
+      "estraverse": {
+        "from": "estraverse",
+        "version": "5.3.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/estraverse"
+      },
+      "event-target-shim": {
+        "from": "event-target-shim",
+        "version": "5.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/event-target-shim"
+      },
+      "eventemitter3": {
+        "from": "eventemitter3",
+        "version": "5.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/eventemitter3"
+      },
+      "exit-x": {
+        "from": "exit-x",
+        "version": "0.2.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/exit-x"
+      },
+      "expect": {
+        "from": "expect",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/expect"
+      },
+      "extend": {
+        "from": "extend",
+        "version": "3.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/extend"
+      },
+      "execa": {
+        "from": "execa",
+        "version": "5.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/execa"
+      },
+      "fast-deep-equal": {
+        "from": "fast-deep-equal",
+        "version": "3.1.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/fast-deep-equal"
+      },
+      "fast-glob": {
+        "from": "fast-glob",
+        "version": "3.3.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/fast-glob"
+      },
+      "fast-json-stable-stringify": {
+        "from": "fast-json-stable-stringify",
+        "version": "2.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/fast-json-stable-stringify"
+      },
+      "fb-watchman": {
+        "from": "fb-watchman",
+        "version": "2.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/fb-watchman"
+      },
+      "fast-levenshtein": {
+        "from": "fast-levenshtein",
+        "version": "2.0.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/fast-levenshtein"
+      },
+      "fastq": {
+        "from": "fastq",
+        "version": "1.20.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/fastq"
+      },
+      "fetch-blob": {
+        "from": "fetch-blob",
+        "version": "3.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/fetch-blob"
+      },
+      "find-up": {
+        "from": "find-up",
+        "version": "5.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/find-up"
+      },
+      "file-entry-cache": {
+        "from": "file-entry-cache",
+        "version": "8.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/file-entry-cache"
+      },
+      "fill-range": {
+        "from": "fill-range",
+        "version": "7.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/fill-range"
+      },
+      "form-data": {
+        "from": "form-data",
+        "version": "4.0.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/form-data"
+      },
+      "flat-cache": {
+        "from": "flat-cache",
+        "version": "4.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/flat-cache"
+      },
+      "foreground-child": {
+        "from": "foreground-child",
+        "version": "3.3.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/foreground-child"
+      },
+      "for-each": {
+        "from": "for-each",
+        "version": "0.3.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/for-each"
+      },
+      "flatted": {
+        "from": "flatted",
+        "version": "3.3.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/flatted"
+      },
+      "formdata-node": {
+        "from": "formdata-node",
+        "version": "4.4.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/formdata-node"
+      },
+      "form-data-encoder": {
+        "from": "form-data-encoder",
+        "version": "1.7.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/form-data-encoder"
+      },
+      "function-bind": {
+        "from": "function-bind",
+        "version": "1.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/function-bind"
+      },
+      "functions-have-names": {
+        "from": "functions-have-names",
+        "version": "1.2.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/functions-have-names"
+      },
+      "fs.realpath": {
+        "from": "fs.realpath",
+        "version": "1.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/fs.realpath"
+      },
+      "formdata-polyfill": {
+        "from": "formdata-polyfill",
+        "version": "4.0.10",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/formdata-polyfill"
+      },
+      "function.prototype.name": {
+        "from": "function.prototype.name",
+        "version": "1.1.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/function.prototype.name"
+      },
+      "gaxios": {
+        "from": "gaxios",
+        "version": "7.1.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/gaxios"
+      },
+      "gensync": {
+        "from": "gensync",
+        "version": "1.0.0-beta.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/gensync"
+      },
+      "get-caller-file": {
+        "from": "get-caller-file",
+        "version": "2.0.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/get-caller-file"
+      },
+      "gcp-metadata": {
+        "from": "gcp-metadata",
+        "version": "8.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/gcp-metadata"
+      },
+      "generator-function": {
+        "from": "generator-function",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/generator-function"
+      },
+      "get-proto": {
+        "from": "get-proto",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/get-proto"
+      },
+      "get-intrinsic": {
+        "from": "get-intrinsic",
+        "version": "1.3.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/get-intrinsic"
+      },
+      "get-package-type": {
+        "from": "get-package-type",
+        "version": "0.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/get-package-type"
+      },
+      "get-stream": {
+        "from": "get-stream",
+        "version": "6.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/get-stream"
+      },
+      "get-tsconfig": {
+        "from": "get-tsconfig",
+        "version": "4.13.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/get-tsconfig"
+      },
+      "glob-parent": {
+        "from": "glob-parent",
+        "version": "6.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/glob-parent"
+      },
+      "get-symbol-description": {
+        "from": "get-symbol-description",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/get-symbol-description"
+      },
+      "glob": {
+        "from": "glob",
+        "version": "10.5.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/glob"
+      },
+      "google-auth-library": {
+        "from": "google-auth-library",
+        "version": "10.5.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/google-auth-library"
+      },
+      "globals": {
+        "from": "globals",
+        "version": "14.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/globals"
+      },
+      "globalthis": {
+        "from": "globalthis",
+        "version": "1.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/globalthis"
+      },
+      "googleapis": {
+        "from": "googleapis",
+        "version": "169.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/googleapis"
+      },
+      "google-logging-utils": {
+        "from": "google-logging-utils",
+        "version": "1.1.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/google-logging-utils"
+      },
+      "gopd": {
+        "from": "gopd",
+        "version": "1.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/gopd"
+      },
+      "googleapis-common": {
+        "from": "googleapis-common",
+        "version": "8.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/googleapis-common"
+      },
+      "graceful-fs": {
+        "from": "graceful-fs",
+        "version": "4.2.11",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/graceful-fs"
+      },
+      "gtoken": {
+        "from": "gtoken",
+        "version": "8.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/gtoken"
+      },
+      "groq-sdk": {
+        "from": "groq-sdk",
+        "version": "0.37.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/groq-sdk"
+      },
+      "has-bigints": {
+        "from": "has-bigints",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/has-bigints"
+      },
+      "handlebars": {
+        "from": "handlebars",
+        "version": "4.7.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/handlebars"
+      },
+      "has-property-descriptors": {
+        "from": "has-property-descriptors",
+        "version": "1.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/has-property-descriptors"
+      },
+      "has-flag": {
+        "from": "has-flag",
+        "version": "4.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/has-flag"
+      },
+      "has-proto": {
+        "from": "has-proto",
+        "version": "1.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/has-proto"
+      },
+      "has-symbols": {
+        "from": "has-symbols",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/has-symbols"
+      },
+      "has-tostringtag": {
+        "from": "has-tostringtag",
+        "version": "1.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/has-tostringtag"
+      },
+      "hast-util-to-jsx-runtime": {
+        "from": "hast-util-to-jsx-runtime",
+        "version": "2.3.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/hast-util-to-jsx-runtime"
+      },
+      "hasown": {
+        "from": "hasown",
+        "version": "2.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/hasown"
+      },
+      "html-escaper": {
+        "from": "html-escaper",
+        "version": "2.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/html-escaper"
+      },
+      "html-encoding-sniffer": {
+        "from": "html-encoding-sniffer",
+        "version": "4.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/html-encoding-sniffer"
+      },
+      "hast-util-whitespace": {
+        "from": "hast-util-whitespace",
+        "version": "3.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/hast-util-whitespace"
+      },
+      "hermes-parser": {
+        "from": "hermes-parser",
+        "version": "0.25.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/hermes-parser"
+      },
+      "http-proxy-agent": {
+        "from": "http-proxy-agent",
+        "version": "7.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/http-proxy-agent"
+      },
+      "hermes-estree": {
+        "from": "hermes-estree",
+        "version": "0.25.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/hermes-estree"
+      },
+      "human-signals": {
+        "from": "human-signals",
+        "version": "2.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/human-signals"
+      },
+      "https-proxy-agent": {
+        "from": "https-proxy-agent",
+        "version": "7.0.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/https-proxy-agent"
+      },
+      "html-url-attributes": {
+        "from": "html-url-attributes",
+        "version": "3.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/html-url-attributes"
+      },
+      "ignore": {
+        "from": "ignore",
+        "version": "5.3.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/ignore"
+      },
+      "iconv-lite": {
+        "from": "iconv-lite",
+        "version": "0.6.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/iconv-lite"
+      },
+      "humanize-ms": {
+        "from": "humanize-ms",
+        "version": "1.2.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/humanize-ms"
+      },
+      "import-local": {
+        "from": "import-local",
+        "version": "3.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/import-local"
+      },
+      "immer": {
+        "from": "immer",
+        "version": "10.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/immer"
+      },
+      "indent-string": {
+        "from": "indent-string",
+        "version": "4.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/indent-string"
+      },
+      "imurmurhash": {
+        "from": "imurmurhash",
+        "version": "0.1.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/imurmurhash"
+      },
+      "inflight": {
+        "from": "inflight",
+        "version": "1.0.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/inflight"
+      },
+      "internal-slot": {
+        "from": "internal-slot",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/internal-slot"
+      },
+      "inline-style-parser": {
+        "from": "inline-style-parser",
+        "version": "0.2.7",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/inline-style-parser"
+      },
+      "inherits": {
+        "from": "inherits",
+        "version": "2.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/inherits"
+      },
+      "is-alphabetical": {
+        "from": "is-alphabetical",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-alphabetical"
+      },
+      "import-fresh": {
+        "from": "import-fresh",
+        "version": "3.3.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/import-fresh"
+      },
+      "is-array-buffer": {
+        "from": "is-array-buffer",
+        "version": "3.0.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-array-buffer"
+      },
+      "is-arrayish": {
+        "from": "is-arrayish",
+        "version": "0.2.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-arrayish"
+      },
+      "internmap": {
+        "from": "internmap",
+        "version": "2.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/internmap"
+      },
+      "is-async-function": {
+        "from": "is-async-function",
+        "version": "2.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-async-function"
+      },
+      "dunder-proto": {
+        "from": "dunder-proto",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/dunder-proto"
+      },
+      "is-bun-module": {
+        "from": "is-bun-module",
+        "version": "2.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-bun-module"
+      },
+      "is-alphanumerical": {
+        "from": "is-alphanumerical",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-alphanumerical"
+      },
+      "is-bigint": {
+        "from": "is-bigint",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-bigint"
+      },
+      "is-core-module": {
+        "from": "is-core-module",
+        "version": "2.16.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-core-module"
+      },
+      "is-callable": {
+        "from": "is-callable",
+        "version": "1.2.7",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-callable"
+      },
+      "is-boolean-object": {
+        "from": "is-boolean-object",
+        "version": "1.2.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-boolean-object"
+      },
+      "is-decimal": {
+        "from": "is-decimal",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-decimal"
+      },
+      "is-date-object": {
+        "from": "is-date-object",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-date-object"
+      },
+      "is-data-view": {
+        "from": "is-data-view",
+        "version": "1.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-data-view"
+      },
+      "is-extglob": {
+        "from": "is-extglob",
+        "version": "2.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-extglob"
+      },
+      "is-fullwidth-code-point": {
+        "from": "is-fullwidth-code-point",
+        "version": "3.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-fullwidth-code-point"
+      },
+      "is-finalizationregistry": {
+        "from": "is-finalizationregistry",
+        "version": "1.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-finalizationregistry"
+      },
+      "is-generator-fn": {
+        "from": "is-generator-fn",
+        "version": "2.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-generator-fn"
+      },
+      "is-hexadecimal": {
+        "from": "is-hexadecimal",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-hexadecimal"
+      },
+      "is-glob": {
+        "from": "is-glob",
+        "version": "4.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-glob"
+      },
+      "is-map": {
+        "from": "is-map",
+        "version": "2.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-map"
+      },
+      "is-generator-function": {
+        "from": "is-generator-function",
+        "version": "1.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-generator-function"
+      },
+      "is-negative-zero": {
+        "from": "is-negative-zero",
+        "version": "2.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-negative-zero"
+      },
+      "is-number": {
+        "from": "is-number",
+        "version": "7.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-number"
+      },
+      "is-plain-obj": {
+        "from": "is-plain-obj",
+        "version": "4.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-plain-obj"
+      },
+      "is-potential-custom-element-name": {
+        "from": "is-potential-custom-element-name",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-potential-custom-element-name"
+      },
+      "is-number-object": {
+        "from": "is-number-object",
+        "version": "1.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-number-object"
+      },
+      "is-shared-array-buffer": {
+        "from": "is-shared-array-buffer",
+        "version": "1.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-shared-array-buffer"
+      },
+      "is-regex": {
+        "from": "is-regex",
+        "version": "1.2.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-regex"
+      },
+      "is-stream": {
+        "from": "is-stream",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-stream"
+      },
+      "is-set": {
+        "from": "is-set",
+        "version": "2.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-set"
+      },
+      "is-string": {
+        "from": "is-string",
+        "version": "1.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-string"
+      },
+      "is-typed-array": {
+        "from": "is-typed-array",
+        "version": "1.1.15",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-typed-array"
+      },
+      "is-symbol": {
+        "from": "is-symbol",
+        "version": "1.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-symbol"
+      },
+      "is-weakmap": {
+        "from": "is-weakmap",
+        "version": "2.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-weakmap"
+      },
+      "is-weakref": {
+        "from": "is-weakref",
+        "version": "1.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-weakref"
+      },
+      "isarray": {
+        "from": "isarray",
+        "version": "2.0.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/isarray"
+      },
+      "is-weakset": {
+        "from": "is-weakset",
+        "version": "2.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/is-weakset"
+      },
+      "isexe": {
+        "from": "isexe",
+        "version": "2.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/isexe"
+      },
+      "istanbul-lib-coverage": {
+        "from": "istanbul-lib-coverage",
+        "version": "3.2.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/istanbul-lib-coverage"
+      },
+      "istanbul-lib-instrument": {
+        "from": "istanbul-lib-instrument",
+        "version": "6.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/istanbul-lib-instrument"
+      },
+      "istanbul-lib-report": {
+        "from": "istanbul-lib-report",
+        "version": "3.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/istanbul-lib-report"
+      },
+      "istanbul-reports": {
+        "from": "istanbul-reports",
+        "version": "3.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/istanbul-reports"
+      },
+      "istanbul-lib-source-maps": {
+        "from": "istanbul-lib-source-maps",
+        "version": "5.0.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/istanbul-lib-source-maps"
+      },
+      "jest-circus": {
+        "from": "jest-circus",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-circus"
+      },
+      "jest": {
+        "from": "jest",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest"
+      },
+      "iterator.prototype": {
+        "from": "iterator.prototype",
+        "version": "1.1.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/iterator.prototype"
+      },
+      "jackspeak": {
+        "from": "jackspeak",
+        "version": "3.4.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jackspeak"
+      },
+      "jest-changed-files": {
+        "from": "jest-changed-files",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-changed-files"
+      },
+      "jest-cli": {
+        "from": "jest-cli",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-cli"
+      },
+      "jest-diff": {
+        "from": "jest-diff",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-diff"
+      },
+      "jest-docblock": {
+        "from": "jest-docblock",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-docblock"
+      },
+      "jest-each": {
+        "from": "jest-each",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-each"
+      },
+      "jest-environment-jsdom": {
+        "from": "jest-environment-jsdom",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-environment-jsdom"
+      },
+      "jest-environment-node": {
+        "from": "jest-environment-node",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-environment-node"
+      },
+      "jest-leak-detector": {
+        "from": "jest-leak-detector",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-leak-detector"
+      },
+      "jest-haste-map": {
+        "from": "jest-haste-map",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-haste-map"
+      },
+      "jest-mock": {
+        "from": "jest-mock",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-mock"
+      },
+      "jest-pnp-resolver": {
+        "from": "jest-pnp-resolver",
+        "version": "1.2.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-pnp-resolver"
+      },
+      "jest-regex-util": {
+        "from": "jest-regex-util",
+        "version": "30.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-regex-util"
+      },
+      "jest-matcher-utils": {
+        "from": "jest-matcher-utils",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-matcher-utils"
+      },
+      "jest-message-util": {
+        "from": "jest-message-util",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-message-util"
+      },
+      "jest-resolve-dependencies": {
+        "from": "jest-resolve-dependencies",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-resolve-dependencies"
+      },
+      "jest-runner": {
+        "from": "jest-runner",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-runner"
+      },
+      "jest-resolve": {
+        "from": "jest-resolve",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-resolve"
+      },
+      "jest-runtime": {
+        "from": "jest-runtime",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-runtime"
+      },
+      "jest-snapshot": {
+        "from": "jest-snapshot",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-snapshot"
+      },
+      "jest-util": {
+        "from": "jest-util",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-util"
+      },
+      "jest-validate": {
+        "from": "jest-validate",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-validate"
+      },
+      "jest-watcher": {
+        "from": "jest-watcher",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-watcher"
+      },
+      "jest-worker": {
+        "from": "jest-worker",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jest-worker"
+      },
+      "jiti": {
+        "from": "jiti",
+        "version": "2.6.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jiti"
+      },
+      "jsdom": {
+        "from": "jsdom",
+        "version": "26.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jsdom"
+      },
+      "js-tokens": {
+        "from": "js-tokens",
+        "version": "4.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/js-tokens"
+      },
+      "js-yaml": {
+        "from": "js-yaml",
+        "version": "4.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/js-yaml"
+      },
+      "json-parse-even-better-errors": {
+        "from": "json-parse-even-better-errors",
+        "version": "2.3.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/json-parse-even-better-errors"
+      },
+      "json-bigint": {
+        "from": "json-bigint",
+        "version": "1.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/json-bigint"
+      },
+      "jsesc": {
+        "from": "jsesc",
+        "version": "3.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jsesc"
+      },
+      "json-buffer": {
+        "from": "json-buffer",
+        "version": "3.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/json-buffer"
+      },
+      "json-schema-traverse": {
+        "from": "json-schema-traverse",
+        "version": "0.4.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/json-schema-traverse"
+      },
+      "jose": {
+        "from": "jose",
+        "version": "6.1.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jose"
+      },
+      "jsx-ast-utils": {
+        "from": "jsx-ast-utils",
+        "version": "3.3.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jsx-ast-utils"
+      },
+      "json-stable-stringify-without-jsonify": {
+        "from": "json-stable-stringify-without-jsonify",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/json-stable-stringify-without-jsonify"
+      },
+      "jwa": {
+        "from": "jwa",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jwa"
+      },
+      "json5": {
+        "from": "json5",
+        "version": "2.2.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/json5"
+      },
+      "keyv": {
+        "from": "keyv",
+        "version": "4.5.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/keyv"
+      },
+      "jws": {
+        "from": "jws",
+        "version": "4.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/jws"
+      },
+      "leven": {
+        "from": "leven",
+        "version": "3.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/leven"
+      },
+      "language-tags": {
+        "from": "language-tags",
+        "version": "1.0.9",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/language-tags"
+      },
+      "levn": {
+        "from": "levn",
+        "version": "0.4.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/levn"
+      },
+      "lightningcss-linux-x64-gnu": {
+        "from": "lightningcss-linux-x64-gnu",
+        "version": "1.30.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/lightningcss-linux-x64-gnu"
+      },
+      "language-subtag-registry": {
+        "from": "language-subtag-registry",
+        "version": "0.3.23",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/language-subtag-registry"
+      },
+      "locate-path": {
+        "from": "locate-path",
+        "version": "6.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/locate-path"
+      },
+      "lines-and-columns": {
+        "from": "lines-and-columns",
+        "version": "1.2.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/lines-and-columns"
+      },
+      "lightningcss": {
+        "from": "lightningcss",
+        "version": "1.30.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/lightningcss"
+      },
+      "lodash.memoize": {
+        "from": "lodash.memoize",
+        "version": "4.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/lodash.memoize"
+      },
+      "lightningcss-linux-x64-musl": {
+        "from": "lightningcss-linux-x64-musl",
+        "version": "1.30.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/lightningcss-linux-x64-musl"
+      },
+      "lodash.merge": {
+        "from": "lodash.merge",
+        "version": "4.6.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/lodash.merge"
+      },
+      "loose-envify": {
+        "from": "loose-envify",
+        "version": "1.4.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/loose-envify"
+      },
+      "lru-cache": {
+        "from": "lru-cache",
+        "version": "5.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/lru-cache"
+      },
+      "lz-string": {
+        "from": "lz-string",
+        "version": "1.5.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/lz-string"
+      },
+      "make-dir": {
+        "from": "make-dir",
+        "version": "4.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/make-dir"
+      },
+      "longest-streak": {
+        "from": "longest-streak",
+        "version": "3.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/longest-streak"
+      },
+      "makeerror": {
+        "from": "makeerror",
+        "version": "1.0.12",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/makeerror"
+      },
+      "make-error": {
+        "from": "make-error",
+        "version": "1.3.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/make-error"
+      },
+      "lucide-react": {
+        "from": "lucide-react",
+        "version": "0.562.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/lucide-react"
+      },
+      "mdast-util-from-markdown": {
+        "from": "mdast-util-from-markdown",
+        "version": "2.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/mdast-util-from-markdown"
+      },
+      "math-intrinsics": {
+        "from": "math-intrinsics",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/math-intrinsics"
+      },
+      "magic-string": {
+        "from": "magic-string",
+        "version": "0.30.21",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/magic-string"
+      },
+      "mdast-util-mdx-expression": {
+        "from": "mdast-util-mdx-expression",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/mdast-util-mdx-expression"
+      },
+      "mdast-util-mdxjs-esm": {
+        "from": "mdast-util-mdxjs-esm",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/mdast-util-mdxjs-esm"
+      },
+      "mdast-util-phrasing": {
+        "from": "mdast-util-phrasing",
+        "version": "4.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/mdast-util-phrasing"
+      },
+      "mdast-util-mdx-jsx": {
+        "from": "mdast-util-mdx-jsx",
+        "version": "3.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/mdast-util-mdx-jsx"
+      },
+      "mdast-util-to-markdown": {
+        "from": "mdast-util-to-markdown",
+        "version": "2.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/mdast-util-to-markdown"
+      },
+      "mdast-util-to-hast": {
+        "from": "mdast-util-to-hast",
+        "version": "13.2.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/mdast-util-to-hast"
+      },
+      "merge-stream": {
+        "from": "merge-stream",
+        "version": "2.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/merge-stream"
+      },
+      "mdast-util-to-string": {
+        "from": "mdast-util-to-string",
+        "version": "4.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/mdast-util-to-string"
+      },
+      "micromark": {
+        "from": "micromark",
+        "version": "4.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark"
+      },
+      "micromark-core-commonmark": {
+        "from": "micromark-core-commonmark",
+        "version": "2.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-core-commonmark"
+      },
+      "merge2": {
+        "from": "merge2",
+        "version": "1.4.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/merge2"
+      },
+      "micromark-factory-destination": {
+        "from": "micromark-factory-destination",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-factory-destination"
+      },
+      "micromark-factory-label": {
+        "from": "micromark-factory-label",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-factory-label"
+      },
+      "micromark-factory-space": {
+        "from": "micromark-factory-space",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-factory-space"
+      },
+      "micromark-factory-title": {
+        "from": "micromark-factory-title",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-factory-title"
+      },
+      "micromark-factory-whitespace": {
+        "from": "micromark-factory-whitespace",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-factory-whitespace"
+      },
+      "micromark-util-chunked": {
+        "from": "micromark-util-chunked",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-util-chunked"
+      },
+      "micromark-util-classify-character": {
+        "from": "micromark-util-classify-character",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-util-classify-character"
+      },
+      "micromark-util-character": {
+        "from": "micromark-util-character",
+        "version": "2.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-util-character"
+      },
+      "micromark-util-combine-extensions": {
+        "from": "micromark-util-combine-extensions",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-util-combine-extensions"
+      },
+      "micromark-util-decode-numeric-character-reference": {
+        "from": "micromark-util-decode-numeric-character-reference",
+        "version": "2.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-util-decode-numeric-character-reference"
+      },
+      "micromark-util-decode-string": {
+        "from": "micromark-util-decode-string",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-util-decode-string"
+      },
+      "micromark-util-encode": {
+        "from": "micromark-util-encode",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-util-encode"
+      },
+      "micromark-util-normalize-identifier": {
+        "from": "micromark-util-normalize-identifier",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-util-normalize-identifier"
+      },
+      "micromark-util-subtokenize": {
+        "from": "micromark-util-subtokenize",
+        "version": "2.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-util-subtokenize"
+      },
+      "micromark-util-html-tag-name": {
+        "from": "micromark-util-html-tag-name",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-util-html-tag-name"
+      },
+      "micromark-util-resolve-all": {
+        "from": "micromark-util-resolve-all",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-util-resolve-all"
+      },
+      "micromark-util-sanitize-uri": {
+        "from": "micromark-util-sanitize-uri",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-util-sanitize-uri"
+      },
+      "micromark-util-types": {
+        "from": "micromark-util-types",
+        "version": "2.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-util-types"
+      },
+      "micromark-util-symbol": {
+        "from": "micromark-util-symbol",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromark-util-symbol"
+      },
+      "mime-db": {
+        "from": "mime-db",
+        "version": "1.52.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/mime-db"
+      },
+      "mimic-fn": {
+        "from": "mimic-fn",
+        "version": "2.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/mimic-fn"
+      },
+      "min-indent": {
+        "from": "min-indent",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/min-indent"
+      },
+      "mime-types": {
+        "from": "mime-types",
+        "version": "2.1.35",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/mime-types"
+      },
+      "micromatch": {
+        "from": "micromatch",
+        "version": "4.0.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/micromatch"
+      },
+      "minipass": {
+        "from": "minipass",
+        "version": "7.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/minipass"
+      },
+      "minimatch": {
+        "from": "minimatch",
+        "version": "3.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/minimatch"
+      },
+      "minimist": {
+        "from": "minimist",
+        "version": "1.2.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/minimist"
+      },
+      "ms": {
+        "from": "ms",
+        "version": "2.1.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/ms"
+      },
+      "neo-async": {
+        "from": "neo-async",
+        "version": "2.6.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/neo-async"
+      },
+      "nanoid": {
+        "from": "nanoid",
+        "version": "5.1.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/nanoid"
+      },
+      "napi-postinstall": {
+        "from": "napi-postinstall",
+        "version": "0.3.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/napi-postinstall"
+      },
+      "normalize-path": {
+        "from": "normalize-path",
+        "version": "3.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/normalize-path"
+      },
+      "next": {
+        "from": "next",
+        "version": "16.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/next"
+      },
+      "natural-compare": {
+        "from": "natural-compare",
+        "version": "1.4.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/natural-compare"
+      },
+      "node-domexception": {
+        "from": "node-domexception",
+        "version": "1.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/node-domexception"
+      },
+      "node-int64": {
+        "from": "node-int64",
+        "version": "0.4.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/node-int64"
+      },
+      "node-fetch": {
+        "from": "node-fetch",
+        "version": "3.3.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/node-fetch"
+      },
+      "npm-run-path": {
+        "from": "npm-run-path",
+        "version": "4.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/npm-run-path"
+      },
+      "nwsapi": {
+        "from": "nwsapi",
+        "version": "2.2.23",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/nwsapi"
+      },
+      "object-assign": {
+        "from": "object-assign",
+        "version": "4.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/object-assign"
+      },
+      "node-releases": {
+        "from": "node-releases",
+        "version": "2.0.27",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/node-releases"
+      },
+      "oauth4webapi": {
+        "from": "oauth4webapi",
+        "version": "3.8.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/oauth4webapi"
+      },
+      "object-keys": {
+        "from": "object-keys",
+        "version": "1.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/object-keys"
+      },
+      "object.entries": {
+        "from": "object.entries",
+        "version": "1.1.9",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/object.entries"
+      },
+      "object.assign": {
+        "from": "object.assign",
+        "version": "4.1.7",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/object.assign"
+      },
+      "object.fromentries": {
+        "from": "object.fromentries",
+        "version": "2.0.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/object.fromentries"
+      },
+      "object.groupby": {
+        "from": "object.groupby",
+        "version": "1.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/object.groupby"
+      },
+      "object-inspect": {
+        "from": "object-inspect",
+        "version": "1.13.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/object-inspect"
+      },
+      "once": {
+        "from": "once",
+        "version": "1.4.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/once"
+      },
+      "object.values": {
+        "from": "object.values",
+        "version": "1.2.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/object.values"
+      },
+      "openid-client": {
+        "from": "openid-client",
+        "version": "6.8.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/openid-client"
+      },
+      "onetime": {
+        "from": "onetime",
+        "version": "5.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/onetime"
+      },
+      "optionator": {
+        "from": "optionator",
+        "version": "0.9.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/optionator"
+      },
+      "p-limit": {
+        "from": "p-limit",
+        "version": "3.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/p-limit"
+      },
+      "own-keys": {
+        "from": "own-keys",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/own-keys"
+      },
+      "p-try": {
+        "from": "p-try",
+        "version": "2.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/p-try"
+      },
+      "p-locate": {
+        "from": "p-locate",
+        "version": "5.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/p-locate"
+      },
+      "package-json-from-dist": {
+        "from": "package-json-from-dist",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/package-json-from-dist"
+      },
+      "parse5": {
+        "from": "parse5",
+        "version": "7.3.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/parse5"
+      },
+      "parse-json": {
+        "from": "parse-json",
+        "version": "5.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/parse-json"
+      },
+      "parent-module": {
+        "from": "parent-module",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/parent-module"
+      },
+      "parse-entities": {
+        "from": "parse-entities",
+        "version": "4.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/parse-entities"
+      },
+      "path-is-absolute": {
+        "from": "path-is-absolute",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/path-is-absolute"
+      },
+      "path-parse": {
+        "from": "path-parse",
+        "version": "1.0.7",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/path-parse"
+      },
+      "path-exists": {
+        "from": "path-exists",
+        "version": "4.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/path-exists"
+      },
+      "path-key": {
+        "from": "path-key",
+        "version": "3.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/path-key"
+      },
+      "path-scurry": {
+        "from": "path-scurry",
+        "version": "1.11.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/path-scurry"
+      },
+      "pg-types": {
+        "from": "pg-types",
+        "version": "2.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/pg-types"
+      },
+      "pg-protocol": {
+        "from": "pg-protocol",
+        "version": "1.10.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/pg-protocol"
+      },
+      "pg-int8": {
+        "from": "pg-int8",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/pg-int8"
+      },
+      "pirates": {
+        "from": "pirates",
+        "version": "4.0.7",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/pirates"
+      },
+      "picocolors": {
+        "from": "picocolors",
+        "version": "1.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/picocolors"
+      },
+      "possible-typed-array-names": {
+        "from": "possible-typed-array-names",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/possible-typed-array-names"
+      },
+      "pkg-dir": {
+        "from": "pkg-dir",
+        "version": "4.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/pkg-dir"
+      },
+      "picomatch": {
+        "from": "picomatch",
+        "version": "2.3.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/picomatch"
+      },
+      "postcss": {
+        "from": "postcss",
+        "version": "8.5.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/postcss"
+      },
+      "postgres-array": {
+        "from": "postgres-array",
+        "version": "2.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/postgres-array"
+      },
+      "postgres-bytea": {
+        "from": "postgres-bytea",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/postgres-bytea"
+      },
+      "postgres-date": {
+        "from": "postgres-date",
+        "version": "1.0.7",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/postgres-date"
+      },
+      "pretty-format": {
+        "from": "pretty-format",
+        "version": "27.5.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/pretty-format"
+      },
+      "punycode": {
+        "from": "punycode",
+        "version": "2.3.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/punycode"
+      },
+      "postgres-interval": {
+        "from": "postgres-interval",
+        "version": "1.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/postgres-interval"
+      },
+      "prelude-ls": {
+        "from": "prelude-ls",
+        "version": "1.2.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/prelude-ls"
+      },
+      "prop-types": {
+        "from": "prop-types",
+        "version": "15.8.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/prop-types"
+      },
+      "property-information": {
+        "from": "property-information",
+        "version": "7.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/property-information"
+      },
+      "qs": {
+        "from": "qs",
+        "version": "6.14.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/qs"
+      },
+      "pure-rand": {
+        "from": "pure-rand",
+        "version": "7.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/pure-rand"
+      },
+      "queue-microtask": {
+        "from": "queue-microtask",
+        "version": "1.2.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/queue-microtask"
+      },
+      "react": {
+        "from": "react",
+        "version": "19.2.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/react"
+      },
+      "react-is": {
+        "from": "react-is",
+        "version": "16.13.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/react-is"
+      },
+      "redent": {
+        "from": "redent",
+        "version": "3.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/redent"
+      },
+      "react-markdown": {
+        "from": "react-markdown",
+        "version": "10.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/react-markdown"
+      },
+      "recharts": {
+        "from": "recharts",
+        "version": "3.6.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/recharts"
+      },
+      "react-redux": {
+        "from": "react-redux",
+        "version": "9.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/react-redux"
+      },
+      "reflect.getprototypeof": {
+        "from": "reflect.getprototypeof",
+        "version": "1.0.10",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/reflect.getprototypeof"
+      },
+      "redux-thunk": {
+        "from": "redux-thunk",
+        "version": "3.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/redux-thunk"
+      },
+      "redux": {
+        "from": "redux",
+        "version": "5.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/redux"
+      },
+      "react-dom": {
+        "from": "react-dom",
+        "version": "19.2.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/react-dom"
+      },
+      "regexp.prototype.flags": {
+        "from": "regexp.prototype.flags",
+        "version": "1.5.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/regexp.prototype.flags"
+      },
+      "require-directory": {
+        "from": "require-directory",
+        "version": "2.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/require-directory"
+      },
+      "remark-parse": {
+        "from": "remark-parse",
+        "version": "11.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/remark-parse"
+      },
+      "remark-rehype": {
+        "from": "remark-rehype",
+        "version": "11.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/remark-rehype"
+      },
+      "reselect": {
+        "from": "reselect",
+        "version": "5.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/reselect"
+      },
+      "resolve-cwd": {
+        "from": "resolve-cwd",
+        "version": "3.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/resolve-cwd"
+      },
+      "resolve-pkg-maps": {
+        "from": "resolve-pkg-maps",
+        "version": "1.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/resolve-pkg-maps"
+      },
+      "reusify": {
+        "from": "reusify",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/reusify"
+      },
+      "resolve-from": {
+        "from": "resolve-from",
+        "version": "4.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/resolve-from"
+      },
+      "rrweb-cssom": {
+        "from": "rrweb-cssom",
+        "version": "0.8.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/rrweb-cssom"
+      },
+      "resolve": {
+        "from": "resolve",
+        "version": "1.22.11",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/resolve"
+      },
+      "run-parallel": {
+        "from": "run-parallel",
+        "version": "1.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/run-parallel"
+      },
+      "safe-array-concat": {
+        "from": "safe-array-concat",
+        "version": "1.1.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/safe-array-concat"
+      },
+      "rimraf": {
+        "from": "rimraf",
+        "version": "5.0.10",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/rimraf"
+      },
+      "safe-push-apply": {
+        "from": "safe-push-apply",
+        "version": "1.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/safe-push-apply"
+      },
+      "safer-buffer": {
+        "from": "safer-buffer",
+        "version": "2.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/safer-buffer"
+      },
+      "safe-buffer": {
+        "from": "safe-buffer",
+        "version": "5.2.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/safe-buffer"
+      },
+      "saxes": {
+        "from": "saxes",
+        "version": "6.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/saxes"
+      },
+      "safe-regex-test": {
+        "from": "safe-regex-test",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/safe-regex-test"
+      },
+      "scheduler": {
+        "from": "scheduler",
+        "version": "0.27.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/scheduler"
+      },
+      "semver": {
+        "from": "semver",
+        "version": "6.3.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/semver"
+      },
+      "set-function-length": {
+        "from": "set-function-length",
+        "version": "1.2.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/set-function-length"
+      },
+      "set-function-name": {
+        "from": "set-function-name",
+        "version": "2.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/set-function-name"
+      },
+      "set-proto": {
+        "from": "set-proto",
+        "version": "1.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/set-proto"
+      },
+      "shebang-regex": {
+        "from": "shebang-regex",
+        "version": "3.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/shebang-regex"
+      },
+      "sharp": {
+        "from": "sharp",
+        "version": "0.34.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/sharp"
+      },
+      "shebang-command": {
+        "from": "shebang-command",
+        "version": "2.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/shebang-command"
+      },
+      "side-channel": {
+        "from": "side-channel",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/side-channel"
+      },
+      "side-channel-map": {
+        "from": "side-channel-map",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/side-channel-map"
+      },
+      "side-channel-weakmap": {
+        "from": "side-channel-weakmap",
+        "version": "1.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/side-channel-weakmap"
+      },
+      "side-channel-list": {
+        "from": "side-channel-list",
+        "version": "1.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/side-channel-list"
+      },
+      "signal-exit": {
+        "from": "signal-exit",
+        "version": "4.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/signal-exit"
+      },
+      "slash": {
+        "from": "slash",
+        "version": "3.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/slash"
+      },
+      "source-map-js": {
+        "from": "source-map-js",
+        "version": "1.2.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/source-map-js"
+      },
+      "source-map": {
+        "from": "source-map",
+        "version": "0.6.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/source-map"
+      },
+      "sprintf-js": {
+        "from": "sprintf-js",
+        "version": "1.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/sprintf-js"
+      },
+      "source-map-support": {
+        "from": "source-map-support",
+        "version": "0.5.21",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/source-map-support"
+      },
+      "stack-utils": {
+        "from": "stack-utils",
+        "version": "2.0.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/stack-utils"
+      },
+      "stable-hash": {
+        "from": "stable-hash",
+        "version": "0.0.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/stable-hash"
+      },
+      "string-length": {
+        "from": "string-length",
+        "version": "4.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/string-length"
+      },
+      "space-separated-tokens": {
+        "from": "space-separated-tokens",
+        "version": "2.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/space-separated-tokens"
+      },
+      "stop-iteration-iterator": {
+        "from": "stop-iteration-iterator",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/stop-iteration-iterator"
+      },
+      "string-width": {
+        "from": "string-width",
+        "version": "5.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/string-width"
+      },
+      "string-width-cjs": {
+        "from": "string-width-cjs",
+        "version": "4.2.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/string-width-cjs"
+      },
+      "string.prototype.matchall": {
+        "from": "string.prototype.matchall",
+        "version": "4.0.12",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/string.prototype.matchall"
+      },
+      "string.prototype.trim": {
+        "from": "string.prototype.trim",
+        "version": "1.2.10",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/string.prototype.trim"
+      },
+      "string.prototype.trimend": {
+        "from": "string.prototype.trimend",
+        "version": "1.0.9",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/string.prototype.trimend"
+      },
+      "string.prototype.trimstart": {
+        "from": "string.prototype.trimstart",
+        "version": "1.0.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/string.prototype.trimstart"
+      },
+      "stringify-entities": {
+        "from": "stringify-entities",
+        "version": "4.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/stringify-entities"
+      },
+      "strip-ansi-cjs": {
+        "from": "strip-ansi-cjs",
+        "version": "6.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/strip-ansi-cjs"
+      },
+      "strip-bom": {
+        "from": "strip-bom",
+        "version": "3.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/strip-bom"
+      },
+      "strip-indent": {
+        "from": "strip-indent",
+        "version": "3.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/strip-indent"
+      },
+      "strip-ansi": {
+        "from": "strip-ansi",
+        "version": "7.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/strip-ansi"
+      },
+      "strip-final-newline": {
+        "from": "strip-final-newline",
+        "version": "2.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/strip-final-newline"
+      },
+      "strip-json-comments": {
+        "from": "strip-json-comments",
+        "version": "3.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/strip-json-comments"
+      },
+      "style-to-object": {
+        "from": "style-to-object",
+        "version": "1.0.14",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/style-to-object"
+      },
+      "style-to-js": {
+        "from": "style-to-js",
+        "version": "1.1.21",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/style-to-js"
+      },
+      "styled-jsx": {
+        "from": "styled-jsx",
+        "version": "5.1.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/styled-jsx"
+      },
+      "supports-preserve-symlinks-flag": {
+        "from": "supports-preserve-symlinks-flag",
+        "version": "1.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/supports-preserve-symlinks-flag"
+      },
+      "supports-color": {
+        "from": "supports-color",
+        "version": "7.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/supports-color"
+      },
+      "symbol-tree": {
+        "from": "symbol-tree",
+        "version": "3.2.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/symbol-tree"
+      },
+      "synckit": {
+        "from": "synckit",
+        "version": "0.11.12",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/synckit"
+      },
+      "swr": {
+        "from": "swr",
+        "version": "2.3.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/swr"
+      },
+      "tapable": {
+        "from": "tapable",
+        "version": "2.3.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/tapable"
+      },
+      "test-exclude": {
+        "from": "test-exclude",
+        "version": "6.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/test-exclude"
+      },
+      "tailwindcss": {
+        "from": "tailwindcss",
+        "version": "4.1.18",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/tailwindcss"
+      },
+      "tldts": {
+        "from": "tldts",
+        "version": "6.1.86",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/tldts"
+      },
+      "tldts-core": {
+        "from": "tldts-core",
+        "version": "6.1.86",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/tldts-core"
+      },
+      "tiny-invariant": {
+        "from": "tiny-invariant",
+        "version": "1.3.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/tiny-invariant"
+      },
+      "tough-cookie": {
+        "from": "tough-cookie",
+        "version": "5.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/tough-cookie"
+      },
+      "tmpl": {
+        "from": "tmpl",
+        "version": "1.0.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/tmpl"
+      },
+      "tinyglobby": {
+        "from": "tinyglobby",
+        "version": "0.2.15",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/tinyglobby"
+      },
+      "to-regex-range": {
+        "from": "to-regex-range",
+        "version": "5.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/to-regex-range"
+      },
+      "trough": {
+        "from": "trough",
+        "version": "2.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/trough"
+      },
+      "trim-lines": {
+        "from": "trim-lines",
+        "version": "3.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/trim-lines"
+      },
+      "ts-jest": {
+        "from": "ts-jest",
+        "version": "29.4.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/ts-jest"
+      },
+      "tr46": {
+        "from": "tr46",
+        "version": "0.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/tr46"
+      },
+      "ts-api-utils": {
+        "from": "ts-api-utils",
+        "version": "2.4.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/ts-api-utils"
+      },
+      "tsconfig-paths": {
+        "from": "tsconfig-paths",
+        "version": "3.15.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/tsconfig-paths"
+      },
+      "type-detect": {
+        "from": "type-detect",
+        "version": "4.0.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/type-detect"
+      },
+      "tslib": {
+        "from": "tslib",
+        "version": "2.8.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/tslib"
+      },
+      "type-check": {
+        "from": "type-check",
+        "version": "0.4.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/type-check"
+      },
+      "type-fest": {
+        "from": "type-fest",
+        "version": "0.21.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/type-fest"
+      },
+      "typed-array-buffer": {
+        "from": "typed-array-buffer",
+        "version": "1.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/typed-array-buffer"
+      },
+      "typescript-eslint": {
+        "from": "typescript-eslint",
+        "version": "8.52.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/typescript-eslint"
+      },
+      "typed-array-byte-offset": {
+        "from": "typed-array-byte-offset",
+        "version": "1.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/typed-array-byte-offset"
+      },
+      "typed-array-length": {
+        "from": "typed-array-length",
+        "version": "1.0.7",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/typed-array-length"
+      },
+      "typed-array-byte-length": {
+        "from": "typed-array-byte-length",
+        "version": "1.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/typed-array-byte-length"
+      },
+      "undici-types": {
+        "from": "undici-types",
+        "version": "6.21.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/undici-types"
+      },
+      "unist-util-is": {
+        "from": "unist-util-is",
+        "version": "6.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/unist-util-is"
+      },
+      "unified": {
+        "from": "unified",
+        "version": "11.0.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/unified"
+      },
+      "uglify-js": {
+        "from": "uglify-js",
+        "version": "3.19.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/uglify-js"
+      },
+      "unbox-primitive": {
+        "from": "unbox-primitive",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/unbox-primitive"
+      },
+      "unist-util-visit-parents": {
+        "from": "unist-util-visit-parents",
+        "version": "6.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/unist-util-visit-parents"
+      },
+      "unist-util-position": {
+        "from": "unist-util-position",
+        "version": "5.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/unist-util-position"
+      },
+      "unist-util-visit": {
+        "from": "unist-util-visit",
+        "version": "5.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/unist-util-visit"
+      },
+      "unrs-resolver": {
+        "from": "unrs-resolver",
+        "version": "1.11.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/unrs-resolver"
+      },
+      "update-browserslist-db": {
+        "from": "update-browserslist-db",
+        "version": "1.2.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/update-browserslist-db"
+      },
+      "uri-js": {
+        "from": "uri-js",
+        "version": "4.4.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/uri-js"
+      },
+      "unist-util-stringify-position": {
+        "from": "unist-util-stringify-position",
+        "version": "4.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/unist-util-stringify-position"
+      },
+      "url-template": {
+        "from": "url-template",
+        "version": "2.0.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/url-template"
+      },
+      "use-sync-external-store": {
+        "from": "use-sync-external-store",
+        "version": "1.6.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/use-sync-external-store"
+      },
+      "vfile": {
+        "from": "vfile",
+        "version": "6.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/vfile"
+      },
+      "v8-to-istanbul": {
+        "from": "v8-to-istanbul",
+        "version": "9.3.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/v8-to-istanbul"
+      },
+      "vfile-message": {
+        "from": "vfile-message",
+        "version": "4.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/vfile-message"
+      },
+      "walker": {
+        "from": "walker",
+        "version": "1.0.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/walker"
+      },
+      "victory-vendor": {
+        "from": "victory-vendor",
+        "version": "37.3.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/victory-vendor"
+      },
+      "w3c-xmlserializer": {
+        "from": "w3c-xmlserializer",
+        "version": "5.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/w3c-xmlserializer"
+      },
+      "whatwg-encoding": {
+        "from": "whatwg-encoding",
+        "version": "3.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/whatwg-encoding"
+      },
+      "whatwg-mimetype": {
+        "from": "whatwg-mimetype",
+        "version": "4.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/whatwg-mimetype"
+      },
+      "web-streams-polyfill": {
+        "from": "web-streams-polyfill",
+        "version": "3.3.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/web-streams-polyfill"
+      },
+      "webidl-conversions": {
+        "from": "webidl-conversions",
+        "version": "3.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/webidl-conversions"
+      },
+      "which": {
+        "from": "which",
+        "version": "2.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/which"
+      },
+      "whatwg-url": {
+        "from": "whatwg-url",
+        "version": "5.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/whatwg-url"
+      },
+      "which-boxed-primitive": {
+        "from": "which-boxed-primitive",
+        "version": "1.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/which-boxed-primitive"
+      },
+      "which-builtin-type": {
+        "from": "which-builtin-type",
+        "version": "1.2.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/which-builtin-type"
+      },
+      "which-collection": {
+        "from": "which-collection",
+        "version": "1.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/which-collection"
+      },
+      "which-typed-array": {
+        "from": "which-typed-array",
+        "version": "1.1.19",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/which-typed-array"
+      },
+      "word-wrap": {
+        "from": "word-wrap",
+        "version": "1.2.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/word-wrap"
+      },
+      "wordwrap": {
+        "from": "wordwrap",
+        "version": "1.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/wordwrap"
+      },
+      "wrappy": {
+        "from": "wrappy",
+        "version": "1.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/wrappy"
+      },
+      "write-file-atomic": {
+        "from": "write-file-atomic",
+        "version": "5.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/write-file-atomic"
+      },
+      "wrap-ansi-cjs": {
+        "from": "wrap-ansi-cjs",
+        "version": "7.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/wrap-ansi-cjs"
+      },
+      "ws": {
+        "from": "ws",
+        "version": "8.19.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/ws"
+      },
+      "wrap-ansi": {
+        "from": "wrap-ansi",
+        "version": "8.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/wrap-ansi"
+      },
+      "xmlchars": {
+        "from": "xmlchars",
+        "version": "2.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/xmlchars"
+      },
+      "xml-name-validator": {
+        "from": "xml-name-validator",
+        "version": "5.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/xml-name-validator"
+      },
+      "y18n": {
+        "from": "y18n",
+        "version": "5.0.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/y18n"
+      },
+      "yargs-parser": {
+        "from": "yargs-parser",
+        "version": "21.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/yargs-parser"
+      },
+      "xtend": {
+        "from": "xtend",
+        "version": "4.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/xtend"
+      },
+      "yargs": {
+        "from": "yargs",
+        "version": "17.7.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/yargs"
+      },
+      "yallist": {
+        "from": "yallist",
+        "version": "3.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/yallist"
+      },
+      "yocto-queue": {
+        "from": "yocto-queue",
+        "version": "0.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/yocto-queue"
+      },
+      "zod": {
+        "from": "zod",
+        "version": "4.3.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/zod"
+      },
+      "zod-validation-error": {
+        "from": "zod-validation-error",
+        "version": "4.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/zod-validation-error"
+      },
+      "@adobe/css-tools": {
+        "from": "@adobe/css-tools",
+        "version": "4.4.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@adobe/css-tools"
+      },
+      "zwitch": {
+        "from": "zwitch",
+        "version": "2.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/zwitch"
+      },
+      "string.prototype.repeat": {
+        "from": "string.prototype.repeat",
+        "version": "1.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/string.prototype.repeat"
+      },
+      "@asamuzakjp/css-color": {
+        "from": "@asamuzakjp/css-color",
+        "version": "3.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@asamuzakjp/css-color"
+      },
+      "@alloc/quick-lru": {
+        "from": "@alloc/quick-lru",
+        "version": "5.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@alloc/quick-lru"
+      },
+      "@babel/generator": {
+        "from": "@babel/generator",
+        "version": "7.28.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/generator"
+      },
+      "string.prototype.includes": {
+        "from": "string.prototype.includes",
+        "version": "2.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/string.prototype.includes"
+      },
+      "@babel/code-frame": {
+        "from": "@babel/code-frame",
+        "version": "7.27.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/code-frame"
+      },
+      "@babel/compat-data": {
+        "from": "@babel/compat-data",
+        "version": "7.28.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/compat-data"
+      },
+      "@babel/core": {
+        "from": "@babel/core",
+        "version": "7.28.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/core"
+      },
+      "@babel/helper-compilation-targets": {
+        "from": "@babel/helper-compilation-targets",
+        "version": "7.27.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/helper-compilation-targets"
+      },
+      "@babel/helper-globals": {
+        "from": "@babel/helper-globals",
+        "version": "7.28.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/helper-globals"
+      },
+      "@babel/helper-module-imports": {
+        "from": "@babel/helper-module-imports",
+        "version": "7.27.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/helper-module-imports"
+      },
+      "@babel/helper-module-transforms": {
+        "from": "@babel/helper-module-transforms",
+        "version": "7.28.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/helper-module-transforms"
+      },
+      "@babel/helper-plugin-utils": {
+        "from": "@babel/helper-plugin-utils",
+        "version": "7.28.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/helper-plugin-utils"
+      },
+      "@babel/helper-string-parser": {
+        "from": "@babel/helper-string-parser",
+        "version": "7.27.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/helper-string-parser"
+      },
+      "@babel/helper-validator-identifier": {
+        "from": "@babel/helper-validator-identifier",
+        "version": "7.28.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/helper-validator-identifier"
+      },
+      "@babel/helper-validator-option": {
+        "from": "@babel/helper-validator-option",
+        "version": "7.27.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/helper-validator-option"
+      },
+      "@babel/parser": {
+        "from": "@babel/parser",
+        "version": "7.28.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/parser"
+      },
+      "@babel/helpers": {
+        "from": "@babel/helpers",
+        "version": "7.28.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/helpers"
+      },
+      "@babel/plugin-syntax-async-generators": {
+        "from": "@babel/plugin-syntax-async-generators",
+        "version": "7.8.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-async-generators"
+      },
+      "@babel/plugin-syntax-bigint": {
+        "from": "@babel/plugin-syntax-bigint",
+        "version": "7.8.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-bigint"
+      },
+      "@babel/plugin-syntax-class-properties": {
+        "from": "@babel/plugin-syntax-class-properties",
+        "version": "7.12.13",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-class-properties"
+      },
+      "@babel/plugin-syntax-import-meta": {
+        "from": "@babel/plugin-syntax-import-meta",
+        "version": "7.10.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-import-meta"
+      },
+      "@babel/plugin-syntax-class-static-block": {
+        "from": "@babel/plugin-syntax-class-static-block",
+        "version": "7.14.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-class-static-block"
+      },
+      "@babel/plugin-syntax-json-strings": {
+        "from": "@babel/plugin-syntax-json-strings",
+        "version": "7.8.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-json-strings"
+      },
+      "@babel/plugin-syntax-import-attributes": {
+        "from": "@babel/plugin-syntax-import-attributes",
+        "version": "7.28.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-import-attributes"
+      },
+      "@babel/plugin-syntax-logical-assignment-operators": {
+        "from": "@babel/plugin-syntax-logical-assignment-operators",
+        "version": "7.10.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-logical-assignment-operators"
+      },
+      "@babel/plugin-syntax-jsx": {
+        "from": "@babel/plugin-syntax-jsx",
+        "version": "7.28.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-jsx"
+      },
+      "@babel/plugin-syntax-numeric-separator": {
+        "from": "@babel/plugin-syntax-numeric-separator",
+        "version": "7.10.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-numeric-separator"
+      },
+      "@babel/plugin-syntax-nullish-coalescing-operator": {
+        "from": "@babel/plugin-syntax-nullish-coalescing-operator",
+        "version": "7.8.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-nullish-coalescing-operator"
+      },
+      "@babel/plugin-syntax-object-rest-spread": {
+        "from": "@babel/plugin-syntax-object-rest-spread",
+        "version": "7.8.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-object-rest-spread"
+      },
+      "@babel/plugin-syntax-optional-catch-binding": {
+        "from": "@babel/plugin-syntax-optional-catch-binding",
+        "version": "7.8.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-optional-catch-binding"
+      },
+      "@babel/plugin-syntax-private-property-in-object": {
+        "from": "@babel/plugin-syntax-private-property-in-object",
+        "version": "7.14.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-private-property-in-object"
+      },
+      "@babel/traverse": {
+        "from": "@babel/traverse",
+        "version": "7.28.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/traverse"
+      },
+      "@babel/plugin-syntax-optional-chaining": {
+        "from": "@babel/plugin-syntax-optional-chaining",
+        "version": "7.8.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-optional-chaining"
+      },
+      "@babel/template": {
+        "from": "@babel/template",
+        "version": "7.27.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/template"
+      },
+      "@babel/plugin-syntax-typescript": {
+        "from": "@babel/plugin-syntax-typescript",
+        "version": "7.28.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-typescript"
+      },
+      "@babel/plugin-syntax-top-level-await": {
+        "from": "@babel/plugin-syntax-top-level-await",
+        "version": "7.14.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/plugin-syntax-top-level-await"
+      },
+      "@babel/runtime": {
+        "from": "@babel/runtime",
+        "version": "7.28.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/runtime"
+      },
+      "@babel/types": {
+        "from": "@babel/types",
+        "version": "7.28.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@babel/types"
+      },
+      "@csstools/color-helpers": {
+        "from": "@csstools/color-helpers",
+        "version": "5.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@csstools/color-helpers"
+      },
+      "@csstools/css-calc": {
+        "from": "@csstools/css-calc",
+        "version": "2.1.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@csstools/css-calc"
+      },
+      "@csstools/css-color-parser": {
+        "from": "@csstools/css-color-parser",
+        "version": "3.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@csstools/css-color-parser"
+      },
+      "@csstools/css-parser-algorithms": {
+        "from": "@csstools/css-parser-algorithms",
+        "version": "3.0.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@csstools/css-parser-algorithms"
+      },
+      "@auth0/nextjs-auth0": {
+        "from": "@auth0/nextjs-auth0",
+        "version": "4.14.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@auth0/nextjs-auth0"
+      },
+      "@csstools/css-tokenizer": {
+        "from": "@csstools/css-tokenizer",
+        "version": "3.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@csstools/css-tokenizer"
+      },
+      "@bcoe/v8-coverage": {
+        "from": "@bcoe/v8-coverage",
+        "version": "0.2.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@bcoe/v8-coverage"
+      },
+      "@edge-runtime/cookies": {
+        "from": "@edge-runtime/cookies",
+        "version": "5.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@edge-runtime/cookies"
+      },
+      "@emnapi/core": {
+        "from": "@emnapi/core",
+        "version": "1.8.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@emnapi/core"
+      },
+      "@emnapi/runtime": {
+        "from": "@emnapi/runtime",
+        "version": "1.8.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@emnapi/runtime"
+      },
+      "@drizzle-team/brocli": {
+        "from": "@drizzle-team/brocli",
+        "version": "0.10.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@drizzle-team/brocli"
+      },
+      "@emnapi/wasi-threads": {
+        "from": "@emnapi/wasi-threads",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@emnapi/wasi-threads"
+      },
+      "@esbuild-kit/esm-loader": {
+        "from": "@esbuild-kit/esm-loader",
+        "version": "2.6.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@esbuild-kit/esm-loader"
+      },
+      "@esbuild/linux-x64": {
+        "from": "@esbuild/linux-x64",
+        "version": "0.25.12",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@esbuild/linux-x64"
+      },
+      "@eslint/config-array": {
+        "from": "@eslint/config-array",
+        "version": "0.21.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@eslint/config-array"
+      },
+      "@esbuild-kit/core-utils": {
+        "from": "@esbuild-kit/core-utils",
+        "version": "3.3.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@esbuild-kit/core-utils"
+      },
+      "@eslint/core": {
+        "from": "@eslint/core",
+        "version": "0.17.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@eslint/core"
+      },
+      "@eslint/config-helpers": {
+        "from": "@eslint/config-helpers",
+        "version": "0.4.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@eslint/config-helpers"
+      },
+      "@eslint/js": {
+        "from": "@eslint/js",
+        "version": "9.39.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@eslint/js"
+      },
+      "@eslint/eslintrc": {
+        "from": "@eslint/eslintrc",
+        "version": "3.3.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@eslint/eslintrc"
+      },
+      "@eslint/object-schema": {
+        "from": "@eslint/object-schema",
+        "version": "2.1.7",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@eslint/object-schema"
+      },
+      "@eslint-community/eslint-utils": {
+        "from": "@eslint-community/eslint-utils",
+        "version": "4.9.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@eslint-community/eslint-utils"
+      },
+      "@eslint-community/regexpp": {
+        "from": "@eslint-community/regexpp",
+        "version": "4.12.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@eslint-community/regexpp"
+      },
+      "@eslint/plugin-kit": {
+        "from": "@eslint/plugin-kit",
+        "version": "0.4.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@eslint/plugin-kit"
+      },
+      "@google/generative-ai": {
+        "from": "@google/generative-ai",
+        "version": "0.24.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@google/generative-ai"
+      },
+      "@humanfs/core": {
+        "from": "@humanfs/core",
+        "version": "0.19.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@humanfs/core"
+      },
+      "@humanfs/node": {
+        "from": "@humanfs/node",
+        "version": "0.16.7",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@humanfs/node"
+      },
+      "@humanwhocodes/module-importer": {
+        "from": "@humanwhocodes/module-importer",
+        "version": "1.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@humanwhocodes/module-importer"
+      },
+      "@img/colour": {
+        "from": "@img/colour",
+        "version": "1.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@img/colour"
+      },
+      "@humanwhocodes/retry": {
+        "from": "@humanwhocodes/retry",
+        "version": "0.4.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@humanwhocodes/retry"
+      },
+      "@img/sharp-libvips-linux-x64": {
+        "from": "@img/sharp-libvips-linux-x64",
+        "version": "1.2.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@img/sharp-libvips-linux-x64"
+      },
+      "@img/sharp-linux-x64": {
+        "from": "@img/sharp-linux-x64",
+        "version": "0.34.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@img/sharp-linux-x64"
+      },
+      "@img/sharp-libvips-linuxmusl-x64": {
+        "from": "@img/sharp-libvips-linuxmusl-x64",
+        "version": "1.2.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@img/sharp-libvips-linuxmusl-x64"
+      },
+      "@istanbuljs/schema": {
+        "from": "@istanbuljs/schema",
+        "version": "0.1.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@istanbuljs/schema"
+      },
+      "@istanbuljs/load-nyc-config": {
+        "from": "@istanbuljs/load-nyc-config",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@istanbuljs/load-nyc-config"
+      },
+      "@img/sharp-linuxmusl-x64": {
+        "from": "@img/sharp-linuxmusl-x64",
+        "version": "0.34.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@img/sharp-linuxmusl-x64"
+      },
+      "@jest/console": {
+        "from": "@jest/console",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/console"
+      },
+      "@isaacs/cliui": {
+        "from": "@isaacs/cliui",
+        "version": "8.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@isaacs/cliui"
+      },
+      "@jest/core": {
+        "from": "@jest/core",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/core"
+      },
+      "@jest/environment": {
+        "from": "@jest/environment",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/environment"
+      },
+      "@jest/diff-sequences": {
+        "from": "@jest/diff-sequences",
+        "version": "30.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/diff-sequences"
+      },
+      "@jest/environment-jsdom-abstract": {
+        "from": "@jest/environment-jsdom-abstract",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/environment-jsdom-abstract"
+      },
+      "@jest/expect": {
+        "from": "@jest/expect",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/expect"
+      },
+      "@jest/expect-utils": {
+        "from": "@jest/expect-utils",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/expect-utils"
+      },
+      "@jest/get-type": {
+        "from": "@jest/get-type",
+        "version": "30.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/get-type"
+      },
+      "@jest/fake-timers": {
+        "from": "@jest/fake-timers",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/fake-timers"
+      },
+      "@jest/pattern": {
+        "from": "@jest/pattern",
+        "version": "30.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/pattern"
+      },
+      "@jest/globals": {
+        "from": "@jest/globals",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/globals"
+      },
+      "@jest/schemas": {
+        "from": "@jest/schemas",
+        "version": "30.0.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/schemas"
+      },
+      "@jest/reporters": {
+        "from": "@jest/reporters",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/reporters"
+      },
+      "@jest/snapshot-utils": {
+        "from": "@jest/snapshot-utils",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/snapshot-utils"
+      },
+      "@jest/source-map": {
+        "from": "@jest/source-map",
+        "version": "30.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/source-map"
+      },
+      "@jest/test-sequencer": {
+        "from": "@jest/test-sequencer",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/test-sequencer"
+      },
+      "@jest/test-result": {
+        "from": "@jest/test-result",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/test-result"
+      },
+      "@jest/transform": {
+        "from": "@jest/transform",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/transform"
+      },
+      "@jest/types": {
+        "from": "@jest/types",
+        "version": "30.2.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jest/types"
+      },
+      "@jridgewell/gen-mapping": {
+        "from": "@jridgewell/gen-mapping",
+        "version": "0.3.13",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jridgewell/gen-mapping"
+      },
+      "@jridgewell/resolve-uri": {
+        "from": "@jridgewell/resolve-uri",
+        "version": "3.1.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jridgewell/resolve-uri"
+      },
+      "@jridgewell/remapping": {
+        "from": "@jridgewell/remapping",
+        "version": "2.3.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jridgewell/remapping"
+      },
+      "@napi-rs/wasm-runtime": {
+        "from": "@napi-rs/wasm-runtime",
+        "version": "0.2.12",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@napi-rs/wasm-runtime"
+      },
+      "@jridgewell/sourcemap-codec": {
+        "from": "@jridgewell/sourcemap-codec",
+        "version": "1.5.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jridgewell/sourcemap-codec"
+      },
+      "@jridgewell/trace-mapping": {
+        "from": "@jridgewell/trace-mapping",
+        "version": "0.3.31",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@jridgewell/trace-mapping"
+      },
+      "@neondatabase/serverless": {
+        "from": "@neondatabase/serverless",
+        "version": "1.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@neondatabase/serverless"
+      },
+      "@next/env": {
+        "from": "@next/env",
+        "version": "16.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@next/env"
+      },
+      "@next/eslint-plugin-next": {
+        "from": "@next/eslint-plugin-next",
+        "version": "16.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@next/eslint-plugin-next"
+      },
+      "@next/swc-linux-x64-musl": {
+        "from": "@next/swc-linux-x64-musl",
+        "version": "16.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@next/swc-linux-x64-musl"
+      },
+      "@next/swc-linux-x64-gnu": {
+        "from": "@next/swc-linux-x64-gnu",
+        "version": "16.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@next/swc-linux-x64-gnu"
+      },
+      "@nodelib/fs.stat": {
+        "from": "@nodelib/fs.stat",
+        "version": "2.0.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@nodelib/fs.stat"
+      },
+      "@nodelib/fs.scandir": {
+        "from": "@nodelib/fs.scandir",
+        "version": "2.1.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@nodelib/fs.scandir"
+      },
+      "@nodelib/fs.walk": {
+        "from": "@nodelib/fs.walk",
+        "version": "1.2.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@nodelib/fs.walk"
+      },
+      "@panva/hkdf": {
+        "from": "@panva/hkdf",
+        "version": "1.2.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@panva/hkdf"
+      },
+      "@nolyfill/is-core-module": {
+        "from": "@nolyfill/is-core-module",
+        "version": "1.0.39",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@nolyfill/is-core-module"
+      },
+      "@pkgr/core": {
+        "from": "@pkgr/core",
+        "version": "0.2.9",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@pkgr/core"
+      },
+      "@sinonjs/commons": {
+        "from": "@sinonjs/commons",
+        "version": "3.0.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@sinonjs/commons"
+      },
+      "@pkgjs/parseargs": {
+        "from": "@pkgjs/parseargs",
+        "version": "0.11.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@pkgjs/parseargs"
+      },
+      "@reduxjs/toolkit": {
+        "from": "@reduxjs/toolkit",
+        "version": "2.11.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@reduxjs/toolkit"
+      },
+      "@rtsao/scc": {
+        "from": "@rtsao/scc",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@rtsao/scc"
+      },
+      "@sinonjs/fake-timers": {
+        "from": "@sinonjs/fake-timers",
+        "version": "13.0.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@sinonjs/fake-timers"
+      },
+      "@sinclair/typebox": {
+        "from": "@sinclair/typebox",
+        "version": "0.34.47",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@sinclair/typebox"
+      },
+      "@standard-schema/spec": {
+        "from": "@standard-schema/spec",
+        "version": "1.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@standard-schema/spec"
+      },
+      "@tailwindcss/node": {
+        "from": "@tailwindcss/node",
+        "version": "4.1.18",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@tailwindcss/node"
+      },
+      "@standard-schema/utils": {
+        "from": "@standard-schema/utils",
+        "version": "0.3.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@standard-schema/utils"
+      },
+      "@tailwindcss/oxide-linux-x64-gnu": {
+        "from": "@tailwindcss/oxide-linux-x64-gnu",
+        "version": "4.1.18",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@tailwindcss/oxide-linux-x64-gnu"
+      },
+      "@swc/helpers": {
+        "from": "@swc/helpers",
+        "version": "0.5.15",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@swc/helpers"
+      },
+      "@testing-library/dom": {
+        "from": "@testing-library/dom",
+        "version": "10.4.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@testing-library/dom"
+      },
+      "@tailwindcss/oxide-linux-x64-musl": {
+        "from": "@tailwindcss/oxide-linux-x64-musl",
+        "version": "4.1.18",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@tailwindcss/oxide-linux-x64-musl"
+      },
+      "@testing-library/react": {
+        "from": "@testing-library/react",
+        "version": "16.3.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@testing-library/react"
+      },
+      "@tailwindcss/oxide": {
+        "from": "@tailwindcss/oxide",
+        "version": "4.1.18",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@tailwindcss/oxide"
+      },
+      "@tailwindcss/postcss": {
+        "from": "@tailwindcss/postcss",
+        "version": "4.1.18",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@tailwindcss/postcss"
+      },
+      "@types/aria-query": {
+        "from": "@types/aria-query",
+        "version": "5.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/aria-query"
+      },
+      "@types/babel__template": {
+        "from": "@types/babel__template",
+        "version": "7.4.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/babel__template"
+      },
+      "@types/babel__core": {
+        "from": "@types/babel__core",
+        "version": "7.20.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/babel__core"
+      },
+      "@types/babel__generator": {
+        "from": "@types/babel__generator",
+        "version": "7.27.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/babel__generator"
+      },
+      "@types/babel__traverse": {
+        "from": "@types/babel__traverse",
+        "version": "7.28.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/babel__traverse"
+      },
+      "@types/d3-array": {
+        "from": "@types/d3-array",
+        "version": "3.2.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/d3-array"
+      },
+      "@testing-library/jest-dom": {
+        "from": "@testing-library/jest-dom",
+        "version": "6.9.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@testing-library/jest-dom"
+      },
+      "@types/d3-ease": {
+        "from": "@types/d3-ease",
+        "version": "3.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/d3-ease"
+      },
+      "@types/d3-color": {
+        "from": "@types/d3-color",
+        "version": "3.1.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/d3-color"
+      },
+      "@types/d3-interpolate": {
+        "from": "@types/d3-interpolate",
+        "version": "3.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/d3-interpolate"
+      },
+      "@types/d3-path": {
+        "from": "@types/d3-path",
+        "version": "3.1.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/d3-path"
+      },
+      "@types/d3-shape": {
+        "from": "@types/d3-shape",
+        "version": "3.1.7",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/d3-shape"
+      },
+      "@testing-library/user-event": {
+        "from": "@testing-library/user-event",
+        "version": "14.6.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@testing-library/user-event"
+      },
+      "@types/d3-scale": {
+        "from": "@types/d3-scale",
+        "version": "4.0.9",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/d3-scale"
+      },
+      "@types/d3-time": {
+        "from": "@types/d3-time",
+        "version": "3.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/d3-time"
+      },
+      "@types/d3-timer": {
+        "from": "@types/d3-timer",
+        "version": "3.0.2",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/d3-timer"
+      },
+      "@types/debug": {
+        "from": "@types/debug",
+        "version": "4.1.12",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/debug"
+      },
+      "@types/estree": {
+        "from": "@types/estree",
+        "version": "1.0.8",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/estree"
+      },
+      "@types/estree-jsx": {
+        "from": "@types/estree-jsx",
+        "version": "1.0.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/estree-jsx"
+      },
+      "@types/hast": {
+        "from": "@types/hast",
+        "version": "3.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/hast"
+      },
+      "@types/istanbul-lib-coverage": {
+        "from": "@types/istanbul-lib-coverage",
+        "version": "2.0.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/istanbul-lib-coverage"
+      },
+      "@types/istanbul-lib-report": {
+        "from": "@types/istanbul-lib-report",
+        "version": "3.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/istanbul-lib-report"
+      },
+      "@types/jsdom": {
+        "from": "@types/jsdom",
+        "version": "21.1.7",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/jsdom"
+      },
+      "@types/istanbul-reports": {
+        "from": "@types/istanbul-reports",
+        "version": "3.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/istanbul-reports"
+      },
+      "@types/jest": {
+        "from": "@types/jest",
+        "version": "30.0.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/jest"
+      },
+      "@types/json-schema": {
+        "from": "@types/json-schema",
+        "version": "7.0.15",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/json-schema"
+      },
+      "@types/mdast": {
+        "from": "@types/mdast",
+        "version": "4.0.4",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/mdast"
+      },
+      "@types/node-fetch": {
+        "from": "@types/node-fetch",
+        "version": "2.6.13",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/node-fetch"
+      },
+      "@types/json5": {
+        "from": "@types/json5",
+        "version": "0.0.29",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/json5"
+      },
+      "@types/ms": {
+        "from": "@types/ms",
+        "version": "2.1.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/ms"
+      },
+      "@types/node": {
+        "from": "@types/node",
+        "version": "20.19.27",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/node"
+      },
+      "@types/pg": {
+        "from": "@types/pg",
+        "version": "8.16.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/pg"
+      },
+      "@types/react-dom": {
+        "from": "@types/react-dom",
+        "version": "19.2.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/react-dom"
+      },
+      "@types/stack-utils": {
+        "from": "@types/stack-utils",
+        "version": "2.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/stack-utils"
+      },
+      "@types/react": {
+        "from": "@types/react",
+        "version": "19.2.7",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/react"
+      },
+      "@types/tough-cookie": {
+        "from": "@types/tough-cookie",
+        "version": "4.0.5",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/tough-cookie"
+      },
+      "@types/unist": {
+        "from": "@types/unist",
+        "version": "3.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/unist"
+      },
+      "@types/yargs": {
+        "from": "@types/yargs",
+        "version": "17.0.35",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/yargs"
+      },
+      "@types/yargs-parser": {
+        "from": "@types/yargs-parser",
+        "version": "21.0.3",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/yargs-parser"
+      },
+      "@tybys/wasm-util": {
+        "from": "@tybys/wasm-util",
+        "version": "0.10.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@tybys/wasm-util"
+      },
+      "@types/use-sync-external-store": {
+        "from": "@types/use-sync-external-store",
+        "version": "0.0.6",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@types/use-sync-external-store"
+      },
+      "@ungap/structured-clone": {
+        "from": "@ungap/structured-clone",
+        "version": "1.3.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@ungap/structured-clone"
+      },
+      "@typescript-eslint/eslint-plugin": {
+        "from": "@typescript-eslint/eslint-plugin",
+        "version": "8.52.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@typescript-eslint/eslint-plugin"
+      },
+      "@typescript-eslint/project-service": {
+        "from": "@typescript-eslint/project-service",
+        "version": "8.52.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@typescript-eslint/project-service"
+      },
+      "@typescript-eslint/parser": {
+        "from": "@typescript-eslint/parser",
+        "version": "8.52.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@typescript-eslint/parser"
+      },
+      "@typescript-eslint/type-utils": {
+        "from": "@typescript-eslint/type-utils",
+        "version": "8.52.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@typescript-eslint/type-utils"
+      },
+      "@typescript-eslint/scope-manager": {
+        "from": "@typescript-eslint/scope-manager",
+        "version": "8.52.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@typescript-eslint/scope-manager"
+      },
+      "@typescript-eslint/tsconfig-utils": {
+        "from": "@typescript-eslint/tsconfig-utils",
+        "version": "8.52.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@typescript-eslint/tsconfig-utils"
+      },
+      "@typescript-eslint/types": {
+        "from": "@typescript-eslint/types",
+        "version": "8.52.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@typescript-eslint/types"
+      },
+      "@typescript-eslint/typescript-estree": {
+        "from": "@typescript-eslint/typescript-estree",
+        "version": "8.52.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@typescript-eslint/typescript-estree"
+      },
+      "@unrs/resolver-binding-linux-x64-musl": {
+        "from": "@unrs/resolver-binding-linux-x64-musl",
+        "version": "1.11.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@unrs/resolver-binding-linux-x64-musl"
+      },
+      "@typescript-eslint/utils": {
+        "from": "@typescript-eslint/utils",
+        "version": "8.52.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@typescript-eslint/utils"
+      },
+      "@unrs/resolver-binding-linux-x64-gnu": {
+        "from": "@unrs/resolver-binding-linux-x64-gnu",
+        "version": "1.11.1",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@unrs/resolver-binding-linux-x64-gnu"
+      },
+      "@typescript-eslint/visitor-keys": {
+        "from": "@typescript-eslint/visitor-keys",
+        "version": "8.52.0",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/@typescript-eslint/visitor-keys"
+      }
+    }
+  },
+  {
+    "name": "@calai/mobile",
+    "version": "1.0.0",
+    "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/apps/mobile",
+    "private": false,
+    "dependencies": {
+      "@calai/shared": {
+        "from": "@calai/shared",
+        "version": "link:../../packages/shared",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/packages/shared"
+      },
+      "@expo/metro-runtime": {
+        "from": "@expo/metro-runtime",
+        "version": "6.1.2",
+        "resolved": "https://registry.npmjs.org/@expo/metro-runtime/-/metro-runtime-6.1.2.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/@expo+metro-runtime@6.1.2_expo@54.0.31_react-dom@19.2.3_react@19.1.0__react-native@0.81.5_@ba_m42saihe3u6xrpzujc46lk6hs4/node_modules/@expo/metro-runtime"
+      },
+      "@react-native-async-storage/async-storage": {
+        "from": "@react-native-async-storage/async-storage",
+        "version": "2.2.0",
+        "resolved": "https://registry.npmjs.org/@react-native-async-storage/async-storage/-/async-storage-2.2.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/@react-native-async-storage+async-storage@2.2.0_react-native@0.81.5_@babel+core@7.28.6_@types_fp4qq3a7mejmut52v6jrlvxlzi/node_modules/@react-native-async-storage/async-storage"
+      },
+      "@react-navigation/bottom-tabs": {
+        "from": "@react-navigation/bottom-tabs",
+        "version": "7.10.0",
+        "resolved": "https://registry.npmjs.org/@react-navigation/bottom-tabs/-/bottom-tabs-7.10.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/@react-navigation+bottom-tabs@7.10.0_@react-navigation+native@7.1.28_react-native@0.81.5_@bab_chat42epxnjh4xqj4rdsozde24/node_modules/@react-navigation/bottom-tabs"
+      },
+      "@react-navigation/native": {
+        "from": "@react-navigation/native",
+        "version": "7.1.28",
+        "resolved": "https://registry.npmjs.org/@react-navigation/native/-/native-7.1.28.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/@react-navigation+native@7.1.28_react-native@0.81.5_@babel+core@7.28.6_@types+react@19.1.17_react@19.1.0__react@19.1.0/node_modules/@react-navigation/native"
+      },
+      "@react-navigation/native-stack": {
+        "from": "@react-navigation/native-stack",
+        "version": "7.10.0",
+        "resolved": "https://registry.npmjs.org/@react-navigation/native-stack/-/native-stack-7.10.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/@react-navigation+native-stack@7.10.0_@react-navigation+native@7.1.28_react-native@0.81.5_@ba_cxz74ursdii2stfh44qfhq375m/node_modules/@react-navigation/native-stack"
+      },
+      "axios": {
+        "from": "axios",
+        "version": "1.13.2",
+        "resolved": "https://registry.npmjs.org/axios/-/axios-1.13.2.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/axios@1.13.2/node_modules/axios"
+      },
+      "clsx": {
+        "from": "clsx",
+        "version": "2.1.1",
+        "resolved": "https://registry.npmjs.org/clsx/-/clsx-2.1.1.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/clsx@2.1.1/node_modules/clsx"
+      },
+      "date-fns": {
+        "from": "date-fns",
+        "version": "4.1.0",
+        "resolved": "https://registry.npmjs.org/date-fns/-/date-fns-4.1.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/date-fns@4.1.0/node_modules/date-fns"
+      },
+      "expo": {
+        "from": "expo",
+        "version": "54.0.31",
+        "resolved": "https://registry.npmjs.org/expo/-/expo-54.0.31.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/expo@54.0.31_@babel+core@7.28.6_@expo+metro-runtime@6.1.2_expo-router@6.0.21_react-native@0.8_ch7qfidwfud6iszwbzfb2m5rni/node_modules/expo"
+      },
+      "expo-asset": {
+        "from": "expo-asset",
+        "version": "12.0.12",
+        "resolved": "https://registry.npmjs.org/expo-asset/-/expo-asset-12.0.12.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/expo-asset@12.0.12_expo@54.0.31_react-native@0.81.5_@babel+core@7.28.6_@types+react@19.1.17_react@19.1.0__react@19.1.0/node_modules/expo-asset"
+      },
+      "expo-auth-session": {
+        "from": "expo-auth-session",
+        "version": "7.0.10",
+        "resolved": "https://registry.npmjs.org/expo-auth-session/-/expo-auth-session-7.0.10.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/expo-auth-session@7.0.10_expo@54.0.31_react-native@0.81.5_@babel+core@7.28.6_@types+react@19._sr67ldf7ee7fly73qlxua24tre/node_modules/expo-auth-session"
+      },
+      "expo-constants": {
+        "from": "expo-constants",
+        "version": "18.0.13",
+        "resolved": "https://registry.npmjs.org/expo-constants/-/expo-constants-18.0.13.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/expo-constants@18.0.13_expo@54.0.31_react-native@0.81.5_@babel+core@7.28.6_@types+react@19.1.17_react@19.1.0_/node_modules/expo-constants"
+      },
+      "expo-crypto": {
+        "from": "expo-crypto",
+        "version": "15.0.8",
+        "resolved": "https://registry.npmjs.org/expo-crypto/-/expo-crypto-15.0.8.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/expo-crypto@15.0.8_expo@54.0.31/node_modules/expo-crypto"
+      },
+      "expo-device": {
+        "from": "expo-device",
+        "version": "8.0.10",
+        "resolved": "https://registry.npmjs.org/expo-device/-/expo-device-8.0.10.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/expo-device@8.0.10_expo@54.0.31/node_modules/expo-device"
+      },
+      "expo-font": {
+        "from": "expo-font",
+        "version": "14.0.10",
+        "resolved": "https://registry.npmjs.org/expo-font/-/expo-font-14.0.10.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/expo-font@14.0.10_expo@54.0.31_react-native@0.81.5_@babel+core@7.28.6_@types+react@19.1.17_react@19.1.0__react@19.1.0/node_modules/expo-font"
+      },
+      "expo-linking": {
+        "from": "expo-linking",
+        "version": "8.0.11",
+        "resolved": "https://registry.npmjs.org/expo-linking/-/expo-linking-8.0.11.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/expo-linking@8.0.11_expo@54.0.31_react-native@0.81.5_@babel+core@7.28.6_@types+react@19.1.17_react@19.1.0__react@19.1.0/node_modules/expo-linking"
+      },
+      "expo-modules-core": {
+        "from": "expo-modules-core",
+        "version": "3.0.29",
+        "resolved": "https://registry.npmjs.org/expo-modules-core/-/expo-modules-core-3.0.29.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/expo-modules-core@3.0.29_react-native@0.81.5_@babel+core@7.28.6_@types+react@19.1.17_react@19.1.0__react@19.1.0/node_modules/expo-modules-core"
+      },
+      "expo-router": {
+        "from": "expo-router",
+        "version": "6.0.21",
+        "resolved": "https://registry.npmjs.org/expo-router/-/expo-router-6.0.21.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/expo-router@6.0.21_@expo+metro-runtime@6.1.2_@types+react-dom@19.2.3_@types+react@19.1.17__@t_op4p4f5xvwjt4hyquqv7xtgywm/node_modules/expo-router"
+      },
+      "expo-splash-screen": {
+        "from": "expo-splash-screen",
+        "version": "31.0.13",
+        "resolved": "https://registry.npmjs.org/expo-splash-screen/-/expo-splash-screen-31.0.13.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/expo-splash-screen@31.0.13_expo@54.0.31/node_modules/expo-splash-screen"
+      },
+      "expo-status-bar": {
+        "from": "expo-status-bar",
+        "version": "3.0.9",
+        "resolved": "https://registry.npmjs.org/expo-status-bar/-/expo-status-bar-3.0.9.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/expo-status-bar@3.0.9_react-native@0.81.5_@babel+core@7.28.6_@types+react@19.1.17_react@19.1.0__react@19.1.0/node_modules/expo-status-bar"
+      },
+      "expo-web-browser": {
+        "from": "expo-web-browser",
+        "version": "15.0.10",
+        "resolved": "https://registry.npmjs.org/expo-web-browser/-/expo-web-browser-15.0.10.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/expo-web-browser@15.0.10_expo@54.0.31_react-native@0.81.5_@babel+core@7.28.6_@types+react@19.1.17_react@19.1.0_/node_modules/expo-web-browser"
+      },
+      "lucide-react-native": {
+        "from": "lucide-react-native",
+        "version": "0.562.0",
+        "resolved": "https://registry.npmjs.org/lucide-react-native/-/lucide-react-native-0.562.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/lucide-react-native@0.562.0_react-native-svg@15.12.1_react-native@0.81.5_@babel+core@7.28.6_@_bgukpfyhmr2mos7yifrqjeiuxy/node_modules/lucide-react-native"
+      },
+      "nativewind": {
+        "from": "nativewind",
+        "version": "4.2.1",
+        "resolved": "https://registry.npmjs.org/nativewind/-/nativewind-4.2.1.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/nativewind@4.2.1_react-native-reanimated@4.2.1_react-native-worklets@0.7.2_@babel+core@7.28.6_z6yvjbtteryamlqp2gshbbmzte/node_modules/nativewind"
+      },
+      "react": {
+        "from": "react",
+        "version": "19.1.0",
+        "resolved": "https://registry.npmjs.org/react/-/react-19.1.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/react@19.1.0/node_modules/react"
+      },
+      "react-dom": {
+        "from": "react-dom",
+        "version": "19.2.3",
+        "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.2.3.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/react-dom@19.2.3_react@19.1.0/node_modules/react-dom"
+      },
+      "react-native": {
+        "from": "react-native",
+        "version": "0.81.5",
+        "resolved": "https://registry.npmjs.org/react-native/-/react-native-0.81.5.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/react-native@0.81.5_@babel+core@7.28.6_@types+react@19.1.17_react@19.1.0/node_modules/react-native"
+      },
+      "react-native-css-interop": {
+        "from": "react-native-css-interop",
+        "version": "0.2.1",
+        "resolved": "https://registry.npmjs.org/react-native-css-interop/-/react-native-css-interop-0.2.1.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/react-native-css-interop@0.2.1_react-native-reanimated@4.2.1_react-native-worklets@0.7.2_@bab_md36yruwo6z6yltypxm2zmvyjq/node_modules/react-native-css-interop"
+      },
+      "react-native-safe-area-context": {
+        "from": "react-native-safe-area-context",
+        "version": "5.6.2",
+        "resolved": "https://registry.npmjs.org/react-native-safe-area-context/-/react-native-safe-area-context-5.6.2.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/react-native-safe-area-context@5.6.2_react-native@0.81.5_@babel+core@7.28.6_@types+react@19.1_azuxgonsvxb2yngtegtuvyxcpi/node_modules/react-native-safe-area-context"
+      },
+      "react-native-screens": {
+        "from": "react-native-screens",
+        "version": "4.19.0",
+        "resolved": "https://registry.npmjs.org/react-native-screens/-/react-native-screens-4.19.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/react-native-screens@4.19.0_react-native@0.81.5_@babel+core@7.28.6_@types+react@19.1.17_react@19.1.0__react@19.1.0/node_modules/react-native-screens"
+      },
+      "react-native-svg": {
+        "from": "react-native-svg",
+        "version": "15.12.1",
+        "resolved": "https://registry.npmjs.org/react-native-svg/-/react-native-svg-15.12.1.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/react-native-svg@15.12.1_react-native@0.81.5_@babel+core@7.28.6_@types+react@19.1.17_react@19.1.0__react@19.1.0/node_modules/react-native-svg"
+      },
+      "react-native-web": {
+        "from": "react-native-web",
+        "version": "0.21.2",
+        "resolved": "https://registry.npmjs.org/react-native-web/-/react-native-web-0.21.2.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/react-native-web@0.21.2_react-dom@19.2.3_react@19.1.0__react@19.1.0/node_modules/react-native-web"
+      },
+      "tailwind-merge": {
+        "from": "tailwind-merge",
+        "version": "3.4.0",
+        "resolved": "https://registry.npmjs.org/tailwind-merge/-/tailwind-merge-3.4.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/tailwind-merge@3.4.0/node_modules/tailwind-merge"
+      },
+      "victory-native": {
+        "from": "victory-native",
+        "version": "41.20.2",
+        "resolved": "https://registry.npmjs.org/victory-native/-/victory-native-41.20.2.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/victory-native@41.20.2_@shopify+react-native-skia@2.4.14_react-native-reanimated@4.2.1_react-_h36zribs5ma4dwx3nkt7uzuyhm/node_modules/victory-native"
+      },
+      "whatwg-fetch": {
+        "from": "whatwg-fetch",
+        "version": "3.6.20",
+        "resolved": "https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-3.6.20.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/whatwg-fetch@3.6.20/node_modules/whatwg-fetch"
+      },
+      "zustand": {
+        "from": "zustand",
+        "version": "5.0.10",
+        "resolved": "https://registry.npmjs.org/zustand/-/zustand-5.0.10.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/zustand@5.0.10_@types+react@19.1.17_immer@11.1.3_react@19.1.0_use-sync-external-store@1.6.0_react@19.1.0_/node_modules/zustand"
+      }
+    },
+    "devDependencies": {
+      "@babel/core": {
+        "from": "@babel/core",
+        "version": "7.28.6",
+        "resolved": "https://registry.npmjs.org/@babel/core/-/core-7.28.6.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/@babel+core@7.28.6/node_modules/@babel/core"
+      },
+      "@types/react": {
+        "from": "@types/react",
+        "version": "19.1.17",
+        "resolved": "https://registry.npmjs.org/@types/react/-/react-19.1.17.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/@types+react@19.1.17/node_modules/@types/react"
+      },
+      "typescript": {
+        "from": "typescript",
+        "version": "5.9.3",
+        "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/typescript@5.9.3/node_modules/typescript"
+      }
+    }
+  },
+  {
+    "name": "@calai/web",
+    "version": "0.1.0",
+    "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/apps/web",
+    "private": true,
+    "dependencies": {
+      "@auth0/nextjs-auth0": {
+        "from": "@auth0/nextjs-auth0",
+        "version": "4.14.0",
+        "resolved": "https://registry.npmjs.org/@auth0/nextjs-auth0/-/nextjs-auth0-4.14.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/@auth0+nextjs-auth0@4.14.0_next@16.1.1_babel-plugin-react-compiler@1.0.0_react-dom@19.2.3_rea_5gk3cwvx6ie3asyao2azl2pl6y/node_modules/@auth0/nextjs-auth0"
+      },
+      "@calai/shared": {
+        "from": "@calai/shared",
+        "version": "link:../../packages/shared",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/packages/shared"
+      },
+      "@google/generative-ai": {
+        "from": "@google/generative-ai",
+        "version": "0.24.1",
+        "resolved": "https://registry.npmjs.org/@google/generative-ai/-/generative-ai-0.24.1.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/@google+generative-ai@0.24.1/node_modules/@google/generative-ai"
+      },
+      "@neondatabase/serverless": {
+        "from": "@neondatabase/serverless",
+        "version": "1.0.2",
+        "resolved": "https://registry.npmjs.org/@neondatabase/serverless/-/serverless-1.0.2.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/@neondatabase+serverless@1.0.2/node_modules/@neondatabase/serverless"
+      },
+      "drizzle-orm": {
+        "from": "drizzle-orm",
+        "version": "0.45.1",
+        "resolved": "https://registry.npmjs.org/drizzle-orm/-/drizzle-orm-0.45.1.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/drizzle-orm@0.45.1_@neondatabase+serverless@1.0.2_@types+pg@8.16.0/node_modules/drizzle-orm"
+      },
+      "googleapis": {
+        "from": "googleapis",
+        "version": "169.0.0",
+        "resolved": "https://registry.npmjs.org/googleapis/-/googleapis-169.0.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/googleapis@169.0.0/node_modules/googleapis"
+      },
+      "groq-sdk": {
+        "from": "groq-sdk",
+        "version": "0.37.0",
+        "resolved": "https://registry.npmjs.org/groq-sdk/-/groq-sdk-0.37.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/groq-sdk@0.37.0/node_modules/groq-sdk"
+      },
+      "lucide-react": {
+        "from": "lucide-react",
+        "version": "0.562.0",
+        "resolved": "https://registry.npmjs.org/lucide-react/-/lucide-react-0.562.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/lucide-react@0.562.0_react@19.2.3/node_modules/lucide-react"
+      },
+      "nanoid": {
+        "from": "nanoid",
+        "version": "5.1.6",
+        "resolved": "https://registry.npmjs.org/nanoid/-/nanoid-5.1.6.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/nanoid@5.1.6/node_modules/nanoid"
+      },
+      "next": {
+        "from": "next",
+        "version": "16.1.1",
+        "resolved": "https://registry.npmjs.org/next/-/next-16.1.1.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/next@16.1.1_babel-plugin-react-compiler@1.0.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next"
+      },
+      "react": {
+        "from": "react",
+        "version": "19.2.3",
+        "resolved": "https://registry.npmjs.org/react/-/react-19.2.3.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/react@19.2.3/node_modules/react"
+      },
+      "react-dom": {
+        "from": "react-dom",
+        "version": "19.2.3",
+        "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.2.3.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/react-dom@19.2.3_react@19.2.3/node_modules/react-dom"
+      },
+      "react-markdown": {
+        "from": "react-markdown",
+        "version": "10.1.0",
+        "resolved": "https://registry.npmjs.org/react-markdown/-/react-markdown-10.1.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/react-markdown@10.1.0_@types+react@19.2.8_react@19.2.3/node_modules/react-markdown"
+      },
+      "recharts": {
+        "from": "recharts",
+        "version": "3.6.0",
+        "resolved": "https://registry.npmjs.org/recharts/-/recharts-3.6.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/recharts@3.6.0_@types+react@19.2.8_react-dom@19.2.3_react@19.2.3__react-is@19.2.3_react@19.2.3_redux@5.0.1/node_modules/recharts"
+      }
+    },
+    "devDependencies": {
+      "@tailwindcss/postcss": {
+        "from": "@tailwindcss/postcss",
+        "version": "4.1.18",
+        "resolved": "https://registry.npmjs.org/@tailwindcss/postcss/-/postcss-4.1.18.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/@tailwindcss+postcss@4.1.18/node_modules/@tailwindcss/postcss"
+      },
+      "@types/node": {
+        "from": "@types/node",
+        "version": "20.19.30",
+        "resolved": "https://registry.npmjs.org/@types/node/-/node-20.19.30.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/@types+node@20.19.30/node_modules/@types/node"
+      },
+      "@types/react": {
+        "from": "@types/react",
+        "version": "19.2.8",
+        "resolved": "https://registry.npmjs.org/@types/react/-/react-19.2.8.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/@types+react@19.2.8/node_modules/@types/react"
+      },
+      "@types/react-dom": {
+        "from": "@types/react-dom",
+        "version": "19.2.3",
+        "resolved": "https://registry.npmjs.org/@types/react-dom/-/react-dom-19.2.3.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/@types+react-dom@19.2.3_@types+react@19.2.8/node_modules/@types/react-dom"
+      },
+      "dotenv": {
+        "from": "dotenv",
+        "version": "17.2.3",
+        "resolved": "https://registry.npmjs.org/dotenv/-/dotenv-17.2.3.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/dotenv@17.2.3/node_modules/dotenv"
+      },
+      "drizzle-kit": {
+        "from": "drizzle-kit",
+        "version": "0.31.8",
+        "resolved": "https://registry.npmjs.org/drizzle-kit/-/drizzle-kit-0.31.8.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/drizzle-kit@0.31.8/node_modules/drizzle-kit"
+      },
+      "eslint": {
+        "from": "eslint",
+        "version": "9.39.2",
+        "resolved": "https://registry.npmjs.org/eslint/-/eslint-9.39.2.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/eslint@9.39.2_jiti@2.6.1/node_modules/eslint"
+      },
+      "eslint-config-next": {
+        "from": "eslint-config-next",
+        "version": "16.1.1",
+        "resolved": "https://registry.npmjs.org/eslint-config-next/-/eslint-config-next-16.1.1.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/eslint-config-next@16.1.1_@typescript-eslint+parser@8.53.0_eslint@9.39.2_jiti@2.6.1__typescri_2pn6bbsasi7xhsu3py7e6wsxly/node_modules/eslint-config-next"
+      },
+      "tailwindcss": {
+        "from": "tailwindcss",
+        "version": "4.1.18",
+        "resolved": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.1.18.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/tailwindcss@4.1.18/node_modules/tailwindcss"
+      },
+      "typescript": {
+        "from": "typescript",
+        "version": "5.6.3",
+        "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.6.3.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/typescript@5.6.3/node_modules/typescript"
+      }
+    }
+  },
+  {
+    "name": "@calai/shared",
+    "version": "0.1.0",
+    "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/packages/shared",
+    "private": true,
+    "dependencies": {
+      "date-fns": {
+        "from": "date-fns",
+        "version": "4.1.0",
+        "resolved": "https://registry.npmjs.org/date-fns/-/date-fns-4.1.0.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/date-fns@4.1.0/node_modules/date-fns"
+      },
+      "nanoid": {
+        "from": "nanoid",
+        "version": "5.1.6",
+        "resolved": "https://registry.npmjs.org/nanoid/-/nanoid-5.1.6.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/nanoid@5.1.6/node_modules/nanoid"
+      }
+    },
+    "devDependencies": {
+      "eslint": {
+        "from": "eslint",
+        "version": "9.39.2",
+        "resolved": "https://registry.npmjs.org/eslint/-/eslint-9.39.2.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/eslint@9.39.2_jiti@2.6.1/node_modules/eslint"
+      },
+      "typescript": {
+        "from": "typescript",
+        "version": "5.6.3",
+        "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.6.3.tgz",
+        "path": "/home/lenovo/.gemini/antigravity/scratch/cal ai/node_modules/.pnpm/typescript@5.6.3/node_modules/typescript"
+      }
+    }
+  }
+]

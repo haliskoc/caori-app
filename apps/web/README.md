@@ -1,0 +1,59 @@
+# Cal AI MVP
+
+Manual-first health tracker with optional Auth0 login and Neon-backed sync.
+
+## Quick Start
+
+```bash
+npm install
+cp .env.example .env.local
+npm run db:push
+npm run dev
+```
+
+## Environment Variables
+
+Create `.env.local` based on `.env.example`:
+
+- `AUTH0_SECRET` (32-byte hex)
+- `APP_BASE_URL` (ex: `http://localhost:3000`)
+- `AUTH0_DOMAIN` (ex: `dev-xxxx.us.auth0.com`)
+- `AUTH0_CLIENT_ID`
+- `AUTH0_CLIENT_SECRET`
+- `DATABASE_URL` (Neon pooled connection string recommended for Vercel)
+- `USDA_FDC_API_KEY` (optional, FoodData Central search)
+- `FOODREPO_API_TOKEN` (optional, FoodRepo search)
+- `FOODREPO_API_BASE` (optional override, default `https://www.foodrepo.org/api/v3`)
+
+## Auth0 Setup (Google + Apple)
+
+1. Create a **Regular Web App** in Auth0.
+2. Add callback URLs:
+   - `http://localhost:3000/auth/callback`
+   - `https://YOUR_DOMAIN/auth/callback`
+3. Add logout URLs:
+   - `http://localhost:3000`
+   - `https://YOUR_DOMAIN`
+4. Enable **Google** and **Apple** connections under Authentication > Social.
+
+## Data Modes
+
+- Logged out: localStorage only.
+- Logged in: Neon Postgres via `/api/v1/*` routes.
+- Settings page includes a **"Cihazdaki kayıtları taşı"** button for migration.
+
+## Database
+
+Schemas live in `src/lib/schema.ts`. Run:
+
+```bash
+npm run db:push
+```
+
+## Deploy
+
+- Frontend: Vercel
+- Database: Neon
+- Auth: Auth0
+
+Set all environment variables in Vercel project settings.

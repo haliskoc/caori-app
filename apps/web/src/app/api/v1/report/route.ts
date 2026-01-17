@@ -1,0 +1,149 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getDb, ensureUser } from "@/lib/database/db";
+import { entries, goals } from "@/lib/database/schema";
+import { and, eq, gte, lte } from "drizzle-orm";
+import { toSafeNumber } from "@/lib/auth/security";
+import { buildReportData } from "@/lib/features/report";
+import type { ActivityType, Entry, MealType } from "@/lib/core/types";
+import { t } from "@/lib/core/i18n";
+import { getApiPrincipal } from "@/lib/auth/api-auth";
+
+export const dynamic = "force-dynamic";
+
+type EntryRow = typeof entries.$inferSelect;
+
+const allowedMeals: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
+const allowedActivities: ActivityType[] = [
+  "walking",
+  "running",
+  "gym",
+  "cycling",
+  "swimming",
+  "yoga",
+  "hiit",
+  "pilates",
+  "stairs",
+];
+
+function toIso(value: unknown) {
+  const date = value instanceof Date ? value : new Date(String(value));
+  if (Number.isNaN(date.getTime())) {
+    return new Date().toISOString();
+  }
+  return date.toISOString();
+}
+
+function normalizeEntry(row: EntryRow): Entry | null {
+  const timestamp = toIso(row.timestamp);
+  if (row.type === "water") {
+    return {
+      id: row.id,
+      type: "water",
+      amountMl: row.amountMl ?? 0,
+      timestamp,
+    };
+  }
+  if (row.type === "activity") {
+    return {
+      id: row.id,
+      type: "activity",
+      activityType: allowedActivities.includes(row.activityType as ActivityType)
+        ? (row.activityType as ActivityType)
+        : "walking",
+      durationMin: row.durationMin ?? 0,
+      estimatedCalories: row.estimatedCalories ?? 0,
+      timestamp,
+    };
+  }
+  if (row.type === "food") {
+    return {
+      id: row.id,
+      type: "food",
+      name: row.name ?? t("Belirtilmedi"),
+      calories: row.calories ?? 0,
+      mealType: allowedMeals.includes(row.mealType as MealType)
+        ? (row.mealType as MealType)
+        : "snack",
+      amountG: row.amountG ?? undefined,
+      proteinG: row.proteinG ?? undefined,
+      carbsG: row.carbsG ?? undefined,
+      fatG: row.fatG ?? undefined,
+      timestamp,
+    };
+  }
+  if (row.type === "drink") {
+    return {
+      id: row.id,
+      type: "drink",
+      name: row.name ?? t("Belirtilmedi"),
+      amountMl: row.amountMl ?? 0,
+      calories: row.calories ?? 0,
+      proteinG: row.proteinG ?? undefined,
+      carbsG: row.carbsG ?? undefined,
+      fatG: row.fatG ?? undefined,
+      timestamp,
+    };
+  }
+  return null;
+}
+
+export async function GET(request: NextRequest) {
+  const principal = await getApiPrincipal(request);
+  if (!principal) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const rangeParam = request.nextUrl.searchParams.get("range");
+  const rangeDays = toSafeNumber(rangeParam, 30, {
+    min: 1,
+    max: 90,
+    integer: true,
+  });
+
+  const end = new Date();
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  start.setDate(start.getDate() - rangeDays + 1);
+
+  await ensureUser({
+    sub: principal.userId,
+    email: principal.email ?? undefined,
+  });
+  const db = getDb();
+  const data = await db
+    .select()
+    .from(entries)
+    .where(
+      and(
+        eq(entries.userId, principal.userId),
+        gte(entries.timestamp, start),
+        lte(entries.timestamp, end),
+      ),
+    );
+
+  const [goalRow] = await db
+    .select()
+    .from(goals)
+    .where(eq(goals.userId, principal.userId));
+  const normalized = data
+    .map((row) => normalizeEntry(row))
+    .filter((entry): entry is Entry => Boolean(entry));
+  const report = buildReportData(
+    normalized,
+    rangeDays,
+    goalRow
+      ? {
+          calorieGoal: goalRow.calorieGoal,
+          waterGoalMl: goalRow.waterGoalMl,
+          activityGoalMin: goalRow.activityGoalMin ?? 30,
+          mealGoalCount: goalRow.mealGoalCount ?? 3,
+          weightGoalKg: goalRow.weightGoalKg ?? 0,
+          proteinGoalG: goalRow.proteinGoalG ?? 0,
+          carbsGoalG: goalRow.carbsGoalG ?? 0,
+          fatGoalG: goalRow.fatGoalG ?? 0,
+        }
+      : undefined,
+  );
+
+  return NextResponse.json(report);
+}
