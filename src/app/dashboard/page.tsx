@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Tooltip } from "@/components/ui/tooltip";
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { WeeklyCharts } from "@/components/features/charts/weekly-charts";
+import { SleepWidget } from "@/components/features/sleep/sleep-widget";
 import { useTracker } from "@/components/providers/tracker-provider";
 import { MealType } from "@/lib/core/types";
 import { t } from "@/lib/core/i18n";
@@ -180,6 +181,9 @@ export default function DashboardPage() {
           </div>
         </Card>
       </section>
+
+      {/* Sleep Widget */}
+      <SleepWidget />
 
       <WeeklyCharts summary={weeklySummary} hasEntries={hasEntries} />
 

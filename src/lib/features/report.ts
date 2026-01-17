@@ -414,6 +414,8 @@ export function buildReportData(
       proteinG: 0,
       carbsG: 0,
       fatG: 0,
+      sleepHours: 0,
+      sleepQuality: null,
     });
     mealSets.set(key, new Set());
   }
@@ -573,8 +575,8 @@ export function buildReportData(
 
   const adherenceScore = scoredDays.length
     ? Math.round(
-        (scoredDays.reduce((sum, item) => sum + item.score, 0) / scoredDays.length) * 100
-      )
+      (scoredDays.reduce((sum, item) => sum + item.score, 0) / scoredDays.length) * 100
+    )
     : 0;
 
   const effectiveDays = scoredDays
@@ -638,8 +640,8 @@ export function buildReportData(
         : 0;
     const weekScore = chunk.length
       ? Math.round(
-          (chunk.reduce((sum, day) => sum + getDayScore(day), 0) / chunk.length) * 100
-        )
+        (chunk.reduce((sum, day) => sum + getDayScore(day), 0) / chunk.length) * 100
+      )
       : 0;
     weekly.push({
       weekStart: chunk[0]?.date ?? "",

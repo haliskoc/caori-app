@@ -46,6 +46,7 @@ export const goals = pgTable("goals", {
   proteinGoalG: integer("protein_goal_g").notNull().default(0),
   carbsGoalG: integer("carbs_goal_g").notNull().default(0),
   fatGoalG: integer("fat_goal_g").notNull().default(0),
+  sleepGoalHours: integer("sleep_goal_hours").notNull().default(8),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
@@ -172,4 +173,18 @@ export const integrations = pgTable("integrations", {
   meta: jsonb("meta"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+});
+
+export const sleepLogs = pgTable("sleep_logs", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  sleepStart: timestamp("sleep_start", { withTimezone: true }).notNull(),
+  sleepEnd: timestamp("sleep_end", { withTimezone: true }).notNull(),
+  durationMin: integer("duration_min").notNull(),
+  quality: text("quality").notNull().default("good"), // poor, fair, good, excellent
+  note: text("note"),
+  timestamp: timestamp("timestamp", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });

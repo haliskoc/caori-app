@@ -86,6 +86,14 @@ export function buildWeeklySummary(entries: Entry[], days = 7): DailySummary[] {
       }
       return sum;
     }, 0);
+    // Get sleep data for the day
+    const sleepEntry = dailyEntries.find((entry) => entry.type === "sleep");
+    const sleepHours = sleepEntry && sleepEntry.type === "sleep"
+      ? sleepEntry.durationMin / 60
+      : 0;
+    const sleepQuality = sleepEntry && sleepEntry.type === "sleep"
+      ? sleepEntry.quality
+      : null;
     return {
       date,
       caloriesIn,
@@ -96,6 +104,8 @@ export function buildWeeklySummary(entries: Entry[], days = 7): DailySummary[] {
       proteinG,
       carbsG,
       fatG,
+      sleepHours,
+      sleepQuality,
     };
   });
 }

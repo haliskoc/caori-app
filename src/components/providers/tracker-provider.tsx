@@ -118,6 +118,7 @@ const DEFAULT_GOALS: Goals = {
   proteinGoalG: 0,
   carbsGoalG: 0,
   fatGoalG: 0,
+  sleepGoalHours: 8,
 };
 
 const MEAL_TYPES: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
@@ -205,20 +206,45 @@ function normalizeEntry(entry: Entry): Entry {
       timestamp,
     };
   }
+  if (entry.type === "sleep") {
+    return {
+      id,
+      type: "sleep",
+      sleepStart: entry.sleepStart || timestamp,
+      sleepEnd: entry.sleepEnd || timestamp,
+      durationMin: Math.round(toFiniteNumber(entry.durationMin, 0)),
+      quality: (["poor", "fair", "good", "excellent"] as const).includes(entry.quality as "poor" | "fair" | "good" | "excellent")
+        ? entry.quality
+        : "good",
+      note: entry.note?.trim() || undefined,
+      timestamp,
+    };
+  }
+  if (entry.type === "activity") {
+    return {
+      id,
+      type: "activity",
+      activityType: ACTIVITY_TYPES.includes(entry.activityType)
+        ? entry.activityType
+        : "walking",
+      durationMin: Math.round(toFiniteNumber(entry.durationMin, 0)),
+      estimatedCalories: Math.round(toFiniteNumber(entry.estimatedCalories, 0)),
+      note:
+        typeof (entry as { note?: string; name?: string }).note === "string"
+          ? (entry as { note?: string }).note?.trim() || undefined
+          : typeof (entry as { name?: string }).name === "string"
+            ? (entry as { name?: string }).name?.trim() || undefined
+            : undefined,
+      timestamp,
+    };
+  }
+  // Fallback for unknown types - treat as activity
   return {
     id,
     type: "activity",
-    activityType: ACTIVITY_TYPES.includes(entry.activityType)
-      ? entry.activityType
-      : "walking",
-    durationMin: Math.round(toFiniteNumber(entry.durationMin, 0)),
-    estimatedCalories: Math.round(toFiniteNumber(entry.estimatedCalories, 0)),
-    note:
-      typeof (entry as { note?: string; name?: string }).note === "string"
-        ? (entry as { note?: string }).note?.trim() || undefined
-        : typeof (entry as { name?: string }).name === "string"
-          ? (entry as { name?: string }).name?.trim() || undefined
-          : undefined,
+    activityType: "walking",
+    durationMin: 0,
+    estimatedCalories: 0,
     timestamp,
   };
 }
@@ -377,6 +403,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           proteinGoalG: data?.proteinGoalG ?? DEFAULT_GOALS.proteinGoalG,
           carbsGoalG: data?.carbsGoalG ?? DEFAULT_GOALS.carbsGoalG,
           fatGoalG: data?.fatGoalG ?? DEFAULT_GOALS.fatGoalG,
+          sleepGoalHours: data?.sleepGoalHours ?? DEFAULT_GOALS.sleepGoalHours,
         });
       }
       if (settingsRes.ok) {
@@ -844,6 +871,7 @@ export function TrackerProvider({ children }: { children: React.ReactNode }) {
           proteinGoalG: data?.proteinGoalG ?? updated.proteinGoalG,
           carbsGoalG: data?.carbsGoalG ?? updated.carbsGoalG,
           fatGoalG: data?.fatGoalG ?? updated.fatGoalG,
+          sleepGoalHours: data?.sleepGoalHours ?? updated.sleepGoalHours,
         });
         recordAudit("update-goals", t("Hedefler güncellendi"), {
           waterGoalMl: data?.waterGoalMl ?? updated.waterGoalMl,

@@ -10,6 +10,8 @@ export type ActivityType =
   | "pilates"
   | "stairs";
 
+export type SleepQuality = "poor" | "fair" | "good" | "excellent";
+
 export type MeasurementType = "weight" | "waist" | "hip" | "chest" | "bodyFat";
 
 export type FoodEntry = {
@@ -54,7 +56,18 @@ export type ActivityEntry = {
   timestamp: string;
 };
 
-export type Entry = FoodEntry | WaterEntry | DrinkEntry | ActivityEntry;
+export type SleepEntry = {
+  id: string;
+  type: "sleep";
+  sleepStart: string;
+  sleepEnd: string;
+  durationMin: number;
+  quality: SleepQuality;
+  note?: string;
+  timestamp: string;
+};
+
+export type Entry = FoodEntry | WaterEntry | DrinkEntry | ActivityEntry | SleepEntry;
 
 export type Goals = {
   waterGoalMl: number;
@@ -65,6 +78,7 @@ export type Goals = {
   proteinGoalG: number;
   carbsGoalG: number;
   fatGoalG: number;
+  sleepGoalHours: number;
 };
 
 export type DailySummary = {
@@ -77,6 +91,8 @@ export type DailySummary = {
   proteinG: number;
   carbsG: number;
   fatG: number;
+  sleepHours: number;
+  sleepQuality: SleepQuality | null;
 };
 
 export type WeeklySummary = DailySummary[];
