@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { Moon, Sun, Clock, Star, ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { Moon, Sun, Clock, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { t } from "@/lib/core/i18n";
 import { SleepEntry, SleepQuality } from "@/lib/core/types";
@@ -26,7 +25,6 @@ import Link from "next/link";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 export default function SleepPage() {
-    const router = useRouter();
     const { user } = useUser();
     const [sleepLogs, setSleepLogs] = useState<SleepEntry[]>([]);
     const [loading, setLoading] = useState(true);
@@ -40,7 +38,7 @@ export default function SleepPage() {
     const [submitting, setSubmitting] = useState(false);
 
     const dataMode = user?.sub ? "remote" : "local";
-    const sleepGoalHours = 8; // Default, could come from goals
+    const sleepGoalHours = 8;
 
     useEffect(() => {
         const loadData = async () => {
@@ -126,7 +124,6 @@ export default function SleepPage() {
                     const created = await res.json();
                     setSleepLogs((prev) => [created, ...prev]);
                 } else {
-                    // Fallback to local
                     const updated = [entry, ...sleepLogs];
                     setSleepLogs(updated);
                     saveSleepLogs(updated);
@@ -200,7 +197,7 @@ export default function SleepPage() {
                 </div>
                 <button
                     onClick={() => setShowAddForm(!showAddForm)}
-                    className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all"
+                    className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition-all"
                 >
                     <Plus className="h-4 w-4" />
                     {t("Uyku Ekle")}
@@ -209,7 +206,7 @@ export default function SleepPage() {
 
             {/* Today's Summary */}
             {todaySleep && (
-                <Card className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-xl">
+                <Card className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white border-0 shadow-xl">
                     <div className="flex items-center gap-4">
                         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
                             <Moon className="h-8 w-8 text-white" />
@@ -252,7 +249,7 @@ export default function SleepPage() {
 
             {/* Add Form */}
             {showAddForm && (
-                <Card className="border-indigo-100 bg-indigo-50/50">
+                <Card className="border-emerald-100 bg-emerald-50/50">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid gap-4 sm:grid-cols-2">
                             <div>
@@ -263,7 +260,7 @@ export default function SleepPage() {
                                     type="datetime-local"
                                     value={sleepStart}
                                     onChange={(e) => setSleepStart(e.target.value)}
-                                    className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10"
+                                    className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/10"
                                     required
                                 />
                             </div>
@@ -275,7 +272,7 @@ export default function SleepPage() {
                                     type="datetime-local"
                                     value={sleepEnd}
                                     onChange={(e) => setSleepEnd(e.target.value)}
-                                    className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10"
+                                    className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/10"
                                     required
                                 />
                             </div>
@@ -292,8 +289,8 @@ export default function SleepPage() {
                                         type="button"
                                         onClick={() => setQuality(q)}
                                         className={`flex flex-col items-center gap-1 rounded-xl border-2 p-3 transition-all ${quality === q
-                                                ? "border-indigo-500 bg-indigo-50"
-                                                : "border-gray-200 bg-white hover:border-indigo-200"
+                                                ? "border-emerald-500 bg-emerald-50"
+                                                : "border-gray-200 bg-white hover:border-emerald-200"
                                             }`}
                                     >
                                         <span className="text-2xl">{sleepQualityEmojis[q]}</span>
@@ -313,7 +310,7 @@ export default function SleepPage() {
                                 value={note}
                                 onChange={(e) => setNote(e.target.value)}
                                 placeholder={t("Örn: Gece yarısı uyandım, rüya gördüm...")}
-                                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 resize-none"
+                                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 resize-none"
                                 rows={2}
                             />
                         </div>
@@ -329,7 +326,7 @@ export default function SleepPage() {
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className="flex-1 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all disabled:opacity-50"
+                                className="flex-1 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition-all disabled:opacity-50"
                             >
                                 {submitting ? t("Kaydediliyor...") : t("Kaydet")}
                             </button>
@@ -339,10 +336,10 @@ export default function SleepPage() {
             )}
 
             {/* Sleep Goal Card */}
-            <Card className="border-indigo-100">
+            <Card className="border-emerald-100">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
                             <Clock className="h-6 w-6" />
                         </div>
                         <div>
@@ -351,7 +348,7 @@ export default function SleepPage() {
                         </div>
                     </div>
                     <div className="text-right">
-                        <p className="text-2xl font-black text-indigo-600">{sleepGoalHours}</p>
+                        <p className="text-2xl font-black text-emerald-600">{sleepGoalHours}</p>
                         <p className="text-xs text-gray-500">{t("saat")}</p>
                     </div>
                 </div>
@@ -371,10 +368,10 @@ export default function SleepPage() {
                         {sleepLogs.map((log) => (
                             <Card
                                 key={log.id}
-                                className="flex items-center justify-between border-gray-100 hover:border-indigo-100 transition-all"
+                                className="flex items-center justify-between border-gray-100 hover:border-emerald-100 transition-all"
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-2xl">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-2xl">
                                         {sleepQualityEmojis[log.quality]}
                                     </div>
                                     <div>
@@ -393,7 +390,7 @@ export default function SleepPage() {
                                 <div className="flex items-center gap-2">
                                     <span
                                         className={`rounded-full px-2 py-1 text-xs font-bold ${log.quality === "excellent"
-                                                ? "bg-blue-100 text-blue-700"
+                                                ? "bg-emerald-100 text-emerald-700"
                                                 : log.quality === "good"
                                                     ? "bg-emerald-100 text-emerald-700"
                                                     : log.quality === "fair"

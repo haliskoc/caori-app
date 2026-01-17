@@ -77,7 +77,7 @@ export function SleepWidget() {
 
     if (loading) {
         return (
-            <Card className="border-indigo-100 animate-pulse">
+            <Card className="border-emerald-100 animate-pulse">
                 <div className="h-24 bg-gray-100 rounded-xl" />
             </Card>
         );
@@ -85,10 +85,10 @@ export function SleepWidget() {
 
     return (
         <Link href="/sleep" className="block">
-            <Card className="border-indigo-100 hover:border-indigo-200 hover:shadow-lg transition-all group cursor-pointer">
+            <Card className="border-emerald-100 hover:border-emerald-200 hover:shadow-lg transition-all group cursor-pointer">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-200 group-hover:scale-110 transition-all">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-200 group-hover:scale-110 transition-all">
                             <Moon className="h-6 w-6" />
                         </div>
                         <div>
@@ -108,7 +108,7 @@ export function SleepWidget() {
                     <div className="flex items-center gap-3">
                         {todaySleep ? (
                             <div className="text-right">
-                                <p className="text-xl font-black text-indigo-600">
+                                <p className="text-xl font-black text-emerald-600">
                                     {formatDuration(todaySleep.durationMin)}
                                 </p>
                                 <p className="text-[10px] text-gray-400">
@@ -117,19 +117,19 @@ export function SleepWidget() {
                             </div>
                         ) : (
                             <div className="text-right">
-                                <p className="text-sm font-bold text-indigo-600">{t("Uyku Ekle")}</p>
+                                <p className="text-sm font-bold text-emerald-600">{t("Uyku Ekle")}</p>
                             </div>
                         )}
-                        <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-indigo-500 group-hover:translate-x-1 transition-all" />
+                        <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
                     </div>
                 </div>
 
                 {/* Progress Bar */}
                 {todaySleep && (
                     <div className="mt-4">
-                        <div className="h-2 w-full overflow-hidden rounded-full bg-indigo-100">
+                        <div className="h-2 w-full overflow-hidden rounded-full bg-emerald-100">
                             <div
-                                className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500"
+                                className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-500"
                                 style={{ width: `${sleepProgress}%` }}
                             />
                         </div>
