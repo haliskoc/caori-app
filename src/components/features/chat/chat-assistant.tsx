@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Bot, Send, X, Sparkles, User, Loader2, Copy, Check, Search, TrendingUp, Utensils, Bell, Info, Coffee } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Bot, Send, X, Sparkles, User, Loader2, Copy, Check, Search, TrendingUp, Utensils, Bell, Info, Coffee, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
 import Link from "next/link";
 import { t, getLocale } from "@/lib/core/i18n";
 import ReactMarkdown from "react-markdown";
 import { useTracker } from "@/components/providers/tracker-provider";
 import { MealType, ActivityType } from "@/lib/core/types";
+import { VoiceChatRecognition, VoiceChatSynthesis, isSpeechRecognitionSupported, isSpeechSynthesisSupported } from "@/lib/features/voice/voice-chat";
 
 type Message = {
     id: string;
@@ -114,6 +115,15 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
     const [customAmount, setCustomAmount] = useState<string>("");
     const scrollAnchorRef = useRef<HTMLDivElement>(null);
 
+    // Voice chat states
+    const [isVoiceListening, setIsVoiceListening] = useState(false);
+    const [isVoiceSpeaking, setIsVoiceSpeaking] = useState(false);
+    const [voiceTranscript, setVoiceTranscript] = useState("");
+    const [voiceSupported, setVoiceSupported] = useState(true);
+    const [autoSpeak, setAutoSpeak] = useState(false);
+    const recognitionRef = useRef<VoiceChatRecognition | null>(null);
+    const synthesisRef = useRef<VoiceChatSynthesis | null>(null);
+
     // Her açıldığında sohbeti sıfırla
     useEffect(() => {
         if (open) {
@@ -129,9 +139,101 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
         }
     }, [open]);
 
+    // Initialize voice chat
+    useEffect(() => {
+        setVoiceSupported(isSpeechRecognitionSupported() && isSpeechSynthesisSupported());
+        
+        if (isSpeechRecognitionSupported()) {
+            const recognition = new VoiceChatRecognition(getLocale() === "tr" ? "tr-TR" : "en-US");
+            
+            recognition.onTranscript((transcript, isFinal) => {
+                setVoiceTranscript(transcript);
+                
+                if (isFinal && transcript.trim()) {
+                    setInput(transcript);
+                    setVoiceTranscript("");
+                }
+            });
+            
+            recognition.onError((error) => {
+                console.error("Voice recognition error:", error);
+                setIsVoiceListening(false);
+            });
+            
+            recognition.onEnd(() => {
+                setIsVoiceListening(false);
+            });
+            
+            recognitionRef.current = recognition;
+        }
+        
+        if (isSpeechSynthesisSupported()) {
+            synthesisRef.current = new VoiceChatSynthesis();
+        }
+        
+        return () => {
+            recognitionRef.current?.abort();
+            synthesisRef.current?.stop();
+        };
+    }, []);
+
+    // Auto-speak AI responses
+    useEffect(() => {
+        if (!autoSpeak || !synthesisRef.current) {
+            return;
+        }
+        
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage && lastMessage.role === "list" && lastMessage.id !== "welcome") {
+            // Remove markdown formatting for speech
+            const cleanText = lastMessage.content
+                .replace(/\*\*/g, "")
+                .replace(/\*/g, "")
+                .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+                .replace(/#{1,6}\s/g, "")
+                .replace(/```[\s\S]*?```/g, "")
+                .replace(/`([^`]+)`/g, "$1");
+            
+            synthesisRef.current.speak(cleanText, { lang: getLocale() === "tr" ? "tr-TR" : "en-US" });
+            setIsVoiceSpeaking(true);
+            
+            // Update speaking state when done
+            const checkSpeaking = setInterval(() => {
+                if (synthesisRef.current && !synthesisRef.current.getIsSpeaking()) {
+                    setIsVoiceSpeaking(false);
+                    clearInterval(checkSpeaking);
+                }
+            }, 100);
+            
+            return () => clearInterval(checkSpeaking);
+        }
+    }, [messages, autoSpeak]);
+
     useEffect(() => {
         scrollAnchorRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }, [messages, open, isLoading]);
+
+    const toggleVoiceListening = useCallback(() => {
+        if (!recognitionRef.current) {
+            return;
+        }
+        
+        if (isVoiceListening) {
+            recognitionRef.current.stop();
+            setIsVoiceListening(false);
+        } else {
+            recognitionRef.current.start();
+            setIsVoiceListening(true);
+        }
+    }, [isVoiceListening]);
+
+    const toggleAutoSpeak = useCallback(() => {
+        if (isVoiceSpeaking && synthesisRef.current) {
+            synthesisRef.current.stop();
+            setIsVoiceSpeaking(false);
+        }
+        setAutoSpeak((prev) => !prev);
+    }, [isVoiceSpeaking]);
 
     async function copyMessage(message: Message) {
         const text = message.content.trim();
@@ -919,10 +1021,76 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
 
                     {/* Input Area */}
                     <div className="border-t border-emerald-50 bg-white p-4">
+                        {/* Voice Controls */}
+                        {voiceSupported && (
+                            <div className="flex items-center justify-between mb-3 px-1">
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={toggleVoiceListening}
+                                        disabled={isLoading || isLimitReached}
+                                        className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                                            isVoiceListening
+                                                ? "bg-red-100 text-red-600 hover:bg-red-200"
+                                                : "bg-emerald-100 text-emerald-600 hover:bg-emerald-200"
+                                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                        title={isVoiceListening ? t("Dinlemeyi Durdur") : t("Sesli Konuş")}
+                                    >
+                                        {isVoiceListening ? (
+                                            <>
+                                                <MicOff className="h-3.5 w-3.5" />
+                                                <span className="animate-pulse">{t("Dinleniyor...")}</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Mic className="h-3.5 w-3.5" />
+                                                {t("Sesli")}
+                                            </>
+                                        )}
+                                    </button>
+                                    
+                                    <button
+                                        type="button"
+                                        onClick={toggleAutoSpeak}
+                                        disabled={isLoading || isLimitReached}
+                                        className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                                            autoSpeak
+                                                ? "bg-blue-100 text-blue-600 hover:bg-blue-200"
+                                                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                        title={autoSpeak ? t("Otomatik Konuşmayı Kapat") : t("Otomatik Konuşma")}
+                                    >
+                                        {isVoiceSpeaking ? (
+                                            <>
+                                                <Volume2 className="h-3.5 w-3.5 animate-pulse" />
+                                                <span className="animate-pulse">{t("Konuşuyor...")}</span>
+                                            </>
+                                        ) : autoSpeak ? (
+                                            <>
+                                                <Volume2 className="h-3.5 w-3.5" />
+                                                {t("Açık")}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <VolumeX className="h-3.5 w-3.5" />
+                                                {t("Kapalı")}
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                                
+                                {voiceTranscript && (
+                                    <span className="text-xs text-emerald-600 font-medium animate-pulse">
+                                        {t("Yazılıyor...")}
+                                    </span>
+                                )}
+                            </div>
+                        )}
+                        
                         <form onSubmit={handleSubmit} className="relative flex items-center">
                             <input
                                 type="text"
-                                value={input}
+                                value={voiceTranscript || input}
                                 onChange={(e) => setInput(e.target.value)}
                                 placeholder={isLimitReached ? t("Limit doldu...") : t("Bir şeyler sor...")}
                                 disabled={isLoading || isLimitReached}
