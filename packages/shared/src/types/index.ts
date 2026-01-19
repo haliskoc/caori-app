@@ -18,12 +18,14 @@ export type FoodEntry = {
   id: string;
   type: "food";
   name: string;
+  brand?: string;
   calories: number;
   mealType: MealType;
   amountG?: number;
   proteinG?: number;
   carbsG?: number;
   fatG?: number;
+  barcode?: string;
   timestamp: string;
 };
 

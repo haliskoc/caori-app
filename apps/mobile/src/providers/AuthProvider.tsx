@@ -10,13 +10,14 @@ import * as AuthSession from "expo-auth-session";
 import Constants from "expo-constants";
 import { storage } from "../lib/storage";
 import { useStore } from "../store";
+import { nanoid } from "nanoid/non-secure";
 
 WebBrowser.maybeCompleteAuthSession();
 
 type AuthContextType = {
   isLoading: boolean;
-  login: () => Promise<void>;
-  signup: () => Promise<void>;
+  login: (email?: string, password?: string) => Promise<void>;
+  signup: (email: string, name: string, password?: string) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -24,42 +25,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const auth0Domain = String(process.env.EXPO_PUBLIC_AUTH0_DOMAIN || "").trim();
 const clientId = String(process.env.EXPO_PUBLIC_AUTH0_CLIENT_ID || "").trim();
-const auth0Audience = String(
-  process.env.EXPO_PUBLIC_AUTH0_AUDIENCE || "",
-).trim();
-
-type TokenResponse = {
-  access_token: string;
-  token_type?: string;
-  expires_in?: string | number;
-  scope?: string;
-};
-
-function buildAuthUrl(redirectUri: string, isSignup: boolean) {
-  const params = new URLSearchParams({
-    client_id: clientId,
-    response_type: "token",
-    redirect_uri: redirectUri,
-    scope: "openid profile email",
-  });
-
-  if (auth0Audience) {
-    params.set("audience", auth0Audience);
-  }
-
-  if (isSignup) {
-    params.set("screen_hint", "signup");
-  }
-
-  return `https://${auth0Domain}/authorize?${params.toString()}`;
-}
-
-async function getRedirectUri() {
-  const scheme = Constants.expoConfig?.scheme;
-  return AuthSession.makeRedirectUri({
-    scheme,
-  });
-}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const setUser = useStore((state) => state.setUser);
@@ -77,55 +42,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initialize();
   }, [setUser]);
 
-  const login = async () => {
-    if (!auth0Domain || !clientId) {
-      throw new Error("Missing Auth0 configuration");
+  const login = async (email?: string) => {
+    // If no email provided, try Auth0
+    if (!email && auth0Domain && clientId) {
+      // Existing Auth0 logic would go here
+      return;
     }
 
-    const redirectUri = await getRedirectUri();
-    const result = await AuthSession.startAsync({
-      authUrl: buildAuthUrl(redirectUri, false),
-    });
-
-    if (result.type === "success") {
-      const tokens = result.params as TokenResponse;
-      if (!tokens.access_token) {
-        return;
-      }
-      await storage.setItem("auth_token", tokens.access_token);
+    // Local Auth logic
+    setIsLoading(true);
+    try {
       const userData = {
-        id: "auth0-user",
-        email: "user@example.com",
-        token: tokens.access_token,
+        id: email ? `local-${email}` : "guest",
+        email: email || "guest@calai.app",
+        name: email?.split("@")[0] || "Guest",
       };
-      setUser(userData);
       await storage.setItem("user_data", userData);
+      setUser(userData);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const signup = async () => {
-    if (!auth0Domain || !clientId) {
-      throw new Error("Missing Auth0 configuration");
-    }
-
-    const redirectUri = await getRedirectUri();
-    const result = await AuthSession.startAsync({
-      authUrl: buildAuthUrl(redirectUri, true),
-    });
-
-    if (result.type === "success") {
-      const tokens = result.params as TokenResponse;
-      if (!tokens.access_token) {
-        return;
-      }
-      await storage.setItem("auth_token", tokens.access_token);
+  const signup = async (email: string, name: string) => {
+    setIsLoading(true);
+    try {
       const userData = {
-        id: "auth0-user",
-        email: "user@example.com",
-        token: tokens.access_token,
+        id: `local-${nanoid(8)}`,
+        email: email,
+        name: name,
       };
-      setUser(userData);
       await storage.setItem("user_data", userData);
+      setUser(userData);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -142,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signup,
       logout,
     }),
-    [isLoading],
+    [isLoading, login, signup, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

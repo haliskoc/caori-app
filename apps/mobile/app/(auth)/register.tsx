@@ -1,57 +1,249 @@
-import { View, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuth } from '../../src/providers/AuthProvider';
-import { t } from '@calai/shared';
-import { UserPlus, ChevronLeft } from 'lucide-react-native';
-import { Text } from '../../src/components/atoms/Text';
-import { Button } from '../../src/components/atoms/Button';
-import { useRouter } from 'expo-router';
+import React, { useState } from "react";
+import {
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "../../src/providers/AuthProvider";
+import { t } from "@calai/shared";
+import { UserPlus, Mail, Lock, User, ChevronLeft } from "lucide-react-native";
+import { Text } from "../../src/components/atoms/Text";
+import { Button } from "../../src/components/atoms/Button";
+import { AnimatedBackground } from "../../src/components/atoms/AnimatedBackground";
+import { LiquidGlassCard } from "../../src/components/atoms/LiquidGlassCard";
+import { THEME } from "../../src/theme";
+import { useRouter } from "expo-router";
 
 export default function RegisterScreen() {
-  const { signup } = useAuth();
+  const { signup, isLoading } = useAuth();
   const router = useRouter();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleRegister = async () => {
+    if (!email || !name) return;
+    await signup(email, name, password);
+  };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#fffcf9]">
-      <View className="px-4 py-4">
-        <TouchableOpacity onPress={() => router.back()} className="p-2">
-          <ChevronLeft size={24} color="#111827" />
-        </TouchableOpacity>
-      </View>
-
-      <View className="flex-1 items-center justify-center px-6">
-        <View className="items-center mb-12">
-          <View className="h-20 w-20 rounded-[2.5rem] bg-emerald-50 items-center justify-center mb-6 border border-emerald-100 shadow-sm">
-            <UserPlus size={40} color="#10b981" />
+    <View style={{ flex: 1, backgroundColor: THEME.colors.background.primary }}>
+      <AnimatedBackground />
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 20,
+                backgroundColor: "rgba(255,255,255,0.8)",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <ChevronLeft size={24} color={THEME.colors.text.primary} />
+            </TouchableOpacity>
           </View>
-          <Text variant="h1" className="text-center">{t("Hesap Oluştur")}</Text>
-          <Text className="text-gray-500 font-medium text-center mt-2 px-4">
-            {t("Sağlıklı yaşam yolculuğuna bugün katıl. Ücretsiz hesabını saniyeler içinde oluştur.")}
-          </Text>
-        </View>
 
-        <View className="w-full space-y-4">
-          <Button 
-            label={t("Şimdi Kayıt Ol")}
-            onPress={signup}
-          />
-          
-          <TouchableOpacity 
-            onPress={() => router.push('/(auth)/login')}
-            className="mt-4"
+          <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: "center",
+              padding: 24,
+            }}
           >
-            <Text className="text-gray-500 text-center font-bold">
-              {t("Zaten hesabın var mı?")} <Text className="text-emerald-600">{t("Giriş Yap")}</Text>
-            </Text>
-          </TouchableOpacity>
-        </View>
+            <View style={{ alignItems: "center", marginBottom: 32 }}>
+              <View
+                style={{
+                  height: 72,
+                  width: 72,
+                  borderRadius: 24,
+                  backgroundColor: THEME.colors.primary[100],
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: 16,
+                }}
+              >
+                <UserPlus size={36} color={THEME.colors.primary[600]} />
+              </View>
+              <Text
+                style={{
+                  fontSize: 28,
+                  fontWeight: "900",
+                  color: THEME.colors.text.primary,
+                }}
+              >
+                {t("Hesap Oluştur")}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 15,
+                  color: THEME.colors.text.muted,
+                  textAlign: "center",
+                  marginTop: 4,
+                  paddingHorizontal: 20,
+                }}
+              >
+                {t("Sağlıklı yaşam yolculuğuna bugün katıl.")}
+              </Text>
+            </View>
 
-        <View className="mt-12 p-6 bg-white rounded-3xl border border-gray-100">
-          <Text variant="caption" className="text-center text-gray-400">
-            {t("Kayıt olarak Kullanım Şartları ve Gizlilik Politikamızı kabul etmiş sayılırsınız.")}
-          </Text>
-        </View>
-      </View>
-    </SafeAreaView>
+            <LiquidGlassCard
+              variant="elevated"
+              style={{ padding: 24, gap: 16 }}
+            >
+              <View style={{ gap: 8 }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: "700",
+                    color: THEME.colors.text.primary,
+                  }}
+                >
+                  {t("Ad Soyad")}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor: "rgba(255,255,255,0.5)",
+                    borderRadius: 12,
+                    paddingHorizontal: 12,
+                    borderWidth: 1,
+                    borderColor: THEME.colors.glass.border,
+                  }}
+                >
+                  <User size={18} color={THEME.colors.text.muted} />
+                  <TextInput
+                    style={{
+                      flex: 1,
+                      padding: 12,
+                      fontSize: 16,
+                      color: THEME.colors.text.primary,
+                    }}
+                    placeholder="Adınız"
+                    value={name}
+                    onChangeText={setName}
+                  />
+                </View>
+              </View>
+
+              <View style={{ gap: 8 }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: "700",
+                    color: THEME.colors.text.primary,
+                  }}
+                >
+                  {t("E-posta")}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor: "rgba(255,255,255,0.5)",
+                    borderRadius: 12,
+                    paddingHorizontal: 12,
+                    borderWidth: 1,
+                    borderColor: THEME.colors.glass.border,
+                  }}
+                >
+                  <Mail size={18} color={THEME.colors.text.muted} />
+                  <TextInput
+                    style={{
+                      flex: 1,
+                      padding: 12,
+                      fontSize: 16,
+                      color: THEME.colors.text.primary,
+                    }}
+                    placeholder="ornek@email.com"
+                    value={email}
+                    onChangeText={setEmail}
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                  />
+                </View>
+              </View>
+
+              <View style={{ gap: 8 }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: "700",
+                    color: THEME.colors.text.primary,
+                  }}
+                >
+                  {t("Şifre")}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor: "rgba(255,255,255,0.5)",
+                    borderRadius: 12,
+                    paddingHorizontal: 12,
+                    borderWidth: 1,
+                    borderColor: THEME.colors.glass.border,
+                  }}
+                >
+                  <Lock size={18} color={THEME.colors.text.muted} />
+                  <TextInput
+                    style={{
+                      flex: 1,
+                      padding: 12,
+                      fontSize: 16,
+                      color: THEME.colors.text.primary,
+                    }}
+                    placeholder="••••••••"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                  />
+                </View>
+              </View>
+
+              <Button
+                label={t("Şimdi Kayıt Ol")}
+                onPress={() => handleRegister()}
+                variant="primary"
+                style={{ marginTop: 8 }}
+                disabled={isLoading}
+              />
+
+              <TouchableOpacity
+                onPress={() => router.push("/(auth)/login" as any)}
+                style={{ alignItems: "center", marginTop: 12 }}
+              >
+                <Text
+                  style={{ color: THEME.colors.text.muted, fontWeight: "600" }}
+                >
+                  {t("Zaten hesabın var mı?")}{" "}
+                  <Text
+                    style={{
+                      color: THEME.colors.primary[700],
+                      fontWeight: "800",
+                    }}
+                  >
+                    {t("Giriş Yap")}
+                  </Text>
+                </Text>
+              </TouchableOpacity>
+            </LiquidGlassCard>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </View>
   );
 }

@@ -11,22 +11,30 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { t, getDayKey } from "@calai/shared";
-import { X, Barcode, Flame, Check, Beef, Wheat, Droplet } from "lucide-react-native";
+import {
+  X,
+  Barcode,
+  Flame,
+  Check,
+  Beef,
+  Wheat,
+  Droplet,
+} from "lucide-react-native";
 import { Text } from "../../src/components/atoms/Text";
 import { AnimatedBackground } from "../../src/components/atoms/AnimatedBackground";
 import { LiquidGlassCard } from "../../src/components/atoms/LiquidGlassCard";
 import { THEME } from "../../src/theme";
-import { searchByBarcode, FoodData } from "../../src/api/open-food-facts";
+import { searchFoodByBarcode } from "../../src/api/food-sources";
 import { useStore } from "../../src/store";
 
 export default function BarcodeResultModal() {
   const router = useRouter();
   const params = useLocalSearchParams<{ code?: string }>();
   const code = params.code ? decodeURIComponent(String(params.code)) : "";
-  const [product, setProduct] = useState<FoodData | null>(null);
+  const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [amountG, setAmountG] = useState("100");
-  const { addEntry, fetchDailySummary, isLoading } = useStore();
+  const { addEntry, fetchDailySummary, isLoading, settings } = useStore();
 
   useEffect(() => {
     let active = true;
@@ -34,7 +42,7 @@ export default function BarcodeResultModal() {
       if (!code) return;
       setLoading(true);
       try {
-        const result = await searchByBarcode(code);
+        const result = await searchFoodByBarcode(code, settings.country);
         if (active) {
           setProduct(result);
         }
@@ -48,7 +56,7 @@ export default function BarcodeResultModal() {
     return () => {
       active = false;
     };
-  }, [code]);
+  }, [code, settings.country]);
 
   const parsedAmount = useMemo(() => {
     const normalized = amountG.trim().replace(",", ".");
@@ -58,17 +66,22 @@ export default function BarcodeResultModal() {
 
   const multiplier = parsedAmount > 0 ? parsedAmount / 100 : 0;
   const totalCalories = product ? Math.round(product.calories * multiplier) : 0;
-  const totalProtein = product ? Math.round(product.protein * multiplier * 10) / 10 : 0;
-  const totalCarbs = product ? Math.round(product.carbs * multiplier * 10) / 10 : 0;
+  const totalProtein = product
+    ? Math.round(product.protein * multiplier * 10) / 10
+    : 0;
+  const totalCarbs = product
+    ? Math.round(product.carbs * multiplier * 10) / 10
+    : 0;
   const totalFat = product ? Math.round(product.fat * multiplier * 10) / 10 : 0;
 
   const handleAdd = async () => {
     if (!product || parsedAmount <= 0) return;
-    
+
     await addEntry({
       type: "food",
       name: product.name,
       brand: product.brand,
+      mealType: "snack",
       calories: totalCalories,
       proteinG: totalProtein,
       carbsG: totalCarbs,
@@ -76,8 +89,8 @@ export default function BarcodeResultModal() {
       amountG: Math.round(parsedAmount),
       barcode: product.barcode,
       timestamp: new Date().toISOString(),
-    });
-    
+    } as any);
+
     await fetchDailySummary(getDayKey(new Date()));
     router.replace("/(tabs)");
   };
@@ -85,8 +98,8 @@ export default function BarcodeResultModal() {
   return (
     <View style={styles.container}>
       <AnimatedBackground />
-      
-      <SafeAreaView style={styles.safeArea} edges={['top']}>
+
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
@@ -98,12 +111,15 @@ export default function BarcodeResultModal() {
               <Text style={styles.headerCode}>{code}</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => router.back()}
+          >
             <X size={22} color={THEME.colors.text.muted} />
           </TouchableOpacity>
         </View>
 
-        <ScrollView 
+        <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
@@ -112,7 +128,10 @@ export default function BarcodeResultModal() {
           {loading && (
             <LiquidGlassCard style={styles.card}>
               <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color={THEME.colors.primary[500]} />
+                <ActivityIndicator
+                  size="large"
+                  color={THEME.colors.primary[500]}
+                />
                 <Text style={styles.loadingText}>{t("Ürün aranıyor...")}</Text>
               </View>
             </LiquidGlassCard>
@@ -127,9 +146,9 @@ export default function BarcodeResultModal() {
                 </View>
                 <Text style={styles.notFoundTitle}>{t("Ürün Bulunamadı")}</Text>
                 <Text style={styles.notFoundText}>
-                  {t("Bu barkod Open Food Facts veritabanında bulunamadı.")}
+                  {t("Bu barkod veritabanlarında bulunamadı.")}
                 </Text>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.retryButton}
                   onPress={() => router.back()}
                 >
@@ -146,12 +165,14 @@ export default function BarcodeResultModal() {
               <LiquidGlassCard variant="elevated" style={styles.card}>
                 <View style={styles.productHeader}>
                   {product.imageUrl ? (
-                    <Image 
-                      source={{ uri: product.imageUrl }} 
+                    <Image
+                      source={{ uri: product.imageUrl }}
                       style={styles.productImage}
                     />
                   ) : (
-                    <View style={[styles.productImage, styles.placeholderImage]}>
+                    <View
+                      style={[styles.productImage, styles.placeholderImage]}
+                    >
                       <Flame size={32} color={THEME.colors.primary[300]} />
                     </View>
                   )}
@@ -161,7 +182,12 @@ export default function BarcodeResultModal() {
                       <Text style={styles.productBrand}>{product.brand}</Text>
                     )}
                     {product.nutritionGrade && (
-                      <View style={[styles.gradeBadge, getGradeStyle(product.nutritionGrade)]}>
+                      <View
+                        style={[
+                          styles.gradeBadge,
+                          getGradeStyle(product.nutritionGrade),
+                        ]}
+                      >
                         <Text style={styles.gradeText}>
                           Nutri-Score {product.nutritionGrade}
                         </Text>
@@ -172,14 +198,16 @@ export default function BarcodeResultModal() {
 
                 <View style={styles.per100Info}>
                   <Text style={styles.per100Label}>{t("100g için")}</Text>
-                  <Text style={styles.per100Value}>{product.calories} kcal</Text>
+                  <Text style={styles.per100Value}>
+                    {product.calories} kcal
+                  </Text>
                 </View>
               </LiquidGlassCard>
 
               {/* Portion Input Card */}
               <LiquidGlassCard style={styles.card}>
                 <Text style={styles.sectionLabel}>{t("Porsiyon (gram)")}</Text>
-                
+
                 <View style={styles.presetRow}>
                   {[50, 100, 150, 200].map((amount) => (
                     <TouchableOpacity
@@ -190,10 +218,12 @@ export default function BarcodeResultModal() {
                       ]}
                       onPress={() => setAmountG(String(amount))}
                     >
-                      <Text style={[
-                        styles.presetText,
-                        amountG === String(amount) && styles.presetTextActive,
-                      ]}>
+                      <Text
+                        style={[
+                          styles.presetText,
+                          amountG === String(amount) && styles.presetTextActive,
+                        ]}
+                      >
                         {amount}g
                       </Text>
                     </TouchableOpacity>
@@ -238,7 +268,7 @@ export default function BarcodeResultModal() {
               </LiquidGlassCard>
 
               {/* Add Button */}
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.addButton}
                 onPress={handleAdd}
                 disabled={isLoading || parsedAmount <= 0}
@@ -248,7 +278,9 @@ export default function BarcodeResultModal() {
                 ) : (
                   <>
                     <Check size={22} color="#fff" />
-                    <Text style={styles.addButtonText}>{t("Öğün Olarak Ekle")}</Text>
+                    <Text style={styles.addButtonText}>
+                      {t("Öğün Olarak Ekle")}
+                    </Text>
                   </>
                 )}
               </TouchableOpacity>
@@ -262,11 +294,11 @@ export default function BarcodeResultModal() {
 
 const getGradeStyle = (grade: string) => {
   const gradeColors: Record<string, any> = {
-    'A': { backgroundColor: '#22c55e' },
-    'B': { backgroundColor: '#84cc16' },
-    'C': { backgroundColor: '#eab308' },
-    'D': { backgroundColor: '#f97316' },
-    'E': { backgroundColor: '#ef4444' },
+    A: { backgroundColor: "#22c55e" },
+    B: { backgroundColor: "#84cc16" },
+    C: { backgroundColor: "#eab308" },
+    D: { backgroundColor: "#f97316" },
+    E: { backgroundColor: "#ef4444" },
   };
   return gradeColors[grade] || { backgroundColor: THEME.colors.text.muted };
 };
@@ -280,15 +312,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
   headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
   },
   headerIcon: {
@@ -296,17 +328,17 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 14,
     backgroundColor: THEME.colors.primary[100],
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: '800',
+    fontWeight: "800",
     color: THEME.colors.text.primary,
   },
   headerCode: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
     marginTop: 2,
   },
@@ -314,9 +346,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   scrollView: {
     flex: 1,
@@ -329,39 +361,39 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   loadingContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 40,
     gap: 16,
   },
   loadingText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
   },
   notFoundContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 40,
   },
   notFoundIcon: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 16,
   },
   notFoundTitle: {
     fontSize: 20,
-    fontWeight: '800',
+    fontWeight: "800",
     color: THEME.colors.text.primary,
     marginBottom: 8,
   },
   notFoundText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 24,
   },
   retryButton: {
@@ -372,11 +404,11 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: "700",
     color: THEME.colors.primary[700],
   },
   productHeader: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 16,
     marginBottom: 16,
   },
@@ -387,64 +419,64 @@ const styles = StyleSheet.create({
     backgroundColor: THEME.colors.primary[50],
   },
   placeholderImage: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   productInfo: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   productName: {
     fontSize: 18,
-    fontWeight: '800',
+    fontWeight: "800",
     color: THEME.colors.text.primary,
     marginBottom: 4,
   },
   productBrand: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
     marginBottom: 8,
   },
   gradeBadge: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
   },
   gradeText: {
     fontSize: 11,
-    fontWeight: '800',
-    color: '#fff',
+    fontWeight: "800",
+    color: "#fff",
   },
   per100Info: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingTop: 16,
     borderTopWidth: 1,
     borderTopColor: THEME.colors.primary[100],
   },
   per100Label: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
   },
   per100Value: {
     fontSize: 16,
-    fontWeight: '800',
+    fontWeight: "800",
     color: THEME.colors.primary[600],
   },
   sectionLabel: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: "700",
     color: THEME.colors.text.muted,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     letterSpacing: 0.5,
     marginBottom: 12,
   },
   presetRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
     marginBottom: 12,
   },
@@ -452,10 +484,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
     borderWidth: 1,
     borderColor: THEME.colors.glass.border,
-    alignItems: 'center',
+    alignItems: "center",
   },
   presetButtonActive: {
     backgroundColor: THEME.colors.primary[600],
@@ -463,16 +495,16 @@ const styles = StyleSheet.create({
   },
   presetText: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: "700",
     color: THEME.colors.text.primary,
   },
   presetTextActive: {
-    color: '#fff',
+    color: "#fff",
   },
   inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
     borderRadius: 12,
     paddingHorizontal: 16,
     borderWidth: 1,
@@ -482,48 +514,48 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
     color: THEME.colors.text.primary,
     paddingVertical: 14,
   },
   inputUnit: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
   },
   nutritionGrid: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   nutritionItem: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
     borderWidth: 1,
     borderColor: THEME.colors.glass.border,
     gap: 4,
   },
   calorieItem: {
-    backgroundColor: 'rgba(245, 158, 11, 0.1)',
-    borderColor: 'rgba(245, 158, 11, 0.2)',
+    backgroundColor: "rgba(245, 158, 11, 0.1)",
+    borderColor: "rgba(245, 158, 11, 0.2)",
   },
   nutritionValue: {
     fontSize: 16,
-    fontWeight: '800',
+    fontWeight: "800",
     color: THEME.colors.text.primary,
   },
   nutritionLabel: {
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
   addButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: THEME.colors.primary[600],
     borderRadius: 16,
     paddingVertical: 18,
@@ -533,7 +565,7 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     fontSize: 16,
-    fontWeight: '800',
-    color: '#fff',
+    fontWeight: "800",
+    color: "#fff",
   },
 });

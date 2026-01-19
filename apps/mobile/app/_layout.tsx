@@ -6,24 +6,26 @@ import { useEffect } from "react";
 import { useStore } from "../src/store";
 import { setLocale } from "@calai/shared";
 import { THEME } from "../src/theme";
+import { initDatabase } from "../src/lib/database";
+import { getCurrentCountry } from "../src/lib/location";
 
 // Custom transition animation config
 const fadeTransition = {
-  animation: 'fade' as const,
+  animation: "fade" as const,
   config: {
     duration: 200,
   },
 };
 
 const slideFromRight = {
-  animation: 'slide_from_right' as const,
+  animation: "slide_from_right" as const,
   config: {
     duration: 250,
   },
 };
 
 const slideFromBottom = {
-  animation: 'slide_from_bottom' as const,
+  animation: "slide_from_bottom" as const,
   config: {
     duration: 300,
   },
@@ -36,8 +38,32 @@ function RootLayoutNav() {
   const fetchProfile = useStore((state) => state.fetchProfile);
   const fetchSettings = useStore((state) => state.fetchSettings);
   const syncPendingEntries = useStore((state) => state.syncPendingEntries);
+  const updateSettings = useStore((state) => state.updateSettings);
   const locale = useStore((state) => state.settings.locale);
   const darkMode = useStore((state) => state.settings.flags.darkMode);
+  const autoDetectCountry = useStore((state) => state.settings.autoDetectCountry);
+  const country = useStore((state) => state.settings.country);
+
+  useEffect(() => {
+    initDatabase().catch((err) => console.error("DB Init Error:", err));
+  }, []);
+
+  // Auto-detect country on app start if enabled
+  useEffect(() => {
+    const detectCountry = async () => {
+      if (autoDetectCountry) {
+        try {
+          const detectedCountry = await getCurrentCountry();
+          if (detectedCountry && detectedCountry !== country) {
+            updateSettings({ country: detectedCountry });
+          }
+        } catch (error) {
+          console.log("Country detection failed:", error);
+        }
+      }
+    };
+    detectCountry();
+  }, [autoDetectCountry]);
 
   useEffect(() => {
     if (user) {
@@ -93,6 +119,13 @@ function RootLayoutNav() {
         />
         <Stack.Screen
           name="(auth)"
+          options={{
+            animation: "fade",
+            animationDuration: 300,
+          }}
+        />
+        <Stack.Screen
+          name="onboarding/index"
           options={{
             animation: "fade",
             animationDuration: 300,

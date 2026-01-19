@@ -30,28 +30,32 @@ import {
   Wheat,
   Droplet,
 } from "lucide-react-native";
-import { searchByBarcode, searchByName, FoodData } from "../../src/api/open-food-facts";
+import {
+  searchFoodByBarcode,
+  searchFoodByName,
+} from "../../src/api/food-sources";
+import { FoodData } from "../../src/api/open-food-facts";
 
 export default function AddScreen() {
   const router = useRouter();
-  const { addEntry, fetchDailySummary, isLoading } = useStore();
-  
-  const [searchQuery, setSearchQuery] = useState('');
+  const { addEntry, fetchDailySummary, isLoading, settings } = useStore();
+
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<FoodData[]>([]);
   const [searching, setSearching] = useState(false);
   const [selectedFood, setSelectedFood] = useState<FoodData | null>(null);
-  const [servingAmount, setServingAmount] = useState('100');
+  const [servingAmount, setServingAmount] = useState("100");
   const [addingFood, setAddingFood] = useState(false);
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-    
+
     setSearching(true);
     try {
-      const results = await searchByName(searchQuery);
+      const results = await searchFoodByName(searchQuery, settings.country);
       setSearchResults(results);
     } catch (error) {
-      console.error('Search error:', error);
+      console.error("Search error:", error);
     } finally {
       setSearching(false);
     }
@@ -60,12 +64,12 @@ export default function AddScreen() {
   const handleBarcodeResult = async (barcode: string) => {
     setSearching(true);
     try {
-      const product = await searchByBarcode(barcode);
+      const product = await searchFoodByBarcode(barcode, settings.country);
       if (product) {
         setSelectedFood(product);
       }
     } catch (error) {
-      console.error('Barcode error:', error);
+      console.error("Barcode error:", error);
     } finally {
       setSearching(false);
     }
@@ -73,7 +77,7 @@ export default function AddScreen() {
 
   const handleSelectFood = (food: FoodData) => {
     setSelectedFood(food);
-    setServingAmount('100');
+    setServingAmount("100");
   };
 
   const calculateNutrition = (food: FoodData, amount: number) => {
@@ -88,16 +92,17 @@ export default function AddScreen() {
 
   const handleAddFood = async () => {
     if (!selectedFood) return;
-    
+
     setAddingFood(true);
     const amount = parseFloat(servingAmount) || 100;
     const nutrition = calculateNutrition(selectedFood, amount);
-    
+
     try {
       await addEntry({
-        type: 'food',
+        type: "food",
         name: selectedFood.name,
         brand: selectedFood.brand,
+        mealType: "snack",
         calories: nutrition.calories,
         proteinG: nutrition.protein,
         carbsG: nutrition.carbs,
@@ -105,31 +110,31 @@ export default function AddScreen() {
         amountG: amount,
         barcode: selectedFood.barcode,
         timestamp: new Date().toISOString(),
-      });
-      
+      } as any);
+
       const today = getDayKey(new Date());
       await fetchDailySummary(today);
-      
+
       setSelectedFood(null);
-      setSearchQuery('');
+      setSearchQuery("");
       setSearchResults([]);
-      router.replace('/(tabs)');
+      router.replace("/(tabs)");
     } catch (error) {
-      console.error('Add food error:', error);
+      console.error("Add food error:", error);
     } finally {
       setAddingFood(false);
     }
   };
 
-  const currentNutrition = selectedFood 
+  const currentNutrition = selectedFood
     ? calculateNutrition(selectedFood, parseFloat(servingAmount) || 100)
     : null;
 
   return (
     <View style={styles.container}>
       <AnimatedBackground />
-      
-      <SafeAreaView style={styles.safeArea} edges={['top']}>
+
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardView}
@@ -143,12 +148,12 @@ export default function AddScreen() {
               <ChevronLeft size={24} color={THEME.colors.text.primary} />
             </TouchableOpacity>
             <View style={styles.headerTitle}>
-              <Text style={styles.title}>{t('Yemek Ekle')}</Text>
-              <Text style={styles.subtitle}>{t('Barkod tara veya ara')}</Text>
+              <Text style={styles.title}>{t("Yemek Ekle")}</Text>
+              <Text style={styles.subtitle}>{t("Barkod tara veya ara")}</Text>
             </View>
             <TouchableOpacity
               style={styles.barcodeButton}
-              onPress={() => router.push('/(modals)/barcode-scanner')}
+              onPress={() => router.push("/(modals)/barcode-scanner")}
             >
               <Barcode size={24} color={THEME.colors.primary[600]} />
             </TouchableOpacity>
@@ -161,7 +166,7 @@ export default function AddScreen() {
                 <Search size={20} color={THEME.colors.text.muted} />
                 <TextInput
                   style={styles.searchInput}
-                  placeholder={t('Yemek ara...')}
+                  placeholder={t("Yemek ara...")}
                   placeholderTextColor={THEME.colors.text.muted}
                   value={searchQuery}
                   onChangeText={setSearchQuery}
@@ -169,7 +174,7 @@ export default function AddScreen() {
                   returnKeyType="search"
                 />
                 {searchQuery.length > 0 && (
-                  <TouchableOpacity onPress={() => setSearchQuery('')}>
+                  <TouchableOpacity onPress={() => setSearchQuery("")}>
                     <X size={18} color={THEME.colors.text.muted} />
                   </TouchableOpacity>
                 )}
@@ -177,7 +182,7 @@ export default function AddScreen() {
             </LiquidGlassCard>
           </View>
 
-          <ScrollView 
+          <ScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
@@ -185,8 +190,11 @@ export default function AddScreen() {
             {/* Loading State */}
             {searching && (
               <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color={THEME.colors.primary[500]} />
-                <Text style={styles.loadingText}>{t('Aranıyor...')}</Text>
+                <ActivityIndicator
+                  size="large"
+                  color={THEME.colors.primary[500]}
+                />
+                <Text style={styles.loadingText}>{t("Aranıyor...")}</Text>
               </View>
             )}
 
@@ -204,23 +212,34 @@ export default function AddScreen() {
                 {/* Food Info */}
                 <View style={styles.selectedHeader}>
                   {selectedFood.imageUrl ? (
-                    <Image 
-                      source={{ uri: selectedFood.imageUrl }} 
+                    <Image
+                      source={{ uri: selectedFood.imageUrl }}
                       style={styles.selectedImage}
                     />
                   ) : (
-                    <View style={[styles.selectedImage, styles.placeholderImage]}>
+                    <View
+                      style={[styles.selectedImage, styles.placeholderImage]}
+                    >
                       <Flame size={32} color={THEME.colors.primary[300]} />
                     </View>
                   )}
                   <View style={styles.selectedInfo}>
                     <Text style={styles.selectedName}>{selectedFood.name}</Text>
                     {selectedFood.brand && (
-                      <Text style={styles.selectedBrand}>{selectedFood.brand}</Text>
+                      <Text style={styles.selectedBrand}>
+                        {selectedFood.brand}
+                      </Text>
                     )}
                     {selectedFood.nutritionGrade && (
-                      <View style={[styles.gradeBadge, getGradeStyle(selectedFood.nutritionGrade)]}>
-                        <Text style={styles.gradeText}>{selectedFood.nutritionGrade}</Text>
+                      <View
+                        style={[
+                          styles.gradeBadge,
+                          getGradeStyle(selectedFood.nutritionGrade),
+                        ]}
+                      >
+                        <Text style={styles.gradeText}>
+                          {selectedFood.nutritionGrade}
+                        </Text>
                       </View>
                     )}
                   </View>
@@ -228,21 +247,25 @@ export default function AddScreen() {
 
                 {/* Serving Size Input */}
                 <View style={styles.servingSection}>
-                  <Text style={styles.servingLabel}>{t('Porsiyon (g)')}</Text>
+                  <Text style={styles.servingLabel}>{t("Porsiyon (g)")}</Text>
                   <View style={styles.servingInputRow}>
                     {[50, 100, 150, 200].map((amount) => (
                       <TouchableOpacity
                         key={amount}
                         style={[
                           styles.servingPreset,
-                          servingAmount === String(amount) && styles.servingPresetActive,
+                          servingAmount === String(amount) &&
+                            styles.servingPresetActive,
                         ]}
                         onPress={() => setServingAmount(String(amount))}
                       >
-                        <Text style={[
-                          styles.servingPresetText,
-                          servingAmount === String(amount) && styles.servingPresetTextActive,
-                        ]}>
+                        <Text
+                          style={[
+                            styles.servingPresetText,
+                            servingAmount === String(amount) &&
+                              styles.servingPresetTextActive,
+                          ]}
+                        >
                           {amount}g
                         </Text>
                       </TouchableOpacity>
@@ -266,23 +289,31 @@ export default function AddScreen() {
                   <View style={styles.nutritionGrid}>
                     <View style={[styles.nutritionItem, styles.calorieItem]}>
                       <Flame size={20} color={THEME.colors.semantic.warning} />
-                      <Text style={styles.nutritionValue}>{currentNutrition.calories}</Text>
+                      <Text style={styles.nutritionValue}>
+                        {currentNutrition.calories}
+                      </Text>
                       <Text style={styles.nutritionLabel}>kcal</Text>
                     </View>
                     <View style={styles.nutritionItem}>
                       <Beef size={18} color={THEME.colors.macro.protein} />
-                      <Text style={styles.nutritionValue}>{currentNutrition.protein}g</Text>
-                      <Text style={styles.nutritionLabel}>{t('Protein')}</Text>
+                      <Text style={styles.nutritionValue}>
+                        {currentNutrition.protein}g
+                      </Text>
+                      <Text style={styles.nutritionLabel}>{t("Protein")}</Text>
                     </View>
                     <View style={styles.nutritionItem}>
                       <Wheat size={18} color={THEME.colors.macro.carbs} />
-                      <Text style={styles.nutritionValue}>{currentNutrition.carbs}g</Text>
-                      <Text style={styles.nutritionLabel}>{t('Karb')}</Text>
+                      <Text style={styles.nutritionValue}>
+                        {currentNutrition.carbs}g
+                      </Text>
+                      <Text style={styles.nutritionLabel}>{t("Karb")}</Text>
                     </View>
                     <View style={styles.nutritionItem}>
                       <Droplet size={18} color={THEME.colors.macro.fat} />
-                      <Text style={styles.nutritionValue}>{currentNutrition.fat}g</Text>
-                      <Text style={styles.nutritionLabel}>{t('Yağ')}</Text>
+                      <Text style={styles.nutritionValue}>
+                        {currentNutrition.fat}g
+                      </Text>
+                      <Text style={styles.nutritionLabel}>{t("Yağ")}</Text>
                     </View>
                   </View>
                 )}
@@ -298,7 +329,7 @@ export default function AddScreen() {
                   ) : (
                     <>
                       <Check size={20} color="#fff" />
-                      <Text style={styles.addButtonText}>{t('Ekle')}</Text>
+                      <Text style={styles.addButtonText}>{t("Ekle")}</Text>
                     </>
                   )}
                 </TouchableOpacity>
@@ -309,7 +340,7 @@ export default function AddScreen() {
             {!selectedFood && searchResults.length > 0 && !searching && (
               <View style={styles.resultsContainer}>
                 <Text style={styles.resultsTitle}>
-                  {searchResults.length} {t('sonuç bulundu')}
+                  {searchResults.length} {t("sonuç bulundu")}
                 </Text>
                 {searchResults.map((food, index) => (
                   <TouchableOpacity
@@ -319,13 +350,21 @@ export default function AddScreen() {
                     <LiquidGlassCard variant="subtle" style={styles.resultCard}>
                       <View style={styles.resultRow}>
                         {food.imageUrl ? (
-                          <Image 
-                            source={{ uri: food.imageUrl }} 
+                          <Image
+                            source={{ uri: food.imageUrl }}
                             style={styles.resultImage}
                           />
                         ) : (
-                          <View style={[styles.resultImage, styles.placeholderImage]}>
-                            <Flame size={20} color={THEME.colors.primary[300]} />
+                          <View
+                            style={[
+                              styles.resultImage,
+                              styles.placeholderImage,
+                            ]}
+                          >
+                            <Flame
+                              size={20}
+                              color={THEME.colors.primary[300]}
+                            />
                           </View>
                         )}
                         <View style={styles.resultInfo}>
@@ -351,35 +390,43 @@ export default function AddScreen() {
             )}
 
             {/* Empty State */}
-            {!selectedFood && searchResults.length === 0 && !searching && searchQuery.length === 0 && (
-              <View style={styles.emptyState}>
-                <View style={styles.emptyIcon}>
-                  <Search size={48} color={THEME.colors.primary[200]} />
+            {!selectedFood &&
+              searchResults.length === 0 &&
+              !searching &&
+              searchQuery.length === 0 && (
+                <View style={styles.emptyState}>
+                  <View style={styles.emptyIcon}>
+                    <Search size={48} color={THEME.colors.primary[200]} />
+                  </View>
+                  <Text style={styles.emptyTitle}>{t("Yemek Ara")}</Text>
+                  <Text style={styles.emptySubtitle}>
+                    {t("Yukarıdaki arama kutusunu kullan veya barkod tara")}
+                  </Text>
+
+                  <TouchableOpacity
+                    style={styles.scanButton}
+                    onPress={() => router.push("/(modals)/barcode-scanner")}
+                  >
+                    <Barcode size={24} color="#fff" />
+                    <Text style={styles.scanButtonText}>
+                      {t("Barkod Tara")}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-                <Text style={styles.emptyTitle}>{t('Yemek Ara')}</Text>
-                <Text style={styles.emptySubtitle}>
-                  {t('Yukarıdaki arama kutusunu kullan veya barkod tara')}
-                </Text>
-                
-                <TouchableOpacity
-                  style={styles.scanButton}
-                  onPress={() => router.push('/(modals)/barcode-scanner')}
-                >
-                  <Barcode size={24} color="#fff" />
-                  <Text style={styles.scanButtonText}>{t('Barkod Tara')}</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+              )}
 
             {/* No Results */}
-            {!selectedFood && searchResults.length === 0 && !searching && searchQuery.length > 0 && (
-              <View style={styles.emptyState}>
-                <Text style={styles.emptyTitle}>{t('Sonuç bulunamadı')}</Text>
-                <Text style={styles.emptySubtitle}>
-                  {t('Başka bir arama terimi deneyin')}
-                </Text>
-              </View>
-            )}
+            {!selectedFood &&
+              searchResults.length === 0 &&
+              !searching &&
+              searchQuery.length > 0 && (
+                <View style={styles.emptyState}>
+                  <Text style={styles.emptyTitle}>{t("Sonuç bulunamadı")}</Text>
+                  <Text style={styles.emptySubtitle}>
+                    {t("Başka bir arama terimi deneyin")}
+                  </Text>
+                </View>
+              )}
 
             <View style={styles.bottomSpacing} />
           </ScrollView>
@@ -391,11 +438,11 @@ export default function AddScreen() {
 
 const getGradeStyle = (grade: string) => {
   const gradeColors: Record<string, any> = {
-    'A': { backgroundColor: '#22c55e' },
-    'B': { backgroundColor: '#84cc16' },
-    'C': { backgroundColor: '#eab308' },
-    'D': { backgroundColor: '#f97316' },
-    'E': { backgroundColor: '#ef4444' },
+    A: { backgroundColor: "#22c55e" },
+    B: { backgroundColor: "#84cc16" },
+    C: { backgroundColor: "#eab308" },
+    D: { backgroundColor: "#f97316" },
+    E: { backgroundColor: "#ef4444" },
   };
   return gradeColors[grade] || { backgroundColor: THEME.colors.text.muted };
 };
@@ -412,8 +459,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 16,
     gap: 12,
@@ -422,9 +469,9 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 14,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
     borderColor: THEME.colors.glass.border,
   },
@@ -433,12 +480,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontWeight: '900',
+    fontWeight: "900",
     color: THEME.colors.text.primary,
   },
   subtitle: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
     marginTop: 2,
   },
@@ -447,8 +494,8 @@ const styles = StyleSheet.create({
     height: 52,
     borderRadius: 16,
     backgroundColor: THEME.colors.primary[100],
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
     borderColor: THEME.colors.primary[200],
   },
@@ -457,8 +504,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   searchInputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 14,
     gap: 12,
@@ -466,7 +513,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.primary,
   },
   scrollView: {
@@ -476,20 +523,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   loadingContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 40,
     gap: 12,
   },
   loadingText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
   },
   selectedCard: {
     marginBottom: 20,
   },
   closeSelectedButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 16,
     right: 16,
     zIndex: 10,
@@ -497,11 +544,11 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     backgroundColor: THEME.colors.primary[50],
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   selectedHeader: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 16,
     marginBottom: 20,
   },
@@ -512,49 +559,49 @@ const styles = StyleSheet.create({
     backgroundColor: THEME.colors.primary[50],
   },
   placeholderImage: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   selectedInfo: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   selectedName: {
     fontSize: 18,
-    fontWeight: '800',
+    fontWeight: "800",
     color: THEME.colors.text.primary,
     marginBottom: 4,
   },
   selectedBrand: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
     marginBottom: 8,
   },
   gradeBadge: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
   },
   gradeText: {
     fontSize: 12,
-    fontWeight: '800',
-    color: '#fff',
+    fontWeight: "800",
+    color: "#fff",
   },
   servingSection: {
     marginBottom: 20,
   },
   servingLabel: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: "700",
     color: THEME.colors.text.muted,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     letterSpacing: 0.5,
     marginBottom: 12,
   },
   servingInputRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
     marginBottom: 12,
   },
@@ -562,10 +609,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
     borderWidth: 1,
     borderColor: THEME.colors.glass.border,
-    alignItems: 'center',
+    alignItems: "center",
   },
   servingPresetActive: {
     backgroundColor: THEME.colors.primary[600],
@@ -573,16 +620,16 @@ const styles = StyleSheet.create({
   },
   servingPresetText: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: "700",
     color: THEME.colors.text.primary,
   },
   servingPresetTextActive: {
-    color: '#fff',
+    color: "#fff",
   },
   customServingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
     borderRadius: 12,
     paddingHorizontal: 16,
     borderWidth: 1,
@@ -591,49 +638,49 @@ const styles = StyleSheet.create({
   servingInput: {
     flex: 1,
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
     color: THEME.colors.text.primary,
     paddingVertical: 12,
   },
   servingUnit: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
   },
   nutritionGrid: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
     marginBottom: 20,
   },
   nutritionItem: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
     borderWidth: 1,
     borderColor: THEME.colors.glass.border,
     gap: 4,
   },
   calorieItem: {
-    backgroundColor: 'rgba(245, 158, 11, 0.1)',
-    borderColor: 'rgba(245, 158, 11, 0.2)',
+    backgroundColor: "rgba(245, 158, 11, 0.1)",
+    borderColor: "rgba(245, 158, 11, 0.2)",
   },
   nutritionValue: {
     fontSize: 16,
-    fontWeight: '800',
+    fontWeight: "800",
     color: THEME.colors.text.primary,
   },
   nutritionLabel: {
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
   addButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: THEME.colors.primary[600],
     borderRadius: 16,
     paddingVertical: 16,
@@ -642,15 +689,15 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     fontSize: 16,
-    fontWeight: '800',
-    color: '#fff',
+    fontWeight: "800",
+    color: "#fff",
   },
   resultsContainer: {
     gap: 12,
   },
   resultsTitle: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: "700",
     color: THEME.colors.text.muted,
     marginBottom: 4,
   },
@@ -658,8 +705,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   resultRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
   },
   resultImage: {
@@ -673,33 +720,33 @@ const styles = StyleSheet.create({
   },
   resultName: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: "700",
     color: THEME.colors.text.primary,
     marginBottom: 2,
   },
   resultBrand: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
     marginBottom: 4,
   },
   resultNutrition: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
   },
   resultCalories: {
     fontSize: 14,
-    fontWeight: '800',
+    fontWeight: "800",
     color: THEME.colors.primary[600],
   },
   resultServing: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
   },
   emptyState: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 60,
     paddingHorizontal: 20,
   },
@@ -708,27 +755,27 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     backgroundColor: THEME.colors.primary[50],
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 20,
   },
   emptyTitle: {
     fontSize: 20,
-    fontWeight: '800',
+    fontWeight: "800",
     color: THEME.colors.text.primary,
     marginBottom: 8,
   },
   emptySubtitle: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.colors.text.muted,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 24,
   },
   scanButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: THEME.colors.primary[600],
     borderRadius: 16,
     paddingVertical: 16,
@@ -738,8 +785,8 @@ const styles = StyleSheet.create({
   },
   scanButtonText: {
     fontSize: 16,
-    fontWeight: '800',
-    color: '#fff',
+    fontWeight: "800",
+    color: "#fff",
   },
   bottomSpacing: {
     height: 120,

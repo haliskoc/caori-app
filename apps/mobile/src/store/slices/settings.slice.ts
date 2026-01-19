@@ -43,6 +43,9 @@ export type AppSettings = {
   flags: FeatureFlags;
   locale: string;
   units: UnitSystem;
+  country: string;
+  autoDetectCountry: boolean;
+  onboardingCompleted: boolean;
 };
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -61,6 +64,9 @@ const DEFAULT_SETTINGS: AppSettings = {
   flags: { aiVisual: false, googleFit: false, darkMode: false },
   locale: "tr",
   units: "metric",
+  country: "TR",
+  autoDetectCountry: true,
+  onboardingCompleted: false,
 };
 
 export interface SettingsSlice {
@@ -87,6 +93,14 @@ export const createSettingsSlice: StateCreator<SettingsSlice> = (set, get) => ({
             ...DEFAULT_SETTINGS,
             ...response.data,
             locale: get().settings.locale || DEFAULT_SETTINGS.locale,
+            country:
+              response.data.country ||
+              get().settings.country ||
+              DEFAULT_SETTINGS.country,
+            autoDetectCountry:
+              response.data.autoDetectCountry !== undefined
+                ? response.data.autoDetectCountry
+                : get().settings.autoDetectCountry,
           },
         });
       }
@@ -104,8 +118,14 @@ export const createSettingsSlice: StateCreator<SettingsSlice> = (set, get) => ({
         ...next,
         theme: { ...state.settings.theme, ...next.theme },
         reminder: { ...state.settings.reminder, ...next.reminder },
-        mealReminders: { ...state.settings.mealReminders, ...next.mealReminders },
-        sleepReminder: { ...state.settings.sleepReminder, ...next.sleepReminder },
+        mealReminders: {
+          ...state.settings.mealReminders,
+          ...next.mealReminders,
+        },
+        sleepReminder: {
+          ...state.settings.sleepReminder,
+          ...next.sleepReminder,
+        },
         flags: { ...state.settings.flags, ...next.flags },
       },
     }));
@@ -119,6 +139,9 @@ export const createSettingsSlice: StateCreator<SettingsSlice> = (set, get) => ({
         theme: settings.theme,
         reminder: settings.reminder,
         flags: settings.flags,
+        country: settings.country,
+        autoDetectCountry: settings.autoDetectCountry,
+        onboardingCompleted: settings.onboardingCompleted,
       });
       if (response.data) {
         set({

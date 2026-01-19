@@ -5,9 +5,16 @@ import {
   SleepEntry,
   SleepQuality,
   buildWeeklySummary,
+  FoodEntry as SharedFoodEntry,
+  WaterEntry as SharedWaterEntry,
+  ActivityEntry as SharedActivityEntry,
 } from "@calai/shared";
 import type { ReportData } from "@calai/shared";
 import api from "../../api/axios-instance";
+import { FoodEntriesRepository } from "../../lib/database/repositories/food-entries.repo";
+import { WaterEntriesRepository } from "../../lib/database/repositories/water-entries.repo";
+import { ActivityEntriesRepository } from "../../lib/database/repositories/activity-entries.repo";
+import { nanoid } from "nanoid/non-secure";
 
 export interface TrackerSlice {
   entries: Entry[];
@@ -22,7 +29,10 @@ export interface TrackerSlice {
   fetchEntries: (date: string) => Promise<void>;
   fetchReportData: (rangeDays: number) => Promise<ReportData | null>;
   addEntry: (entry: Omit<Entry, "id">) => Promise<void>;
-  updateEntry: (id: string, entry: Partial<Entry> & { type: Entry["type"] }) => Promise<void>;
+  updateEntry: (
+    id: string,
+    entry: Partial<Entry> & { type: Entry["type"] },
+  ) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   syncPendingEntries: () => Promise<void>;
   fetchSleepLogs: () => Promise<void>;
@@ -56,16 +66,33 @@ export const createTrackerSlice: StateCreator<TrackerSlice> = (set, get) => ({
   fetchDailySummary: async (date: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await api.get(`/entries/summary?date=${date}`);
-      set({ dailySummary: response.data });
-    } catch (error) {
+      // 1. First try to load from local SQLite
+      const foodLocal = await FoodEntriesRepository.getAllByDay(date);
+      const waterLocal = await WaterEntriesRepository.getAllByDay(date);
+      const activityLocal = await ActivityEntriesRepository.getAllByDay(date);
+
+      // Merge and map to Entry type
+      const localEntries: Entry[] = [
+        ...foodLocal.map((f) => ({ ...f, type: "food" }) as any),
+        ...waterLocal.map((w) => ({ ...w, type: "water" }) as any),
+        ...activityLocal.map((a) => ({ ...a, type: "activity" }) as any),
+      ];
+
+      // Calculate summary locally if API fails or we want offline-first
+      const summary = buildWeeklySummary(localEntries, 1)[0] || null;
+      set({ dailySummary: summary, entries: localEntries });
+
+      // 2. Optionally try to sync with API
       try {
-        const entriesResponse = await api.get(`/entries?date=${date}`);
-        const fallback = buildWeeklySummary(entriesResponse.data, 1)[0] || null;
-        set({ dailySummary: fallback || null });
-      } catch (innerError) {
-        set({ error: "Failed to fetch summary" });
+        const response = await api.get(`/entries/summary?date=${date}`);
+        if (response.data) {
+          set({ dailySummary: response.data });
+        }
+      } catch (e) {
+        console.log("Offline mode: using local summary");
       }
+    } catch (error) {
+      set({ error: "Failed to fetch summary" });
     } finally {
       set({ isLoading: false });
     }
@@ -74,8 +101,17 @@ export const createTrackerSlice: StateCreator<TrackerSlice> = (set, get) => ({
   fetchEntries: async (date: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await api.get(`/entries?date=${date}`);
-      set({ entries: response.data });
+      const foodLocal = await FoodEntriesRepository.getAllByDay(date);
+      const waterLocal = await WaterEntriesRepository.getAllByDay(date);
+      const activityLocal = await ActivityEntriesRepository.getAllByDay(date);
+
+      const localEntries: Entry[] = [
+        ...foodLocal.map((f) => ({ ...f, type: "food" }) as any),
+        ...waterLocal.map((w) => ({ ...w, type: "water" }) as any),
+        ...activityLocal.map((a) => ({ ...a, type: "activity" }) as any),
+      ];
+
+      set({ entries: localEntries });
     } catch (error) {
       set({ error: "Failed to fetch entries" });
     } finally {
@@ -95,29 +131,58 @@ export const createTrackerSlice: StateCreator<TrackerSlice> = (set, get) => ({
 
   addEntry: async (entry) => {
     set({ isLoading: true, error: null });
+    const id = nanoid();
+    const newEntry = { ...entry, id } as Entry;
+
     try {
-      const tempId = Math.random().toString();
-      const newEntry = { ...entry, id: tempId } as Entry;
+      // 1. Save to SQLite first (Offline First)
+      if (entry.type === "food") {
+        const e = entry as SharedFoodEntry;
+        await FoodEntriesRepository.insert({
+          id,
+          name: e.name,
+          brand: e.brand,
+          calories: e.calories,
+          protein_g: e.proteinG,
+          carbs_g: e.carbsG,
+          fat_g: e.fatG,
+          amount_g: e.amountG,
+          barcode: e.barcode,
+          meal_type: e.mealType,
+          timestamp: e.timestamp,
+        });
+      } else if (entry.type === "water") {
+        const e = entry as SharedWaterEntry;
+        await WaterEntriesRepository.insert({
+          id,
+          amount_ml: e.amountMl,
+          timestamp: e.timestamp,
+        });
+      } else if (entry.type === "activity") {
+        const e = entry as SharedActivityEntry;
+        await ActivityEntriesRepository.insert({
+          id,
+          activity_type: e.activityType,
+          duration_min: e.durationMin,
+          calories_burned: e.estimatedCalories,
+          timestamp: e.timestamp,
+        });
+      }
 
       set((state) => ({
-        entries: [...state.entries, newEntry],
+        entries: [newEntry, ...state.entries],
       }));
 
-      const response = await api.post("/entries", entry);
-
-      set((state) => ({
-        entries: state.entries.map((e) =>
-          e.id === tempId ? response.data : e,
-        ),
-      }));
+      // 2. Try to sync with API in background
+      api.post("/entries", entry).catch((err) => {
+        console.log("API Sync failed, entry remains in local DB", err);
+        set((state) => ({
+          pendingEntries: [...state.pendingEntries, newEntry],
+        }));
+      });
     } catch (error) {
-      const tempId = Math.random().toString();
-      const pending = { ...entry, id: tempId } as Entry;
-      set((state) => ({
-        entries: [...state.entries, pending],
-        pendingEntries: [...state.pendingEntries, pending],
-        error: "Failed to add entry",
-      }));
+      console.error("Local DB Error:", error);
+      set({ error: "Failed to add entry locally" });
     } finally {
       set({ isLoading: false });
     }
@@ -144,10 +209,19 @@ export const createTrackerSlice: StateCreator<TrackerSlice> = (set, get) => ({
   deleteEntry: async (id: string) => {
     set({ isLoading: true });
     try {
-      await api.delete(`/entries/${id}`);
+      // 1. Delete from SQLite
+      await FoodEntriesRepository.delete(id);
+      await WaterEntriesRepository.delete(id);
+      await ActivityEntriesRepository.delete(id);
+
       set((state) => ({
         entries: state.entries.filter((e) => e.id !== id),
       }));
+
+      // 2. Delete from API
+      await api
+        .delete(`/entries/${id}`)
+        .catch((e) => console.log("API Delete failed"));
     } catch (error) {
       set({ error: "Failed to delete entry" });
     } finally {
@@ -175,7 +249,9 @@ export const createTrackerSlice: StateCreator<TrackerSlice> = (set, get) => ({
       }
       if (synced.length) {
         set((state) => ({
-          pendingEntries: state.pendingEntries.filter((item) => !synced.includes(item.id)),
+          pendingEntries: state.pendingEntries.filter(
+            (item) => !synced.includes(item.id),
+          ),
         }));
       }
     } catch (error) {
