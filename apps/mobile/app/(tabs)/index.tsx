@@ -1,91 +1,252 @@
-import React, { useEffect } from "react";
-import { ScrollView, SafeAreaView, RefreshControl, View } from "react-native";
-import { t } from "@calai/shared";
-import { useStore } from "../../src/store";
-import { DailySummary } from "../../src/components/organisms/DailySummary";
-import { WaterWidget } from "../../src/components/organisms/WaterWidget";
-import { SleepSummaryCard } from "../../src/components/organisms/SleepSummaryCard";
-import { Text } from "../../src/components/atoms/Text";
-import { getDayKey } from "@calai/shared";
+import React, { useEffect, useState, useCallback } from 'react';
+import { 
+  View, 
+  ScrollView, 
+  RefreshControl, 
+  StyleSheet, 
+  StatusBar,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import { t, getDayKey } from '@calai/shared';
+import { useStore } from '../../src/store';
+import { AnimatedBackground } from '../../src/components/atoms/AnimatedBackground';
+import { CalorieSummaryWidget } from '../../src/components/organisms/CalorieSummaryWidget';
+import { QuickCalorieAddWidget } from '../../src/components/organisms/QuickCalorieAddWidget';
+import { WaterTrackingWidget } from '../../src/components/organisms/WaterTrackingWidget';
+import { WeeklyCalorieChart } from '../../src/components/organisms/WeeklyCalorieChart';
+import { Text } from '../../src/components/atoms/Text';
+import { THEME } from '../../src/theme';
+import { Bot, Bell } from 'lucide-react-native';
 
-import { useRouter } from "expo-router";
-import { Bot } from "lucide-react-native";
-import { TouchableOpacity } from "react-native";
+const { width } = Dimensions.get('window');
 
 export default function DashboardScreen() {
-  const { dailySummary, fetchDailySummary, isLoading, addEntry, goals } =
-    useStore();
   const router = useRouter();
+  const { 
+    dailySummary, 
+    fetchDailySummary, 
+    isLoading, 
+    addEntry, 
+    goals,
+    fetchReportData,
+  } = useStore();
+
   const today = getDayKey(new Date());
+  const [weeklyData, setWeeklyData] = useState<any[]>([]);
+  const [greeting, setGreeting] = useState('');
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      setGreeting(t('Günaydın'));
+    } else if (hour < 18) {
+      setGreeting(t('İyi Günler'));
+    } else {
+      setGreeting(t('İyi Akşamlar'));
+    }
+  }, []);
 
   useEffect(() => {
     fetchDailySummary(today);
+    loadWeeklyData();
   }, []);
 
-  const onRefresh = () => {
-    fetchDailySummary(today);
+  const loadWeeklyData = async () => {
+    const reportData = await fetchReportData(7);
+    if (reportData?.dailySummaries) {
+      setWeeklyData(reportData.dailySummaries);
+    } else {
+      // Mock data for demonstration
+      setWeeklyData([
+        { date: '2026-01-13', caloriesIn: 1800, caloriesOut: 300 },
+        { date: '2026-01-14', caloriesIn: 2100, caloriesOut: 450 },
+        { date: '2026-01-15', caloriesIn: 1950, caloriesOut: 200 },
+        { date: '2026-01-16', caloriesIn: 2200, caloriesOut: 500 },
+        { date: '2026-01-17', caloriesIn: 1700, caloriesOut: 350 },
+        { date: '2026-01-18', caloriesIn: 2000, caloriesOut: 400 },
+        { date: '2026-01-19', caloriesIn: dailySummary?.caloriesIn || 0, caloriesOut: dailySummary?.caloriesOut || 0 },
+      ]);
+    }
   };
 
-  const handleAddWater = (amount: number) => {
-    addEntry({
-      type: "water",
+  const onRefresh = useCallback(() => {
+    fetchDailySummary(today);
+    loadWeeklyData();
+  }, [today]);
+
+  const handleAddWater = async (amount: number) => {
+    await addEntry({
+      type: 'water',
       amountMl: amount,
       timestamp: new Date().toISOString(),
     });
     fetchDailySummary(today);
   };
 
+  const handleQuickCalorieAdd = async (amount: number) => {
+    await addEntry({
+      type: 'food',
+      name: t('Hızlı Ekleme'),
+      calories: amount,
+      timestamp: new Date().toISOString(),
+    });
+    fetchDailySummary(today);
+  };
+
+  const formatDate = () => {
+    const options: Intl.DateTimeFormatOptions = { 
+      weekday: 'long', 
+      day: 'numeric', 
+      month: 'long' 
+    };
+    return new Date().toLocaleDateString('tr-TR', options);
+  };
+
   return (
-    <SafeAreaView className="flex-1 bg-[#fffcf9]">
-      <ScrollView
-        className="flex-1 px-4 py-6"
-        refreshControl={
-          <RefreshControl
-            refreshing={isLoading}
-            onRefresh={onRefresh}
-            tintColor="#10b981"
-          />
-        }
-      >
-        <View className="flex-row items-center justify-between mb-8">
-          <View>
-            <Text variant="caption" className="uppercase">
-              {t("Bugün Özeti")}
-            </Text>
-            <Text variant="h1">{t("Merhaba!")}</Text>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
+      <AnimatedBackground />
+      
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isLoading}
+              onRefresh={onRefresh}
+              tintColor={THEME.colors.primary[500]}
+              colors={[THEME.colors.primary[500]]}
+            />
+          }
+        >
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={styles.headerLeft}>
+              <Text style={styles.greeting}>{greeting}</Text>
+              <Text style={styles.date}>{formatDate()}</Text>
+            </View>
+            <View style={styles.headerRight}>
+              <TouchableOpacity 
+                style={styles.headerButton}
+                onPress={() => {/* Notifications */}}
+              >
+                <Bell size={22} color={THEME.colors.text.secondary} strokeWidth={2} />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.headerButton, styles.aiButton]}
+                onPress={() => router.push('/(modals)/ai-assistant')}
+              >
+                <Bot size={22} color={THEME.colors.primary[600]} strokeWidth={2} />
+              </TouchableOpacity>
+            </View>
           </View>
-          <TouchableOpacity
-            onPress={() => router.push("/(modals)/ai-assistant")}
-            className="h-12 w-12 bg-emerald-100 rounded-2xl items-center justify-center border border-emerald-200 shadow-sm"
-          >
-            <Bot size={28} color="#10b981" />
-          </TouchableOpacity>
-        </View>
 
-        <DailySummary
-          caloriesIn={dailySummary?.caloriesIn || 0}
-          caloriesOut={dailySummary?.caloriesOut || 0}
-          proteinG={dailySummary?.proteinG || 0}
-          carbsG={dailySummary?.carbsG || 0}
-          fatG={dailySummary?.fatG || 0}
-        />
+          {/* Daily Summary Widget */}
+          <View style={styles.section}>
+            <CalorieSummaryWidget
+              caloriesIn={dailySummary?.caloriesIn || 0}
+              caloriesOut={dailySummary?.caloriesOut || 0}
+              proteinG={dailySummary?.proteinG || 0}
+              carbsG={dailySummary?.carbsG || 0}
+              fatG={dailySummary?.fatG || 0}
+              calorieGoal={goals?.calorieGoal || 2000}
+              proteinGoalG={goals?.proteinGoalG || 150}
+              carbsGoalG={goals?.carbsGoalG || 250}
+              fatGoalG={goals?.fatGoalG || 65}
+            />
+          </View>
 
-        <View className="mt-6">
-          <WaterWidget
-            currentMl={dailySummary?.waterMl || 0}
-            goalMl={goals.waterGoalMl}
-            onAddWater={handleAddWater}
-          />
-        </View>
+          {/* Quick Calorie Add */}
+          <View style={styles.section}>
+            <QuickCalorieAddWidget onAddCalories={handleQuickCalorieAdd} />
+          </View>
 
-        <View className="mt-6 mb-8">
-          <SleepSummaryCard
-            sleepDurationHours={dailySummary?.sleepHours || 0}
-            sleepGoalHours={goals.sleepGoalHours || 8}
-            quality={dailySummary?.sleepQuality || null}
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          {/* Water Tracking */}
+          <View style={styles.section}>
+            <WaterTrackingWidget
+              currentMl={dailySummary?.waterMl || 0}
+              goalMl={goals?.waterGoalMl || 2500}
+              onAddWater={handleAddWater}
+            />
+          </View>
+
+          {/* Weekly Chart */}
+          <View style={styles.section}>
+            <WeeklyCalorieChart data={weeklyData} />
+          </View>
+
+          {/* Bottom spacing for tab bar */}
+          <View style={styles.bottomSpacing} />
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: THEME.colors.background.primary,
+  },
+  safeArea: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  greeting: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: THEME.colors.text.primary,
+    letterSpacing: -0.5,
+  },
+  date: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: THEME.colors.text.muted,
+    marginTop: 4,
+    textTransform: 'capitalize',
+  },
+  headerRight: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  headerButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: THEME.colors.glass.border,
+  },
+  aiButton: {
+    backgroundColor: THEME.colors.primary[100],
+    borderColor: THEME.colors.primary[200],
+  },
+  section: {
+    marginBottom: 20,
+  },
+  bottomSpacing: {
+    height: 100,
+  },
+});

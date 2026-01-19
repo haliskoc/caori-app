@@ -1,7 +1,4 @@
 import { Text as RNText, TextProps } from 'react-native';
-import { styled } from 'nativewind';
-
-const StyledText = styled(RNText);
 
 interface Props extends TextProps {
   variant?: 'h1' | 'h2' | 'h3' | 'body' | 'caption';
@@ -21,7 +18,7 @@ export function Text({ variant = 'body', weight = 'regular', className, style, .
   }
 
   return (
-    <StyledText 
+    <RNText 
       className={`${baseStyle} ${className}`} 
       style={style}
       {...props} 

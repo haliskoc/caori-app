@@ -2,165 +2,746 @@ import React, { useState } from "react";
 import {
   View,
   ScrollView,
-  SafeAreaView,
+  StyleSheet,
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  TextInput,
+  Image,
+  ActivityIndicator,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { getDayKey, t } from "@calai/shared";
 import { useStore } from "../../src/store";
-import { FoodForm } from "../../src/features/tracker/components/FoodForm";
-import { DrinkForm } from "../../src/features/tracker/components/DrinkForm";
-import { ActivityForm } from "../../src/features/tracker/components/ActivityForm";
-import { SleepEntryForm } from "../../src/components/organisms/SleepEntryForm";
-import { SleepLogList } from "../../src/components/organisms/SleepLogList";
+import { AnimatedBackground } from "../../src/components/atoms/AnimatedBackground";
+import { LiquidGlassCard } from "../../src/components/atoms/LiquidGlassCard";
 import { Text } from "../../src/components/atoms/Text";
-import { Barcode, Utensils, Coffee, Activity, Moon } from "lucide-react-native";
-
-type TabType = "food" | "drink" | "activity" | "sleep";
+import { THEME } from "../../src/theme";
+import {
+  Barcode,
+  Search,
+  ChevronLeft,
+  Plus,
+  X,
+  Check,
+  Flame,
+  Beef,
+  Wheat,
+  Droplet,
+} from "lucide-react-native";
+import { searchByBarcode, searchByName, FoodData } from "../../src/api/open-food-facts";
 
 export default function AddScreen() {
-  const [activeTab, setActiveTab] = useState<TabType>("food");
-  const {
-    addEntry,
-    isLoading,
-    fetchDailySummary,
-    addSleepLog,
-    fetchSleepLogs,
-    sleepLogs,
-    sleepLoading,
-    goals,
-  } = useStore();
   const router = useRouter();
+  const { addEntry, fetchDailySummary, isLoading } = useStore();
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<FoodData[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [selectedFood, setSelectedFood] = useState<FoodData | null>(null);
+  const [servingAmount, setServingAmount] = useState('100');
+  const [addingFood, setAddingFood] = useState(false);
 
-  React.useEffect(() => {
-    if (activeTab === "sleep") {
-      fetchSleepLogs();
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+    
+    setSearching(true);
+    try {
+      const results = await searchByName(searchQuery);
+      setSearchResults(results);
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setSearching(false);
     }
-  }, [activeTab]);
-
-  const handleEntrySubmit = async (data: any) => {
-    await addEntry({
-      type: activeTab as any,
-      ...data,
-      timestamp: new Date().toISOString(),
-    });
-
-    const today = getDayKey(new Date());
-    await fetchDailySummary(today);
-    router.replace("/(tabs)");
   };
 
-  const handleSleepSubmit = async (data: any) => {
-    const now = new Date();
-    const [startHour, startMinute] = String(data.sleepStart).split(":");
-    const [endHour, endMinute] = String(data.sleepEnd).split(":");
-
-    const startDate = new Date(now);
-    startDate.setHours(Number(startHour) || 0, Number(startMinute) || 0, 0, 0);
-    const endDate = new Date(now);
-    endDate.setHours(Number(endHour) || 0, Number(endMinute) || 0, 0, 0);
-
-    if (endDate <= startDate) {
-      endDate.setDate(endDate.getDate() + 1);
+  const handleBarcodeResult = async (barcode: string) => {
+    setSearching(true);
+    try {
+      const product = await searchByBarcode(barcode);
+      if (product) {
+        setSelectedFood(product);
+      }
+    } catch (error) {
+      console.error('Barcode error:', error);
+    } finally {
+      setSearching(false);
     }
-
-    const durationMin = Math.round(
-      (endDate.getTime() - startDate.getTime()) / 60000,
-    );
-
-    await addSleepLog({
-      sleepStart: startDate.toISOString(),
-      sleepEnd: endDate.toISOString(),
-      durationMin,
-      quality: data.quality,
-      note: data.note,
-      timestamp: new Date().toISOString(),
-    });
-
-    const today = getDayKey(new Date());
-    await fetchDailySummary(today);
   };
 
-  const tabs: { id: TabType; label: string; icon: any }[] = [
-    { id: "food", label: t("Yemek"), icon: Utensils },
-    { id: "drink", label: t("İçecek"), icon: Coffee },
-    { id: "activity", label: t("Egzersiz"), icon: Activity },
-    { id: "sleep", label: t("Uyku"), icon: Moon },
-  ];
+  const handleSelectFood = (food: FoodData) => {
+    setSelectedFood(food);
+    setServingAmount('100');
+  };
+
+  const calculateNutrition = (food: FoodData, amount: number) => {
+    const multiplier = amount / 100;
+    return {
+      calories: Math.round(food.calories * multiplier),
+      protein: Math.round(food.protein * multiplier * 10) / 10,
+      carbs: Math.round(food.carbs * multiplier * 10) / 10,
+      fat: Math.round(food.fat * multiplier * 10) / 10,
+    };
+  };
+
+  const handleAddFood = async () => {
+    if (!selectedFood) return;
+    
+    setAddingFood(true);
+    const amount = parseFloat(servingAmount) || 100;
+    const nutrition = calculateNutrition(selectedFood, amount);
+    
+    try {
+      await addEntry({
+        type: 'food',
+        name: selectedFood.name,
+        brand: selectedFood.brand,
+        calories: nutrition.calories,
+        proteinG: nutrition.protein,
+        carbsG: nutrition.carbs,
+        fatG: nutrition.fat,
+        amountG: amount,
+        barcode: selectedFood.barcode,
+        timestamp: new Date().toISOString(),
+      });
+      
+      const today = getDayKey(new Date());
+      await fetchDailySummary(today);
+      
+      setSelectedFood(null);
+      setSearchQuery('');
+      setSearchResults([]);
+      router.replace('/(tabs)');
+    } catch (error) {
+      console.error('Add food error:', error);
+    } finally {
+      setAddingFood(false);
+    }
+  };
+
+  const currentNutrition = selectedFood 
+    ? calculateNutrition(selectedFood, parseFloat(servingAmount) || 100)
+    : null;
 
   return (
-    <SafeAreaView className="flex-1 bg-[#fffcf9]">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
-      >
-        <ScrollView className="flex-1 px-4 py-6">
-          <View className="flex-row items-center justify-between mb-8">
-            <View>
-              <Text variant="h2">{t("Yeni Kayıt")}</Text>
-              <Text className="text-gray-500 font-medium">
-                {t("Gününe bir ekleme yap.")}
-              </Text>
+    <View style={styles.container}>
+      <AnimatedBackground />
+      
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.keyboardView}
+        >
+          {/* Header */}
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <ChevronLeft size={24} color={THEME.colors.text.primary} />
+            </TouchableOpacity>
+            <View style={styles.headerTitle}>
+              <Text style={styles.title}>{t('Yemek Ekle')}</Text>
+              <Text style={styles.subtitle}>{t('Barkod tara veya ara')}</Text>
             </View>
-            {activeTab === "food" && (
-              <TouchableOpacity
-                onPress={() => router.push("/(modals)/barcode-scanner")}
-                className="h-12 w-12 bg-white border border-gray-100 rounded-2xl items-center justify-center shadow-sm"
-              >
-                <Barcode size={24} color="#10b981" />
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              style={styles.barcodeButton}
+              onPress={() => router.push('/(modals)/barcode-scanner')}
+            >
+              <Barcode size={24} color={THEME.colors.primary[600]} />
+            </TouchableOpacity>
           </View>
 
-          <View className="flex-row bg-emerald-50/50 p-1.5 rounded-3xl mb-8 border border-emerald-100">
-            {tabs.map((tab) => (
-              <TouchableOpacity
-                key={tab.id}
-                onPress={() => setActiveTab(tab.id)}
-                className={`flex-1 flex-row items-center justify-center py-3 rounded-2xl gap-2 ${activeTab === tab.id ? "bg-white shadow-sm" : ""}`}
-              >
-                <tab.icon
-                  size={16}
-                  color={activeTab === tab.id ? "#10b981" : "#9ca3af"}
+          {/* Search Bar */}
+          <View style={styles.searchContainer}>
+            <LiquidGlassCard variant="subtle" noPadding>
+              <View style={styles.searchInputWrapper}>
+                <Search size={20} color={THEME.colors.text.muted} />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder={t('Yemek ara...')}
+                  placeholderTextColor={THEME.colors.text.muted}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  onSubmitEditing={handleSearch}
+                  returnKeyType="search"
                 />
-                {activeTab === tab.id && (
-                  <Text className="text-emerald-700 font-black text-xs">
-                    {tab.label}
-                  </Text>
+                {searchQuery.length > 0 && (
+                  <TouchableOpacity onPress={() => setSearchQuery('')}>
+                    <X size={18} color={THEME.colors.text.muted} />
+                  </TouchableOpacity>
                 )}
-              </TouchableOpacity>
-            ))}
+              </View>
+            </LiquidGlassCard>
           </View>
 
-          {activeTab === "food" && (
-            <FoodForm onSubmit={handleEntrySubmit} loading={isLoading} />
-          )}
+          <ScrollView 
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            {/* Loading State */}
+            {searching && (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={THEME.colors.primary[500]} />
+                <Text style={styles.loadingText}>{t('Aranıyor...')}</Text>
+              </View>
+            )}
 
-          {activeTab === "drink" && (
-            <DrinkForm onSubmit={handleEntrySubmit} loading={isLoading} />
-          )}
+            {/* Selected Food Detail */}
+            {selectedFood && !searching && (
+              <LiquidGlassCard variant="elevated" style={styles.selectedCard}>
+                {/* Close Button */}
+                <TouchableOpacity
+                  style={styles.closeSelectedButton}
+                  onPress={() => setSelectedFood(null)}
+                >
+                  <X size={20} color={THEME.colors.text.muted} />
+                </TouchableOpacity>
 
-          {activeTab === "activity" && (
-            <ActivityForm
-              onSubmit={handleEntrySubmit}
-              loading={isLoading}
-              weightKg={goals.weightGoalKg}
-            />
-          )}
+                {/* Food Info */}
+                <View style={styles.selectedHeader}>
+                  {selectedFood.imageUrl ? (
+                    <Image 
+                      source={{ uri: selectedFood.imageUrl }} 
+                      style={styles.selectedImage}
+                    />
+                  ) : (
+                    <View style={[styles.selectedImage, styles.placeholderImage]}>
+                      <Flame size={32} color={THEME.colors.primary[300]} />
+                    </View>
+                  )}
+                  <View style={styles.selectedInfo}>
+                    <Text style={styles.selectedName}>{selectedFood.name}</Text>
+                    {selectedFood.brand && (
+                      <Text style={styles.selectedBrand}>{selectedFood.brand}</Text>
+                    )}
+                    {selectedFood.nutritionGrade && (
+                      <View style={[styles.gradeBadge, getGradeStyle(selectedFood.nutritionGrade)]}>
+                        <Text style={styles.gradeText}>{selectedFood.nutritionGrade}</Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
 
-          {activeTab === "sleep" && (
-            <View className="gap-8">
-              <SleepEntryForm
-                onSubmit={handleSleepSubmit}
-                isLoading={sleepLoading}
-              />
-              <SleepLogList entries={sleepLogs} />
-            </View>
-          )}
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+                {/* Serving Size Input */}
+                <View style={styles.servingSection}>
+                  <Text style={styles.servingLabel}>{t('Porsiyon (g)')}</Text>
+                  <View style={styles.servingInputRow}>
+                    {[50, 100, 150, 200].map((amount) => (
+                      <TouchableOpacity
+                        key={amount}
+                        style={[
+                          styles.servingPreset,
+                          servingAmount === String(amount) && styles.servingPresetActive,
+                        ]}
+                        onPress={() => setServingAmount(String(amount))}
+                      >
+                        <Text style={[
+                          styles.servingPresetText,
+                          servingAmount === String(amount) && styles.servingPresetTextActive,
+                        ]}>
+                          {amount}g
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  <View style={styles.customServingRow}>
+                    <TextInput
+                      style={styles.servingInput}
+                      value={servingAmount}
+                      onChangeText={setServingAmount}
+                      keyboardType="numeric"
+                      placeholder="100"
+                      placeholderTextColor={THEME.colors.text.muted}
+                    />
+                    <Text style={styles.servingUnit}>g</Text>
+                  </View>
+                </View>
+
+                {/* Nutrition Info */}
+                {currentNutrition && (
+                  <View style={styles.nutritionGrid}>
+                    <View style={[styles.nutritionItem, styles.calorieItem]}>
+                      <Flame size={20} color={THEME.colors.semantic.warning} />
+                      <Text style={styles.nutritionValue}>{currentNutrition.calories}</Text>
+                      <Text style={styles.nutritionLabel}>kcal</Text>
+                    </View>
+                    <View style={styles.nutritionItem}>
+                      <Beef size={18} color={THEME.colors.macro.protein} />
+                      <Text style={styles.nutritionValue}>{currentNutrition.protein}g</Text>
+                      <Text style={styles.nutritionLabel}>{t('Protein')}</Text>
+                    </View>
+                    <View style={styles.nutritionItem}>
+                      <Wheat size={18} color={THEME.colors.macro.carbs} />
+                      <Text style={styles.nutritionValue}>{currentNutrition.carbs}g</Text>
+                      <Text style={styles.nutritionLabel}>{t('Karb')}</Text>
+                    </View>
+                    <View style={styles.nutritionItem}>
+                      <Droplet size={18} color={THEME.colors.macro.fat} />
+                      <Text style={styles.nutritionValue}>{currentNutrition.fat}g</Text>
+                      <Text style={styles.nutritionLabel}>{t('Yağ')}</Text>
+                    </View>
+                  </View>
+                )}
+
+                {/* Add Button */}
+                <TouchableOpacity
+                  style={styles.addButton}
+                  onPress={handleAddFood}
+                  disabled={addingFood}
+                >
+                  {addingFood ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <>
+                      <Check size={20} color="#fff" />
+                      <Text style={styles.addButtonText}>{t('Ekle')}</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              </LiquidGlassCard>
+            )}
+
+            {/* Search Results */}
+            {!selectedFood && searchResults.length > 0 && !searching && (
+              <View style={styles.resultsContainer}>
+                <Text style={styles.resultsTitle}>
+                  {searchResults.length} {t('sonuç bulundu')}
+                </Text>
+                {searchResults.map((food, index) => (
+                  <TouchableOpacity
+                    key={`${food.barcode}-${index}`}
+                    onPress={() => handleSelectFood(food)}
+                  >
+                    <LiquidGlassCard variant="subtle" style={styles.resultCard}>
+                      <View style={styles.resultRow}>
+                        {food.imageUrl ? (
+                          <Image 
+                            source={{ uri: food.imageUrl }} 
+                            style={styles.resultImage}
+                          />
+                        ) : (
+                          <View style={[styles.resultImage, styles.placeholderImage]}>
+                            <Flame size={20} color={THEME.colors.primary[300]} />
+                          </View>
+                        )}
+                        <View style={styles.resultInfo}>
+                          <Text style={styles.resultName} numberOfLines={2}>
+                            {food.name}
+                          </Text>
+                          {food.brand && (
+                            <Text style={styles.resultBrand}>{food.brand}</Text>
+                          )}
+                          <View style={styles.resultNutrition}>
+                            <Text style={styles.resultCalories}>
+                              {food.calories} kcal
+                            </Text>
+                            <Text style={styles.resultServing}>/ 100g</Text>
+                          </View>
+                        </View>
+                        <Plus size={24} color={THEME.colors.primary[500]} />
+                      </View>
+                    </LiquidGlassCard>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
+            {/* Empty State */}
+            {!selectedFood && searchResults.length === 0 && !searching && searchQuery.length === 0 && (
+              <View style={styles.emptyState}>
+                <View style={styles.emptyIcon}>
+                  <Search size={48} color={THEME.colors.primary[200]} />
+                </View>
+                <Text style={styles.emptyTitle}>{t('Yemek Ara')}</Text>
+                <Text style={styles.emptySubtitle}>
+                  {t('Yukarıdaki arama kutusunu kullan veya barkod tara')}
+                </Text>
+                
+                <TouchableOpacity
+                  style={styles.scanButton}
+                  onPress={() => router.push('/(modals)/barcode-scanner')}
+                >
+                  <Barcode size={24} color="#fff" />
+                  <Text style={styles.scanButtonText}>{t('Barkod Tara')}</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {/* No Results */}
+            {!selectedFood && searchResults.length === 0 && !searching && searchQuery.length > 0 && (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyTitle}>{t('Sonuç bulunamadı')}</Text>
+                <Text style={styles.emptySubtitle}>
+                  {t('Başka bir arama terimi deneyin')}
+                </Text>
+              </View>
+            )}
+
+            <View style={styles.bottomSpacing} />
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </View>
   );
 }
+
+const getGradeStyle = (grade: string) => {
+  const gradeColors: Record<string, any> = {
+    'A': { backgroundColor: '#22c55e' },
+    'B': { backgroundColor: '#84cc16' },
+    'C': { backgroundColor: '#eab308' },
+    'D': { backgroundColor: '#f97316' },
+    'E': { backgroundColor: '#ef4444' },
+  };
+  return gradeColors[grade] || { backgroundColor: THEME.colors.text.muted };
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: THEME.colors.background.primary,
+  },
+  safeArea: {
+    flex: 1,
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    gap: 12,
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: THEME.colors.glass.border,
+  },
+  headerTitle: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: THEME.colors.text.primary,
+  },
+  subtitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: THEME.colors.text.muted,
+    marginTop: 2,
+  },
+  barcodeButton: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    backgroundColor: THEME.colors.primary[100],
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: THEME.colors.primary[200],
+  },
+  searchContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 16,
+  },
+  searchInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    gap: 12,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '600',
+    color: THEME.colors.text.primary,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    paddingVertical: 40,
+    gap: 12,
+  },
+  loadingText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: THEME.colors.text.muted,
+  },
+  selectedCard: {
+    marginBottom: 20,
+  },
+  closeSelectedButton: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    zIndex: 10,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: THEME.colors.primary[50],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selectedHeader: {
+    flexDirection: 'row',
+    gap: 16,
+    marginBottom: 20,
+  },
+  selectedImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 16,
+    backgroundColor: THEME.colors.primary[50],
+  },
+  placeholderImage: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selectedInfo: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  selectedName: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: THEME.colors.text.primary,
+    marginBottom: 4,
+  },
+  selectedBrand: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: THEME.colors.text.muted,
+    marginBottom: 8,
+  },
+  gradeBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  gradeText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#fff',
+  },
+  servingSection: {
+    marginBottom: 20,
+  },
+  servingLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: THEME.colors.text.muted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 12,
+  },
+  servingInputRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 12,
+  },
+  servingPreset: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderWidth: 1,
+    borderColor: THEME.colors.glass.border,
+    alignItems: 'center',
+  },
+  servingPresetActive: {
+    backgroundColor: THEME.colors.primary[600],
+    borderColor: THEME.colors.primary[600],
+  },
+  servingPresetText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: THEME.colors.text.primary,
+  },
+  servingPresetTextActive: {
+    color: '#fff',
+  },
+  customServingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: THEME.colors.glass.border,
+  },
+  servingInput: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: '700',
+    color: THEME.colors.text.primary,
+    paddingVertical: 12,
+  },
+  servingUnit: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: THEME.colors.text.muted,
+  },
+  nutritionGrid: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 20,
+  },
+  nutritionItem: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderWidth: 1,
+    borderColor: THEME.colors.glass.border,
+    gap: 4,
+  },
+  calorieItem: {
+    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+    borderColor: 'rgba(245, 158, 11, 0.2)',
+  },
+  nutritionValue: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: THEME.colors.text.primary,
+  },
+  nutritionLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: THEME.colors.text.muted,
+    textTransform: 'uppercase',
+  },
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: THEME.colors.primary[600],
+    borderRadius: 16,
+    paddingVertical: 16,
+    gap: 8,
+    ...THEME.shadow.md,
+  },
+  addButtonText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#fff',
+  },
+  resultsContainer: {
+    gap: 12,
+  },
+  resultsTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: THEME.colors.text.muted,
+    marginBottom: 4,
+  },
+  resultCard: {
+    marginBottom: 8,
+  },
+  resultRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  resultImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    backgroundColor: THEME.colors.primary[50],
+  },
+  resultInfo: {
+    flex: 1,
+  },
+  resultName: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: THEME.colors.text.primary,
+    marginBottom: 2,
+  },
+  resultBrand: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: THEME.colors.text.muted,
+    marginBottom: 4,
+  },
+  resultNutrition: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  resultCalories: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: THEME.colors.primary[600],
+  },
+  resultServing: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: THEME.colors.text.muted,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 60,
+    paddingHorizontal: 20,
+  },
+  emptyIcon: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: THEME.colors.primary[50],
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: THEME.colors.text.primary,
+    marginBottom: 8,
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: THEME.colors.text.muted,
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  scanButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: THEME.colors.primary[600],
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    gap: 10,
+    ...THEME.shadow.md,
+  },
+  scanButtonText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#fff',
+  },
+  bottomSpacing: {
+    height: 120,
+  },
+});

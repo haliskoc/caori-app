@@ -1,75 +1,363 @@
-import React from 'react';
-import { View, ScrollView, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import {
+  View,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import { t } from '@calai/shared';
-import { ChevronLeft, User, Mail, Calendar, Ruler } from 'lucide-react-native';
+import {
+  ChevronLeft,
+  User,
+  Mail,
+  Calendar,
+  Ruler,
+  Scale,
+  Check,
+} from 'lucide-react-native';
 import { Text } from '../../src/components/atoms/Text';
-import { Button } from '../../src/components/atoms/Button';
+import { AnimatedBackground } from '../../src/components/atoms/AnimatedBackground';
+import { LiquidGlassCard } from '../../src/components/atoms/LiquidGlassCard';
+import { THEME } from '../../src/theme';
 import { useStore } from '../../src/store';
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { user } = useStore();
+  const { user, profile, updateProfile, fetchProfile, saveProfileToApi, profileLoading } = useStore();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
+
+  useEffect(() => {
+    fetchProfile();
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        tension: 80,
+        friction: 12,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [fetchProfile]);
+
+  const handleSave = async () => {
+    await saveProfileToApi();
+    router.back();
+  };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#fffcf9]">
-      <View className="flex-row items-center px-4 py-4 border-b border-gray-100">
-        <TouchableOpacity onPress={() => router.back()} className="p-2">
-          <ChevronLeft size={24} color="#111827" />
-        </TouchableOpacity>
-        <Text variant="h3" className="ml-2">{t("Profil Bilgileri")}</Text>
-      </View>
+    <View style={styles.container}>
+      <AnimatedBackground />
 
-      <ScrollView className="flex-1 px-6 py-8">
-        <View className="items-center mb-10">
-          <View className="h-24 w-24 rounded-[3rem] bg-emerald-100 items-center justify-center border-4 border-white shadow-sm">
-            <User size={48} color="#10b981" />
-          </View>
-          <Text variant="h2" className="mt-4">{user?.name || t("Kullanıcı")}</Text>
-          <Text className="text-gray-400 font-bold">{user?.email}</Text>
-        </View>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        {/* Header */}
+        <BlurView intensity={80} tint="light" style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+            <ChevronLeft size={24} color={THEME.colors.text.primary} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{t('Profil Bilgileri')}</Text>
+          <View style={styles.headerSpacer} />
+        </BlurView>
 
-        <View className="space-y-6">
-          <View>
-            <Text variant="caption" className="mb-2 uppercase font-black text-gray-400">{t("Ad Soyad")}</Text>
-            <View className="flex-row items-center bg-white border border-gray-100 rounded-2xl px-4 h-14">
-              <User size={20} color="#9ca3af" />
-              <TextInput 
-                className="flex-1 ml-3 font-bold text-gray-900"
-                value={user?.name}
-                placeholder={t("Adınız")}
-              />
-            </View>
-          </View>
-
-          <View>
-            <Text variant="caption" className="mb-2 uppercase font-black text-gray-400">{t("E-posta")}</Text>
-            <View className="flex-row items-center bg-gray-50 border border-gray-100 rounded-2xl px-4 h-14">
-              <Mail size={20} color="#9ca3af" />
-              <Text className="flex-1 ml-3 font-bold text-gray-400">{user?.email}</Text>
-            </View>
-          </View>
-
-          <View className="flex-row gap-4">
-            <View className="flex-1">
-              <Text variant="caption" className="mb-2 uppercase font-black text-gray-400">{t("Boy (cm)")}</Text>
-              <View className="flex-row items-center bg-white border border-gray-100 rounded-2xl px-4 h-14">
-                <Ruler size={20} color="#9ca3af" />
-                <TextInput className="flex-1 ml-3 font-bold text-gray-900" keyboardType="numeric" placeholder="175" />
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Avatar Section */}
+          <Animated.View
+            style={[
+              styles.avatarSection,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: slideAnim }],
+              },
+            ]}
+          >
+            <View style={styles.avatarContainer}>
+              <View style={styles.avatarInner}>
+                <User size={48} color={THEME.colors.primary[500]} />
+              </View>
+              <View style={styles.avatarBadge}>
+                <Check size={14} color="#fff" />
               </View>
             </View>
-            <View className="flex-1">
-              <Text variant="caption" className="mb-2 uppercase font-black text-gray-400">{t("Yaş")}</Text>
-              <View className="flex-row items-center bg-white border border-gray-100 rounded-2xl px-4 h-14">
-                <Calendar size={20} color="#9ca3af" />
-                <TextInput className="flex-1 ml-3 font-bold text-gray-900" keyboardType="numeric" placeholder="25" />
-              </View>
-            </View>
-          </View>
+            <Text style={styles.userName}>{user?.name || profile.fullName || t('Kullanıcı')}</Text>
+            <Text style={styles.userEmail}>{user?.email || 'user@example.com'}</Text>
+          </Animated.View>
 
-          <Button label={t("Güncelle")} className="mt-8" />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          {/* Form Section */}
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }}
+          >
+            {/* Full Name */}
+            <LiquidGlassCard style={styles.formCard}>
+              <Text style={styles.inputLabel}>{t('Ad Soyad')}</Text>
+              <View style={styles.inputContainer}>
+                <View style={styles.inputIcon}>
+                  <User size={20} color={THEME.colors.primary[500]} />
+                </View>
+                <TextInput
+                  style={styles.input}
+                  value={profile.fullName}
+                  placeholder={t('Adınız')}
+                  placeholderTextColor={THEME.colors.text.muted}
+                  onChangeText={(value) => updateProfile({ fullName: value })}
+                />
+              </View>
+            </LiquidGlassCard>
+
+            {/* Email (Read-only) */}
+            <LiquidGlassCard style={styles.formCard} variant="subtle">
+              <Text style={styles.inputLabel}>{t('E-posta')}</Text>
+              <View style={styles.inputContainer}>
+                <View style={styles.inputIcon}>
+                  <Mail size={20} color={THEME.colors.text.muted} />
+                </View>
+                <Text style={styles.readOnlyText}>{user?.email || 'user@example.com'}</Text>
+              </View>
+            </LiquidGlassCard>
+
+            {/* Height and Age Row */}
+            <View style={styles.rowContainer}>
+              <LiquidGlassCard style={[styles.formCard, styles.halfCard]}>
+                <Text style={styles.inputLabel}>{t('Boy (cm)')}</Text>
+                <View style={styles.inputContainer}>
+                  <View style={styles.inputIcon}>
+                    <Ruler size={20} color={THEME.colors.primary[500]} />
+                  </View>
+                  <TextInput
+                    style={styles.input}
+                    keyboardType="numeric"
+                    placeholder="175"
+                    placeholderTextColor={THEME.colors.text.muted}
+                    value={profile.heightCm}
+                    onChangeText={(value) => updateProfile({ heightCm: value })}
+                  />
+                </View>
+              </LiquidGlassCard>
+
+              <LiquidGlassCard style={[styles.formCard, styles.halfCard]}>
+                <Text style={styles.inputLabel}>{t('Yaş')}</Text>
+                <View style={styles.inputContainer}>
+                  <View style={styles.inputIcon}>
+                    <Calendar size={20} color={THEME.colors.primary[500]} />
+                  </View>
+                  <TextInput
+                    style={styles.input}
+                    keyboardType="numeric"
+                    placeholder="25"
+                    placeholderTextColor={THEME.colors.text.muted}
+                    value={profile.age}
+                    onChangeText={(value) => updateProfile({ age: value })}
+                  />
+                </View>
+              </LiquidGlassCard>
+            </View>
+
+            {/* Weight */}
+            <LiquidGlassCard style={styles.formCard}>
+              <Text style={styles.inputLabel}>{t('Kilo (kg)')}</Text>
+              <View style={styles.inputContainer}>
+                <View style={styles.inputIcon}>
+                  <Scale size={20} color={THEME.colors.primary[500]} />
+                </View>
+                <TextInput
+                  style={styles.input}
+                  keyboardType="numeric"
+                  placeholder="70"
+                  placeholderTextColor={THEME.colors.text.muted}
+                  value={profile.weightKg}
+                  onChangeText={(value) => updateProfile({ weightKg: value })}
+                />
+              </View>
+            </LiquidGlassCard>
+          </Animated.View>
+
+          {/* Save Button */}
+          <TouchableOpacity
+            style={[styles.saveButton, profileLoading && styles.saveButtonLoading]}
+            onPress={handleSave}
+            disabled={profileLoading}
+          >
+            {profileLoading ? (
+              <Text style={styles.saveButtonText}>{t('Kaydediliyor...')}</Text>
+            ) : (
+              <>
+                <Check size={22} color="#fff" />
+                <Text style={styles.saveButtonText}>{t('Güncelle')}</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: THEME.colors.background.primary,
+  },
+  safeArea: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: THEME.colors.glass.border,
+    overflow: 'hidden',
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: THEME.colors.text.primary,
+  },
+  headerSpacer: {
+    width: 40,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  avatarSection: {
+    alignItems: 'center',
+    paddingVertical: 32,
+  },
+  avatarContainer: {
+    position: 'relative',
+    marginBottom: 16,
+  },
+  avatarInner: {
+    width: 100,
+    height: 100,
+    borderRadius: 36,
+    backgroundColor: THEME.colors.primary[100],
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 4,
+    borderColor: '#fff',
+    ...THEME.shadow.lg,
+  },
+  avatarBadge: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: THEME.colors.semantic.success,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: '#fff',
+  },
+  userName: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: THEME.colors.text.primary,
+    marginBottom: 4,
+  },
+  userEmail: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: THEME.colors.text.muted,
+  },
+  formCard: {
+    marginBottom: 16,
+  },
+  halfCard: {
+    flex: 1,
+    marginBottom: 0,
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 16,
+  },
+  inputLabel: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: THEME.colors.text.muted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 12,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: THEME.colors.glass.border,
+  },
+  inputIcon: {
+    width: 48,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  input: {
+    flex: 1,
+    height: 48,
+    fontSize: 15,
+    fontWeight: '700',
+    color: THEME.colors.text.primary,
+    paddingRight: 16,
+  },
+  readOnlyText: {
+    flex: 1,
+    height: 48,
+    lineHeight: 48,
+    fontSize: 15,
+    fontWeight: '600',
+    color: THEME.colors.text.muted,
+  },
+  saveButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: THEME.colors.primary[600],
+    borderRadius: 16,
+    paddingVertical: 18,
+    gap: 10,
+    marginTop: 16,
+    ...THEME.shadow.lg,
+  },
+  saveButtonLoading: {
+    opacity: 0.7,
+  },
+  saveButtonText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#fff',
+  },
+});

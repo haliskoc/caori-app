@@ -1,8 +1,9 @@
 import React from "react";
 import { View } from "react-native";
 import { Text } from "../atoms/Text";
-import { Moon, Star } from "lucide-react-native";
-import { SleepQuality } from "@calai/shared";
+import { Moon, Star, Sparkles, Clock } from "lucide-react-native";
+import { SleepQuality, t } from "@calai/shared";
+import { GlassCard } from "../atoms/GlassCard";
 
 interface Props {
   sleepDurationHours: number;
@@ -10,25 +11,11 @@ interface Props {
   quality: SleepQuality | null;
 }
 
-const QUALITY_COLORS: Record<SleepQuality, string> = {
-  poor: "text-red-500",
-  fair: "text-yellow-600",
-  good: "text-emerald-600",
-  excellent: "text-blue-600",
-};
-
-const QUALITY_BG_COLORS: Record<SleepQuality, string> = {
-  poor: "bg-red-100",
-  fair: "bg-yellow-100",
-  good: "bg-emerald-100",
-  excellent: "bg-blue-100",
-};
-
-const QUALITY_LABELS: Record<SleepQuality, string> = {
-  poor: "Kotu",
-  fair: "Orta",
-  good: "Iyi",
-  excellent: "Mukemmel",
+const QUALITY_STYLES: Record<SleepQuality, { color: string; bg: string; label: string }> = {
+  poor: { color: "#ef4444", bg: "bg-red-50", label: t("Kötü") },
+  fair: { color: "#f59e0b", bg: "bg-amber-50", label: t("Orta") },
+  good: { color: "#10b981", bg: "bg-emerald-50", label: t("İyi") },
+  excellent: { color: "#3b82f6", bg: "bg-blue-50", label: t("Mükemmel") },
 };
 
 export function SleepSummaryCard({
@@ -37,42 +24,68 @@ export function SleepSummaryCard({
   quality,
 }: Props) {
   const progress = Math.min(1, sleepDurationHours / (sleepGoalHours || 8));
-
-  const progressPercent = `${Math.round(progress * 100)}%`;
+  const style = quality ? QUALITY_STYLES[quality] : null;
 
   return (
-    <View className="bg-white p-6 rounded-[2.5rem] border border-emerald-50 shadow-sm">
-      <View className="flex-row items-center justify-between mb-4">
+    <GlassCard>
+      <View className="flex-row items-center justify-between mb-6">
         <View className="flex-row items-center gap-3">
-          <View className="p-2 bg-emerald-100 rounded-xl">
-            <Moon size={20} color="#10b981" />
+          <View className="p-2 bg-indigo-100 rounded-xl">
+            <Moon size={22} color="#4f46e5" />
           </View>
-          <Text variant="h3">Uyku</Text>
+          <View>
+            <Text variant="h3" className="text-indigo-950 leading-tight">
+              {t("Uyku Analizi")}
+            </Text>
+            <Text className="text-indigo-700/60 font-black text-[10px] uppercase tracking-widest">
+              {sleepDurationHours.toFixed(1)} / {sleepGoalHours} sa
+            </Text>
+          </View>
         </View>
-        <Text className="text-emerald-900 font-black">
-          {sleepDurationHours.toFixed(1)} / {sleepGoalHours} sa
-        </Text>
-      </View>
-
-      <View className="h-3 w-full bg-emerald-50 rounded-full overflow-hidden mb-6">
-        <View
-          className="h-full bg-emerald-500 rounded-full"
-          style={{ width: progressPercent }}
-        />
-      </View>
-
-      {quality ? (
-        <View
-          className={`flex-row items-center self-start px-3 py-1.5 rounded-full ${QUALITY_BG_COLORS[quality]}`}
-        >
-          <Star size={14} className="mr-1.5" color="#4b5563" />
-          <Text className={`text-xs font-bold ${QUALITY_COLORS[quality]}`}>
-            {QUALITY_LABELS[quality]} Kalite
+        <View className="bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">
+          <Text className="text-[10px] font-black text-indigo-700">
+            {Math.round(progress * 100)}%
           </Text>
         </View>
-      ) : (
-        <Text className="text-gray-400 text-sm">Henuz veri yok</Text>
-      )}
-    </View>
+      </View>
+
+      <View className="h-4 w-full bg-indigo-50/50 border border-indigo-100 rounded-full overflow-hidden mb-6 shadow-sm">
+        <View
+          className="h-full bg-indigo-600 rounded-full relative"
+          style={{ width: `${progress * 100}%` }}
+        >
+          <View className="absolute inset-0 bg-white/10 opacity-20" />
+        </View>
+      </View>
+
+      <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center gap-4">
+          <View className="flex-row items-center gap-1.5 bg-white/60 px-3 py-2 rounded-2xl border border-white/60">
+            <Clock size={14} color="#4f46e5" />
+            <Text className="text-[10px] font-black text-indigo-900">
+              {sleepDurationHours.toFixed(1)} {t("saat")}
+            </Text>
+          </View>
+
+          {quality && style && (
+            <View className={`flex-row items-center gap-1.5 ${style.bg} px-3 py-2 rounded-2xl border border-indigo-50`}>
+              <Star size={14} color={style.color} fill={style.color} />
+              <Text className="text-[10px] font-black" style={{ color: style.color }}>
+                {style.label} {t("Uyku")}
+              </Text>
+            </View>
+          )}
+        </View>
+
+        {!quality && (
+          <View className="flex-row items-center gap-1.5">
+            <Sparkles size={14} color="#94a3b8" />
+            <Text className="text-[10px] font-bold text-slate-400">
+              {t("Veri Bekleniyor")}
+            </Text>
+          </View>
+        )}
+      </View>
+    </GlassCard>
   );
 }

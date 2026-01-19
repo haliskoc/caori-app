@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, SafeAreaView, TextInput, ScrollView } from 'react-native';
+import { View, TextInput, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { t } from '@calai/shared';
 import { Text } from '../../src/components/atoms/Text';

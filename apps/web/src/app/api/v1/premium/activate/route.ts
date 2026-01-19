@@ -1,10 +1,10 @@
 
 import { NextRequest, NextResponse } from "next/server";
-import { auth0 } from "@/lib/auth/auth0";
 import { getDb, ensureUser } from "@/lib/database/db";
 import { users } from "@/lib/database/schema";
 import { eq } from "drizzle-orm";
 import { isSameOrigin } from "@/lib/auth/security";
+import { getApiPrincipal } from "@/lib/auth/api-auth";
 
 export async function POST(req: NextRequest) {
     if (!isSameOrigin(req)) {
@@ -16,8 +16,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
     }
 
-    const session = await auth0.getSession(req);
-    if (!session?.user) {
+    const principal = await getApiPrincipal(req);
+    if (!principal) {
         console.error("Activation Error: Unauthorized - No session found");
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -48,7 +48,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Geçersiz plan seçimi." }, { status: 400 });
         }
 
-        await ensureUser(session.user);
+        await ensureUser({
+            sub: principal.userId,
+            email: principal.email ?? undefined,
+        });
         const db = getDb();
 
         // Kullanıcının planını güncelle
@@ -58,7 +61,7 @@ export async function POST(req: NextRequest) {
                 plan: plan,
                 subscriptionStatus: "active",
             })
-            .where(eq(users.id, session.user.sub));
+            .where(eq(users.id, principal.userId));
 
         return NextResponse.json({ success: true, message: `Tebrikler! ${plan.toUpperCase()} paketiniz aktif edildi.` });
     } catch (error: unknown) {

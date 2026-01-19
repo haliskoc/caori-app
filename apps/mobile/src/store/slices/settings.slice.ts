@@ -1,0 +1,137 @@
+import { StateCreator } from "zustand";
+import api from "../../api/axios-instance";
+
+export type ThemeMode = "light" | "dim";
+export type ThemeAccent = "teal" | "rose";
+
+export type ReminderSettings = {
+  enabled: boolean;
+  time: string;
+  lastNotifiedDay?: string;
+};
+
+export type MealReminderSettings = {
+  enabled: boolean;
+  breakfast: string;
+  lunch: string;
+  dinner: string;
+};
+
+export type SleepReminderSettings = {
+  enabled: boolean;
+  time: string;
+};
+
+export type FeatureFlags = {
+  aiVisual: boolean;
+  googleFit: boolean;
+  darkMode: boolean;
+};
+
+export type ThemeSettings = {
+  mode: ThemeMode;
+  accent: ThemeAccent;
+};
+
+export type UnitSystem = "metric" | "imperial";
+
+export type AppSettings = {
+  theme: ThemeSettings;
+  reminder: ReminderSettings;
+  mealReminders: MealReminderSettings;
+  sleepReminder: SleepReminderSettings;
+  flags: FeatureFlags;
+  locale: string;
+  units: UnitSystem;
+};
+
+const DEFAULT_SETTINGS: AppSettings = {
+  theme: { mode: "light", accent: "teal" },
+  reminder: { enabled: false, time: "09:00" },
+  mealReminders: {
+    enabled: false,
+    breakfast: "08:00",
+    lunch: "13:00",
+    dinner: "19:00",
+  },
+  sleepReminder: {
+    enabled: false,
+    time: "23:00",
+  },
+  flags: { aiVisual: false, googleFit: false, darkMode: false },
+  locale: "tr",
+  units: "metric",
+};
+
+export interface SettingsSlice {
+  settings: AppSettings;
+  settingsLoading: boolean;
+  settingsError: string | null;
+  fetchSettings: () => Promise<void>;
+  updateSettings: (next: Partial<AppSettings>) => void;
+  saveSettings: () => Promise<void>;
+}
+
+export const createSettingsSlice: StateCreator<SettingsSlice> = (set, get) => ({
+  settings: DEFAULT_SETTINGS,
+  settingsLoading: false,
+  settingsError: null,
+
+  fetchSettings: async () => {
+    set({ settingsLoading: true, settingsError: null });
+    try {
+      const response = await api.get("/settings");
+      if (response.data) {
+        set({
+          settings: {
+            ...DEFAULT_SETTINGS,
+            ...response.data,
+            locale: get().settings.locale || DEFAULT_SETTINGS.locale,
+          },
+        });
+      }
+    } catch (error) {
+      set({ settingsError: "Failed to fetch settings" });
+    } finally {
+      set({ settingsLoading: false });
+    }
+  },
+
+  updateSettings: (next) => {
+    set((state) => ({
+      settings: {
+        ...state.settings,
+        ...next,
+        theme: { ...state.settings.theme, ...next.theme },
+        reminder: { ...state.settings.reminder, ...next.reminder },
+        mealReminders: { ...state.settings.mealReminders, ...next.mealReminders },
+        sleepReminder: { ...state.settings.sleepReminder, ...next.sleepReminder },
+        flags: { ...state.settings.flags, ...next.flags },
+      },
+    }));
+  },
+
+  saveSettings: async () => {
+    const { settings } = get();
+    set({ settingsLoading: true, settingsError: null });
+    try {
+      const response = await api.put("/settings", {
+        theme: settings.theme,
+        reminder: settings.reminder,
+        flags: settings.flags,
+      });
+      if (response.data) {
+        set({
+          settings: {
+            ...settings,
+            ...response.data,
+          },
+        });
+      }
+    } catch (error) {
+      set({ settingsError: "Failed to save settings" });
+    } finally {
+      set({ settingsLoading: false });
+    }
+  },
+});

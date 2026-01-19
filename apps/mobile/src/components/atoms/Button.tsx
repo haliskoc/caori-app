@@ -1,8 +1,5 @@
 import { TouchableOpacity, ActivityIndicator, TouchableOpacityProps } from 'react-native';
-import { styled } from 'nativewind';
 import { Text } from './Text';
-
-const StyledButton = styled(TouchableOpacity);
 
 interface Props extends TouchableOpacityProps {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -36,7 +33,7 @@ export function Button({ variant = 'primary', label, loading, icon, className, .
   }
 
   return (
-    <StyledButton 
+    <TouchableOpacity 
       className={`${containerStyle} ${loading ? 'opacity-80' : ''} ${className}`}
       disabled={loading || props.disabled}
       {...props}
@@ -51,6 +48,6 @@ export function Button({ variant = 'primary', label, loading, icon, className, .
           </Text>
         </>
       )}
-    </StyledButton>
+    </TouchableOpacity>
   );
 }

@@ -11,6 +11,7 @@ import api from "../../api/axios-instance";
 
 export interface TrackerSlice {
   entries: Entry[];
+  pendingEntries: Entry[];
   dailySummary: DailySummary | null;
   sleepLogs: SleepEntry[];
   isLoading: boolean;
@@ -21,7 +22,9 @@ export interface TrackerSlice {
   fetchEntries: (date: string) => Promise<void>;
   fetchReportData: (rangeDays: number) => Promise<ReportData | null>;
   addEntry: (entry: Omit<Entry, "id">) => Promise<void>;
+  updateEntry: (id: string, entry: Partial<Entry> & { type: Entry["type"] }) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
+  syncPendingEntries: () => Promise<void>;
   fetchSleepLogs: () => Promise<void>;
   addSleepLog: (input: {
     sleepStart: string;
@@ -43,6 +46,7 @@ export interface TrackerSlice {
 
 export const createTrackerSlice: StateCreator<TrackerSlice> = (set, get) => ({
   entries: [],
+  pendingEntries: [],
   dailySummary: null,
   sleepLogs: [],
   isLoading: false,
@@ -107,7 +111,31 @@ export const createTrackerSlice: StateCreator<TrackerSlice> = (set, get) => ({
         ),
       }));
     } catch (error) {
-      set({ error: "Failed to add entry" });
+      const tempId = Math.random().toString();
+      const pending = { ...entry, id: tempId } as Entry;
+      set((state) => ({
+        entries: [...state.entries, pending],
+        pendingEntries: [...state.pendingEntries, pending],
+        error: "Failed to add entry",
+      }));
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  updateEntry: async (id, entry) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await api.put(`/entries/${id}`, entry);
+      if (response.data) {
+        set((state) => ({
+          entries: state.entries.map((item) =>
+            item.id === id ? response.data : item,
+          ),
+        }));
+      }
+    } catch (error) {
+      set({ error: "Failed to update entry" });
     } finally {
       set({ isLoading: false });
     }
@@ -122,6 +150,36 @@ export const createTrackerSlice: StateCreator<TrackerSlice> = (set, get) => ({
       }));
     } catch (error) {
       set({ error: "Failed to delete entry" });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  syncPendingEntries: async () => {
+    const { pendingEntries } = get();
+    if (pendingEntries.length === 0) return;
+    set({ isLoading: true });
+    try {
+      const synced: string[] = [];
+      for (const entry of pendingEntries) {
+        const { id: _id, ...payload } = entry;
+        const response = await api.post("/entries", payload);
+        if (response.data) {
+          synced.push(entry.id);
+          set((state) => ({
+            entries: state.entries.map((item) =>
+              item.id === entry.id ? response.data : item,
+            ),
+          }));
+        }
+      }
+      if (synced.length) {
+        set((state) => ({
+          pendingEntries: state.pendingEntries.filter((item) => !synced.includes(item.id)),
+        }));
+      }
+    } catch (error) {
+      set({ error: "Failed to sync entries" });
     } finally {
       set({ isLoading: false });
     }

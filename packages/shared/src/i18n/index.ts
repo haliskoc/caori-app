@@ -4,6 +4,16 @@ export type { LocaleCode, Dictionary };
 
 export const defaultLocale: LocaleCode = "en";
 
+const LOCALE_KEY = "__calaiLocale";
+
+export function setLocale(locale: string) {
+  (globalThis as any)[LOCALE_KEY] = locale;
+}
+
+export function getLocale(): string | undefined {
+  return (globalThis as any)[LOCALE_KEY];
+}
+
 export function normalizeLocale(value?: string | null): LocaleCode {
   if (!value) return defaultLocale;
   const trimmed = value.trim();
@@ -55,7 +65,7 @@ export function t(
   params?: Record<string, string | number>,
   locale?: string
 ) {
-  const resolvedLocale = normalizeLocale(locale);
+  const resolvedLocale = normalizeLocale(locale ?? getLocale());
   const dictionary = (locales as any)[resolvedLocale] ?? (locales as any)[defaultLocale];
   const value = getValue(dictionary, key);
   const template = typeof value === "string" ? value : key;
