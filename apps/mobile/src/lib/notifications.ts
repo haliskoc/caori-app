@@ -17,6 +17,8 @@ async function loadNotifications() {
     Notifications?.setNotificationHandler?.({
       handleNotification: async () => ({
         shouldShowAlert: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
         shouldPlaySound: true,
         shouldSetBadge: false,
       }),
@@ -51,7 +53,7 @@ export async function scheduleDailyReminder(time: string) {
       body: "Günlük hedeflerini kontrol etmeyi unutma.",
       sound: "default",
     },
-    trigger: { hour, minute, repeats: true },
+    trigger: { type: 'daily', hour, minute } as any,
   });
 }
 
@@ -80,7 +82,7 @@ export async function scheduleCustomReminders(
         body: reminder.body,
         sound: "default",
       },
-      trigger: { hour, minute, repeats: true },
+      trigger: { type: 'daily', hour, minute } as any,
     });
   }
 }

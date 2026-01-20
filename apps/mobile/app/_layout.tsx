@@ -1,11 +1,15 @@
 import "../global.css";
 import { Stack } from "expo-router";
 import { AuthProvider, useAuth } from "../src/providers/AuthProvider";
+import { ThemeProvider } from "../src/providers/ThemeProvider";
+import { NotificationProvider } from "../src/providers/NotificationProvider";
+import { ToastProvider } from "../src/providers/ToastProvider";
+import { TutorialProvider } from "../src/components/molecules/TutorialTooltip";
 import { View, ActivityIndicator, StatusBar } from "react-native";
 import { useEffect } from "react";
 import { useStore } from "../src/store";
 import { setLocale } from "@calai/shared";
-import { THEME } from "../src/theme";
+import { THEME, getTheme } from "../src/theme";
 import { initDatabase } from "../src/lib/database";
 import { getCurrentCountry } from "../src/lib/location";
 
@@ -45,7 +49,13 @@ function RootLayoutNav() {
   const country = useStore((state) => state.settings.country);
 
   useEffect(() => {
-    initDatabase().catch((err) => console.error("DB Init Error:", err));
+    initDatabase()
+      .then((success) => {
+        if (!success) {
+          console.warn("Database initialization failed - offline features may not work");
+        }
+      })
+      .catch((err) => console.error("DB Init Error:", err));
   }, []);
 
   // Auto-detect country on app start if enabled
@@ -222,6 +232,13 @@ function RootLayoutNav() {
             animationDuration: 250,
           }}
         />
+        <Stack.Screen
+          name="(screens)/sleep"
+          options={{
+            animation: "slide_from_right",
+            animationDuration: 250,
+          }}
+        />
         <Stack.Screen name="+not-found" />
       </Stack>
     </>
@@ -231,7 +248,15 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <RootLayoutNav />
+      <ThemeProvider>
+        <NotificationProvider>
+          <ToastProvider>
+            <TutorialProvider>
+              <RootLayoutNav />
+            </TutorialProvider>
+          </ToastProvider>
+        </NotificationProvider>
+      </ThemeProvider>
     </AuthProvider>
   );
 }

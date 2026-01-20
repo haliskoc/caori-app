@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Animated,
   Easing,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
@@ -191,8 +192,19 @@ export default function AIAssistantModal() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const router = useRouter();
+
+  const handleMicPress = () => {
+    Alert.alert(
+      t('Sesli Giriş'),
+      t('Sesli giriş özelliği yakında aktif olacak! Şimdilik yazarak mesaj gönderebilirsiniz.'),
+      [{ text: t('Tamam'), style: 'default' }]
+    );
+    // TODO: Implement voice recording with expo-av
+    // setIsRecording(!isRecording);
+  };
 
   const handleSend = async (text?: string) => {
     const messageText = (text || input).trim();
@@ -268,7 +280,7 @@ export default function AIAssistantModal() {
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.keyboardView}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         >
           {/* Messages */}
           <ScrollView
@@ -276,6 +288,11 @@ export default function AIAssistantModal() {
             style={styles.messagesContainer}
             contentContainerStyle={styles.messagesContent}
             showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            onContentSizeChange={() => {
+              // Scroll to bottom when new content is added and keyboard is visible
+              scrollViewRef.current?.scrollToEnd({ animated: true });
+            }}
           >
             {/* Welcome Card */}
             <View style={styles.welcomeCard}>
@@ -319,8 +336,11 @@ export default function AIAssistantModal() {
 
           {/* Input Area */}
           <BlurView intensity={80} tint="light" style={styles.inputArea}>
-            <TouchableOpacity style={styles.micButton}>
-              <Mic size={22} color={THEME.colors.primary[600]} />
+            <TouchableOpacity
+              style={[styles.micButton, isRecording && styles.micButtonActive]}
+              onPress={handleMicPress}
+            >
+              <Mic size={22} color={isRecording ? '#fff' : THEME.colors.primary[600]} />
             </TouchableOpacity>
 
             <View style={styles.inputWrapper}>
@@ -579,6 +599,9 @@ const styles = StyleSheet.create({
     backgroundColor: THEME.colors.primary[100],
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  micButtonActive: {
+    backgroundColor: THEME.colors.semantic.error,
   },
   inputWrapper: {
     flex: 1,

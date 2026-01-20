@@ -179,10 +179,25 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
 
     // Auto-speak AI responses
     useEffect(() => {
+        // Track the current interval to properly clean up
+        let checkSpeaking: NodeJS.Timeout | null = null;
+
+        const cleanup = () => {
+            if (checkSpeaking) {
+                clearInterval(checkSpeaking);
+                checkSpeaking = null;
+            }
+        };
+
         if (!autoSpeak || !synthesisRef.current) {
-            return;
+            return cleanup;
         }
-        
+
+        // Add bounds check for messages array
+        if (messages.length === 0) {
+            return cleanup;
+        }
+
         const lastMessage = messages[messages.length - 1];
         if (lastMessage && lastMessage.role === "list" && lastMessage.id !== "welcome") {
             // Remove markdown formatting for speech
@@ -193,20 +208,24 @@ export function ChatAssistant({ isOpen, onToggle, launcherClassName = "" }: Chat
                 .replace(/#{1,6}\s/g, "")
                 .replace(/```[\s\S]*?```/g, "")
                 .replace(/`([^`]+)`/g, "$1");
-            
+
             synthesisRef.current.speak(cleanText, { lang: getLocale() === "tr" ? "tr-TR" : "en-US" });
             setIsVoiceSpeaking(true);
-            
+
             // Update speaking state when done
-            const checkSpeaking = setInterval(() => {
+            checkSpeaking = setInterval(() => {
                 if (synthesisRef.current && !synthesisRef.current.getIsSpeaking()) {
                     setIsVoiceSpeaking(false);
-                    clearInterval(checkSpeaking);
+                    if (checkSpeaking) {
+                        clearInterval(checkSpeaking);
+                        checkSpeaking = null;
+                    }
                 }
             }, 100);
-            
-            return () => clearInterval(checkSpeaking);
         }
+
+        // Return cleanup function
+        return cleanup;
     }, [messages, autoSpeak]);
 
     useEffect(() => {

@@ -7,7 +7,7 @@ import {
   Animated,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { format, subDays, isToday } from 'date-fns';
+import { format, subDays, isToday, Locale } from 'date-fns';
 import { tr, enUS } from 'date-fns/locale';
 import { Text } from '../atoms/Text';
 import { getDayKey } from '@calai/shared';

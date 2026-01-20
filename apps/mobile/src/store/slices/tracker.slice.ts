@@ -52,6 +52,7 @@ export interface TrackerSlice {
     },
   ) => Promise<void>;
   deleteSleepLog: (id: string) => Promise<void>;
+  addEntries: (entries: Entry[]) => Promise<void>;
 }
 
 export const createTrackerSlice: StateCreator<TrackerSlice> = (set, get) => ({
@@ -232,21 +233,68 @@ export const createTrackerSlice: StateCreator<TrackerSlice> = (set, get) => ({
   syncPendingEntries: async () => {
     const { pendingEntries } = get();
     if (pendingEntries.length === 0) return;
+
     set({ isLoading: true });
+
     try {
+      // Try batch sync first (more efficient)
+      const BATCH_SIZE = 10;
       const synced: string[] = [];
-      for (const entry of pendingEntries) {
-        const { id: _id, ...payload } = entry;
-        const response = await api.post("/entries", payload);
-        if (response.data) {
-          synced.push(entry.id);
-          set((state) => ({
-            entries: state.entries.map((item) =>
-              item.id === entry.id ? response.data : item,
-            ),
-          }));
+      const failed: string[] = [];
+
+      for (let i = 0; i < pendingEntries.length; i += BATCH_SIZE) {
+        const batch = pendingEntries.slice(i, i + BATCH_SIZE);
+
+        // Try batch endpoint first
+        try {
+          const payloads = batch.map(entry => {
+            const { id: _id, ...payload } = entry;
+            return payload;
+          });
+
+          const response = await api.post("/entries/batch", { entries: payloads });
+
+          if (response.data?.success) {
+            batch.forEach(entry => synced.push(entry.id));
+          }
+        } catch (batchError) {
+          // Fallback to individual sync with retry
+          for (const entry of batch) {
+            let retries = 0;
+            const maxRetries = 3;
+            let success = false;
+
+            while (retries < maxRetries && !success) {
+              try {
+                const { id: _id, ...payload } = entry;
+                const response = await api.post("/entries", payload);
+
+                if (response.data) {
+                  synced.push(entry.id);
+                  set((state) => ({
+                    entries: state.entries.map((item) =>
+                      item.id === entry.id ? response.data : item,
+                    ),
+                  }));
+                  success = true;
+                }
+              } catch (error) {
+                retries++;
+                if (retries < maxRetries) {
+                  // Exponential backoff
+                  await new Promise(resolve =>
+                    setTimeout(resolve, Math.pow(2, retries) * 500)
+                  );
+                } else {
+                  failed.push(entry.id);
+                }
+              }
+            }
+          }
         }
       }
+
+      // Update pending entries - keep failed ones for next sync
       if (synced.length) {
         set((state) => ({
           pendingEntries: state.pendingEntries.filter(
@@ -254,7 +302,12 @@ export const createTrackerSlice: StateCreator<TrackerSlice> = (set, get) => ({
           ),
         }));
       }
+
+      // Log sync status
+      console.log(`Sync complete: ${synced.length} synced, ${failed.length} failed`);
+
     } catch (error) {
+      console.error("Sync failed:", error);
       set({ error: "Failed to sync entries" });
     } finally {
       set({ isLoading: false });
@@ -314,6 +367,57 @@ export const createTrackerSlice: StateCreator<TrackerSlice> = (set, get) => ({
       set({ error: "Failed to delete sleep log" });
     } finally {
       set({ sleepLoading: false });
+    }
+  },
+
+  addEntries: async (entries: Entry[]) => {
+    set({ isLoading: true, error: null });
+    try {
+      for (const entry of entries) {
+        const id = entry.id || nanoid();
+
+        if (entry.type === "food") {
+          const e = entry as SharedFoodEntry;
+          await FoodEntriesRepository.insert({
+            id,
+            name: e.name,
+            brand: e.brand,
+            calories: e.calories,
+            protein_g: e.proteinG,
+            carbs_g: e.carbsG,
+            fat_g: e.fatG,
+            amount_g: e.amountG,
+            barcode: e.barcode,
+            meal_type: e.mealType,
+            timestamp: e.timestamp,
+          });
+        } else if (entry.type === "water") {
+          const e = entry as SharedWaterEntry;
+          await WaterEntriesRepository.insert({
+            id,
+            amount_ml: e.amountMl,
+            timestamp: e.timestamp,
+          });
+        } else if (entry.type === "activity") {
+          const e = entry as SharedActivityEntry;
+          await ActivityEntriesRepository.insert({
+            id,
+            activity_type: e.activityType,
+            duration_min: e.durationMin,
+            calories_burned: e.estimatedCalories,
+            timestamp: e.timestamp,
+          });
+        }
+      }
+
+      set((state) => ({
+        entries: [...entries, ...state.entries],
+      }));
+    } catch (error) {
+      console.error("Failed to add entries:", error);
+      set({ error: "Failed to add entries" });
+    } finally {
+      set({ isLoading: false });
     }
   },
 });

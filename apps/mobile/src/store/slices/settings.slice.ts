@@ -35,6 +35,17 @@ export type ThemeSettings = {
 
 export type UnitSystem = "metric" | "imperial";
 
+export type Integrations = {
+  googleFit: {
+    connected: boolean;
+    lastSync?: string;
+  };
+  appleHealth: {
+    connected: boolean;
+    lastSync?: string;
+  };
+};
+
 export type AppSettings = {
   theme: ThemeSettings;
   reminder: ReminderSettings;
@@ -46,6 +57,7 @@ export type AppSettings = {
   country: string;
   autoDetectCountry: boolean;
   onboardingCompleted: boolean;
+  integrations: Integrations;
 };
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -67,6 +79,10 @@ const DEFAULT_SETTINGS: AppSettings = {
   country: "TR",
   autoDetectCountry: true,
   onboardingCompleted: false,
+  integrations: {
+    googleFit: { connected: false },
+    appleHealth: { connected: false },
+  },
 };
 
 export interface SettingsSlice {
@@ -101,6 +117,18 @@ export const createSettingsSlice: StateCreator<SettingsSlice> = (set, get) => ({
               response.data.autoDetectCountry !== undefined
                 ? response.data.autoDetectCountry
                 : get().settings.autoDetectCountry,
+            integrations: {
+              ...DEFAULT_SETTINGS.integrations,
+              ...response.data.integrations,
+              googleFit: {
+                ...DEFAULT_SETTINGS.integrations.googleFit,
+                ...response.data.integrations?.googleFit,
+              },
+              appleHealth: {
+                ...DEFAULT_SETTINGS.integrations.appleHealth,
+                ...response.data.integrations?.appleHealth,
+              },
+            },
           },
         });
       }
@@ -127,6 +155,18 @@ export const createSettingsSlice: StateCreator<SettingsSlice> = (set, get) => ({
           ...next.sleepReminder,
         },
         flags: { ...state.settings.flags, ...next.flags },
+        integrations: {
+          ...state.settings.integrations,
+          ...next.integrations,
+          googleFit: {
+            ...state.settings.integrations.googleFit,
+            ...next.integrations?.googleFit,
+          },
+          appleHealth: {
+            ...state.settings.integrations.appleHealth,
+            ...next.integrations?.appleHealth,
+          },
+        },
       },
     }));
   },
@@ -142,6 +182,7 @@ export const createSettingsSlice: StateCreator<SettingsSlice> = (set, get) => ({
         country: settings.country,
         autoDetectCountry: settings.autoDetectCountry,
         onboardingCompleted: settings.onboardingCompleted,
+        integrations: settings.integrations,
       });
       if (response.data) {
         set({

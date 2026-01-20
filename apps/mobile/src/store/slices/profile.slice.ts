@@ -41,8 +41,13 @@ export const createProfileSlice: StateCreator<ProfileSlice> = (set, get) => ({
       if (response.data) {
         set({ goals: { ...DEFAULT_GOALS, ...response.data } });
       }
-    } catch (error) {
-      console.error("Failed to fetch goals", error);
+    } catch (error: any) {
+      // Network hatasıysa sessizce devam et (offline mod)
+      if (error?.isNetworkError) {
+        console.log("Offline: using local goals");
+      } else {
+        console.warn("Failed to fetch goals", error?.message || error);
+      }
     } finally {
       set({ goalsLoading: false });
     }
@@ -61,8 +66,12 @@ export const createProfileSlice: StateCreator<ProfileSlice> = (set, get) => ({
       if (response.data) {
         set({ goals: { ...DEFAULT_GOALS, ...response.data } });
       }
-    } catch (error) {
-      console.error("Failed to save goals", error);
+    } catch (error: any) {
+      if (error?.isNetworkError) {
+        console.log("Offline: goals will sync when online");
+      } else {
+        console.warn("Failed to save goals", error?.message || error);
+      }
     }
   },
 
@@ -73,8 +82,13 @@ export const createProfileSlice: StateCreator<ProfileSlice> = (set, get) => ({
       if (response.data) {
         set({ profile: { ...defaultProfile, ...response.data } });
       }
-    } catch (error) {
-      console.error("Failed to fetch profile", error);
+    } catch (error: any) {
+      // Network hatasıysa sessizce devam et (offline mod)
+      if (error?.isNetworkError) {
+        console.log("Offline: using local profile");
+      } else {
+        console.warn("Failed to fetch profile", error?.message || error);
+      }
     } finally {
       set({ profileLoading: false });
     }
@@ -94,8 +108,12 @@ export const createProfileSlice: StateCreator<ProfileSlice> = (set, get) => ({
       if (response.data) {
         set({ profile: { ...defaultProfile, ...response.data } });
       }
-    } catch (error) {
-      console.error("Failed to save profile", error);
+    } catch (error: any) {
+      if (error?.isNetworkError) {
+        console.log("Offline: profile will sync when online");
+      } else {
+        console.warn("Failed to save profile", error?.message || error);
+      }
     } finally {
       set({ profileLoading: false });
     }
