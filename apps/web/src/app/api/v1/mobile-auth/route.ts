@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
                 name: payload.name,
             },
         });
-    } catch (error) {
+    } catch {
         return NextResponse.json({ valid: false, error: 'Invalid token' }, { status: 401 });
     }
 }
@@ -139,7 +139,7 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({
             accessToken: newAccessToken,
         });
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: 'Invalid refresh token' }, { status: 401 });
     }
 }
