@@ -67,7 +67,13 @@ export function t(
 ) {
   const resolvedLocale = normalizeLocale(locale ?? getLocale());
   const dictionary = (locales as any)[resolvedLocale] ?? (locales as any)[defaultLocale];
-  const value = getValue(dictionary, key);
+  let value = getValue(dictionary, key);
+  if (typeof value !== "string" && resolvedLocale !== defaultLocale && resolvedLocale !== "tr") {
+    const fallback = getValue((locales as any)[defaultLocale], key);
+    if (typeof fallback === "string") {
+      value = fallback;
+    }
+  }
   const template = typeof value === "string" ? value : key;
   
   if (!params) {
