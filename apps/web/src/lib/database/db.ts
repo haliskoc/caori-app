@@ -12,7 +12,11 @@ export function getDb() {
   return drizzle(client, { schema });
 }
 
-export async function ensureUser(user: { sub: string; email?: string | null; name?: string | null }) {
+export async function ensureUser(user: {
+  sub: string;
+  email?: string | null;
+  name?: string | null;
+}) {
   const db = getDb();
   
   // First, try to find if user exists

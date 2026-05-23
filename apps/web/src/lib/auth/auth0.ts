@@ -38,7 +38,7 @@ export const auth0 = new Auth0Client({
   async onCallback(error, context) {
     if (error) {
       console.error("Auth0 callback error:", error.message);
-      return NextResponse.redirect(new URL("/", appBaseUrl));
+      return NextResponse.redirect(new URL("/login", appBaseUrl));
     }
     const returnTo = context.returnTo && context.returnTo !== "/" 
       ? context.returnTo 

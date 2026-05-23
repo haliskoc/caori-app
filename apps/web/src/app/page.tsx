@@ -76,12 +76,12 @@ export default function LandingPage() {
           </nav>
           <div className="flex items-center gap-4">
             <Link
-              href="/auth/login"
+              href="/login"
               className="hidden text-sm font-bold text-gray-900 hover:text-emerald-600 transition-colors sm:inline"
             >
               {t("Giriş Yap")}
             </Link>
-            <Link href="/auth/login?screen_hint=signup">
+            <Link href="/login?mode=signup">
               <span className="rounded-2xl bg-emerald-600 px-6 py-2.5 text-sm font-black text-white shadow-lg shadow-emerald-200 transition-all hover:bg-gray-900 hover:shadow-gray-200 active:scale-95">
                 {t("Ücretsiz Başla")}
               </span>
@@ -115,7 +115,7 @@ export default function LandingPage() {
               {t("Ücretlendirme")}
             </Link>
             <Link
-              href="/auth/login?screen_hint=signup"
+              href="/login?mode=signup"
               className="rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-200"
               onClick={() => setMobileMenuOpen(false)}
             >
@@ -150,7 +150,7 @@ export default function LandingPage() {
               </p>
 
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center justify-center pt-4">
-                <Link href="/auth/login?screen_hint=signup" className="group">
+                <Link href="/login?mode=signup" className="group">
                   <span className="flex h-14 items-center justify-center gap-3 rounded-[2rem] bg-gray-900 px-10 text-base font-black text-white shadow-2xl transition-all hover:-translate-y-1 hover:bg-emerald-600 active:scale-95">
                     {t("Hemen Başla")}
                     <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -275,7 +275,7 @@ export default function LandingPage() {
               {t("Daha İyi Bir Sen İçin")} <br />
               <span className="text-emerald-400">{t("Bugün İlk Adımı At.")}</span>
             </h2>
-            <Link href="/auth/login?screen_hint=signup">
+            <Link href="/login?mode=signup">
               <span className="inline-flex h-16 items-center justify-center gap-3 rounded-[2rem] bg-white px-12 text-lg font-black text-gray-900 shadow-2xl transition-all hover:bg-emerald-400 hover:scale-105 active:scale-95">
                 {t("Ücretsiz Hesabını Oluştur")}
                 <ArrowRight className="h-5 w-5" />

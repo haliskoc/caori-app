@@ -2,7 +2,7 @@ import { locales, Dictionary, LocaleCode } from "../locales";
 
 export type { LocaleCode, Dictionary };
 
-export const defaultLocale: LocaleCode = "en";
+export const defaultLocale: LocaleCode = "tr";
 
 const LOCALE_KEY = "__calaiLocale";
 

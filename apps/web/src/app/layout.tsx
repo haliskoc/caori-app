@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Outfit, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/app-providers";
-import { defaultLocale, t } from "@/lib/core/i18n";
+import { resolveRequestLocale } from "@/lib/core/resolve-request-locale";
+import { syncActiveLocale, t } from "@/lib/core/i18n";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -22,14 +23,20 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await resolveRequestLocale();
+  syncActiveLocale(locale);
+
+  return {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://calmet.ai"),
   title: {
-    default: t("Calmet - Akıllı Sağlık ve Kalori Takibi"),
+    default: t("Calmet - Akıllı Sağlık ve Kalori Takibi", undefined, locale),
     template: `%s | Calmet`,
   },
   description: t(
-    "AI destekli kalori, su ve aktivite takibi asistanı. Sağlıklı yaşam hedeflerinize ulaşmak için en akıllı yol."
+    "AI destekli kalori, su ve aktivite takibi asistanı. Sağlıklı yaşam hedeflerinize ulaşmak için en akıllı yol.",
+    undefined,
+    locale
   ),
   keywords: [
     "kalori takibi",
@@ -48,9 +55,11 @@ export const metadata: Metadata = {
     locale: "tr_TR",
     url: "https://calmet.ai",
     siteName: "Calmet",
-    title: t("Calmet - Akıllı Sağlık ve Kalori Takibi"),
+    title: t("Calmet - Akıllı Sağlık ve Kalori Takibi", undefined, locale),
     description: t(
-      "AI destekli kalori, su ve aktivite takibi asistanı. Sağlıklı yaşam hedeflerinize ulaşmak için en akıllı yol."
+      "AI destekli kalori, su ve aktivite takibi asistanı. Sağlıklı yaşam hedeflerinize ulaşmak için en akıllı yol.",
+      undefined,
+      locale
     ),
     images: [
       {
@@ -63,9 +72,11 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: t("Calmet - Akıllı Sağlık ve Kalori Takibi"),
+    title: t("Calmet - Akıllı Sağlık ve Kalori Takibi", undefined, locale),
     description: t(
-      "AI destekli kalori, su ve aktivite takibi asistanı. Sağlıklı yaşam hedeflerinize ulaşmak için en akıllı yol."
+      "AI destekli kalori, su ve aktivite takibi asistanı. Sağlıklı yaşam hedeflerinize ulaşmak için en akıllı yol.",
+      undefined,
+      locale
     ),
     images: ["/og-image.png"],
   },
@@ -89,13 +100,17 @@ export const metadata: Metadata = {
       pt: "/?hl=pt",
     },
   },
-};
+  };
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialLocale = await resolveRequestLocale();
+  syncActiveLocale(initialLocale);
+
   const breadcrumbData = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -110,13 +125,13 @@ export default function RootLayout({
   };
 
   return (
-    <html lang={defaultLocale} className="scroll-smooth">
+    <html lang={initialLocale} className="scroll-smooth" suppressHydrationWarning>
       <body className={`${outfit.variable} ${spaceMono.variable} antialiased font-sans`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
         />
-        <AppProviders>{children}</AppProviders>
+        <AppProviders initialLocale={initialLocale}>{children}</AppProviders>
       </body>
     </html>
   );

@@ -1,0 +1,131 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "Calmet" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]: Calmet
+        - navigation [ref=e7]:
+          - link "Features" [ref=e8] [cursor=pointer]:
+            - /url: "#features"
+          - link "Pricing" [ref=e9] [cursor=pointer]:
+            - /url: /pricing
+        - generic [ref=e10]:
+          - link "Sign In" [ref=e11] [cursor=pointer]:
+            - /url: /auth/login
+          - link "Free trial" [ref=e12] [cursor=pointer]:
+            - /url: /auth/login?screen_hint=signup
+    - main [ref=e13]:
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - img [ref=e18]
+          - text: AI-Powered Health Tracking
+        - heading "For your body The Smartest Path." [level=1] [ref=e21]:
+          - text: For your body
+          - text: The Smartest Path.
+        - paragraph [ref=e22]: Calmet helps you reach your health goals in the shortest way with AI-powered diet calendars, meal templates, and in-depth analytics.
+        - generic [ref=e23]:
+          - link "Get Started" [ref=e24] [cursor=pointer]:
+            - /url: /auth/login?screen_hint=signup
+            - generic [ref=e25]:
+              - text: Get Started
+              - img [ref=e26]
+          - link "Discover" [ref=e28] [cursor=pointer]:
+            - /url: "#features"
+            - generic [ref=e29]: Discover
+        - generic [ref=e30]:
+          - generic [ref=e31]: NutriCheck Approved
+          - generic [ref=e32]: HealthDash Verified
+          - generic [ref=e33]: PureFit 2026
+      - generic [ref=e38]:
+        - generic [ref=e39]:
+          - heading "Everything in One Smart Dashboard." [level=2] [ref=e40]:
+            - text: Everything in One
+            - text: Smart Dashboard.
+          - paragraph [ref=e41]: Your calorie intake, water consumption, and activity data are synced instantly. AI detects your deficiencies and warns you throughout the day.
+          - generic [ref=e42]:
+            - generic [ref=e43]:
+              - img [ref=e45]
+              - generic [ref=e47]: Auto Calorie Calculation
+            - generic [ref=e48]:
+              - img [ref=e50]
+              - generic [ref=e52]: 7-Day Progress Analysis
+            - generic [ref=e53]:
+              - img [ref=e55]
+              - generic [ref=e58]: Personal Data Security
+        - generic [ref=e60]:
+          - generic [ref=e62]: Today's Summary
+          - generic [ref=e65]:
+            - generic [ref=e66]:
+              - paragraph [ref=e67]: Calories
+              - paragraph [ref=e68]: 1,842
+            - generic [ref=e69]:
+              - paragraph [ref=e70]: Water
+              - paragraph [ref=e71]: 2.4L
+      - generic [ref=e76]:
+        - generic [ref=e77]:
+          - heading "Why Calmet?" [level=2] [ref=e78]
+          - paragraph [ref=e79]: Much more than just a tracking app. We blend scientific data with modern technology.
+        - generic [ref=e80]:
+          - generic [ref=e81]:
+            - img [ref=e83]
+            - heading "Personalized Diet Calendar" [level=3] [ref=e85]
+            - paragraph [ref=e86]: A weekly plan automatically generated based on your goals, habits, and daily schedule.
+          - generic [ref=e87]:
+            - img [ref=e89]
+            - heading "Detailed Charts" [level=3] [ref=e91]
+            - paragraph [ref=e92]: Clearly view daily, weekly, and monthly progress. Trends and deviations on a single screen.
+          - generic [ref=e93]:
+            - img [ref=e95]
+            - heading "Ready Meal Templates" [level=3] [ref=e97]
+            - paragraph [ref=e98]: Choose your meal from dietitian-approved templates without entering calories one by one.
+      - generic [ref=e102]:
+        - heading "For a Better You Take the First Step Today." [level=2] [ref=e103]:
+          - text: For a Better You
+          - text: Take the First Step Today.
+        - link "Create Free Account" [ref=e104] [cursor=pointer]:
+          - /url: /auth/login?screen_hint=signup
+          - generic [ref=e105]:
+            - text: Create Free Account
+            - img [ref=e106]
+        - paragraph [ref=e108]: No credit card required. Start in seconds.
+    - contentinfo [ref=e109]:
+      - generic [ref=e110]:
+        - generic [ref=e111]:
+          - generic [ref=e113]: Calmet
+          - paragraph [ref=e114]: Your modern and smart health tracking assistant. 2026 Calmet App Inc.
+        - generic [ref=e115]:
+          - heading "Product" [level=4] [ref=e116]
+          - list [ref=e117]:
+            - listitem [ref=e118]:
+              - link "Features" [ref=e119] [cursor=pointer]:
+                - /url: /#features
+            - listitem [ref=e120]:
+              - link "Pricing" [ref=e121] [cursor=pointer]:
+                - /url: /pricing
+        - generic [ref=e122]:
+          - heading "Support" [level=4] [ref=e123]
+          - list [ref=e124]:
+            - listitem [ref=e125]:
+              - link "Help Center" [ref=e126] [cursor=pointer]:
+                - /url: /help
+            - listitem [ref=e127]:
+              - link "FAQ" [ref=e128] [cursor=pointer]:
+                - /url: /faq
+            - listitem [ref=e129]:
+              - link "Contact" [ref=e130] [cursor=pointer]:
+                - /url: /contact
+        - generic [ref=e131]:
+          - heading "Legal" [level=4] [ref=e132]
+          - list [ref=e133]:
+            - listitem [ref=e134]:
+              - link "Privacy Policy" [ref=e135] [cursor=pointer]:
+                - /url: /legal/privacy
+            - listitem [ref=e136]:
+              - link "Terms of Use" [ref=e137] [cursor=pointer]:
+                - /url: /legal/terms
+            - listitem [ref=e138]:
+              - link "Data Protection" [ref=e139] [cursor=pointer]:
+                - /url: /legal/kvkk
+  - button "Open Next.js Dev Tools" [ref=e145] [cursor=pointer]:
+    - img [ref=e146]

@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///home/lenovo/Desktop/repo/caori-app/apps/web/src/app/pricing/layout.tsx"],"sourcesContent":["import type { Metadata } from \"next\";\nimport { t } from \"@/lib/core/i18n\";\n\nexport const metadata: Metadata = {\n    title: t(\"Ücretlendirme\"),\n    description: t(\"Calmet paketlerini keşfedin. Ücretsiz, Pro ve AI Plus seçenekleriyle size en uygun planı seçin.\"),\n};\n\nexport default function PricingLayout({\n    children,\n}: {\n    children: React.ReactNode;\n}) {\n    return <>{children}</>;\n}\n"],"names":[],"mappings":";;;;;;;AACA;;;AAEO,MAAM,WAAqB;IAC9B,OAAO,IAAA,8JAAC,EAAC;IACT,aAAa,IAAA,8JAAC,EAAC;AACnB;AAEe,SAAS,cAAc,EAClC,QAAQ,EAGX;IACG,qBAAO;kBAAG;;AACd"}}]
+}

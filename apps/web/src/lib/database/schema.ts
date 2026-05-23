@@ -14,8 +14,10 @@ import {
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
-  email: text("email"),
+  email: text("email").unique(),
   name: text("name"),
+  passwordHash: text("password_hash"),
+  salt: text("salt"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   plan: text("plan").default("free").notNull(),
   subscriptionStatus: text("subscription_status").default("active"), // active, past_due, canceled

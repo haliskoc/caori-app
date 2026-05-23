@@ -24,6 +24,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [logoutHref, setLogoutHref] = useState("/auth/logout");
   const hideShell =
     pathname === "/" ||
+    pathname.startsWith("/auth") ||
     pathname.startsWith("/share") ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/pricing") ||
